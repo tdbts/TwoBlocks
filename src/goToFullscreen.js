@@ -14,7 +14,10 @@
  *
  */
 
-const goToFullscreen = function goToFullscreen(canvas) {
+const goToFullscreen = function goToFullscreen(canvas, panorama) {
+
+	let fullscreenWidth; 
+	let fullscreenHeight; 
 
 	// 'canvas' should be passed into this function 
 	// var canvas = document.getElementById("canvas_streetviewpanorama");
@@ -44,8 +47,6 @@ const goToFullscreen = function goToFullscreen(canvas) {
 
 	} else if (document.mozCancelFullScreen) {
 		
-		console.log("moz");
-		
 		canvas.mozRequestFullScreen();
 		
 		fullscreenWidth = canvas.clientWidth;
@@ -63,12 +64,12 @@ const goToFullscreen = function goToFullscreen(canvas) {
 				canvas.style.width = fullscreenWidth + "px";
 				canvas.style.height = fullscreenHeight + "px";
 		
-				google.maps.event.trigger(panorama, 'resize')
+				google.maps.event.trigger(panorama, 'resize');
 			}
 		
 		}, false);
 	}
-}
+};
 
 /*=====  End of goToFullscreen()  ======*/
 
