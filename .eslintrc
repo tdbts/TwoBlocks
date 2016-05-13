@@ -1,6 +1,6 @@
 {
 	"env": {
-		// "browser": true, // --> Don't specify until true
+		"browser": true,
 		"es6": true, 
 		"node": true, 
 		"mocha": true

@@ -19,7 +19,8 @@
         "google",
         "maps",
         "nyc",
-        "panoramas"
+        "panoramas", 
+        "streetview"
     ],
     "author": "Vinny Sanchez",
     "license": "ISC",
