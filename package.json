@@ -7,10 +7,10 @@
     "test": "find . -name test -type d ! -path './node_modules/*' -exec mocha {} --compilers js:babel-core/register --recursive ';'",
     "build": "npm run lint && npm test && npm run pack",
     "pack": "webpack",
-    "lint": "eslint src/",
+    "lint": "eslint src/ build/",
     "postlint": "echo 'Linting complete with no errors.'",
     "start": "sudo browser-sync start --server --index './build/index.html' --files './dist/*.js, ./build/*.html, ./build/*.js'",     
-    "watch": "watch 'npm run lint' ./src/"
+    "watch": "watch 'npm run lint && npm run pack' ./src/ ./build/"
   },
   "repository": {
     "type": "git",

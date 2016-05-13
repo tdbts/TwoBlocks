@@ -64,7 +64,7 @@
 		value: true
 	});
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	/* global document, google */
 
@@ -84,39 +84,48 @@
 
 		/*----------  getUrlParameters()  ----------*/
 
-		function getUrlParameters(url) {
+		var getUrlParameters = function getUrlParameters(url) {
 
 			// The original author of this code was not very experienced with Javascript. 
-			// I changed 'vars' from an array to an object to make it make sense for how
-			// the author has used it. 
-			var vars = {},
-			    hash;
+			// I changed 'parameters' (originally 'vars') from an array to
+			// an object to make it appropriate for how the author has used it. 
+			var parameters = {};
+
+			var hash = void 0;
 
 			// Get the string of everything after the '?' in the url,
 			// and split it into an array of parameter key/value pairs
 			var hashes = url.slice(url.indexOf('?') + 1).split('&');
 
 			// For each parameter key/value pair, split the pair at the '='
-			// character and add the key / value pair to the 'vars' object 
+			// character and add the key / value pair to the 'parameters' object 
 			for (var i = 0; i < hashes.length; i++) {
 
 				hash = hashes[i].split('=');
 
-				vars[hash[0]] = hash[1];
+				var _hash = hash;
+
+				var _hash2 = _slicedToArray(_hash, 2);
+
+				var prop = _hash2[0];
+				var val = _hash2[1];
+
+
+				parameters[prop] = val;
 			}
 
-			return vars;
-		}
+			return parameters;
+		};
 
 		// Create embed url parameter object
 		var embedUrlParams = getUrlParameters(embedUrl);
 
 		/*----------  getUrlParameter()  ----------*/
 
-		function getUrlParameter(obj, name) {
+		var getUrlParameter = function getUrlParameter(obj, name) {
 
 			return obj[name];
-		}
+		};
 
 		// Convert the latlong string into an array
 		var latlong = getUrlParameter(embedUrlParams, 'll').split(',');
@@ -126,6 +135,7 @@
 		// #################
 		var latitude = parseFloat(latlong[0]);
 		var longitude = parseFloat(latlong[1]);
+
 		var panoid = getUrlParameter(embedUrlParams, 'panoid');
 
 		// #############
@@ -147,25 +157,25 @@
 		var scrollwheel = false;
 		var zoomPos = "";
 		var zoomSize = "";
-		var zoomStart = 1.1;
-		var fullscreen = false;
-		//
+		// const zoomStart = 1.1;  // Never used
+		// const fullscreen = false;  // Never used
 
-		var fullscreenWidth;
-		var fullscreenHeight;
-		var panorama;
-		var timer;
+		// let fullscreenWidth;  // Never used
+		// let fullscreenHeight;  // Never used
+		var panorama = void 0;
+		// let timer;  // Never used
 
 		var spinner = void 0;
+		var mode = void 0;
 
 		if (!mode) {
 
-			var mode = "undefined";
+			mode = "undefined";
 		}
 
 		/*----------  initGl()  ----------*/
 
-		function initGl() {
+		var initGl = function initGl() {
 
 			if (mode === "webgl") {
 
@@ -176,46 +186,11 @@
 					c.addEventListener("webglcontextrestored", spinner.spin, false);
 				}
 			}
-		}
+		};
 
 		/*----------  init()  ----------*/
 
-		function init() {
-			var _panoramaOptions;
-
-			if (mode === "undefined") {
-
-				mode = "html4";
-
-				if (window.WebGLRenderingContext) {
-
-					var testCanvas = document.createElement("canvas_streetviewpanorama");
-
-					if (testCanvas) {
-						//mode = "html5";
-						document.getElementsByTagName("body").item(0).appendChild(testCanvas);
-
-						var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
-
-						for (var i = 0; i < webGlNames.length; i++) {
-
-							try {
-
-								var context = testCanvas.getContext(webGlNames[i]);
-
-								if (context && typeof context.getParameter === "function") {
-
-									mode = "webgl";
-
-									break;
-								}
-							} catch (e) {}
-						}
-
-						testCanvas.parentNode.removeChild(testCanvas);
-					}
-				}
-			}
+		var init = function init() {
 
 			var gps = new google.maps.LatLng(latitude, longitude);
 
@@ -250,29 +225,32 @@
 
 			/*----------  End of Options Processing  ----------*/
 
-			var panoramaOptions = (_panoramaOptions = {
-				pano: panoid,
-				pov: {
-					heading: 0,
-					pitch: 0,
-					zoom: zoom
-				},
+			var panoramaOptions = {
+				addressControl: addressControl,
+				addressControlOptions: addressControlOptions,
 				clickToGo: clickToGo,
+				imageDateControl: imageDateControl,
+				mode: mode,
+				panControl: panControl,
+				panControlOptions: panControlOptions,
 				scrollwheel: scrollwheel,
 				zoomControl: zoomControl,
 				zoomControlOptions: zoomControlOptions,
-				panControl: panControl,
-				panControlOptions: panControlOptions,
-				visible: true,
-				mode: mode,
-				addressControl: addressControl,
-				addressControlOptions: addressControlOptions,
-				linksControl: chevrons,
 				disableDoubleClickZoom: !doubleClickZoom,
-				imageDateControl: imageDateControl
-			}, _defineProperty(_panoramaOptions, 'scrollwheel', scrollwheel), _defineProperty(_panoramaOptions, 'enableCloseButton', closebutton), _defineProperty(_panoramaOptions, 'position', gps), _panoramaOptions);
+				enableCloseButton: closebutton,
+				linksControl: chevrons,
+				pano: panoid,
+				position: gps,
+				pov: {
+					zoom: zoom,
+					heading: 0,
+					pitch: 0
+				},
+				visible: true
+			};
 
 			var canvas = document.getElementById("canvas_streetviewpanorama");
+
 			// Documentation on streetViewPanorama class:
 			// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
 			panorama = new google.maps.StreetViewPanorama(canvas, panoramaOptions);
@@ -303,7 +281,7 @@
 			canvas.onmouseout = function () {
 				return spinner.start();
 			};
-		}
+		};
 
 		/*----------  showMap()  ----------*/
 
@@ -313,7 +291,7 @@
 	  *
 	  */
 
-		function showMap() {
+		var showMap = function showMap() {
 
 			var canvas = document.getElementById("canvas_streetviewpanorama");
 
@@ -341,7 +319,7 @@
 			var marker = new google.maps.Marker(markerOptions);
 
 			google.maps.event.addListener(marker, 'click', init);
-		}
+		};
 
 		var createSpinner = function createSpinner(panorma, interval) {
 
@@ -365,7 +343,9 @@
 						}
 
 						panorma.setPov(pov);
-					} catch (e) {}
+					} catch (e) {
+						window.console.error("e:", e);
+					}
 				},
 				start: function start() {
 
@@ -382,9 +362,10 @@
 
 		/*----------  injectGapiScript()  ----------*/
 
-		function injectGapiScript(MAPS_API_KEY) {
+		var injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
 
 			var script = document.createElement("script");
+
 			var source = "https://maps.googleapis.com/maps/api/js";
 
 			script.type = "text/javascript";
@@ -398,7 +379,7 @@
 			script.onload = init;
 
 			document.body.appendChild(script);
-		}
+		};
 
 		injectGapiScript();
 	};

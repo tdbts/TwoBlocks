@@ -19,26 +19,29 @@ const twoBlocks = function twoBlocks() {
 	const getUrlParameters = function getUrlParameters(url) {
 
 		// The original author of this code was not very experienced with Javascript.  
-		// I changed 'vars' from an array to an object to make it make sense for how 
-		// the author has used it.  
-		const vars = {};
+		// I changed 'parameters' (originally 'vars') from an array to 
+		// an object to make it appropriate for how the author has used it.  
+		const parameters = {};
+
 		let hash;
 
 		// Get the string of everything after the '?' in the url, 
 		// and split it into an array of parameter key/value pairs 
 		const hashes = url.slice(url.indexOf('?') + 1).split('&');
-		
+
 		// For each parameter key/value pair, split the pair at the '=' 
-		// character and add the key / value pair to the 'vars' object  
+		// character and add the key / value pair to the 'parameters' object  
 		for (let i = 0; i < hashes.length; i++) {
-		
+
 			hash = hashes[i].split('=');
-		
-			vars[hash[0]] = hash[1];
+
+			const [ prop, val ] = hash; 
+ 
+			parameters[prop] = val;
 		
 		} 
 
-		return vars;
+		return parameters;
 	};
 
 	// Create embed url parameter object 
@@ -118,49 +121,6 @@ const twoBlocks = function twoBlocks() {
 	/*----------  init()  ----------*/
 
 	const init = function init() {
-
-		if (mode === "undefined") {
-
-			mode = "html4";
-
-			if (window.WebGLRenderingContext) {
-
-				const testCanvas = document.createElement("canvas_streetviewpanorama");
-
-				if (testCanvas) {
-					//mode = "html5";
-					document.getElementsByTagName("body").item(0).appendChild(testCanvas);
-
-					const webGlNames = [
-						"webgl",
-						"experimental-webgl",
-						"moz-webgl",
-						"webkit-3d"
-					];
-
-					for (let i = 0; i < webGlNames.length; i++) {
-						
-						try {
-
-							const context = testCanvas.getContext(webGlNames[i]);
-						
-							if (context && (typeof context.getParameter === "function")) {
-								
-								mode = "webgl";
-
-								break;
-							}
-
-						} catch (e) {
-							window.console.error("e:", e); 
-						}
-					}
-
-					testCanvas.parentNode.removeChild(testCanvas);
-				
-				}
-			}
-		}
 		
 		const gps = new google.maps.LatLng(latitude, longitude);
 		
