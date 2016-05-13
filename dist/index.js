@@ -42,15 +42,37 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _twoBlocks = __webpack_require__(1);
+
+	var _twoBlocks2 = _interopRequireDefault(_twoBlocks);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	(0, _twoBlocks2.default)();
+
+/***/ },
+/* 1 */
 /***/ function(module, exports) {
 
 	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 	/* global document, google */
 
-	module.exports = function () {
+	/*=================================
+	=            twoBlocks()            =
+	=================================*/
+
+	var twoBlocks = function twoBlocks() {
 
 		// CHANGE THE BELOW URL BETWEEN THE QUOTES
 		// var embedUrl = "https://maps.google.com/maps?q=1516+W+Arthur+Ave,+Chicago,+IL&hl=en&ll=41.999942,-87.668645&spn=0.010796,0.020363&sll=41.999949,-87.668677&layer=c&cbp=13,289.04,,0,13.77&cbll=41.999936,-87.668635&hnear=1516+W+Arthur+Ave,+Chicago,+Illinois+60626&t=m&z=16&iwloc=A&panoid=HAvjga5mCucRKAGYvRxy0g
@@ -358,66 +380,6 @@
 			};
 		};
 
-		/*----------  goToFullscreen()  ----------*/
-
-		/**
-	  *
-	  * Never invoked anywhere 
-	  *
-	  */
-
-		function goToFullscreen() {
-
-			// 'canvas' should be passed into this function
-			var canvas = document.getElementById("canvas_streetviewpanorama");
-
-			if (document.webkitCancelFullScreen) {
-
-				canvas.webkitRequestFullScreen();
-
-				fullscreenWidth = canvas.clientWidth;
-				fullscreenHeight = canvas.clientHeight;
-
-				canvas.style.width = "100%";
-				canvas.style.height = "100%";
-
-				document.addEventListener("webkitfullscreenchange", function () {
-
-					if (!document.webkitIsFullScreen) {
-
-						var c = document.getElementById("canvas_streetviewpanorama");
-
-						c.style.width = fullscreenWidth + "px";
-						c.style.height = fullscreenHeight + "px";
-					}
-				}, false);
-			} else if (document.mozCancelFullScreen) {
-
-				console.log("moz");
-
-				canvas.mozRequestFullScreen();
-
-				fullscreenWidth = canvas.clientWidth;
-				fullscreenHeight = canvas.clientHeight;
-
-				canvas.style.width = "100%";
-				canvas.style.height = "100%";
-
-				document.addEventListener("mozfullscreenchange", function () {
-
-					if (document.mozFullScreenElement === null) {
-
-						var c = document.getElementById("canvas_streetviewpanorama");
-
-						c.style.width = fullscreenWidth + "px";
-						c.style.height = fullscreenHeight + "px";
-
-						google.maps.event.trigger(panorama, 'resize');
-					}
-				}, false);
-			}
-		}
-
 		/*----------  injectGapiScript()  ----------*/
 
 		function injectGapiScript(MAPS_API_KEY) {
@@ -439,7 +401,11 @@
 		}
 
 		injectGapiScript();
-	}();
+	};
+
+	/*=====  End of twoBlocks()  ======*/
+
+	exports.default = twoBlocks;
 
 /***/ }
 /******/ ]);
