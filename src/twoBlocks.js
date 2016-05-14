@@ -73,34 +73,12 @@ const twoBlocks = function twoBlocks() {
 	// #############
 
 	const zoom = 1.1;
-	// increment controls the speed of panning
+	// 'increment' controls the speed of panning
 	// positive values pan to the right, negatives values pan to the left
 	const increment = 1.2;
 	const interval = 30;
-	const chevrons = false;
-	// Below, we add an event listener to 'closeclick', which fires when 
-	// the close button is clicked.  In the original author's implementation, 
-	// the application reveals the map on 'closeclick'.  
-	const enableCloseButton = false;
-	// clickToGo shows a rectangular "highlight" under the cursor, and on 
-	// click, the street view moves to the location clicked upon.  We will 
-	// want to keep this disabled for the game.  
-	const clickToGo = false;
-	const address = "";
-	const pan = "";
-	const disableDoubleClickZoom = true;
-	const imageDateControl = false;
-	const scrollwheel = false;
-	const zoomPos = "";
-	const zoomSize = "";
-	// const zoomStart = 1.1;  // Never used
-	// const fullscreen = false;  // Never used
 
-	// let fullscreenWidth;  // Never used
-	// let fullscreenHeight;  // Never used
 	let panorama;
-	// let timer;  // Never used
-
 	let spinner;
 
 	/*----------  initGl()  ----------*/
@@ -157,57 +135,39 @@ const twoBlocks = function twoBlocks() {
 
 	/*----------  init()  ----------*/
 
-	const init = function init() {
+	const init = function init(givenPanoramaOptions = {}) {
 		
 		const mode = canUseWebGl() ? "webgl" : "html4";
 
 		const gps = new google.maps.LatLng(latitude, longitude);
-		
-		/*----------  Options Processing  ----------*/
-		
-		// Address control shows a box with basic information about the 
-		// location, as well as a link to see the map on Google Maps 
-		const addressControl = false; 
-
-		const addressControlOptions = {
-		
-			position: (addressControl && address) ? address : google.maps.ControlPosition.TOP_LEFT
-		
-		};
-		
-		// Pan Control shows a UI element that allows you to rotate the pano 
-		const panControl = false; 
-
-		const panControlOptions = { 
-		
-			position: (panControl && pan) ? pan : google.maps.ControlPosition.TOP_LEFT 
-		
-		};
-		
-		// Zoom control functionality is obvious 
-		const zoomControl = false; 
-
-		const zoomControlOptions = {
-			position: (zoomControl && zoomPos) ? zoomPos : google.maps.ControlPosition.TOP_LEFT,
-			style: (zoomControl && zoomSize) ? zoomSize : google.maps.ZoomControlStyle.DEFAULT
-		};
-		
-		/*----------  End of Options Processing  ----------*/
-		
-		const panoramaOptions = {
-			addressControl,
-			addressControlOptions,
-			clickToGo,
-			disableDoubleClickZoom,
-			enableCloseButton,
-			imageDateControl,
+			
+		const defaultPanoramaOptions = {
 			mode,
-			panControl,
-			panControlOptions,
-			scrollwheel,
-			zoomControl,
-			zoomControlOptions,
-			linksControl: chevrons,
+			// Address control shows a box with basic information about the 
+			// location, as well as a link to see the map on Google Maps 
+			addressControl: false,
+			addressControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+			// clickToGo shows a rectangular "highlight" under the cursor, and on 
+			// click, the street view moves to the location clicked upon.  We will 
+			// want to keep this disabled for the game.			
+			clickToGo: false,
+			disableDoubleClickZoom: true,
+			// Below, we add an event listener to 'closeclick', which fires when 
+			// the close button is clicked.  In the original author's implementation, 
+			// the application reveals the map on 'closeclick'.  			
+			enableCloseButton: false,
+			imageDateControl: false,
+			// Pan Control shows a UI element that allows you to rotate the pano 
+			panControl: false,
+			panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+			scrollwheel: false,
+			// Zoom control functionality is obvious 
+			zoomControl: false,
+			zoomControlOptions: {
+				position: google.maps.ControlPosition.TOP_LEFT, 
+				style: google.maps.ZoomControlStyle.DEFAULT
+			},
+			linksControl: false,
 			pano: panoid,
 			position: gps,
 			pov: {
@@ -217,6 +177,8 @@ const twoBlocks = function twoBlocks() {
 			},
 			visible: true
 		};
+
+		const panoramaOptions = Object.assign({}, defaultPanoramaOptions, givenPanoramaOptions); 
 		
 		const canvas = document.getElementById("canvas-streetviewpanorama");
 

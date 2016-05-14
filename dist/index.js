@@ -64,6 +64,8 @@
 		value: true
 	});
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	/* global document, google */
@@ -150,34 +152,12 @@
 		// #############
 
 		var zoom = 1.1;
-		// increment controls the speed of panning
+		// 'increment' controls the speed of panning
 		// positive values pan to the right, negatives values pan to the left
 		var increment = 1.2;
 		var interval = 30;
-		var chevrons = false;
-		// Below, we add an event listener to 'closeclick', which fires when
-		// the close button is clicked.  In the original author's implementation,
-		// the application reveals the map on 'closeclick'. 
-		var enableCloseButton = false;
-		// clickToGo shows a rectangular "highlight" under the cursor, and on
-		// click, the street view moves to the location clicked upon.  We will
-		// want to keep this disabled for the game. 
-		var clickToGo = false;
-		var address = "";
-		var pan = "";
-		var disableDoubleClickZoom = true;
-		var imageDateControl = false;
-		var scrollwheel = false;
-		var zoomPos = "";
-		var zoomSize = "";
-		// const zoomStart = 1.1;  // Never used
-		// const fullscreen = false;  // Never used
 
-		// let fullscreenWidth;  // Never used
-		// let fullscreenHeight;  // Never used
 		var panorama = void 0;
-		// let timer;  // Never used
-
 		var spinner = void 0;
 
 		/*----------  initGl()  ----------*/
@@ -225,56 +205,40 @@
 		/*----------  init()  ----------*/
 
 		var init = function init() {
+			var givenPanoramaOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
 
 			var mode = canUseWebGl() ? "webgl" : "html4";
 
 			var gps = new google.maps.LatLng(latitude, longitude);
 
-			/*----------  Options Processing  ----------*/
-
-			// Address control shows a box with basic information about the
-			// location, as well as a link to see the map on Google Maps
-			var addressControl = false;
-
-			var addressControlOptions = {
-
-				position: addressControl && address ? address : google.maps.ControlPosition.TOP_LEFT
-
-			};
-
-			// Pan Control shows a UI element that allows you to rotate the pano
-			var panControl = false;
-
-			var panControlOptions = {
-
-				position: panControl && pan ? pan : google.maps.ControlPosition.TOP_LEFT
-
-			};
-
-			// Zoom control functionality is obvious
-			var zoomControl = false;
-
-			var zoomControlOptions = {
-				position: zoomControl && zoomPos ? zoomPos : google.maps.ControlPosition.TOP_LEFT,
-				style: zoomControl && zoomSize ? zoomSize : google.maps.ZoomControlStyle.DEFAULT
-			};
-
-			/*----------  End of Options Processing  ----------*/
-
-			var panoramaOptions = {
-				addressControl: addressControl,
-				addressControlOptions: addressControlOptions,
-				clickToGo: clickToGo,
-				disableDoubleClickZoom: disableDoubleClickZoom,
-				enableCloseButton: enableCloseButton,
-				imageDateControl: imageDateControl,
+			var defaultPanoramaOptions = {
 				mode: mode,
-				panControl: panControl,
-				panControlOptions: panControlOptions,
-				scrollwheel: scrollwheel,
-				zoomControl: zoomControl,
-				zoomControlOptions: zoomControlOptions,
-				linksControl: chevrons,
+				// Address control shows a box with basic information about the
+				// location, as well as a link to see the map on Google Maps
+				addressControl: false,
+				addressControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+				// clickToGo shows a rectangular "highlight" under the cursor, and on
+				// click, the street view moves to the location clicked upon.  We will
+				// want to keep this disabled for the game.			
+				clickToGo: false,
+				disableDoubleClickZoom: true,
+				// Below, we add an event listener to 'closeclick', which fires when
+				// the close button is clicked.  In the original author's implementation,
+				// the application reveals the map on 'closeclick'.  			
+				enableCloseButton: false,
+				imageDateControl: false,
+				// Pan Control shows a UI element that allows you to rotate the pano
+				panControl: false,
+				panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+				scrollwheel: false,
+				// Zoom control functionality is obvious
+				zoomControl: false,
+				zoomControlOptions: {
+					position: google.maps.ControlPosition.TOP_LEFT,
+					style: google.maps.ZoomControlStyle.DEFAULT
+				},
+				linksControl: false,
 				pano: panoid,
 				position: gps,
 				pov: {
@@ -284,6 +248,8 @@
 				},
 				visible: true
 			};
+
+			var panoramaOptions = _extends({}, defaultPanoramaOptions, givenPanoramaOptions);
 
 			var canvas = document.getElementById("canvas-streetviewpanorama");
 
