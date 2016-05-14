@@ -81,8 +81,6 @@
 		var latitude = 40.6291566;
 		var longitude = -74.0287341;
 
-		var panoid = null;
-
 		// #############
 		// MORE SETTINGS
 		// #############
@@ -92,6 +90,7 @@
 		var increment = 1.2;
 		var interval = 30;
 
+		var panoid = null;
 		var panorama = void 0;
 		var spinner = void 0;
 
@@ -118,12 +117,10 @@
 
 			if (testCanvas && 'getContext' in testCanvas) {
 
-				// document.getElementsByTagName("body").item(0).appendChild(testCanvas);
-
 				var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
 
-				// Reduce the array of webGlNames to a single boolean, which
-				// represents the result of canUseWebGl(). 
+				// Reduce the array of webGlNames to a single boolean,
+				// which represents the result of canUseWebGl(). 
 				result = webGlNames.reduce(function (prev, curr) {
 
 					if (prev) return prev; // If 'prev' is truthy, we can use WebGL.
@@ -131,7 +128,7 @@
 					var context = testCanvas.getContext(curr);
 
 					if (context && context instanceof WebGLRenderingContext) return true;
-				}, false); // Start with false
+				}, false); // Start with false (default)
 			}
 
 			return result;
@@ -139,8 +136,8 @@
 
 		/*----------  init()  ----------*/
 
-		var init = function init() {
-			var givenPanoramaOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+		var init = function init(latitude, longitude) {
+			var givenPanoramaOptions = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
 
 			var mode = canUseWebGl() ? "webgl" : "html4";
@@ -163,17 +160,10 @@
 				// the application reveals the map on 'closeclick'.  			
 				enableCloseButton: false,
 				imageDateControl: false,
+				linksControl: false,
 				// Pan Control shows a UI element that allows you to rotate the pano
 				panControl: false,
 				panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-				scrollwheel: false,
-				// Zoom control functionality is obvious
-				zoomControl: false,
-				zoomControlOptions: {
-					position: google.maps.ControlPosition.TOP_LEFT,
-					style: google.maps.ZoomControlStyle.DEFAULT
-				},
-				linksControl: false,
 				pano: panoid,
 				position: gps,
 				pov: {
@@ -181,7 +171,14 @@
 					heading: 0,
 					pitch: 0
 				},
-				visible: true
+				scrollwheel: false,
+				visible: true,
+				// Zoom control functionality is obvious
+				zoomControl: false,
+				zoomControlOptions: {
+					position: google.maps.ControlPosition.TOP_LEFT,
+					style: google.maps.ZoomControlStyle.DEFAULT
+				}
 			};
 
 			var panoramaOptions = _extends({}, defaultPanoramaOptions, givenPanoramaOptions);
@@ -262,7 +259,9 @@
 
 			var marker = new google.maps.Marker(markerOptions);
 
-			google.maps.event.addListener(marker, 'click', init);
+			google.maps.event.addListener(marker, 'click', function () {
+				return init(latitude, longitude, {});
+			});
 		};
 
 		/*----------  createSpinner()  ----------*/
@@ -333,7 +332,9 @@
 			}
 
 			script.src = source;
-			script.onload = init;
+			script.onload = function () {
+				return init(latitude, longitude, {});
+			};
 
 			document.body.appendChild(script);
 		};

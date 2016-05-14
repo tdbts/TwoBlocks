@@ -12,8 +12,6 @@ const twoBlocks = function twoBlocks() {
 
 	const latitude = 40.6291566; 
 	const longitude = -74.0287341; 
-	
-	let panoid = null; 
 
 	// #############
 	// MORE SETTINGS
@@ -24,6 +22,7 @@ const twoBlocks = function twoBlocks() {
 	const increment = 1.2;
 	const interval = 30;
 
+	let panoid = null; 
 	let panorama;
 	let spinner;
 
@@ -52,8 +51,6 @@ const twoBlocks = function twoBlocks() {
 
 		if (testCanvas && ('getContext' in testCanvas)) {
 
-			// document.getElementsByTagName("body").item(0).appendChild(testCanvas);
-
 			const webGlNames = [
 				"webgl",
 				"experimental-webgl",
@@ -61,8 +58,8 @@ const twoBlocks = function twoBlocks() {
 				"webkit-3d"
 			];
 
-			// Reduce the array of webGlNames to a single boolean, which 
-			// represents the result of canUseWebGl().  
+			// Reduce the array of webGlNames to a single boolean, 
+			// which represents the result of canUseWebGl().  
 			result = webGlNames.reduce((prev, curr) => {
 				
 				if (prev) return prev;  // If 'prev' is truthy, we can use WebGL. 
@@ -71,7 +68,7 @@ const twoBlocks = function twoBlocks() {
 
 				if (context && (context instanceof WebGLRenderingContext)) return true; 
 
-			}, false);  // Start with false 
+			}, false);  // Start with false (default) 
 
 		}
 
@@ -81,7 +78,7 @@ const twoBlocks = function twoBlocks() {
 
 	/*----------  init()  ----------*/
 
-	const init = function init(givenPanoramaOptions = {}) {
+	const init = function init(latitude, longitude, givenPanoramaOptions = {}) {
 		
 		const mode = canUseWebGl() ? "webgl" : "html4";
 
@@ -103,17 +100,10 @@ const twoBlocks = function twoBlocks() {
 			// the application reveals the map on 'closeclick'.  			
 			enableCloseButton: false,
 			imageDateControl: false,
+			linksControl: false,
 			// Pan Control shows a UI element that allows you to rotate the pano 
 			panControl: false,
 			panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-			scrollwheel: false,
-			// Zoom control functionality is obvious 
-			zoomControl: false,
-			zoomControlOptions: {
-				position: google.maps.ControlPosition.TOP_LEFT, 
-				style: google.maps.ZoomControlStyle.DEFAULT
-			},
-			linksControl: false,
 			pano: panoid,
 			position: gps,
 			pov: {
@@ -121,7 +111,14 @@ const twoBlocks = function twoBlocks() {
 				heading: 0,
 				pitch: 0
 			},
-			visible: true
+			scrollwheel: false,
+			visible: true,
+			// Zoom control functionality is obvious 
+			zoomControl: false,
+			zoomControlOptions: {
+				position: google.maps.ControlPosition.TOP_LEFT, 
+				style: google.maps.ZoomControlStyle.DEFAULT
+			}
 		};
 
 		const panoramaOptions = Object.assign({}, defaultPanoramaOptions, givenPanoramaOptions); 
@@ -136,7 +133,7 @@ const twoBlocks = function twoBlocks() {
 		
 		panorama.setPano(panoid);
 		
-		google.maps.event.addListener(panorama, 'pano_changed', function () {
+		google.maps.event.addListener(panorama, 'pano_changed', () => {
 			// getPano() --> [string] Returns the current panorama ID 
 			// for the Street View panorama. This id is stable within 
 			// the browser's current session only.
@@ -201,7 +198,7 @@ const twoBlocks = function twoBlocks() {
 		
 		const marker = new google.maps.Marker(markerOptions);
 		
-		google.maps.event.addListener(marker, 'click', init);
+		google.maps.event.addListener(marker, 'click', () => init(latitude, longitude, {}));
 		
 	};
 
@@ -284,7 +281,7 @@ const twoBlocks = function twoBlocks() {
 		}
 
 		script.src = source; 
-		script.onload = init; 
+		script.onload = () => init(latitude, longitude, {}); 
 
 		document.body.appendChild(script);
 	
