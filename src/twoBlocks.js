@@ -78,7 +78,13 @@ const twoBlocks = function twoBlocks() {
 	const increment = 1.2;
 	const interval = 30;
 	const chevrons = false;
+	// Below, we add an event listener to 'closeclick', which fires when 
+	// the close button is clicked.  In the original author's implementation, 
+	// the application reveals the map on 'closeclick'.  
 	const closebutton = false;
+	// clickToGo shows a rectangular "highlight" under the cursor, and on 
+	// click, the street view moves to the location clicked upon.  We will 
+	// want to keep this disabled for the game.  
 	const clickToGo = false;
 	const address = "";
 	const pan = "";

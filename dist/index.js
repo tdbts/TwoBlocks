@@ -155,7 +155,13 @@
 		var increment = 1.2;
 		var interval = 30;
 		var chevrons = false;
+		// Below, we add an event listener to 'closeclick', which fires when
+		// the close button is clicked.  In the original author's implementation,
+		// the application reveals the map on 'closeclick'. 
 		var closebutton = false;
+		// clickToGo shows a rectangular "highlight" under the cursor, and on
+		// click, the street view moves to the location clicked upon.  We will
+		// want to keep this disabled for the game. 
 		var clickToGo = false;
 		var address = "";
 		var pan = "";
