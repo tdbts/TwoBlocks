@@ -80,6 +80,13 @@ const createSpinner = (panorma, options = {}) => {
 
 			api.stop(); 
 
+			// If we were to pause the spinning on mouseover as 
+			// the original author chose to do, we wouldn't actually 
+			// want to start spinning when this timeout expires.  
+			// So we would need to read the mouseover state somehow 
+			// and start only when the timeout has expired AND the 
+			// mouse has left the canvas <div>.  This is where something 
+			// like Redux is going to shine.  
 			setTimeout(() => api.start(), delay);
 
 		} 
@@ -92,8 +99,7 @@ const createSpinner = (panorma, options = {}) => {
 
 	if (punctuated) {
 
-		segments = punctuated.segments; 
-		delay = punctuated.delay; 
+		( { segments, delay } = punctuated );
 
 	}
 

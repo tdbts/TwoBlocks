@@ -20,6 +20,8 @@ const twoBlocks = function twoBlocks() {
 	// MORE SETTINGS
 	// #############
 
+	const canvasId = "canvas-streetviewpanorama"; 
+	const canvas = document.getElementById(canvasId); 
 	// 'increment' controls the speed of panning
 	// positive values pan to the right, negatives values pan to the left
 	const increment = 1; 
@@ -81,22 +83,22 @@ const twoBlocks = function twoBlocks() {
 
 	/*----------  init()  ----------*/
 
-	const init = function init(latitude, longitude) {
+	const init = function init(canvas, latitude, longitude) {
 		
 		const mode = canUseWebGl() ? "webgl" : "html4";
 
 		const gps = new google.maps.LatLng(latitude, longitude);
-		
-		const canvas = document.getElementById("canvas-streetviewpanorama");
 
+		/*----------  Set up panorama  ----------*/
+		
 		panorama = createPanorama(canvas, gps, { 
 			mode, 
 			pano: panoid 
 		}); 
 		
-		google.maps.event.addListener(panorama, 'closeclick', showMap);
-		
 		panorama.setPano(panoid);
+
+		google.maps.event.addListener(panorama, 'closeclick', () => showMap(canvas, gps));
 		
 		google.maps.event.addListener(panorama, 'pano_changed', () => {
 			// getPano() --> [string] Returns the current panorama ID 
@@ -106,6 +108,8 @@ const twoBlocks = function twoBlocks() {
 		
 		});
 
+		/*----------  Set up spinner  ----------*/
+		
 		spinner = createSpinner(panorama, {
 			increment, 
 			interval, 
@@ -117,15 +121,17 @@ const twoBlocks = function twoBlocks() {
 		
 		spinner.start(); 
 
-		if (mode === 'webgl') {
+		canvas.addEventListener('mouseover', () => spinner.stop()); 
+		canvas.addEventListener('mouseout', () => spinner.start()); 
+		
+		/*----------  Set up WebGl  ----------*/
+		
+		if (canUseWebGl()) {
 
 			setTimeout(initGl, 1000);
 		
 		}
 		
-		canvas.addEventListener('mouseover', () => spinner.stop()); 
-		canvas.addEventListener('mouseout', () => spinner.start()); 
-
 	};
 
 	/*----------  showMap()  ----------*/
@@ -139,18 +145,16 @@ const twoBlocks = function twoBlocks() {
 	// Refactor this to make this a more generally useful pure function.  
 	// Pass in canvas element, and LatLong instance.  Remove side effect 
 	// of assigning to 'panorama' variable.  
-	const showMap = function showMap() {
+	const showMap = function showMap(canvas, gps) {
 
-		const canvas = document.getElementById("canvas-streetviewpanorama");
-		
 		// Remove event listeners created in init().  
 		// Too tightly coupled here, maybe just emit an event. 
 		canvas.onmouseover = function () {};
 		canvas.onmouseout = function () {};
 		
+		// Same here.  Emit an event and stop the spinner on 
+		// that event.  
 		spinner.stop(); 
-		
-		const gps = new google.maps.LatLng(latitude, longitude);
 		
 		const mapOptions = {
 			center: gps,
@@ -170,7 +174,7 @@ const twoBlocks = function twoBlocks() {
 		
 		const marker = new google.maps.Marker(markerOptions);
 		
-		google.maps.event.addListener(marker, 'click', () => init(latitude, longitude, {}));
+		google.maps.event.addListener(marker, 'click', () => init(canvas, latitude, longitude, {}));
 		
 	};
 
@@ -191,7 +195,7 @@ const twoBlocks = function twoBlocks() {
 		}
 
 		script.src = source; 
-		script.onload = () => init(latitude, longitude, {}); 
+		script.onload = () => init(canvas, latitude, longitude, {}); 
 
 		document.body.appendChild(script);
 	

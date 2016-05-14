@@ -93,6 +93,8 @@
 		// MORE SETTINGS
 		// #############
 
+		var canvasId = "canvas-streetviewpanorama";
+		var canvas = document.getElementById(canvasId);
 		// 'increment' controls the speed of panning
 		// positive values pan to the right, negatives values pan to the left
 		var increment = 1;
@@ -144,22 +146,24 @@
 
 		/*----------  init()  ----------*/
 
-		var init = function init(latitude, longitude) {
+		var init = function init(canvas, latitude, longitude) {
 
 			var mode = canUseWebGl() ? "webgl" : "html4";
 
 			var gps = new google.maps.LatLng(latitude, longitude);
 
-			var canvas = document.getElementById("canvas-streetviewpanorama");
+			/*----------  Set up panorama  ----------*/
 
 			panorama = (0, _createPanorama2.default)(canvas, gps, {
 				mode: mode,
 				pano: panoid
 			});
 
-			google.maps.event.addListener(panorama, 'closeclick', showMap);
-
 			panorama.setPano(panoid);
+
+			google.maps.event.addListener(panorama, 'closeclick', function () {
+				return showMap(canvas, gps);
+			});
 
 			google.maps.event.addListener(panorama, 'pano_changed', function () {
 				// getPano() --> [string] Returns the current panorama ID
@@ -167,6 +171,8 @@
 				// the browser's current session only.
 				panoid = panorama.getPano();
 			});
+
+			/*----------  Set up spinner  ----------*/
 
 			spinner = (0, _createSpinner2.default)(panorama, {
 				increment: increment,
@@ -179,17 +185,19 @@
 
 			spinner.start();
 
-			if (mode === 'webgl') {
-
-				setTimeout(initGl, 1000);
-			}
-
 			canvas.addEventListener('mouseover', function () {
 				return spinner.stop();
 			});
 			canvas.addEventListener('mouseout', function () {
 				return spinner.start();
 			});
+
+			/*----------  Set up WebGl  ----------*/
+
+			if (canUseWebGl()) {
+
+				setTimeout(initGl, 1000);
+			}
 		};
 
 		/*----------  showMap()  ----------*/
@@ -203,18 +211,16 @@
 		// Refactor this to make this a more generally useful pure function. 
 		// Pass in canvas element, and LatLong instance.  Remove side effect
 		// of assigning to 'panorama' variable. 
-		var showMap = function showMap() {
-
-			var canvas = document.getElementById("canvas-streetviewpanorama");
+		var showMap = function showMap(canvas, gps) {
 
 			// Remove event listeners created in init(). 
 			// Too tightly coupled here, maybe just emit an event.
 			canvas.onmouseover = function () {};
 			canvas.onmouseout = function () {};
 
+			// Same here.  Emit an event and stop the spinner on
+			// that event. 
 			spinner.stop();
-
-			var gps = new google.maps.LatLng(latitude, longitude);
 
 			var mapOptions = {
 				center: gps,
@@ -235,7 +241,7 @@
 			var marker = new google.maps.Marker(markerOptions);
 
 			google.maps.event.addListener(marker, 'click', function () {
-				return init(latitude, longitude, {});
+				return init(canvas, latitude, longitude, {});
 			});
 		};
 
@@ -256,7 +262,7 @@
 
 			script.src = source;
 			script.onload = function () {
-				return init(latitude, longitude, {});
+				return init(canvas, latitude, longitude, {});
 			};
 
 			document.body.appendChild(script);
@@ -431,6 +437,13 @@
 
 				api.stop();
 
+				// If we were to pause the spinning on mouseover as
+				// the original author chose to do, we wouldn't actually
+				// want to start spinning when this timeout expires. 
+				// So we would need to read the mouseover state somehow
+				// and start only when the timeout has expired AND the
+				// mouse has left the canvas <div>.  This is where something
+				// like Redux is going to shine. 
 				setTimeout(function () {
 					return api.start();
 				}, delay);
@@ -442,7 +455,6 @@
 		var punctuated = handlePunctuationOption(options);
 
 		if (punctuated) {
-
 			segments = punctuated.segments;
 			delay = punctuated.delay;
 		}
