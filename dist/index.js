@@ -151,7 +151,6 @@
 		// MORE SETTINGS
 		// #############
 
-		var zoom = 1.1;
 		// 'increment' controls the speed of panning
 		// positive values pan to the right, negatives values pan to the left
 		var increment = 1.2;
@@ -242,7 +241,7 @@
 				pano: panoid,
 				position: gps,
 				pov: {
-					zoom: zoom,
+					zoom: 1.1,
 					heading: 0,
 					pitch: 0
 				},
@@ -293,6 +292,9 @@
 	  *
 	  */
 
+		// Refactor this to make this a more generally useful pure function. 
+		// Pass in canvas element, and LatLong instance.  Remove side effect
+		// of assigning to 'panorama' variable. 
 		var showMap = function showMap() {
 
 			var canvas = document.getElementById("canvas-streetviewpanorama");
@@ -314,6 +316,8 @@
 
 			panorama = new google.maps.Map(canvas, mapOptions);
 
+			// Add a marker to the map.  Options define which map,
+			// what location, and whether is visible. 
 			var markerOptions = {
 				map: panorama,
 				position: gps,
@@ -326,6 +330,16 @@
 		};
 
 		/*----------  createSpinner()  ----------*/
+
+		/**
+	  *
+	  * Add options object as last parameter.  Add option to 
+	  * not spin continuously, but rather, in a series of 
+	  * partial-spins.  Should be able to split the 360 degrees 
+	  * into "chunks", spin to one chunk, pause for a few 
+	  * seconds, and then continue to the next one.  
+	  *
+	  */
 
 		var createSpinner = function createSpinner(panorma, interval) {
 

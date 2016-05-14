@@ -72,7 +72,6 @@ const twoBlocks = function twoBlocks() {
 	// MORE SETTINGS
 	// #############
 
-	const zoom = 1.1;
 	// 'increment' controls the speed of panning
 	// positive values pan to the right, negatives values pan to the left
 	const increment = 1.2;
@@ -171,7 +170,7 @@ const twoBlocks = function twoBlocks() {
 			pano: panoid,
 			position: gps,
 			pov: {
-				zoom,		
+				zoom: 1.1,		
 				heading: 0,
 				pitch: 0
 			},
@@ -221,6 +220,9 @@ const twoBlocks = function twoBlocks() {
 	 *
 	 */
 	
+	// Refactor this to make this a more generally useful pure function.  
+	// Pass in canvas element, and LatLong instance.  Remove side effect 
+	// of assigning to 'panorama' variable.  
 	const showMap = function showMap() {
 
 		const canvas = document.getElementById("canvas-streetviewpanorama");
@@ -242,6 +244,8 @@ const twoBlocks = function twoBlocks() {
 
 		panorama = new google.maps.Map(canvas, mapOptions);
 		
+		// Add a marker to the map.  Options define which map, 
+		// what location, and whether is visible.  
 		const markerOptions = {
 			map: panorama,
 			position: gps,
@@ -256,6 +260,16 @@ const twoBlocks = function twoBlocks() {
 
 	/*----------  createSpinner()  ----------*/
 	
+	/**
+	 *
+	 * Add options object as last parameter.  Add option to 
+	 * not spin continuously, but rather, in a series of 
+	 * partial-spins.  Should be able to split the 360 degrees 
+	 * into "chunks", spin to one chunk, pause for a few 
+	 * seconds, and then continue to the next one.  
+	 *
+	 */
+
 	const createSpinner = (panorma, interval) => {
 
 		let timer;  
