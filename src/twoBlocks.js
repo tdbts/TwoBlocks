@@ -81,14 +81,14 @@ const twoBlocks = function twoBlocks() {
 	// Below, we add an event listener to 'closeclick', which fires when 
 	// the close button is clicked.  In the original author's implementation, 
 	// the application reveals the map on 'closeclick'.  
-	const closebutton = false;
+	const enableCloseButton = false;
 	// clickToGo shows a rectangular "highlight" under the cursor, and on 
 	// click, the street view moves to the location clicked upon.  We will 
 	// want to keep this disabled for the game.  
 	const clickToGo = false;
 	const address = "";
 	const pan = "";
-	const doubleClickZoom = false;
+	const disableDoubleClickZoom = true;
 	const imageDateControl = false;
 	const scrollwheel = false;
 	const zoomPos = "";
@@ -102,18 +102,65 @@ const twoBlocks = function twoBlocks() {
 	// let timer;  // Never used
 
 	let spinner;
-	let mode;  
+
+	/*----------  initGl()  ----------*/
 	
-	if (!(mode)) {
+	const initGl = function initGl() {
+
+		const c = document.getElementsByTagName("canvas").item(0);
+
+		if (c) {
+
+			c.addEventListener("webglcontextrestored", spinner.spin, false);
+		
+		}
+
+	};	
+
+	/*----------  canUseWebGl  ----------*/
+	const canUseWebGl = function canUseWebGl() {
 	
-		mode = "undefined";
+		if (!(window.WebGLRenderingContext)) return false; 
+
+		const testCanvas = document.createElement('canvas');
+
+		let result; 
+
+		if (testCanvas && ('getContext' in testCanvas)) {
+
+			// document.getElementsByTagName("body").item(0).appendChild(testCanvas);
+
+			const webGlNames = [
+				"webgl",
+				"experimental-webgl",
+				"moz-webgl",
+				"webkit-3d"
+			];
+
+			// Reduce the array of webGlNames to a single boolean, which 
+			// represents the result of canUseWebGl().  
+			result = webGlNames.reduce((prev, curr) => {
+				
+				if (prev) return prev;  // If 'prev' is truthy, we can use WebGL. 
+			
+				const context = testCanvas.getContext(curr); 
+
+				if (context && (context instanceof WebGLRenderingContext)) return true; 
+
+			}, false);  // Start with false 
+
+		}
+
+		return result;	
 	
-	}
+	}; 
 
 	/*----------  init()  ----------*/
 
 	const init = function init() {
 		
+		const mode = canUseWebGl() ? "webgl" : "html4";
+
 		const gps = new google.maps.LatLng(latitude, longitude);
 		
 		/*----------  Options Processing  ----------*/
@@ -151,6 +198,8 @@ const twoBlocks = function twoBlocks() {
 			addressControl,
 			addressControlOptions,
 			clickToGo,
+			disableDoubleClickZoom,
+			enableCloseButton,
 			imageDateControl,
 			mode,
 			panControl,
@@ -158,8 +207,6 @@ const twoBlocks = function twoBlocks() {
 			scrollwheel,
 			zoomControl,
 			zoomControlOptions,
-			disableDoubleClickZoom: !(doubleClickZoom),
-			enableCloseButton: closebutton,
 			linksControl: chevrons,
 			pano: panoid,
 			position: gps,
@@ -171,7 +218,7 @@ const twoBlocks = function twoBlocks() {
 			visible: true
 		};
 		
-		const canvas = document.getElementById("canvas_streetviewpanorama");
+		const canvas = document.getElementById("canvas-streetviewpanorama");
 
 		// Documentation on streetViewPanorama class: 
 		// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
@@ -191,14 +238,17 @@ const twoBlocks = function twoBlocks() {
 
 		spinner = createSpinner(panorama, interval); 
 		
-		if (canvas.onmouseover === null) {
-		
-			spinner.start(); 
+		spinner.start(); 
+
+		if (mode === 'webgl') {
+
+			setTimeout(initGl, 1000);
 		
 		}
 		
-		canvas.onmouseover = () => spinner.stop();
-		canvas.onmouseout = () => spinner.start();	
+		canvas.addEventListener('mouseover', () => spinner.stop()); 
+		canvas.addEventListener('mouseout', () => spinner.start()); 
+
 	};
 
 	/*----------  showMap()  ----------*/
@@ -211,14 +261,17 @@ const twoBlocks = function twoBlocks() {
 	
 	const showMap = function showMap() {
 
-		const canvas = document.getElementById("canvas_streetviewpanorama");
+		const canvas = document.getElementById("canvas-streetviewpanorama");
 		
+		// Remove event listeners created in init().  
+		// Too tightly coupled here, maybe just emit an event. 
 		canvas.onmouseover = function () {};
 		canvas.onmouseout = function () {};
 		
 		spinner.stop(); 
 		
 		const gps = new google.maps.LatLng(latitude, longitude);
+		
 		const mapOptions = {
 			center: gps,
 			zoom: 16,
@@ -266,7 +319,9 @@ const twoBlocks = function twoBlocks() {
 					panorma.setPov(pov); 
 				
 				} catch (e) {
+				
 					window.console.error("e:", e); 
+				
 				}
 
 			}, 

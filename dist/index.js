@@ -158,14 +158,14 @@
 		// Below, we add an event listener to 'closeclick', which fires when
 		// the close button is clicked.  In the original author's implementation,
 		// the application reveals the map on 'closeclick'. 
-		var closebutton = false;
+		var enableCloseButton = false;
 		// clickToGo shows a rectangular "highlight" under the cursor, and on
 		// click, the street view moves to the location clicked upon.  We will
 		// want to keep this disabled for the game. 
 		var clickToGo = false;
 		var address = "";
 		var pan = "";
-		var doubleClickZoom = false;
+		var disableDoubleClickZoom = true;
 		var imageDateControl = false;
 		var scrollwheel = false;
 		var zoomPos = "";
@@ -179,16 +179,54 @@
 		// let timer;  // Never used
 
 		var spinner = void 0;
-		var mode = void 0;
 
-		if (!mode) {
+		/*----------  initGl()  ----------*/
 
-			mode = "undefined";
-		}
+		var initGl = function initGl() {
+
+			var c = document.getElementsByTagName("canvas").item(0);
+
+			if (c) {
+
+				c.addEventListener("webglcontextrestored", spinner.spin, false);
+			}
+		};
+
+		/*----------  canUseWebGl  ----------*/
+		var canUseWebGl = function canUseWebGl() {
+
+			if (!window.WebGLRenderingContext) return false;
+
+			var testCanvas = document.createElement('canvas');
+
+			var result = void 0;
+
+			if (testCanvas && 'getContext' in testCanvas) {
+
+				// document.getElementsByTagName("body").item(0).appendChild(testCanvas);
+
+				var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
+
+				// Reduce the array of webGlNames to a single boolean, which
+				// represents the result of canUseWebGl(). 
+				result = webGlNames.reduce(function (prev, curr) {
+
+					if (prev) return prev; // If 'prev' is truthy, we can use WebGL.
+
+					var context = testCanvas.getContext(curr);
+
+					if (context && context instanceof WebGLRenderingContext) return true;
+				}, false); // Start with false
+			}
+
+			return result;
+		};
 
 		/*----------  init()  ----------*/
 
 		var init = function init() {
+
+			var mode = canUseWebGl() ? "webgl" : "html4";
 
 			var gps = new google.maps.LatLng(latitude, longitude);
 
@@ -227,6 +265,8 @@
 				addressControl: addressControl,
 				addressControlOptions: addressControlOptions,
 				clickToGo: clickToGo,
+				disableDoubleClickZoom: disableDoubleClickZoom,
+				enableCloseButton: enableCloseButton,
 				imageDateControl: imageDateControl,
 				mode: mode,
 				panControl: panControl,
@@ -234,8 +274,6 @@
 				scrollwheel: scrollwheel,
 				zoomControl: zoomControl,
 				zoomControlOptions: zoomControlOptions,
-				disableDoubleClickZoom: !doubleClickZoom,
-				enableCloseButton: closebutton,
 				linksControl: chevrons,
 				pano: panoid,
 				position: gps,
@@ -247,7 +285,7 @@
 				visible: true
 			};
 
-			var canvas = document.getElementById("canvas_streetviewpanorama");
+			var canvas = document.getElementById("canvas-streetviewpanorama");
 
 			// Documentation on streetViewPanorama class:
 			// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
@@ -266,17 +304,19 @@
 
 			spinner = createSpinner(panorama, interval);
 
-			if (canvas.onmouseover === null) {
+			spinner.start();
 
-				spinner.start();
+			if (mode === 'webgl') {
+
+				setTimeout(initGl, 1000);
 			}
 
-			canvas.onmouseover = function () {
+			canvas.addEventListener('mouseover', function () {
 				return spinner.stop();
-			};
-			canvas.onmouseout = function () {
+			});
+			canvas.addEventListener('mouseout', function () {
 				return spinner.start();
-			};
+			});
 		};
 
 		/*----------  showMap()  ----------*/
@@ -289,14 +329,17 @@
 
 		var showMap = function showMap() {
 
-			var canvas = document.getElementById("canvas_streetviewpanorama");
+			var canvas = document.getElementById("canvas-streetviewpanorama");
 
+			// Remove event listeners created in init(). 
+			// Too tightly coupled here, maybe just emit an event.
 			canvas.onmouseover = function () {};
 			canvas.onmouseout = function () {};
 
 			spinner.stop();
 
 			var gps = new google.maps.LatLng(latitude, longitude);
+
 			var mapOptions = {
 				center: gps,
 				zoom: 16,
@@ -341,6 +384,7 @@
 
 						panorma.setPov(pov);
 					} catch (e) {
+
 						window.console.error("e:", e);
 					}
 				},
