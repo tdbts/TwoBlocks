@@ -1,3 +1,7 @@
+/*=======================================
+=            createUrlParser()            =
+=======================================*/
+
 const createUrlParser = function createUrlParser(url) {
 
 	let parameters = null; 
@@ -46,5 +50,8 @@ const createUrlParser = function createUrlParser(url) {
 	}; 
 
 };
+
+/*=====  End of createUrlParser()  ======*/
+
 
 export default createUrlParser; 

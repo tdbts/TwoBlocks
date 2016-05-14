@@ -1,5 +1,7 @@
 /* global document, google */
 
+import createPanorama from './createPanorama'; 
+
 /*=================================
 =            twoBlocks()            =
 =================================*/
@@ -78,56 +80,18 @@ const twoBlocks = function twoBlocks() {
 
 	/*----------  init()  ----------*/
 
-	const init = function init(latitude, longitude, givenPanoramaOptions = {}) {
+	const init = function init(latitude, longitude) {
 		
 		const mode = canUseWebGl() ? "webgl" : "html4";
 
 		const gps = new google.maps.LatLng(latitude, longitude);
-			
-		const defaultPanoramaOptions = {
-			mode,
-			// Address control shows a box with basic information about the 
-			// location, as well as a link to see the map on Google Maps 
-			addressControl: false,
-			addressControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-			// clickToGo shows a rectangular "highlight" under the cursor, and on 
-			// click, the street view moves to the location clicked upon.  We will 
-			// want to keep this disabled for the game.			
-			clickToGo: false,
-			disableDoubleClickZoom: true,
-			// Below, we add an event listener to 'closeclick', which fires when 
-			// the close button is clicked.  In the original author's implementation, 
-			// the application reveals the map on 'closeclick'.  			
-			enableCloseButton: false,
-			imageDateControl: false,
-			linksControl: false,
-			// Pan Control shows a UI element that allows you to rotate the pano 
-			panControl: false,
-			panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-			pano: panoid,
-			position: gps,
-			pov: {
-				zoom: 1.1,		
-				heading: 0,
-				pitch: 0
-			},
-			scrollwheel: false,
-			visible: true,
-			// Zoom control functionality is obvious 
-			zoomControl: false,
-			zoomControlOptions: {
-				position: google.maps.ControlPosition.TOP_LEFT, 
-				style: google.maps.ZoomControlStyle.DEFAULT
-			}
-		};
-
-		const panoramaOptions = Object.assign({}, defaultPanoramaOptions, givenPanoramaOptions); 
 		
 		const canvas = document.getElementById("canvas-streetviewpanorama");
 
-		// Documentation on streetViewPanorama class: 
-		// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
-		panorama = new google.maps.StreetViewPanorama(canvas, panoramaOptions);
+		panorama = createPanorama(canvas, gps, { 
+			mode, 
+			pano: panoid 
+		}); 
 		
 		google.maps.event.addListener(panorama, 'closeclick', showMap);
 		
