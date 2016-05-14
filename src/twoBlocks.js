@@ -19,8 +19,8 @@ const twoBlocks = function twoBlocks() {
 
 	// 'increment' controls the speed of panning
 	// positive values pan to the right, negatives values pan to the left
-	const increment = 1.2;
-	const interval = 30;
+	const increment = 1; 
+	const interval = 25; 
 
 	let panoid = null; 
 	let panorama;
@@ -141,7 +141,12 @@ const twoBlocks = function twoBlocks() {
 		
 		});
 
-		spinner = createSpinner(panorama, interval); 
+		spinner = createSpinner(panorama, interval, {
+			punctuate: {
+				segments: 4, 
+				delay: 2000
+			}
+		}); 
 		
 		spinner.start(); 
 
@@ -212,31 +217,99 @@ const twoBlocks = function twoBlocks() {
 	 * into "chunks", spin to one chunk, pause for a few 
 	 * seconds, and then continue to the next one.  
 	 *
+	 * Option will be called 'punctuate'.  Properties will be 
+	 * 'segments' and 'delay'.  Valid options for segments will be
+	 * even divisors of 360 -- 12 (30-degrees), 9 (40-degrees), 
+	 * 6 (60-degrees), 4 (90-degrees), 2 (180-degrees)
+	 * 
 	 */
 
-	const createSpinner = (panorma, interval) => {
+	const createSpinner = (panorma, interval, options = {}) => {
+
+		const DEGREES_IN_A_CIRCLE = 360; 
+
+		let segments = null; 
+		let delay = null; 
 
 		let timer;  
 
-		return {
+		const handlePunctuationOption = function handlePunctuationOption(options) {
+
+			if ('punctuate' in options) {
+
+				let { segments, delay } = options.punctuate; 
+
+				if (!(segments)) {
+					segments = 4; 
+				} 
+
+				if (!(delay)) {
+					delay = 1000; 
+				}
+
+				return { segments, delay }; 
+
+			}
+
+		};
+
+		const incrementHeading = function incrementHeading(pov, increment) {
+		
+			pov.heading += increment; 
+
+			while (pov.heading > DEGREES_IN_A_CIRCLE) {
+				pov.heading -= DEGREES_IN_A_CIRCLE; 
+			} 
+
+			while (pov.heading < 0.0) {
+				pov.heading += DEGREES_IN_A_CIRCLE; 
+			} 			
+
+			return pov; 
+		
+		};
+
+		// Initial implementation assumes that we are incrementing 
+		// the spin by one degree each time we call spin().  
+		// TODO: Make this more sophisticated and robust.  
+		const punctuate = function punctuate(pov, segments, delay) {
+			
+			const { heading } = pov; 
+
+			if ((heading % (DEGREES_IN_A_CIRCLE / segments)) === 0) {
+
+				api.stop(); 
+
+				setTimeout(() => api.start(), delay);
+
+			} 
+		
+		};
+
+		const punctuated = handlePunctuationOption(options); 
+
+		if (punctuated) {
+
+			segments = punctuated.segments; 
+			delay = punctuated.delay; 
+	
+		}
+
+		const api = {
 
 			spin() {
 
 				try {
 
-					const pov = panorma.getPov(); 
-
-					pov.heading += increment; 
-
-					while (pov.heading > 360.0) {
-						pov.heading -= 360.0; 
-					} 
-
-					while (pov.heading < 0.0) {
-						pov.heading += 360.0; 
-					} 
+					const pov = incrementHeading(panorma.getPov(), increment); 
 
 					panorma.setPov(pov); 
+
+					if (punctuated) {
+
+						punctuate(pov, segments, delay); 
+					
+					}
 				
 				} catch (e) {
 				
@@ -261,6 +334,8 @@ const twoBlocks = function twoBlocks() {
 			}
 		
 		};
+
+		return api; 
 
 	};
 

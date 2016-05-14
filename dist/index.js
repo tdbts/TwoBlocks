@@ -87,8 +87,8 @@
 
 		// 'increment' controls the speed of panning
 		// positive values pan to the right, negatives values pan to the left
-		var increment = 1.2;
-		var interval = 30;
+		var increment = 1;
+		var interval = 25;
 
 		var panoid = null;
 		var panorama = void 0;
@@ -200,7 +200,12 @@
 				panoid = panorama.getPano();
 			});
 
-			spinner = createSpinner(panorama, interval);
+			spinner = createSpinner(panorama, interval, {
+				punctuate: {
+					segments: 4,
+					delay: 2000
+				}
+			});
 
 			spinner.start();
 
@@ -274,30 +279,97 @@
 	  * into "chunks", spin to one chunk, pause for a few 
 	  * seconds, and then continue to the next one.  
 	  *
+	  * Option will be called 'punctuate'.  Properties will be 
+	  * 'segments' and 'delay'.  Valid options for segments will be
+	  * even divisors of 360 -- 12 (30-degrees), 9 (40-degrees), 
+	  * 6 (60-degrees), 4 (90-degrees), 2 (180-degrees)
+	  * 
 	  */
 
 		var createSpinner = function createSpinner(panorma, interval) {
+			var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+
+			var DEGREES_IN_A_CIRCLE = 360;
+
+			var segments = null;
+			var delay = null;
 
 			var timer = void 0;
 
-			return {
+			var handlePunctuationOption = function handlePunctuationOption(options) {
+
+				if ('punctuate' in options) {
+					var _options$punctuate = options.punctuate;
+					var _segments = _options$punctuate.segments;
+					var _delay = _options$punctuate.delay;
+
+
+					if (!_segments) {
+						_segments = 4;
+					}
+
+					if (!_delay) {
+						_delay = 1000;
+					}
+
+					return { segments: _segments, delay: _delay };
+				}
+			};
+
+			var incrementHeading = function incrementHeading(pov, increment) {
+
+				pov.heading += increment;
+
+				while (pov.heading > DEGREES_IN_A_CIRCLE) {
+					pov.heading -= DEGREES_IN_A_CIRCLE;
+				}
+
+				while (pov.heading < 0.0) {
+					pov.heading += DEGREES_IN_A_CIRCLE;
+				}
+
+				return pov;
+			};
+
+			// Initial implementation assumes that we are incrementing
+			// the spin by one degree each time we call spin(). 
+			// TODO: Make this more sophisticated and robust. 
+			var punctuate = function punctuate(pov, segments, delay) {
+				var heading = pov.heading;
+
+
+				if (heading % (DEGREES_IN_A_CIRCLE / segments) === 0) {
+
+					api.stop();
+
+					setTimeout(function () {
+						return api.start();
+					}, delay);
+				}
+			};
+
+			var punctuated = handlePunctuationOption(options);
+
+			if (punctuated) {
+
+				segments = punctuated.segments;
+				delay = punctuated.delay;
+			}
+
+			var api = {
 				spin: function spin() {
 
 					try {
 
-						var pov = panorma.getPov();
-
-						pov.heading += increment;
-
-						while (pov.heading > 360.0) {
-							pov.heading -= 360.0;
-						}
-
-						while (pov.heading < 0.0) {
-							pov.heading += 360.0;
-						}
+						var pov = incrementHeading(panorma.getPov(), increment);
 
 						panorma.setPov(pov);
+
+						if (punctuated) {
+
+							punctuate(pov, segments, delay);
+						}
 					} catch (e) {
 
 						window.console.error("e:", e);
@@ -314,6 +386,8 @@
 					clearInterval(timer);
 				}
 			};
+
+			return api;
 		};
 
 		/*----------  injectGapiScript()  ----------*/
