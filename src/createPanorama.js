@@ -23,8 +23,8 @@ const createPanorama = function createPanorama(canvas, position, options = {}) {
 		enableCloseButton: false,
 		imageDateControl: false,
 		linksControl: false,
-		// Pan Control shows a UI element that allows you to rotate the pano 
 		mode: "webgl",
+		// Pan Control shows a UI element that allows you to rotate the pano 
 		panControl: false,
 		panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
 		pano: null,

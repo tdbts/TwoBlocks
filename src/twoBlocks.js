@@ -1,6 +1,7 @@
 /* global document, google */
 
 import createPanorama from './createPanorama'; 
+import createSpinner from './createSpinner'; 
 
 /*=================================
 =            twoBlocks()            =
@@ -105,7 +106,9 @@ const twoBlocks = function twoBlocks() {
 		
 		});
 
-		spinner = createSpinner(panorama, interval, {
+		spinner = createSpinner(panorama, {
+			increment, 
+			interval, 
 			punctuate: {
 				segments: 4, 
 				delay: 2000
@@ -169,138 +172,6 @@ const twoBlocks = function twoBlocks() {
 		
 		google.maps.event.addListener(marker, 'click', () => init(latitude, longitude, {}));
 		
-	};
-
-	/*----------  createSpinner()  ----------*/
-	
-	/**
-	 *
-	 * Add options object as last parameter.  Add option to 
-	 * not spin continuously, but rather, in a series of 
-	 * partial-spins.  Should be able to split the 360 degrees 
-	 * into "chunks", spin to one chunk, pause for a few 
-	 * seconds, and then continue to the next one.  
-	 *
-	 * Option will be called 'punctuate'.  Properties will be 
-	 * 'segments' and 'delay'.  Valid options for segments will be
-	 * even divisors of 360 -- 12 (30-degrees), 9 (40-degrees), 
-	 * 6 (60-degrees), 4 (90-degrees), 2 (180-degrees)
-	 * 
-	 */
-
-	const createSpinner = (panorma, interval, options = {}) => {
-
-		const DEGREES_IN_A_CIRCLE = 360; 
-
-		let segments = null; 
-		let delay = null; 
-
-		let timer;  
-
-		const handlePunctuationOption = function handlePunctuationOption(options) {
-
-			if ('punctuate' in options) {
-
-				let { segments, delay } = options.punctuate; 
-
-				if (!(segments)) {
-					segments = 4; 
-				} 
-
-				if (!(delay)) {
-					delay = 1000; 
-				}
-
-				return { segments, delay }; 
-
-			}
-
-		};
-
-		const incrementHeading = function incrementHeading(pov, increment) {
-		
-			pov.heading += increment; 
-
-			while (pov.heading > DEGREES_IN_A_CIRCLE) {
-				pov.heading -= DEGREES_IN_A_CIRCLE; 
-			} 
-
-			while (pov.heading < 0.0) {
-				pov.heading += DEGREES_IN_A_CIRCLE; 
-			} 			
-
-			return pov; 
-		
-		};
-
-		// Initial implementation assumes that we are incrementing 
-		// the spin by one degree each time we call spin().  
-		// TODO: Make this more sophisticated and robust.  
-		const punctuate = function punctuate(pov, segments, delay) {
-			
-			const { heading } = pov; 
-
-			if ((heading % (DEGREES_IN_A_CIRCLE / segments)) === 0) {
-
-				api.stop(); 
-
-				setTimeout(() => api.start(), delay);
-
-			} 
-		
-		};
-
-		const punctuated = handlePunctuationOption(options); 
-
-		if (punctuated) {
-
-			segments = punctuated.segments; 
-			delay = punctuated.delay; 
-	
-		}
-
-		const api = {
-
-			spin() {
-
-				try {
-
-					const pov = incrementHeading(panorma.getPov(), increment); 
-
-					panorma.setPov(pov); 
-
-					if (punctuated) {
-
-						punctuate(pov, segments, delay); 
-					
-					}
-				
-				} catch (e) {
-				
-					window.console.error("e:", e); 
-				
-				}
-
-			}, 
-
-			start() {
-
-				clearInterval(timer); 
-
-				timer = setInterval(this.spin, interval); 
-
-			}, 
-
-			stop() {
-
-				clearInterval(timer); 
-
-			}
-		
-		};
-
-		return api; 
-
 	};
 
 	/*----------  injectGapiScript()  ----------*/
