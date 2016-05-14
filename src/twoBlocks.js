@@ -5,68 +5,15 @@
 =================================*/
 
 const twoBlocks = function twoBlocks() {
-
-	// CHANGE THE BELOW URL BETWEEN THE QUOTES
-	// var embedUrl = "https://maps.google.com/maps?q=1516+W+Arthur+Ave,+Chicago,+IL&hl=en&ll=41.999942,-87.668645&spn=0.010796,0.020363&sll=41.999949,-87.668677&layer=c&cbp=13,289.04,,0,13.77&cbll=41.999936,-87.668635&hnear=1516+W+Arthur+Ave,+Chicago,+Illinois+60626&t=m&z=16&iwloc=A&panoid=HAvjga5mCucRKAGYvRxy0g
-
-	// ALL YOU NEED IS LONGITUDE AND LATITUDE 
-	// Lat / Long will be randomly chosen within pre-defined NYC bounds 
-	const embedUrl = "https://maps.google.com/maps?ll=40.6291566,-74.0287341";
-	// CHANGE THE ABOVE URL BETWEEN THE QUOTES
-
-	/*----------  getUrlParameters()  ----------*/
-
-	const getUrlParameters = function getUrlParameters(url) {
-
-		// The original author of this code was not very experienced with Javascript.  
-		// I changed 'parameters' (originally 'vars') from an array to 
-		// an object to make it appropriate for how the author has used it.  
-		const parameters = {};
-
-		let hash;
-
-		// Get the string of everything after the '?' in the url, 
-		// and split it into an array of parameter key/value pairs 
-		const hashes = url.slice(url.indexOf('?') + 1).split('&');
-
-		// For each parameter key/value pair, split the pair at the '=' 
-		// character and add the key / value pair to the 'parameters' object  
-		for (let i = 0; i < hashes.length; i++) {
-
-			hash = hashes[i].split('=');
-
-			const [ prop, val ] = hash; 
- 
-			parameters[prop] = val;
-		
-		} 
-
-		return parameters;
-	};
-
-	// Create embed url parameter object 
-	const embedUrlParams = getUrlParameters(embedUrl); 
-
-	/*----------  getUrlParameter()  ----------*/
-	
-	const getUrlParameter = function getUrlParameter(obj, name) {
-		
-		return obj[name];
-	
-	}; 
-
-	// Convert the latlong string into an array 
-	const latlong = getUrlParameter(embedUrlParams, 'll').split(',');
 	
 	// #################
 	// LOCATION SETTINGS
 	// #################
-	let [latitude, longitude] = latlong; 
 
-	latitude = parseFloat(latitude); 
-	longitude = parseFloat(longitude); 
+	const latitude = 40.6291566; 
+	const longitude = -74.0287341; 
 	
-	let panoid = getUrlParameter(embedUrlParams, 'panoid');
+	let panoid = null; 
 
 	// #############
 	// MORE SETTINGS
