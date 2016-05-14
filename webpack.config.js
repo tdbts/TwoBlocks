@@ -18,6 +18,7 @@ module.exports = {
 				loader: 'babel-loader',
 				exclude: /node_modules/,
 				query: {
+					plugins: ['transform-object-assign'], 
 					presets: ['es2015']
         		}
       		}

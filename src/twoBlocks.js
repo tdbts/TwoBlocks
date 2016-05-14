@@ -61,8 +61,10 @@ const twoBlocks = function twoBlocks() {
 	// #################
 	// LOCATION SETTINGS
 	// #################
-	const latitude = parseFloat(latlong[0]);
-	const longitude = parseFloat(latlong[1]);
+	let [latitude, longitude] = latlong; 
+
+	latitude = parseFloat(latitude); 
+	longitude = parseFloat(longitude); 
 	
 	let panoid = getUrlParameter(embedUrlParams, 'panoid');
 
@@ -101,22 +103,6 @@ const twoBlocks = function twoBlocks() {
 		mode = "undefined";
 	
 	}
-
-	/*----------  initGl()  ----------*/
-	
-	const initGl = function initGl() {
-
-		if (mode === "webgl") {
-
-			const c = document.getElementsByTagName("canvas_streetviewpanorama").item(0);
-
-			if (c) {
-
-				c.addEventListener("webglcontextrestored", spinner.spin, false);
-			
-			}
-		}
-	};
 
 	/*----------  init()  ----------*/
 
@@ -201,9 +187,7 @@ const twoBlocks = function twoBlocks() {
 		
 		if (canvas.onmouseover === null) {
 		
-			// startSpin();
 			spinner.start(); 
-			setTimeout(initGl, 1000);
 		
 		}
 		
@@ -226,7 +210,6 @@ const twoBlocks = function twoBlocks() {
 		canvas.onmouseover = function () {};
 		canvas.onmouseout = function () {};
 		
-		// stopSpin();
 		spinner.stop(); 
 		
 		const gps = new google.maps.LatLng(latitude, longitude);
@@ -250,6 +233,8 @@ const twoBlocks = function twoBlocks() {
 		
 	};
 
+	/*----------  createSpinner()  ----------*/
+	
 	const createSpinner = (panorma, interval) => {
 
 		let timer;  

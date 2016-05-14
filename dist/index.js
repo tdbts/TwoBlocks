@@ -133,8 +133,15 @@
 		// #################
 		// LOCATION SETTINGS
 		// #################
-		var latitude = parseFloat(latlong[0]);
-		var longitude = parseFloat(latlong[1]);
+
+		var _latlong = _slicedToArray(latlong, 2);
+
+		var latitude = _latlong[0];
+		var longitude = _latlong[1];
+
+
+		latitude = parseFloat(latitude);
+		longitude = parseFloat(longitude);
 
 		var panoid = getUrlParameter(embedUrlParams, 'panoid');
 
@@ -172,21 +179,6 @@
 
 			mode = "undefined";
 		}
-
-		/*----------  initGl()  ----------*/
-
-		var initGl = function initGl() {
-
-			if (mode === "webgl") {
-
-				var c = document.getElementsByTagName("canvas_streetviewpanorama").item(0);
-
-				if (c) {
-
-					c.addEventListener("webglcontextrestored", spinner.spin, false);
-				}
-			}
-		};
 
 		/*----------  init()  ----------*/
 
@@ -270,9 +262,7 @@
 
 			if (canvas.onmouseover === null) {
 
-				// startSpin();
 				spinner.start();
-				setTimeout(initGl, 1000);
 			}
 
 			canvas.onmouseover = function () {
@@ -298,7 +288,6 @@
 			canvas.onmouseover = function () {};
 			canvas.onmouseout = function () {};
 
-			// stopSpin();
 			spinner.stop();
 
 			var gps = new google.maps.LatLng(latitude, longitude);
@@ -320,6 +309,8 @@
 
 			google.maps.event.addListener(marker, 'click', init);
 		};
+
+		/*----------  createSpinner()  ----------*/
 
 		var createSpinner = function createSpinner(panorma, interval) {
 
