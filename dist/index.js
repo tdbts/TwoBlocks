@@ -75,7 +75,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/*=================================
-	=            twoBlocks()            =
+	=            twoBlocks()          =
 	=================================*/
 
 	/* global document, google */
@@ -154,9 +154,10 @@
 
 			/*----------  Set up panorama  ----------*/
 
-			panorama = (0, _createPanorama2.default)(canvas, gps, {
+			panorama = (0, _createPanorama2.default)(canvas, {
 				mode: mode,
-				pano: panoid
+				pano: panoid,
+				position: gps
 			});
 
 			panorama.setPano(panoid);
@@ -293,12 +294,12 @@
 	=            createPanorama()          =
 	======================================*/
 
-	var createPanorama = function createPanorama(canvas, position) {
-		var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	var createPanorama = function createPanorama(canvas) {
+		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
 
 		var defaultOptions = {
-			position: position,
+			position: null,
 			// Address control shows a box with basic information about the
 			// location, as well as a link to see the map on Google Maps
 			addressControl: false,

@@ -4,10 +4,10 @@
 =            createPanorama()          =
 ======================================*/
 
-const createPanorama = function createPanorama(canvas, position, options = {}) {
+const createPanorama = function createPanorama(canvas, options = {}) {
 
 	const defaultOptions = {
-		position, 
+		position: null, 
 		// Address control shows a box with basic information about the 
 		// location, as well as a link to see the map on Google Maps 
 		addressControl: false,

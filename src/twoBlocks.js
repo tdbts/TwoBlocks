@@ -4,7 +4,7 @@ import createPanorama from './createPanorama';
 import createSpinner from './createSpinner'; 
 
 /*=================================
-=            twoBlocks()            =
+=            twoBlocks()          =
 =================================*/
 
 const twoBlocks = function twoBlocks() {
@@ -91,9 +91,10 @@ const twoBlocks = function twoBlocks() {
 
 		/*----------  Set up panorama  ----------*/
 		
-		panorama = createPanorama(canvas, gps, { 
+		panorama = createPanorama(canvas, { 
 			mode, 
-			pano: panoid 
+			pano: panoid, 
+			position: gps 
 		}); 
 		
 		panorama.setPano(panoid);
