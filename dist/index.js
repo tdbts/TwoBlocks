@@ -97,8 +97,6 @@
 		var canvas = document.getElementById(canvasId);
 		// 'increment' controls the speed of panning
 		// positive values pan to the right, negatives values pan to the left
-		var increment = 1;
-		var interval = 25;
 
 		var panoid = null;
 		var spinner = void 0;
@@ -181,8 +179,6 @@
 			/*----------  Set up spinner  ----------*/
 
 			spinner = (0, _createSpinner2.default)(panorama, {
-				increment: increment,
-				interval: interval,
 				punctuate: {
 					segments: 4,
 					delay: 2000

@@ -24,8 +24,6 @@ const twoBlocks = function twoBlocks() {
 	const canvas = document.getElementById(canvasId); 
 	// 'increment' controls the speed of panning
 	// positive values pan to the right, negatives values pan to the left
-	const increment = 1; 
-	const interval = 25; 
 
 	let panoid = null; 
 	let spinner;
@@ -117,8 +115,6 @@ const twoBlocks = function twoBlocks() {
 		/*----------  Set up spinner  ----------*/
 		
 		spinner = createSpinner(panorama, {
-			increment, 
-			interval, 
 			punctuate: {
 				segments: 4, 
 				delay: 2000
