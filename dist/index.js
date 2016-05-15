@@ -101,7 +101,6 @@
 		var interval = 25;
 
 		var panoid = null;
-		var panorama = void 0;
 		var spinner = void 0;
 
 		/*----------  initGl()  ----------*/
@@ -154,7 +153,7 @@
 
 			/*----------  Set up panorama  ----------*/
 
-			panorama = (0, _createPanorama2.default)(canvas, {
+			var panorama = (0, _createPanorama2.default)(canvas, {
 				mode: mode,
 				pano: panoid,
 				position: gps
@@ -229,12 +228,12 @@
 			// that event. 
 			spinner.stop();
 
-			panorama = new google.maps.Map(canvas, mapOptions);
+			var map = new google.maps.Map(canvas, mapOptions);
 
 			// Add a marker to the map.  Options define which map,
 			// what location, and whether is visible. 
 			var markerOptions = {
-				map: panorama,
+				map: map,
 				position: mapOptions.center,
 				visible: true
 			};
@@ -319,7 +318,7 @@
 			// Pan Control shows a UI element that allows you to rotate the pano
 			panControl: false,
 			panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-			pano: null,
+			pano: null, // ID of panorama to use
 			pov: {
 				zoom: 1.1,
 				heading: 0,

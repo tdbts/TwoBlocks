@@ -28,7 +28,6 @@ const twoBlocks = function twoBlocks() {
 	const interval = 25; 
 
 	let panoid = null; 
-	let panorama;
 	let spinner;
 
 	/*----------  initGl()  ----------*/
@@ -91,10 +90,10 @@ const twoBlocks = function twoBlocks() {
 
 		/*----------  Set up panorama  ----------*/
 		
-		panorama = createPanorama(canvas, { 
+		const panorama = createPanorama(canvas, { 
 			mode, 
 			pano: panoid, 
-			position: gps 
+			position: gps
 		}); 
 		
 		panorama.setPano(panoid);
@@ -163,12 +162,12 @@ const twoBlocks = function twoBlocks() {
 		// that event.  
 		spinner.stop(); 
 		
-		panorama = new google.maps.Map(canvas, mapOptions);
+		const map = new google.maps.Map(canvas, mapOptions);
 		
 		// Add a marker to the map.  Options define which map, 
 		// what location, and whether is visible.  
 		const markerOptions = {
-			map: panorama,
+			map,
 			position: mapOptions.center,
 			visible: true
 		};

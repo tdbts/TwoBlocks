@@ -27,7 +27,7 @@ const createPanorama = function createPanorama(canvas, options = {}) {
 		// Pan Control shows a UI element that allows you to rotate the pano 
 		panControl: false,
 		panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-		pano: null,
+		pano: null,  // ID of panorama to use 
 		pov: {
 			zoom: 1.1,		
 			heading: 0,
