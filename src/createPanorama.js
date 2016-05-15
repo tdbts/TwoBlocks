@@ -1,7 +1,7 @@
 /* global google */
 
 /*======================================
-=            createPanorama()            =
+=            createPanorama()          =
 ======================================*/
 
 const createPanorama = function createPanorama(canvas, position, options = {}) {

@@ -21,11 +21,11 @@
 
 const createSpinner = (panorma, options = {}) => {
 
-	const DEGREES_IN_A_CIRCLE = 360; 
-	const DELAY_DEFAULT = 1000;  // Milliseconds  
-	const INCREMENT_DEFAULT = 1;  // Degrees 
-	const INTERVAL_DEFAULT = 25;  // Milliseconds 
-	const SEGMENTS_DEFAULT = 4; 
+	const DEGREES_IN_A_CIRCLE  	= 360; 
+	const DELAY_DEFAULT  		= 1000; 	// Milliseconds  
+	const INCREMENT_DEFAULT  	= 1; 		// Degrees 
+	const INTERVAL_DEFAULT  	= 25; 		// Milliseconds 
+	const SEGMENTS_DEFAULT  	= 4; 
 
 	let segments = null; 
 	let delay = null; 
@@ -74,8 +74,13 @@ const createSpinner = (panorma, options = {}) => {
 	// TODO: Make this more sophisticated and robust.  
 	const punctuate = function punctuate(pov, segments, delay) {
 		
+		// Heading is the number of degrees from cardinal direction North 
 		const { heading } = pov; 
 
+		// The valid values for 'segments' evenly divide 360 degrees.  
+		// If the heading is evenly divisible by the number of degrees 
+		// in each segment, the spinning has completed one partial 
+		// rotation, and it is time to pause the movement.  
 		if ((heading % (DEGREES_IN_A_CIRCLE / segments)) === 0) {
 
 			api.stop(); 

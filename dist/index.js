@@ -241,7 +241,7 @@
 			var marker = new google.maps.Marker(markerOptions);
 
 			google.maps.event.addListener(marker, 'click', function () {
-				return init(canvas, latitude, longitude, {});
+				return init(canvas, latitude, longitude);
 			});
 		};
 
@@ -257,12 +257,12 @@
 
 			if (MAPS_API_KEY) {
 
-				source += "&key=" + MAPS_API_KEY;
+				source += '&key=' + MAPS_API_KEY;
 			}
 
 			script.src = source;
 			script.onload = function () {
-				return init(canvas, latitude, longitude, {});
+				return init(canvas, latitude, longitude);
 			};
 
 			document.body.appendChild(script);
@@ -290,7 +290,7 @@
 	/* global google */
 
 	/*======================================
-	=            createPanorama()            =
+	=            createPanorama()          =
 	======================================*/
 
 	var createPanorama = function createPanorama(canvas, position) {
@@ -430,8 +430,14 @@
 		// the spin by one degree each time we call spin(). 
 		// TODO: Make this more sophisticated and robust. 
 		var punctuate = function punctuate(pov, segments, delay) {
+
+			// Heading is the number of degrees from cardinal direction North
 			var heading = pov.heading;
 
+			// The valid values for 'segments' evenly divide 360 degrees. 
+			// If the heading is evenly divisible by the number of degrees
+			// in each segment, the spinning has completed one partial
+			// rotation, and it is time to pause the movement. 
 
 			if (heading % (DEGREES_IN_A_CIRCLE / segments) === 0) {
 

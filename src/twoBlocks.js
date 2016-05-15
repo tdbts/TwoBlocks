@@ -174,7 +174,7 @@ const twoBlocks = function twoBlocks() {
 		
 		const marker = new google.maps.Marker(markerOptions);
 		
-		google.maps.event.addListener(marker, 'click', () => init(canvas, latitude, longitude, {}));
+		google.maps.event.addListener(marker, 'click', () => init(canvas, latitude, longitude));
 		
 	};
 
@@ -190,12 +190,12 @@ const twoBlocks = function twoBlocks() {
 		
 		if (MAPS_API_KEY) {
 			
-			source += "&key=" + MAPS_API_KEY;
+			source += `&key=${MAPS_API_KEY}`;
 		
 		}
 
 		script.src = source; 
-		script.onload = () => init(canvas, latitude, longitude, {}); 
+		script.onload = () => init(canvas, latitude, longitude); 
 
 		document.body.appendChild(script);
 	
