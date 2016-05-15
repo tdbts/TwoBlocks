@@ -161,8 +161,14 @@
 
 			panorama.setPano(panoid);
 
+			var mapOptions = {
+				center: gps,
+				zoom: 16,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+
 			google.maps.event.addListener(panorama, 'closeclick', function () {
-				return showMap(canvas, gps);
+				return showMap(canvas, mapOptions);
 			});
 
 			google.maps.event.addListener(panorama, 'pano_changed', function () {
@@ -211,7 +217,7 @@
 		// Refactor this to make this a more generally useful pure function. 
 		// Pass in canvas element, and LatLong instance.  Remove side effect
 		// of assigning to 'panorama' variable. 
-		var showMap = function showMap(canvas, gps) {
+		var showMap = function showMap(canvas, mapOptions) {
 
 			// Remove event listeners created in init(). 
 			// Too tightly coupled here, maybe just emit an event.
@@ -222,19 +228,13 @@
 			// that event. 
 			spinner.stop();
 
-			var mapOptions = {
-				center: gps,
-				zoom: 16,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			};
-
 			panorama = new google.maps.Map(canvas, mapOptions);
 
 			// Add a marker to the map.  Options define which map,
 			// what location, and whether is visible. 
 			var markerOptions = {
 				map: panorama,
-				position: gps,
+				position: mapOptions.center,
 				visible: true
 			};
 

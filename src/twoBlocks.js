@@ -8,7 +8,7 @@ import createSpinner from './createSpinner';
 =================================*/
 
 const twoBlocks = function twoBlocks() {
-	
+
 	// #################
 	// LOCATION SETTINGS
 	// #################
@@ -97,8 +97,14 @@ const twoBlocks = function twoBlocks() {
 		}); 
 		
 		panorama.setPano(panoid);
+	
+		const mapOptions = {
+			center: gps,
+			zoom: 16,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};	 
 
-		google.maps.event.addListener(panorama, 'closeclick', () => showMap(canvas, gps));
+		google.maps.event.addListener(panorama, 'closeclick', () => showMap(canvas, mapOptions));
 		
 		google.maps.event.addListener(panorama, 'pano_changed', () => {
 			// getPano() --> [string] Returns the current panorama ID 
@@ -145,7 +151,7 @@ const twoBlocks = function twoBlocks() {
 	// Refactor this to make this a more generally useful pure function.  
 	// Pass in canvas element, and LatLong instance.  Remove side effect 
 	// of assigning to 'panorama' variable.  
-	const showMap = function showMap(canvas, gps) {
+	const showMap = function showMap(canvas, mapOptions) {
 
 		// Remove event listeners created in init().  
 		// Too tightly coupled here, maybe just emit an event. 
@@ -156,19 +162,13 @@ const twoBlocks = function twoBlocks() {
 		// that event.  
 		spinner.stop(); 
 		
-		const mapOptions = {
-			center: gps,
-			zoom: 16,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		};
-
 		panorama = new google.maps.Map(canvas, mapOptions);
 		
 		// Add a marker to the map.  Options define which map, 
 		// what location, and whether is visible.  
 		const markerOptions = {
 			map: panorama,
-			position: gps,
+			position: mapOptions.center,
 			visible: true
 		};
 		
