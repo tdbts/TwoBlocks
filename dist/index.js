@@ -64,6 +64,8 @@
 		value: true
 	});
 
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 	var _createPanorama = __webpack_require__(2);
 
 	var _createPanorama2 = _interopRequireDefault(_createPanorama);
@@ -76,7 +78,13 @@
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
+	var _selectRandomValueOfRange = __webpack_require__(10);
+
+	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /* global document, google */
 
 	/*=================================
 	=            twoBlocks()          =
@@ -90,6 +98,23 @@
 
 		var latitude = 40.6291566;
 		var longitude = -74.0287341;
+
+		var nycBoundaryPoints = [
+		// NJ, above Bronx, West side
+		[40.932251, -73.935757],
+		// LI Sound, above Bronx, East side
+		[40.866917, -73.750877],
+		// Atlantic Ocean, just South of LI,
+		// past Eastern border of Queens
+		[40.567269, -73.66539],
+		// Atlantic Ocean, just South of Rockaway penninsula and Brooklyn
+		[40.519264, -73.946915],
+		// (Lower Bay, Between Staten Island and Brooklyn) 
+		[40.572485, -74.054031],
+		// Just South of Staten Island
+		[40.477492, -74.233932],
+		// NJ, West of Staten Island
+		[40.562052, -74.352036]];
 
 		// #############
 		// MORE SETTINGS
@@ -241,12 +266,122 @@
 
 		injectGapiScript().then(function () {
 			return init(canvas, latitude, longitude);
+		})
+
+		// Convert array of lat / lng values to an array
+		// of LatLng class instances
+		.then(function () {
+
+			var nycBoundaryLatLngs = [];
+
+			nycBoundaryPoints.forEach(function (pointPair) {
+
+				nycBoundaryLatLngs.push(new (Function.prototype.bind.apply(google.maps.LatLng, [null].concat(_toConsumableArray(pointPair))))());
+			});
+
+			return nycBoundaryLatLngs;
+		})
+
+		// Create nycPolygon using the array of LatLng instances
+		.then(function (nycBoundaryLatLngs) {
+
+			var nycPolygon = new google.maps.Polygon({
+
+				paths: nycBoundaryLatLngs
+
+			});
+
+			return nycPolygon;
+		})
+
+		// Create an object defining the min / max values
+		// for both lat / lng of the NYC boundary points
+		.then(function (nycPolygon) {
+
+			window.console.log("nycPolygon:", nycPolygon);
+
+			var latLngMaxMin = {
+				lat: {
+					min: null,
+					max: null
+				},
+
+				lng: {
+					min: null,
+					max: null
+				}
+			};
+
+			latLngMaxMin = nycBoundaryPoints.reduce(function (prev, curr) {
+				var lat = prev.lat;
+				var lng = prev.lng;
+
+				// On the first invocation, the Lat and Lng
+				// values are both the min and max
+
+				if ([lat.min, lat.max, lng.min, lng.max].every(function (val) {
+					return !val;
+				})) {
+					var _curr = _slicedToArray(curr, 2);
+
+					var currLat = _curr[0];
+					var currLng = _curr[1];
+
+
+					lat.min = lat.max = currLat;
+					lng.min = lng.max = currLng;
+				} else {
+					var _curr2 = _slicedToArray(curr, 2);
+
+					var _currLat = _curr2[0];
+					var _currLng = _curr2[1];
+
+
+					lat.min = Math.min(lat.min, _currLat);
+					lat.max = Math.max(lat.max, _currLat);
+					lng.min = Math.min(lng.min, _currLng);
+					lng.max = Math.max(lng.max, _currLng);
+				}
+
+				return prev;
+			}, latLngMaxMin);
+
+			window.console.log("latLngMaxMin:", latLngMaxMin);
+
+			return { latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon };
+		})
+
+		// Select random point from within min / max values for
+		// lat / lng, and check if they fall within our defined
+		// NYC polygon
+		.then(function (nycMapData) {
+			var latLngMaxMin = nycMapData.latLngMaxMin;
+			var nycPolygon = nycMapData.nycPolygon;
+			var lat = latLngMaxMin.lat;
+			var lng = latLngMaxMin.lng;
+
+
+			var randomLat = (0, _selectRandomValueOfRange2.default)(lat.min, lat.max).toFixed(6);
+
+			var randomLng = (0, _selectRandomValueOfRange2.default)(lng.min, lng.max).toFixed(6);
+
+			window.console.log("randomLat:", randomLat);
+			window.console.log("randomLng:", randomLng);
+
+			var randomCoords = new google.maps.LatLng(randomLat, randomLng);
+
+			// Umm...Have to put a timeout, or else the 'geometry' library is not defined
+			// yet on the google.maps object.  WTF Google.
+			setTimeout(function () {
+
+				var isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomCoords, nycPolygon);
+
+				window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries);
+			}, 1000);
 		});
 	};
 
 	/*=====  End of twoBlocks()  ======*/
-
-	/* global document, google */
 
 	exports.default = twoBlocks;
 
@@ -1619,6 +1754,31 @@
 	  }
 	}
 
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var selectRandomValueOfRange = function selectRandomValueOfRange(min, max) {
+
+		// If the order is incorrect, switch.
+		if (!(min <= max)) {
+			var _ref = [max, min];
+			min = _ref[0];
+			max = _ref[1];
+		}
+
+		var difference = max - min;
+
+		return min + Math.random() * difference;
+	};
+
+	exports.default = selectRandomValueOfRange;
 
 /***/ }
 /******/ ]);
