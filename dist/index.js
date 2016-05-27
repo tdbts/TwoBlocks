@@ -291,14 +291,14 @@
 
 			});
 
+			window.console.log("nycPolygon:", nycPolygon);
+
 			return nycPolygon;
 		})
 
 		// Create an object defining the min / max values
 		// for both lat / lng of the NYC boundary points
 		.then(function (nycPolygon) {
-
-			window.console.log("nycPolygon:", nycPolygon);
 
 			var latLngMaxMin = {
 				lat: {
@@ -312,16 +312,14 @@
 				}
 			};
 
-			latLngMaxMin = nycBoundaryPoints.reduce(function (prev, curr) {
+			latLngMaxMin = nycBoundaryPoints.reduce(function (prev, curr, i) {
 				var lat = prev.lat;
 				var lng = prev.lng;
 
 				// On the first invocation, the Lat and Lng
 				// values are both the min and max
 
-				if ([lat.min, lat.max, lng.min, lng.max].every(function (val) {
-					return !val;
-				})) {
+				if (i === 0) {
 					var _curr = _slicedToArray(curr, 2);
 
 					var currLat = _curr[0];
@@ -355,29 +353,97 @@
 		// lat / lng, and check if they fall within our defined
 		// NYC polygon
 		.then(function (nycMapData) {
-			var latLngMaxMin = nycMapData.latLngMaxMin;
-			var nycPolygon = nycMapData.nycPolygon;
-			var lat = latLngMaxMin.lat;
-			var lng = latLngMaxMin.lng;
+
+			return new Promise(function (resolve) {
+				var latLngMaxMin = nycMapData.latLngMaxMin;
+				var nycPolygon = nycMapData.nycPolygon;
 
 
-			var randomLat = (0, _selectRandomValueOfRange2.default)(lat.min, lat.max).toFixed(6);
+				var getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
+					var lat = latLngMaxMin.lat;
+					var lng = latLngMaxMin.lng;
 
-			var randomLng = (0, _selectRandomValueOfRange2.default)(lng.min, lng.max).toFixed(6);
 
-			window.console.log("randomLat:", randomLat);
-			window.console.log("randomLng:", randomLng);
+					var randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6);
 
-			var randomCoords = new google.maps.LatLng(randomLat, randomLng);
+					var randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6);
 
-			// Umm...Have to put a timeout, or else the 'geometry' library is not defined
-			// yet on the google.maps object.  WTF Google.
-			setTimeout(function () {
+					window.console.log("randomLat:", randomLat);
+					window.console.log("randomLng:", randomLng);
 
-				var isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomCoords, nycPolygon);
+					var randomCoords = { randomLat: randomLat, randomLng: randomLng };
 
-				window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries);
-			}, 1000);
+					return randomCoords;
+				};
+
+				// Umm...Have to put a timeout, or else the 'geometry' library is not defined
+				// yet on the google.maps object.  WTF Google.
+				setTimeout(function () {
+					var _getRandomNycCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
+
+					var randomLat = _getRandomNycCoords.randomLat;
+					var randomLng = _getRandomNycCoords.randomLng;
+
+
+					var randomLatLng = new google.maps.LatLng(randomLat, randomLng);
+
+					var isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
+
+					window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries);
+
+					resolve({ getRandomNycCoords: getRandomNycCoords, latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon });
+				}, 1000);
+			}).then(function (nycMapData) {
+				var getRandomNycCoords = nycMapData.getRandomNycCoords;
+				var latLngMaxMin = nycMapData.latLngMaxMin;
+				var nycPolygon = nycMapData.nycPolygon;
+
+
+				var createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
+
+					var isWithinNycBoundaries = false;
+					var randomCoords = null;
+					var randomLatLng = void 0;
+
+					while (!isWithinNycBoundaries) {
+
+						randomCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
+
+						var _randomCoords = randomCoords;
+						var randomLat = _randomCoords.randomLat;
+						var randomLng = _randomCoords.randomLng;
+
+
+						randomLatLng = new google.maps.LatLng(randomLat, randomLng);
+
+						isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
+					}
+
+					// return init(canvas, randomLat, randomLng);
+					if (spinner) {
+
+						spinner.stop();
+					}
+
+					var panorama = (0, _createPanorama2.default)(canvas, {
+						mode: "webgl",
+						position: randomLatLng
+					});
+
+					spinner = (0, _createSpinner2.default)(panorama, {
+						punctuate: {
+							segments: 4,
+							delay: 2000
+						}
+					});
+
+					spinner.start();
+				};
+
+				setInterval(function () {
+					return createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon);
+				}, 10000);
+			});
 		});
 	};
 

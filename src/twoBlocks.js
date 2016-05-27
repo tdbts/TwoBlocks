@@ -206,6 +206,8 @@ const twoBlocks = function twoBlocks() {
 			
 			}); 
 
+			window.console.log("nycPolygon:", nycPolygon);
+
 			return nycPolygon; 
 
 		})
@@ -213,8 +215,6 @@ const twoBlocks = function twoBlocks() {
 		// Create an object defining the min / max values 
 		// for both lat / lng of the NYC boundary points 
 		.then(nycPolygon => {
-
-			window.console.log("nycPolygon:", nycPolygon); 
 
 			let latLngMaxMin = {
 				lat: { 
@@ -228,13 +228,13 @@ const twoBlocks = function twoBlocks() {
 				} 				
 			}; 
 
-			latLngMaxMin = nycBoundaryPoints.reduce((prev, curr) => {
+			latLngMaxMin = nycBoundaryPoints.reduce((prev, curr, i) => {
  
 				const { lat, lng } = prev; 
 
 				// On the first invocation, the Lat and Lng 
 				// values are both the min and max 
-				if ([lat.min, lat.max, lng.min, lng.max].every(val => !(val))) {
+				if (i === 0) {
 
 					const [ currLat, currLng ] = curr; 
 
@@ -267,28 +267,93 @@ const twoBlocks = function twoBlocks() {
 		// NYC polygon 
 		.then(nycMapData => {
 
-			const { latLngMaxMin, nycPolygon } = nycMapData; 
+			return new Promise(resolve => {
 
-			const { lat, lng } = latLngMaxMin; 
-
-			const randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6); 
-			
-			const randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6); 
-
-			window.console.log("randomLat:", randomLat); 
-			window.console.log("randomLng:", randomLng); 
-
-			const randomCoords = new google.maps.LatLng(randomLat, randomLng); 
-
-			// Umm...Have to put a timeout, or else the 'geometry' library is not defined 
-			// yet on the google.maps object.  WTF Google. 
-			setTimeout(function() {
+				const { latLngMaxMin, nycPolygon } = nycMapData; 
 				
-				const isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomCoords, nycPolygon); 
-
-				window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries); 
+				const getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
 				
-			}, 1000);
+					const { lat, lng } = latLngMaxMin; 
+
+					const randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6); 
+					
+					const randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6); 
+
+					window.console.log("randomLat:", randomLat); 
+					window.console.log("randomLng:", randomLng); 
+
+					const randomCoords = { randomLat, randomLng }; 
+					
+					return randomCoords; 
+				
+				}; 
+
+				// Umm...Have to put a timeout, or else the 'geometry' library is not defined 
+				// yet on the google.maps object.  WTF Google. 
+				setTimeout(function() {
+					
+					const { randomLat, randomLng } = getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange); 
+
+					const randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
+
+					const isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
+
+					window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries); 
+					
+					resolve({ getRandomNycCoords, latLngMaxMin, nycPolygon }); 
+
+				}, 1000);
+
+			}) 
+
+			.then(nycMapData => {
+
+				const { getRandomNycCoords, latLngMaxMin, nycPolygon } = nycMapData; 
+
+				const createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
+				
+					let isWithinNycBoundaries = false; 
+					let randomCoords = null;
+					let randomLatLng;  
+
+					while (!(isWithinNycBoundaries)) {
+
+						randomCoords = getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange); 
+						
+						const { randomLat, randomLng } = randomCoords; 
+
+						randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
+
+						isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
+
+					}
+
+					// return init(canvas, randomLat, randomLng);
+					if (spinner) {
+
+						spinner.stop();  
+					
+					}
+
+					const panorama = createPanorama(canvas, { 
+						mode: "webgl", 
+						position: randomLatLng
+					}); 					
+				
+					spinner = createSpinner(panorama, {
+						punctuate: {
+							segments: 4, 
+							delay: 2000
+						}
+					}); 	
+					
+					spinner.start(); 				
+
+				}; 
+
+				setInterval(() => createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon), 10000); 
+
+			}); 
 
 		}); 
 
