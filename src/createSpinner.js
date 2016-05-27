@@ -35,6 +35,8 @@ const createSpinner = (panorma, options = {}) => {
 
 	const handlePunctuationOption = function handlePunctuationOption(options) {
 
+		let punctuateSettings = null; 
+
 		if ('punctuate' in options) {
 
 			let { segments, delay } = options.punctuate; 
@@ -47,9 +49,11 @@ const createSpinner = (panorma, options = {}) => {
 				delay = DELAY_DEFAULT; 
 			}
 
-			return { segments, delay }; 
+			punctuateSettings = { segments, delay }; 
 
 		}
+
+		return punctuateSettings; 
 
 	};
 
@@ -104,11 +108,14 @@ const createSpinner = (panorma, options = {}) => {
 
 	if (punctuated) {
 
+		// Parentheses required when destructuring assigns 
+		// to previously declared variables.  
 		( { segments, delay } = punctuated );
 
 	}
 
 	/*----------  Set increment option  ----------*/
+	
 	( { increment } = options ); 
 
 	if (!(increment)) {

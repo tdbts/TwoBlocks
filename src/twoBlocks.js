@@ -2,6 +2,7 @@
 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
+import createWebGlManager from './createWebGlManager'; 
 
 /*=================================
 =            twoBlocks()          =
@@ -25,64 +26,16 @@ const twoBlocks = function twoBlocks() {
 	// 'increment' controls the speed of panning
 	// positive values pan to the right, negatives values pan to the left
 
+	const webGlManager = createWebGlManager(canvas); 
+
 	let panoid = null; 
 	let spinner;
-
-	/*----------  initGl()  ----------*/
-	
-	const initGl = function initGl() {
-
-		const c = document.getElementsByTagName("canvas").item(0);
-
-		if (c) {
-
-			c.addEventListener("webglcontextrestored", spinner.spin, false);
-		
-		}
-
-	};	
-
-	/*----------  canUseWebGl  ----------*/
-	const canUseWebGl = function canUseWebGl() {
-	
-		if (!(window.WebGLRenderingContext)) return false; 
-
-		const testCanvas = document.createElement('canvas');
-
-		let result; 
-
-		if (testCanvas && ('getContext' in testCanvas)) {
-
-			const webGlNames = [
-				"webgl",
-				"experimental-webgl",
-				"moz-webgl",
-				"webkit-3d"
-			];
-
-			// Reduce the array of webGlNames to a single boolean, 
-			// which represents the result of canUseWebGl().  
-			result = webGlNames.reduce((prev, curr) => {
-				
-				if (prev) return prev;  // If 'prev' is truthy, we can use WebGL. 
-			
-				const context = testCanvas.getContext(curr); 
-
-				if (context && (context instanceof WebGLRenderingContext)) return true; 
-
-			}, false);  // Start with false (default) 
-
-		}
-
-		return result;	
-	
-	}; 
 
 	/*----------  init()  ----------*/
 
 	const init = function init(canvas, latitude, longitude) {
 		
-		const mode = canUseWebGl() ? "webgl" : "html4";
+		const mode = webGlManager.canUseWebGl() ? "webgl" : "html4";
 
 		const gps = new google.maps.LatLng(latitude, longitude);
 
@@ -125,12 +78,14 @@ const twoBlocks = function twoBlocks() {
 
 		canvas.addEventListener('mouseover', () => spinner.stop()); 
 		canvas.addEventListener('mouseout', () => spinner.start()); 
+
+		webGlManager.on('webglcontextrestored', () => spinner.spin()); 
 		
 		/*----------  Set up WebGl  ----------*/
 		
-		if (canUseWebGl()) {
+		if (webGlManager.canUseWebGl()) {
 
-			setTimeout(initGl, 1000);
+			setTimeout(() => webGlManager.initGl(), 1000);
 		
 		}
 		
