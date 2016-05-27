@@ -215,26 +215,33 @@
 
 		var injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
 
-			var script = document.createElement("script");
+			return new Promise(function (resolve) {
 
-			var source = "https://maps.googleapis.com/maps/api/js";
+				var script = document.createElement("script");
 
-			script.type = "text/javascript";
+				var source = "https://maps.googleapis.com/maps/api/js";
 
-			if (MAPS_API_KEY) {
+				script.type = "text/javascript";
 
-				source += '&key=' + MAPS_API_KEY;
-			}
+				if (MAPS_API_KEY) {
 
-			script.src = source;
-			script.onload = function () {
-				return init(canvas, latitude, longitude);
-			};
+					source += '&key=' + MAPS_API_KEY;
+				}
 
-			document.body.appendChild(script);
+				script.src = source;
+				script.onload = function () {
+					return resolve();
+				};
+
+				document.body.appendChild(script);
+			});
 		};
 
-		injectGapiScript();
+		/*----------  Initialization  ----------*/
+
+		injectGapiScript().then(function () {
+			return init(canvas, latitude, longitude);
+		});
 	};
 
 	/*=====  End of twoBlocks()  ======*/
