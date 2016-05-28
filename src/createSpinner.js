@@ -1,5 +1,7 @@
 /* global window */
 
+import { isOneOf } from './utils/utils'; 
+
 /*=====================================
 =            createSpinner()            =
 =====================================*/
@@ -26,6 +28,7 @@ const createSpinner = (panorma, options = {}) => {
 	const INCREMENT_DEFAULT  	= 1; 		// Degrees 
 	const INTERVAL_DEFAULT  	= 25; 		// Milliseconds 
 	const SEGMENTS_DEFAULT  	= 4; 
+	const VALID_SEGMENTS 		= [2, 4, 6, 9, 12]; 
 
 	let segments = null; 
 	let delay = null; 
@@ -40,6 +43,12 @@ const createSpinner = (panorma, options = {}) => {
 		if ('punctuate' in options) {
 
 			let { segments, delay } = options.punctuate; 
+
+			if (!(isOneOf(VALID_SEGMENTS, segments))) {
+				
+				segments = null; 
+			
+			}
 
 			if (!(segments)) {
 				segments = SEGMENTS_DEFAULT; 
