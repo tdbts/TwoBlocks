@@ -107,6 +107,8 @@ const twoBlocks = function twoBlocks() {
 			setTimeout(() => webGlManager.initGl(), 1000);
 		
 		}
+
+		return { panorama, spinner }; 
 		
 	};
 
@@ -183,7 +185,7 @@ const twoBlocks = function twoBlocks() {
 
 		// Convert array of lat / lng values to an array 
 		// of LatLng class instances 
-		.then(() => {
+		.then(appComponents => {
 
 			const nycBoundaryLatLngs = []; 
 
@@ -193,12 +195,14 @@ const twoBlocks = function twoBlocks() {
 
 			}); 
 
-			return nycBoundaryLatLngs; 
+			return Object.assign({}, appComponents, { nycBoundaryLatLngs }); 
 
 		})
 
 		// Create nycPolygon using the array of LatLng instances 
-		.then(nycBoundaryLatLngs => {
+		.then(appComponents => {
+
+			const { nycBoundaryLatLngs } = appComponents; 
 
 			const nycPolygon = new google.maps.Polygon({
 
@@ -208,13 +212,15 @@ const twoBlocks = function twoBlocks() {
 
 			window.console.log("nycPolygon:", nycPolygon);
 
-			return nycPolygon; 
+			return Object.assign({}, appComponents, { nycPolygon }); 
 
 		})
 
 		// Create an object defining the min / max values 
 		// for both lat / lng of the NYC boundary points 
-		.then(nycPolygon => {
+		.then(appComponents => {
+
+			const { nycPolygon } = appComponents; 
 
 			let latLngMaxMin = {
 				lat: { 
@@ -258,18 +264,18 @@ const twoBlocks = function twoBlocks() {
 
 			window.console.log("latLngMaxMin:", latLngMaxMin); 
 
-			return { latLngMaxMin, nycPolygon }; 
+			return Object.assign({}, appComponents, { latLngMaxMin, nycPolygon }); 
 
 		})
 
 		// Select random point from within min / max values for 
 		// lat / lng, and check if they fall within our defined 
 		// NYC polygon 
-		.then(nycMapData => {
+		.then(appComponents => {
 
 			return new Promise(resolve => {
 
-				const { latLngMaxMin, nycPolygon } = nycMapData; 
+				const { latLngMaxMin, nycPolygon } = appComponents; 
 				
 				const getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
 				
@@ -300,15 +306,17 @@ const twoBlocks = function twoBlocks() {
 
 					window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries); 
 					
-					resolve({ getRandomNycCoords, latLngMaxMin, nycPolygon }); 
+					resolve(Object.assign({}, appComponents, { getRandomNycCoords, latLngMaxMin, nycPolygon })); 
 
 				}, 1000);
 
 			}) 
 
-			.then(nycMapData => {
+			.then(appComponents => {
 
-				const { getRandomNycCoords, latLngMaxMin, nycPolygon } = nycMapData; 
+				window.console.log("appComponents:", appComponents); 
+
+				const { getRandomNycCoords, latLngMaxMin, nycPolygon } = appComponents; 
 
 				const createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
 				

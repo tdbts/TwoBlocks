@@ -66,6 +66,8 @@
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _createPanorama = __webpack_require__(2);
 
 	var _createPanorama2 = _interopRequireDefault(_createPanorama);
@@ -195,6 +197,8 @@
 					return webGlManager.initGl();
 				}, 1000);
 			}
+
+			return { panorama: panorama, spinner: spinner };
 		};
 
 		/*----------  showMap()  ----------*/
@@ -270,7 +274,7 @@
 
 		// Convert array of lat / lng values to an array
 		// of LatLng class instances
-		.then(function () {
+		.then(function (appComponents) {
 
 			var nycBoundaryLatLngs = [];
 
@@ -279,11 +283,13 @@
 				nycBoundaryLatLngs.push(new (Function.prototype.bind.apply(google.maps.LatLng, [null].concat(_toConsumableArray(pointPair))))());
 			});
 
-			return nycBoundaryLatLngs;
+			return _extends({}, appComponents, { nycBoundaryLatLngs: nycBoundaryLatLngs });
 		})
 
 		// Create nycPolygon using the array of LatLng instances
-		.then(function (nycBoundaryLatLngs) {
+		.then(function (appComponents) {
+			var nycBoundaryLatLngs = appComponents.nycBoundaryLatLngs;
+
 
 			var nycPolygon = new google.maps.Polygon({
 
@@ -293,12 +299,14 @@
 
 			window.console.log("nycPolygon:", nycPolygon);
 
-			return nycPolygon;
+			return _extends({}, appComponents, { nycPolygon: nycPolygon });
 		})
 
 		// Create an object defining the min / max values
 		// for both lat / lng of the NYC boundary points
-		.then(function (nycPolygon) {
+		.then(function (appComponents) {
+			var nycPolygon = appComponents.nycPolygon;
+
 
 			var latLngMaxMin = {
 				lat: {
@@ -346,17 +354,17 @@
 
 			window.console.log("latLngMaxMin:", latLngMaxMin);
 
-			return { latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon };
+			return _extends({}, appComponents, { latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon });
 		})
 
 		// Select random point from within min / max values for
 		// lat / lng, and check if they fall within our defined
 		// NYC polygon
-		.then(function (nycMapData) {
+		.then(function (appComponents) {
 
 			return new Promise(function (resolve) {
-				var latLngMaxMin = nycMapData.latLngMaxMin;
-				var nycPolygon = nycMapData.nycPolygon;
+				var latLngMaxMin = appComponents.latLngMaxMin;
+				var nycPolygon = appComponents.nycPolygon;
 
 
 				var getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
@@ -391,12 +399,15 @@
 
 					window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries);
 
-					resolve({ getRandomNycCoords: getRandomNycCoords, latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon });
+					resolve(_extends({}, appComponents, { getRandomNycCoords: getRandomNycCoords, latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon }));
 				}, 1000);
-			}).then(function (nycMapData) {
-				var getRandomNycCoords = nycMapData.getRandomNycCoords;
-				var latLngMaxMin = nycMapData.latLngMaxMin;
-				var nycPolygon = nycMapData.nycPolygon;
+			}).then(function (appComponents) {
+
+				window.console.log("appComponents:", appComponents);
+
+				var getRandomNycCoords = appComponents.getRandomNycCoords;
+				var latLngMaxMin = appComponents.latLngMaxMin;
+				var nycPolygon = appComponents.nycPolygon;
 
 
 				var createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
@@ -606,7 +617,7 @@
 				pov.heading -= DEGREES_IN_A_CIRCLE;
 			}
 
-			while (pov.heading < 0.0) {
+			while (pov.heading < 0) {
 				pov.heading += DEGREES_IN_A_CIRCLE;
 			}
 
