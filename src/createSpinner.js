@@ -74,7 +74,7 @@ const createSpinner = (panorma, options = {}) => {
 			pov.heading -= DEGREES_IN_A_CIRCLE; 
 		} 
 
-		while (pov.heading < 0.0) {
+		while (pov.heading < 0) {
 			pov.heading += DEGREES_IN_A_CIRCLE; 
 		} 			
 
