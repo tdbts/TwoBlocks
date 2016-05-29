@@ -93,6 +93,8 @@ const twoBlocks = function twoBlocks() {
 				delay: 2000
 			}
 		}); 
+
+		spinner.on('revolution', () => window.console.log('revolution')); 
 		
 		spinner.start(); 
 
@@ -332,12 +334,12 @@ const twoBlocks = function twoBlocks() {
 
 					panorama.setPosition(randomLatLng);	 			
 				
-					spinner = createSpinner(panorama, {
-						punctuate: {
-							segments: 4, 
-							delay: 2000
-						}
-					}); 	
+					// spinner = createSpinner(panorama, {
+					// 	punctuate: {
+					// 		segments: 4, 
+					// 		delay: 2000
+					// 	}
+					// }); 	
 					
 				}; 
 
@@ -347,11 +349,11 @@ const twoBlocks = function twoBlocks() {
 
 		.then(appComponents => {
 
-			const { createRandomNycSpinner, getRandomNycCoords, latLngMaxMin, nycPolygon, pollForGeometryLibrary } = appComponents; 
+			const { createRandomNycSpinner, getRandomNycCoords, latLngMaxMin, nycPolygon, pollForGeometryLibrary, spinner } = appComponents; 
 
 			pollForGeometryLibrary 
 
-				.then(() => setInterval(() => createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon), 10000)); 
+				.then(spinner.on('revolution', () => createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon)));  
 
 		})
 

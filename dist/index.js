@@ -76,7 +76,7 @@
 
 	var _createSpinner2 = _interopRequireDefault(_createSpinner);
 
-	var _createWebGlManager = __webpack_require__(41);
+	var _createWebGlManager = __webpack_require__(46);
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
@@ -84,7 +84,7 @@
 
 	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
 
-	var _utils = __webpack_require__(4);
+	var _utils = __webpack_require__(5);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -176,6 +176,10 @@
 					segments: 4,
 					delay: 2000
 				}
+			});
+
+			spinner.on('revolution', function () {
+				return window.console.log('revolution');
 			});
 
 			spinner.start();
@@ -420,12 +424,12 @@
 
 				panorama.setPosition(randomLatLng);
 
-				spinner = (0, _createSpinner2.default)(panorama, {
-					punctuate: {
-						segments: 4,
-						delay: 2000
-					}
-				});
+				// spinner = createSpinner(panorama, {
+				// 	punctuate: {
+				// 		segments: 4,
+				// 		delay: 2000
+				// 	}
+				// }); 	
 			};
 
 			return _extends({}, appComponents, { createRandomNycSpinner: createRandomNycSpinner });
@@ -435,13 +439,12 @@
 			var latLngMaxMin = appComponents.latLngMaxMin;
 			var nycPolygon = appComponents.nycPolygon;
 			var pollForGeometryLibrary = appComponents.pollForGeometryLibrary;
+			var spinner = appComponents.spinner;
 
 
-			pollForGeometryLibrary.then(function () {
-				return setInterval(function () {
-					return createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon);
-				}, 10000);
-			});
+			pollForGeometryLibrary.then(spinner.on('revolution', function () {
+				return createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon);
+			}));
 		}).catch(function () {
 			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 				args[_key] = arguments[_key];
@@ -535,7 +538,13 @@
 		value: true
 	});
 
-	var _utils = __webpack_require__(4);
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
+
+	var _events = __webpack_require__(4);
+
+	var _utils = __webpack_require__(5);
+
+	var _util = __webpack_require__(42);
 
 	/*=====================================
 	=            createSpinner()            =
@@ -567,11 +576,15 @@
 		var SEGMENTS_DEFAULT = 4;
 		var VALID_SEGMENTS = [2, 4, 6, 9, 12];
 
+		var _started = false;
+		var _startHeading = null;
 		var segments = null;
 		var delay = null;
 		var increment = void 0;
 		var interval = void 0;
 		var timer = void 0;
+
+		var spinner = null;
 
 		var handlePunctuationOption = function handlePunctuationOption(options) {
 
@@ -680,12 +693,19 @@
 
 		var api = {
 			spin: function spin() {
-
+				// window.console.log('spin()');
+				// window.console.log("_startHeading:", _startHeading);
 				try {
 
 					var pov = incrementHeading(panorma.getPov(), increment);
+					// window.console.log("pov.heading:", pov.heading);
 
 					panorma.setPov(pov);
+
+					if (pov.heading % 360 === _startHeading) {
+
+						spinner.emit('revolution');
+					}
 
 					if (punctuated) {
 
@@ -697,10 +717,24 @@
 				}
 			},
 			start: function start() {
+				var _this = this;
+
+				if (!_started) {
+
+					_started = true;
+
+					_startHeading = panorma.getPov().heading;
+				}
 
 				clearInterval(timer);
 
-				timer = setInterval(this.spin, interval);
+				timer = setInterval(function () {
+					return _this.spin();
+				}, interval);
+			},
+			started: function started() {
+
+				return _started;
 			},
 			stop: function stop() {
 
@@ -708,1391 +742,27 @@
 			}
 		};
 
-		return api;
+		/*----------  Create Spinner instance  ----------*/
+
+		// Create Spinner() constructor to inherit EventEmitter functionality
+		var Spinner = function Spinner() {};
+
+		(0, _util.inherits)(Spinner, _events.EventEmitter);
+
+		// Add API methods to prototype
+		_extends(Spinner.prototype, api);
+
+		spinner = new Spinner();
+
+		return spinner;
 	};
 
 	/*=====  End of createSpinner()  ======*/
-
-	/* global window */
 
 	exports.default = createSpinner;
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.typeIsValid = exports.truthyness = exports.throwErrorIfTrue = exports.throttle = exports.returnItem = exports.poll = exports.pipeline = exports.once = exports.noUniqueBetweenSets = exports.noArguments = exports.negate = exports.merge = exports.length = exports.keys = exports.hasKeys = exports.isType = exports.isSomething = exports.isOneOf = exports.isNothing = exports.isEmpty = exports.invoke = exports.halt = exports.getType = exports.getProp = exports.getOwnProp = exports.getArgumentsArray = exports.followPath = exports.existenceCheck = exports.extend = exports.emptyFunction = exports.debounce = exports.clone = exports.applyToOwnProp = exports.applyToAllOwnProps = undefined;
-
-	var _applyToAllOwnProps = __webpack_require__(5);
-
-	var _applyToAllOwnProps2 = _interopRequireDefault(_applyToAllOwnProps);
-
-	var _applyToOwnProp = __webpack_require__(6);
-
-	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
-
-	var _clone = __webpack_require__(7);
-
-	var _clone2 = _interopRequireDefault(_clone);
-
-	var _debounce = __webpack_require__(10);
-
-	var _debounce2 = _interopRequireDefault(_debounce);
-
-	var _emptyFunction = __webpack_require__(11);
-
-	var _emptyFunction2 = _interopRequireDefault(_emptyFunction);
-
-	var _extend = __webpack_require__(12);
-
-	var _extend2 = _interopRequireDefault(_extend);
-
-	var _existenceCheck = __webpack_require__(19);
-
-	var _existenceCheck2 = _interopRequireDefault(_existenceCheck);
-
-	var _followPath = __webpack_require__(20);
-
-	var _followPath2 = _interopRequireDefault(_followPath);
-
-	var _getArgumentsArray = __webpack_require__(23);
-
-	var _getArgumentsArray2 = _interopRequireDefault(_getArgumentsArray);
-
-	var _getOwnProp = __webpack_require__(24);
-
-	var _getOwnProp2 = _interopRequireDefault(_getOwnProp);
-
-	var _getProp = __webpack_require__(25);
-
-	var _getProp2 = _interopRequireDefault(_getProp);
-
-	var _getType = __webpack_require__(8);
-
-	var _getType2 = _interopRequireDefault(_getType);
-
-	var _halt = __webpack_require__(26);
-
-	var _halt2 = _interopRequireDefault(_halt);
-
-	var _invoke = __webpack_require__(27);
-
-	var _invoke2 = _interopRequireDefault(_invoke);
-
-	var _isEmpty = __webpack_require__(28);
-
-	var _isEmpty2 = _interopRequireDefault(_isEmpty);
-
-	var _isNothing = __webpack_require__(21);
-
-	var _isNothing2 = _interopRequireDefault(_isNothing);
-
-	var _isOneOf = __webpack_require__(9);
-
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-
-	var _isSomething = __webpack_require__(22);
-
-	var _isSomething2 = _interopRequireDefault(_isSomething);
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	var _hasKeys = __webpack_require__(29);
-
-	var _hasKeys2 = _interopRequireDefault(_hasKeys);
-
-	var _keys = __webpack_require__(18);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	var _length = __webpack_require__(13);
-
-	var _length2 = _interopRequireDefault(_length);
-
-	var _merge = __webpack_require__(30);
-
-	var _merge2 = _interopRequireDefault(_merge);
-
-	var _negate = __webpack_require__(31);
-
-	var _negate2 = _interopRequireDefault(_negate);
-
-	var _noArguments = __webpack_require__(32);
-
-	var _noArguments2 = _interopRequireDefault(_noArguments);
-
-	var _noUniqueBetweenSets = __webpack_require__(33);
-
-	var _noUniqueBetweenSets2 = _interopRequireDefault(_noUniqueBetweenSets);
-
-	var _once = __webpack_require__(34);
-
-	var _once2 = _interopRequireDefault(_once);
-
-	var _pipeline = __webpack_require__(35);
-
-	var _pipeline2 = _interopRequireDefault(_pipeline);
-
-	var _poll = __webpack_require__(36);
-
-	var _poll2 = _interopRequireDefault(_poll);
-
-	var _returnItem = __webpack_require__(37);
-
-	var _returnItem2 = _interopRequireDefault(_returnItem);
-
-	var _throttle = __webpack_require__(38);
-
-	var _throttle2 = _interopRequireDefault(_throttle);
-
-	var _throwErrorIfTrue = __webpack_require__(39);
-
-	var _throwErrorIfTrue2 = _interopRequireDefault(_throwErrorIfTrue);
-
-	var _truthyness = __webpack_require__(40);
-
-	var _truthyness2 = _interopRequireDefault(_truthyness);
-
-	var _typeIsValid = __webpack_require__(15);
-
-	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.applyToAllOwnProps = _applyToAllOwnProps2.default;
-	exports.applyToOwnProp = _applyToOwnProp2.default;
-	exports.clone = _clone2.default;
-	exports.debounce = _debounce2.default;
-	exports.emptyFunction = _emptyFunction2.default;
-	exports.extend = _extend2.default;
-	exports.existenceCheck = _existenceCheck2.default;
-	exports.followPath = _followPath2.default;
-	exports.getArgumentsArray = _getArgumentsArray2.default;
-	exports.getOwnProp = _getOwnProp2.default;
-	exports.getProp = _getProp2.default;
-	exports.getType = _getType2.default;
-	exports.halt = _halt2.default;
-	exports.invoke = _invoke2.default;
-	exports.isEmpty = _isEmpty2.default;
-	exports.isNothing = _isNothing2.default;
-	exports.isOneOf = _isOneOf2.default;
-	exports.isSomething = _isSomething2.default;
-	exports.isType = _isType2.default;
-	exports.hasKeys = _hasKeys2.default;
-	exports.keys = _keys2.default;
-	exports.length = _length2.default;
-	exports.merge = _merge2.default;
-	exports.negate = _negate2.default;
-	exports.noArguments = _noArguments2.default;
-	exports.noUniqueBetweenSets = _noUniqueBetweenSets2.default;
-	exports.once = _once2.default;
-	exports.pipeline = _pipeline2.default;
-	exports.poll = _poll2.default;
-	exports.returnItem = _returnItem2.default;
-	exports.throttle = _throttle2.default;
-	exports.throwErrorIfTrue = _throwErrorIfTrue2.default;
-	exports.truthyness = _truthyness2.default;
-	exports.typeIsValid = _typeIsValid2.default;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _applyToOwnProp = __webpack_require__(6);
-
-	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function applyToAllOwnProps(action, obj) {
-		return Object.keys(obj).forEach(function (prop) {
-			return (0, _applyToOwnProp2.default)(action, obj, prop);
-		});
-	}
-
-	exports.default = applyToAllOwnProps;
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function applyToOwnProp(action, obj, prop) {
-		if (obj.hasOwnProperty(prop)) {
-			return action(obj, prop);
-		}
-	}
-
-	exports.default = applyToOwnProp;
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _getType = __webpack_require__(8);
-
-	var _getType2 = _interopRequireDefault(_getType);
-
-	var _isOneOf = __webpack_require__(9);
-
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// Inspired by accepted answer at the following Stack Overflow question:
-	// http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object
-
-
-	function clone(obj) {
-	    var result = void 0;
-	    var copy = void 0;
-
-	    // Handle the 3 simple types (string, number, boolean),
-	    // as well as NaN, null or undefined
-	    if ((0, _isOneOf2.default)(['null', 'undefined', 'NaN', 'string', 'number', 'boolean'], (0, _getType2.default)(obj))) {
-	        result = obj;
-	    } else if (obj instanceof Date) {
-	        // Handle instances of Date
-	        copy = new Date();
-
-	        copy.setTime(obj.getTime());
-
-	        result = copy;
-	    } else if ('array' === (0, _getType2.default)(obj)) {
-	        // Handle arrays
-
-	        copy = [];
-
-	        for (var i = 0, length = obj.length; i < length; i++) {
-	            copy[i] = clone(obj[i]);
-	        }
-
-	        result = copy;
-	    } else if ('object' === (0, _getType2.default)(obj)) {
-	        // Handle objects
-	        copy = {};
-
-	        for (var attr in obj) {
-	            if (obj.hasOwnProperty(attr)) {
-	                copy[attr] = clone(obj[attr]);
-	            }
-	        }
-
-	        result = copy;
-	    }
-
-	    return result;
-	}
-
-	exports.default = clone;
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isOneOf = __webpack_require__(9);
-
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// Returns the type for any passed entitity. 
-	// NaN actually evaluates to 'NaN', not "number" as per Javascript quirkiness.
-	function getType(item) {
-
-		var result = item !== item ? 'NaN' : Object.prototype.toString.call(item).slice(8, -1).toLowerCase();
-
-		result = (0, _isOneOf2.default)(['arguments'], result) ? 'object' : result;
-
-		return result;
-	}
-
-	exports.default = getType;
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function isOneOf(matches, givenItem) {
-		return matches.some(function (match) {
-			return match === givenItem;
-		});
-	}
-
-	exports.default = isOneOf;
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	/* SOURCE: https://davidwalsh.name/javascript-debounce-function */
-
-	// Returns a function, that, as long as it continues to be invoked, will not
-	// be triggered. The function will be called after it stops being called for
-	// N milliseconds. If `immediate` is passed, trigger the function on the
-	// leading edge, instead of the trailing.
-	var debounce = function debounce(func, wait, immediate) {
-		window.console.log('debounce()');
-		var timeout = void 0;
-
-		return function debouncer() {
-			window.console.log('debouncer');
-			var context = this;
-
-			var args = arguments;
-
-			var later = function later() {
-
-				timeout = null;
-
-				if (!immediate) {
-
-					func.apply(context, args);
-				}
-			};
-
-			var callNow = immediate && !timeout;
-
-			clearTimeout(timeout);
-
-			timeout = setTimeout(later, wait);
-
-			if (callNow) {
-
-				func.apply(context, args);
-			}
-		};
-	};
-
-	exports.default = debounce;
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function emptyFunction() {
-		return function () {};
-	}
-
-	exports.default = emptyFunction;
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _length = __webpack_require__(13);
-
-	var _length2 = _interopRequireDefault(_length);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var extend = function extend(o, modifications) {
-		for (var _len = arguments.length, rest = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-			rest[_key - 2] = arguments[_key];
-		}
-
-		if ((0, _length2.default)(rest) > 0) {
-			var extension = extend(o, modifications);
-			var args = rest;
-
-			args.unshift(extension);
-
-			return extend.apply(undefined, args);
-		}
-
-		var F = function F() {};
-
-		if (modifications) {
-			for (var prop in modifications) {
-				o[prop] = modifications[prop];
-			}
-		}
-
-		F.prototype = o;
-
-		return new F();
-	};
-
-	exports.default = extend;
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	var _getType = __webpack_require__(8);
-
-	var _getType2 = _interopRequireDefault(_getType);
-
-	var _keys = __webpack_require__(18);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function length(item) {
-		var result = void 0;
-
-		if ((0, _isType2.default)(['array', 'string', 'function'], item)) {
-			result = item.length;
-		} else if ('object' === (0, _getType2.default)(item)) {
-			result = length((0, _keys2.default)(item));
-		}
-
-		return result;
-	}
-
-	exports.default = length;
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _getType = __webpack_require__(8);
-
-	var _getType2 = _interopRequireDefault(_getType);
-
-	var _typeIsValid = __webpack_require__(15);
-
-	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var isType = function isType(types, item) {
-		var result = void 0;
-
-		if ('array' === (0, _getType2.default)(types)) {
-
-			result = types.some(function (type) {
-				return isType(type, item);
-			});
-		} else if ('string' === (0, _getType2.default)(types)) {
-			var type = types;
-
-			if ((0, _typeIsValid2.default)(type)) {
-				result = type === (0, _getType2.default)(item);
-			} else {
-				throw new TypeError("Invalid type provided: " + type);
-			}
-		}
-
-		return result;
-	};
-
-	exports.default = isType;
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isOneOf = __webpack_require__(9);
-
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-
-	var _constants = __webpack_require__(16);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function typeisValid(givenType) {
-		return (0, _isOneOf2.default)(_constants.ALL_TYPES, givenType);
-	}
-
-	exports.default = typeisValid;
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.ALL_TYPES = undefined;
-
-	var _ALL_TYPES = __webpack_require__(17);
-
-	var _ALL_TYPES2 = _interopRequireDefault(_ALL_TYPES);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.ALL_TYPES = _ALL_TYPES2.default;
-
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	module.exports = ['NaN', 'array', 'boolean', 'date', 'error', 'function', 'null', 'number', 'object', 'regex', 'string', 'undefined'];
-
-/***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function keys(obj) {
-		return Object.keys(obj);
-	}
-
-	exports.default = keys;
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _followPath = __webpack_require__(20);
-
-	var _followPath2 = _interopRequireDefault(_followPath);
-
-	var _isNothing = __webpack_require__(21);
-
-	var _isNothing2 = _interopRequireDefault(_isNothing);
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	var _length = __webpack_require__(13);
-
-	var _length2 = _interopRequireDefault(_length);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var existenceCheck = function existenceCheck(props, obj) {
-		var result = false;
-
-		if ((0, _isNothing2.default)(props) || (0, _length2.default)(props) < 1 || !(0, _isType2.default)(['string', 'array'], props)) {
-			throw new Error("Missing or invalid properties passed to existenceCheck()");
-		}
-
-		try {
-			(0, _followPath2.default)((0, _isType2.default)('array', props) ? props : [props], obj);
-
-			result = true;
-		} catch (ignore) {
-			/* If followPath() throws an error, result will not be set to true. */
-		}
-
-		return result;
-	};
-
-	exports.default = existenceCheck;
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	/**
-	 *
-	 * @name followPath() 
-	 *
-	 * @desc Returns the entity located at the terminus of the 
-	 *     given path within the given object of nested objects.
-	 *
-	 * @param { string[] } path - Array of strings delineating 
-	 *     the path to follow.  
-	 * @param { object } obj - The object where the path will be  
-	 *     followed. 
-	 * @param { object } options - An object for setting options.
-	 *     - @prop { boolean } upsert - If true, in cases where the 
-	 *         property does not exist within the current object, an 
-	 *         empty object will be created at that property. 
-	 *     - @prop { function } terminus - A function that will be 
-	 *         called in order to set the value of the property 
-	 *         located at the terminus of the given path.     
-	 * 
-	 * @returns { any }
-	 *
-	 */
-
-	var followPath = function followPath(path, obj) {
-		var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-
-		var result = void 0;
-
-		if (path.length === 0) {
-			result = obj;
-		} else {
-			var prop = path[0];
-
-			if ((0, _isType2.default)('object', obj)) {
-
-				if (!(prop in obj)) {
-
-					if (path.length === 1 && 'terminus' in options) {
-
-						obj[prop] = options.terminus(obj[prop], obj, prop);
-					} else if ('upsert' in options && options.upsert) {
-
-						obj[prop] = {};
-					} else {
-
-						throw new ReferenceError('The property ' + prop + ' does not exist in the object ' + JSON.stringify(obj));
-					}
-				} else if (path.length === 1 && 'terminus' in options && (0, _isType2.default)('function', options.terminus)) {
-
-					obj[prop] = options.terminus(obj[prop], obj, prop);
-				}
-			} else {
-				throw new Error('The path ' + path + ' is invalid for the entity ' + JSON.stringify(obj));
-			}
-
-			result = followPath(path.slice(1), obj[prop], options);
-		}
-
-		return result;
-	};
-
-	exports.default = followPath;
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isSomething = __webpack_require__(22);
-
-	var _isSomething2 = _interopRequireDefault(_isSomething);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function isNothing(item) {
-		return !(0, _isSomething2.default)(item);
-	}
-
-	exports.default = isNothing;
-
-/***/ },
-/* 22 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function isSomething(item) {
-		return item !== null && item !== undefined;
-	}
-
-	exports.default = isSomething;
-
-/***/ },
-/* 23 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	// Obselete now that ES2015 is here, but
-	// still useful in browsers for a couple of years. 
-
-	function getArgumentsArray(args, start, end) {
-		return Array.prototype.slice.call(args, start, end);
-	}
-
-	exports.default = getArgumentsArray;
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _applyToOwnProp = __webpack_require__(6);
-
-	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
-
-	var _getProp = __webpack_require__(25);
-
-	var _getProp2 = _interopRequireDefault(_getProp);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function getOwnProp(obj, prop) {
-		var result = void 0;
-
-		if (prop in obj) {
-			result = (0, _applyToOwnProp2.default)(_getProp2.default, obj, prop);
-		} else {
-			throw new ReferenceError("The property '" + prop + "' does not exist in the provided object: " + JSON.stringify(obj));
-		}
-
-		return result;
-	}
-
-	exports.default = getOwnProp;
-
-/***/ },
-/* 25 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function getProp(obj, prop) {
-		return obj[prop];
-	}
-
-	exports.default = getProp;
-
-/***/ },
-/* 26 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-	/**
-	 *
-	 * halt() - Pass in a function and some arguments, and 
-	 * 		it returns a function which will call the given 
-	 * 		function with the given arguments.  Good for 
-	 * 		when you want to set up an invocation, without 
-	 * 		actually invoking yet.  
-	 * 
-	 * @param func { function } - Function to invoke. 
-	 * @param args { array } - Arguments to pass on invocation. 
-	 * 
-	 * @returns { function } - Anonymous function which invokes the 
-	 * 		given function with the given arguments.  
-	 * 
-	 */
-
-	function halt(func, args) {
-	  return function () {
-	    func.call.apply(func, [this].concat(_toConsumableArray(args)));
-	  };
-	}
-
-	exports.default = halt;
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	/*==============================
-	=            invoke()            =
-	==============================*/
-
-	var invoke = function invoke(obj, method) {
-		if (obj && method && (0, _isType2.default)('function', obj[method])) {
-			return obj[method]();
-		}
-	};
-
-	/*=====  End of invoke()  ======*/
-
-	exports.default = invoke;
-
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _getType = __webpack_require__(8);
-
-	var _getType2 = _interopRequireDefault(_getType);
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	var _keys = __webpack_require__(18);
-
-	var _keys2 = _interopRequireDefault(_keys);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function isEmpty(item) {
-		var result = void 0;
-
-		if ((0, _isType2.default)(['string', 'array'], item)) {
-			result = item.length === 0;
-		} else if ((0, _isType2.default)('object', item)) {
-			result = isEmpty((0, _keys2.default)(item));
-		} else {
-			throw new Error("isEmpty() cannot be used on {" + item + "} because its type is: " + (0, _getType2.default)(item));
-		}
-
-		return result;
-	}
-
-	exports.default = isEmpty;
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var keyExists = function keyExists(desiredKey, keys) {
-		return keys.some(function (key) {
-			return key === desiredKey;
-		});
-	};
-
-	var hasKeys = function hasKeys(keys, obj) {
-		var result = false;
-
-		if ((0, _isType2.default)(['array', 'string'], keys) && (0, _isType2.default)('object', obj)) {
-
-			if ((0, _isType2.default)('array', keys)) {
-				result = keys.every(function (key) {
-					return keyExists(key, Object.keys(obj));
-				});
-			} else {
-				result = keyExists(keys, Object.keys(obj));
-			}
-		} else {
-			throw new TypeError('The keys and/or object provided are of an invalid type: \n\t\t\t\tkeys: ' + keys + ' \n\t\t\t\tobject: ' + JSON.stringify(obj));
-		}
-
-		return result;
-	};
-
-	exports.default = hasKeys;
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _applyToAllOwnProps = __webpack_require__(5);
-
-	var _applyToAllOwnProps2 = _interopRequireDefault(_applyToAllOwnProps);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var addPropTo = function addPropTo(receiver) {
-		return function (obj, prop) {
-			receiver[prop] = obj[prop];
-		};
-	};
-
-	var merge = function merge(first, second) {
-		(0, _applyToAllOwnProps2.default)(addPropTo(first), second);
-	};
-
-	exports.default = merge;
-
-/***/ },
-/* 31 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function negate(action) {
-		return function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-
-			return !action.apply(this, args);
-		};
-	}
-
-	exports.default = negate;
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isEmpty = __webpack_require__(28);
-
-	var _isEmpty2 = _interopRequireDefault(_isEmpty);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var noArguments = function noArguments(args) {
-		return (0, _isEmpty2.default)(args);
-	};
-
-	exports.default = noArguments;
-
-/***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isOneOf = __webpack_require__(9);
-
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var noUniqueBetweenSets = function noUniqueBetweenSets(first, second) {
-
-		if ((0, _isType2.default)('array', first) && (0, _isType2.default)('array', second)) {
-
-			return first.every(function (item) {
-				return (0, _isOneOf2.default)(second, item);
-			}) && second.every(function (item) {
-				return (0, _isOneOf2.default)(first, item);
-			});
-		}
-	};
-
-	exports.default = noUniqueBetweenSets;
-
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	// SOURCE: https://leanpub.com/javascriptallongesix/read
-
-	// N.B: This will not work within constructors!
-	// If used within a constructor's prototype, all
-	// instances will have the same once function,
-	// and the desired affect will not be achieved. 
-	var once = function once(fn) {
-		var hasRun = false;
-
-		return function () {
-			if (hasRun) return;
-
-			hasRun = true;
-
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-
-			return fn.apply(this, args);
-		};
-	};
-
-	exports.default = once;
-
-/***/ },
-/* 35 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var pipeline = function pipeline() {
-		for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
-			fns[_key] = arguments[_key];
-		}
-
-		return function (value) {
-			return fns.reduce(function (acc, fn) {
-				return fn(acc);
-			}, value);
-		};
-	};
-
-	exports.default = pipeline;
-
-/***/ },
-/* 36 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	/*==============================
-	=            poll()            =
-	==============================*/
-
-	var poll = function poll(func) {
-		var interval = arguments.length <= 1 || arguments[1] === undefined ? 100 : arguments[1];
-		var timeout = arguments[2];
-
-
-		var endTime = Number(new Date()) + (timeout || 2000);
-
-		return new Promise(function checkPolledCondition(resolve, reject) {
-
-			var result = func();
-
-			if (result) {
-
-				// If the condition has been met, we're done
-				resolve(result);
-			} else if (Number(new Date()) < endTime) {
-
-				// If the condition has not been met but the timeout
-				// has not elapsed, try again
-				setTimeout(function () {
-					return checkPolledCondition(resolve, reject);
-				}, interval);
-			} else {
-
-				// Reject when the timeout expires
-				reject(new Error("poll() - Timeout of " + timeout + " milliseconds exceeded without the following condition check returning true: " + func));
-			}
-		});
-	};
-
-	/*=====  End of poll()  ======*/
-
-	exports.default = poll;
-
-/***/ },
-/* 37 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function returnItem(item) {
-		return function () {
-			return item;
-		};
-	}
-
-	exports.default = returnItem;
-
-/***/ },
-/* 38 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var throttle = function throttle(fn) {
-		var threshhold = arguments.length <= 1 || arguments[1] === undefined ? 250 : arguments[1];
-		var context = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
-
-
-		var last = void 0;
-		var deferTimer = void 0;
-
-		return function throttler() {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-
-			var now = +new Date();
-
-			if (last && now < last + threshhold) {
-
-				// hold onto it
-				clearTimeout(deferTimer);
-
-				deferTimer = setTimeout(function () {
-
-					last = now;
-
-					fn.apply(context, args);
-				}, threshhold);
-			} else {
-
-				last = now;
-
-				fn.apply(context, args);
-			}
-		};
-	};
-
-	exports.default = throttle;
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _isSomething = __webpack_require__(22);
-
-	var _isSomething2 = _interopRequireDefault(_isSomething);
-
-	var _isType = __webpack_require__(14);
-
-	var _isType2 = _interopRequireDefault(_isType);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function throwErrorIfTrue(action, item, error) {
-		if ((0, _isType2.default)('function', action) && action(item)) {
-
-			if ((0, _isSomething2.default)(error) && (0, _isType2.default)('error', error)) {
-				throw error;
-			} else {
-				throw new Error('Threw error because given action \'' + action + '\' on item \'' + item + '\' returned true.');
-			}
-		}
-	}
-
-	exports.default = throwErrorIfTrue;
-
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function truthyness(item) {
-		return !!item;
-	}
-
-	exports.default = truthyness;
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
-
-	var _events = __webpack_require__(42);
-
-	var _util = __webpack_require__(43);
-
-	/*==========================================
-	=            createWebGlManager            =
-	==========================================*/
-
-	var createWebGlManager = function createWebGlManager(canvas) {
-
-		var WebGlManager = function WebGlManager(canvas) {
-
-			this.canvas = canvas;
-		};
-
-		// Inherit from EventEmitter
-		(0, _util.inherits)(WebGlManager, _events.EventEmitter);
-
-		// Extend WebGlManager prototype with
-		// desired functionality.
-		_extends(WebGlManager.prototype, {
-			canUseWebGl: function canUseWebGl() {
-
-				if (!window.WebGLRenderingContext) return false;
-
-				var testCanvas = document.createElement('canvas');
-
-				var result = void 0;
-
-				if (testCanvas && 'getContext' in testCanvas) {
-
-					var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
-
-					// Reduce the array of webGlNames to a single boolean,
-					// which represents the result of canUseWebGl(). 
-					result = webGlNames.reduce(function (prev, curr) {
-
-						if (prev) return prev; // If 'prev' is truthy, we can use WebGL.
-
-						var context = testCanvas.getContext(curr);
-
-						if (context && context instanceof WebGLRenderingContext) return true;
-					}, false); // Start with false (default)
-				}
-
-				return result;
-			},
-			initGl: function initGl() {
-				var _this = this;
-
-				if (this.canvas) {
-
-					this.canvas.addEventListener('webglcontextrestored', function () {
-						return _this.emit('webglcontextrestored');
-					});
-				}
-			}
-		});
-
-		// Return class instance which has inherited
-		// our desired functionality
-		return new WebGlManager(canvas);
-	};
-
-	/*=====  End of createWebGlManager  ======*/
-
-	exports.default = createWebGlManager;
-
-/***/ },
-/* 42 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -2396,7 +1066,1301 @@
 
 
 /***/ },
-/* 43 */
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.typeIsValid = exports.truthyness = exports.throwErrorIfTrue = exports.throttle = exports.returnItem = exports.poll = exports.pipeline = exports.once = exports.noUniqueBetweenSets = exports.noArguments = exports.negate = exports.merge = exports.length = exports.keys = exports.hasKeys = exports.isType = exports.isSomething = exports.isOneOf = exports.isNothing = exports.isEmpty = exports.invoke = exports.halt = exports.getType = exports.getProp = exports.getOwnProp = exports.getArgumentsArray = exports.followPath = exports.existenceCheck = exports.extend = exports.emptyFunction = exports.debounce = exports.clone = exports.applyToOwnProp = exports.applyToAllOwnProps = undefined;
+
+	var _applyToAllOwnProps = __webpack_require__(6);
+
+	var _applyToAllOwnProps2 = _interopRequireDefault(_applyToAllOwnProps);
+
+	var _applyToOwnProp = __webpack_require__(7);
+
+	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
+
+	var _clone = __webpack_require__(8);
+
+	var _clone2 = _interopRequireDefault(_clone);
+
+	var _debounce = __webpack_require__(11);
+
+	var _debounce2 = _interopRequireDefault(_debounce);
+
+	var _emptyFunction = __webpack_require__(12);
+
+	var _emptyFunction2 = _interopRequireDefault(_emptyFunction);
+
+	var _extend = __webpack_require__(13);
+
+	var _extend2 = _interopRequireDefault(_extend);
+
+	var _existenceCheck = __webpack_require__(20);
+
+	var _existenceCheck2 = _interopRequireDefault(_existenceCheck);
+
+	var _followPath = __webpack_require__(21);
+
+	var _followPath2 = _interopRequireDefault(_followPath);
+
+	var _getArgumentsArray = __webpack_require__(24);
+
+	var _getArgumentsArray2 = _interopRequireDefault(_getArgumentsArray);
+
+	var _getOwnProp = __webpack_require__(25);
+
+	var _getOwnProp2 = _interopRequireDefault(_getOwnProp);
+
+	var _getProp = __webpack_require__(26);
+
+	var _getProp2 = _interopRequireDefault(_getProp);
+
+	var _getType = __webpack_require__(9);
+
+	var _getType2 = _interopRequireDefault(_getType);
+
+	var _halt = __webpack_require__(27);
+
+	var _halt2 = _interopRequireDefault(_halt);
+
+	var _invoke = __webpack_require__(28);
+
+	var _invoke2 = _interopRequireDefault(_invoke);
+
+	var _isEmpty = __webpack_require__(29);
+
+	var _isEmpty2 = _interopRequireDefault(_isEmpty);
+
+	var _isNothing = __webpack_require__(22);
+
+	var _isNothing2 = _interopRequireDefault(_isNothing);
+
+	var _isOneOf = __webpack_require__(10);
+
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+
+	var _isSomething = __webpack_require__(23);
+
+	var _isSomething2 = _interopRequireDefault(_isSomething);
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	var _hasKeys = __webpack_require__(30);
+
+	var _hasKeys2 = _interopRequireDefault(_hasKeys);
+
+	var _keys = __webpack_require__(19);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	var _length = __webpack_require__(14);
+
+	var _length2 = _interopRequireDefault(_length);
+
+	var _merge = __webpack_require__(31);
+
+	var _merge2 = _interopRequireDefault(_merge);
+
+	var _negate = __webpack_require__(32);
+
+	var _negate2 = _interopRequireDefault(_negate);
+
+	var _noArguments = __webpack_require__(33);
+
+	var _noArguments2 = _interopRequireDefault(_noArguments);
+
+	var _noUniqueBetweenSets = __webpack_require__(34);
+
+	var _noUniqueBetweenSets2 = _interopRequireDefault(_noUniqueBetweenSets);
+
+	var _once = __webpack_require__(35);
+
+	var _once2 = _interopRequireDefault(_once);
+
+	var _pipeline = __webpack_require__(36);
+
+	var _pipeline2 = _interopRequireDefault(_pipeline);
+
+	var _poll = __webpack_require__(37);
+
+	var _poll2 = _interopRequireDefault(_poll);
+
+	var _returnItem = __webpack_require__(38);
+
+	var _returnItem2 = _interopRequireDefault(_returnItem);
+
+	var _throttle = __webpack_require__(39);
+
+	var _throttle2 = _interopRequireDefault(_throttle);
+
+	var _throwErrorIfTrue = __webpack_require__(40);
+
+	var _throwErrorIfTrue2 = _interopRequireDefault(_throwErrorIfTrue);
+
+	var _truthyness = __webpack_require__(41);
+
+	var _truthyness2 = _interopRequireDefault(_truthyness);
+
+	var _typeIsValid = __webpack_require__(16);
+
+	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.applyToAllOwnProps = _applyToAllOwnProps2.default;
+	exports.applyToOwnProp = _applyToOwnProp2.default;
+	exports.clone = _clone2.default;
+	exports.debounce = _debounce2.default;
+	exports.emptyFunction = _emptyFunction2.default;
+	exports.extend = _extend2.default;
+	exports.existenceCheck = _existenceCheck2.default;
+	exports.followPath = _followPath2.default;
+	exports.getArgumentsArray = _getArgumentsArray2.default;
+	exports.getOwnProp = _getOwnProp2.default;
+	exports.getProp = _getProp2.default;
+	exports.getType = _getType2.default;
+	exports.halt = _halt2.default;
+	exports.invoke = _invoke2.default;
+	exports.isEmpty = _isEmpty2.default;
+	exports.isNothing = _isNothing2.default;
+	exports.isOneOf = _isOneOf2.default;
+	exports.isSomething = _isSomething2.default;
+	exports.isType = _isType2.default;
+	exports.hasKeys = _hasKeys2.default;
+	exports.keys = _keys2.default;
+	exports.length = _length2.default;
+	exports.merge = _merge2.default;
+	exports.negate = _negate2.default;
+	exports.noArguments = _noArguments2.default;
+	exports.noUniqueBetweenSets = _noUniqueBetweenSets2.default;
+	exports.once = _once2.default;
+	exports.pipeline = _pipeline2.default;
+	exports.poll = _poll2.default;
+	exports.returnItem = _returnItem2.default;
+	exports.throttle = _throttle2.default;
+	exports.throwErrorIfTrue = _throwErrorIfTrue2.default;
+	exports.truthyness = _truthyness2.default;
+	exports.typeIsValid = _typeIsValid2.default;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _applyToOwnProp = __webpack_require__(7);
+
+	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function applyToAllOwnProps(action, obj) {
+		return Object.keys(obj).forEach(function (prop) {
+			return (0, _applyToOwnProp2.default)(action, obj, prop);
+		});
+	}
+
+	exports.default = applyToAllOwnProps;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function applyToOwnProp(action, obj, prop) {
+		if (obj.hasOwnProperty(prop)) {
+			return action(obj, prop);
+		}
+	}
+
+	exports.default = applyToOwnProp;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _getType = __webpack_require__(9);
+
+	var _getType2 = _interopRequireDefault(_getType);
+
+	var _isOneOf = __webpack_require__(10);
+
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// Inspired by accepted answer at the following Stack Overflow question:
+	// http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object
+
+
+	function clone(obj) {
+	    var result = void 0;
+	    var copy = void 0;
+
+	    // Handle the 3 simple types (string, number, boolean),
+	    // as well as NaN, null or undefined
+	    if ((0, _isOneOf2.default)(['null', 'undefined', 'NaN', 'string', 'number', 'boolean'], (0, _getType2.default)(obj))) {
+	        result = obj;
+	    } else if (obj instanceof Date) {
+	        // Handle instances of Date
+	        copy = new Date();
+
+	        copy.setTime(obj.getTime());
+
+	        result = copy;
+	    } else if ('array' === (0, _getType2.default)(obj)) {
+	        // Handle arrays
+
+	        copy = [];
+
+	        for (var i = 0, length = obj.length; i < length; i++) {
+	            copy[i] = clone(obj[i]);
+	        }
+
+	        result = copy;
+	    } else if ('object' === (0, _getType2.default)(obj)) {
+	        // Handle objects
+	        copy = {};
+
+	        for (var attr in obj) {
+	            if (obj.hasOwnProperty(attr)) {
+	                copy[attr] = clone(obj[attr]);
+	            }
+	        }
+
+	        result = copy;
+	    }
+
+	    return result;
+	}
+
+	exports.default = clone;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isOneOf = __webpack_require__(10);
+
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// Returns the type for any passed entitity. 
+	// NaN actually evaluates to 'NaN', not "number" as per Javascript quirkiness.
+	function getType(item) {
+
+		var result = item !== item ? 'NaN' : Object.prototype.toString.call(item).slice(8, -1).toLowerCase();
+
+		result = (0, _isOneOf2.default)(['arguments'], result) ? 'object' : result;
+
+		return result;
+	}
+
+	exports.default = getType;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function isOneOf(matches, givenItem) {
+		return matches.some(function (match) {
+			return match === givenItem;
+		});
+	}
+
+	exports.default = isOneOf;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/* SOURCE: https://davidwalsh.name/javascript-debounce-function */
+
+	// Returns a function, that, as long as it continues to be invoked, will not
+	// be triggered. The function will be called after it stops being called for
+	// N milliseconds. If `immediate` is passed, trigger the function on the
+	// leading edge, instead of the trailing.
+	var debounce = function debounce(func, wait, immediate) {
+		window.console.log('debounce()');
+		var timeout = void 0;
+
+		return function debouncer() {
+			window.console.log('debouncer');
+			var context = this;
+
+			var args = arguments;
+
+			var later = function later() {
+
+				timeout = null;
+
+				if (!immediate) {
+
+					func.apply(context, args);
+				}
+			};
+
+			var callNow = immediate && !timeout;
+
+			clearTimeout(timeout);
+
+			timeout = setTimeout(later, wait);
+
+			if (callNow) {
+
+				func.apply(context, args);
+			}
+		};
+	};
+
+	exports.default = debounce;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function emptyFunction() {
+		return function () {};
+	}
+
+	exports.default = emptyFunction;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _length = __webpack_require__(14);
+
+	var _length2 = _interopRequireDefault(_length);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var extend = function extend(o, modifications) {
+		for (var _len = arguments.length, rest = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+			rest[_key - 2] = arguments[_key];
+		}
+
+		if ((0, _length2.default)(rest) > 0) {
+			var extension = extend(o, modifications);
+			var args = rest;
+
+			args.unshift(extension);
+
+			return extend.apply(undefined, args);
+		}
+
+		var F = function F() {};
+
+		if (modifications) {
+			for (var prop in modifications) {
+				o[prop] = modifications[prop];
+			}
+		}
+
+		F.prototype = o;
+
+		return new F();
+	};
+
+	exports.default = extend;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	var _getType = __webpack_require__(9);
+
+	var _getType2 = _interopRequireDefault(_getType);
+
+	var _keys = __webpack_require__(19);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function length(item) {
+		var result = void 0;
+
+		if ((0, _isType2.default)(['array', 'string', 'function'], item)) {
+			result = item.length;
+		} else if ('object' === (0, _getType2.default)(item)) {
+			result = length((0, _keys2.default)(item));
+		}
+
+		return result;
+	}
+
+	exports.default = length;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _getType = __webpack_require__(9);
+
+	var _getType2 = _interopRequireDefault(_getType);
+
+	var _typeIsValid = __webpack_require__(16);
+
+	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var isType = function isType(types, item) {
+		var result = void 0;
+
+		if ('array' === (0, _getType2.default)(types)) {
+
+			result = types.some(function (type) {
+				return isType(type, item);
+			});
+		} else if ('string' === (0, _getType2.default)(types)) {
+			var type = types;
+
+			if ((0, _typeIsValid2.default)(type)) {
+				result = type === (0, _getType2.default)(item);
+			} else {
+				throw new TypeError("Invalid type provided: " + type);
+			}
+		}
+
+		return result;
+	};
+
+	exports.default = isType;
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isOneOf = __webpack_require__(10);
+
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+
+	var _constants = __webpack_require__(17);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function typeisValid(givenType) {
+		return (0, _isOneOf2.default)(_constants.ALL_TYPES, givenType);
+	}
+
+	exports.default = typeisValid;
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.ALL_TYPES = undefined;
+
+	var _ALL_TYPES = __webpack_require__(18);
+
+	var _ALL_TYPES2 = _interopRequireDefault(_ALL_TYPES);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.ALL_TYPES = _ALL_TYPES2.default;
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = ['NaN', 'array', 'boolean', 'date', 'error', 'function', 'null', 'number', 'object', 'regex', 'string', 'undefined'];
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function keys(obj) {
+		return Object.keys(obj);
+	}
+
+	exports.default = keys;
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _followPath = __webpack_require__(21);
+
+	var _followPath2 = _interopRequireDefault(_followPath);
+
+	var _isNothing = __webpack_require__(22);
+
+	var _isNothing2 = _interopRequireDefault(_isNothing);
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	var _length = __webpack_require__(14);
+
+	var _length2 = _interopRequireDefault(_length);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var existenceCheck = function existenceCheck(props, obj) {
+		var result = false;
+
+		if ((0, _isNothing2.default)(props) || (0, _length2.default)(props) < 1 || !(0, _isType2.default)(['string', 'array'], props)) {
+			throw new Error("Missing or invalid properties passed to existenceCheck()");
+		}
+
+		try {
+			(0, _followPath2.default)((0, _isType2.default)('array', props) ? props : [props], obj);
+
+			result = true;
+		} catch (ignore) {
+			/* If followPath() throws an error, result will not be set to true. */
+		}
+
+		return result;
+	};
+
+	exports.default = existenceCheck;
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 *
+	 * @name followPath() 
+	 *
+	 * @desc Returns the entity located at the terminus of the 
+	 *     given path within the given object of nested objects.
+	 *
+	 * @param { string[] } path - Array of strings delineating 
+	 *     the path to follow.  
+	 * @param { object } obj - The object where the path will be  
+	 *     followed. 
+	 * @param { object } options - An object for setting options.
+	 *     - @prop { boolean } upsert - If true, in cases where the 
+	 *         property does not exist within the current object, an 
+	 *         empty object will be created at that property. 
+	 *     - @prop { function } terminus - A function that will be 
+	 *         called in order to set the value of the property 
+	 *         located at the terminus of the given path.     
+	 * 
+	 * @returns { any }
+	 *
+	 */
+
+	var followPath = function followPath(path, obj) {
+		var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+		var result = void 0;
+
+		if (path.length === 0) {
+			result = obj;
+		} else {
+			var prop = path[0];
+
+			if ((0, _isType2.default)('object', obj)) {
+
+				if (!(prop in obj)) {
+
+					if (path.length === 1 && 'terminus' in options) {
+
+						obj[prop] = options.terminus(obj[prop], obj, prop);
+					} else if ('upsert' in options && options.upsert) {
+
+						obj[prop] = {};
+					} else {
+
+						throw new ReferenceError('The property ' + prop + ' does not exist in the object ' + JSON.stringify(obj));
+					}
+				} else if (path.length === 1 && 'terminus' in options && (0, _isType2.default)('function', options.terminus)) {
+
+					obj[prop] = options.terminus(obj[prop], obj, prop);
+				}
+			} else {
+				throw new Error('The path ' + path + ' is invalid for the entity ' + JSON.stringify(obj));
+			}
+
+			result = followPath(path.slice(1), obj[prop], options);
+		}
+
+		return result;
+	};
+
+	exports.default = followPath;
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isSomething = __webpack_require__(23);
+
+	var _isSomething2 = _interopRequireDefault(_isSomething);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function isNothing(item) {
+		return !(0, _isSomething2.default)(item);
+	}
+
+	exports.default = isNothing;
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function isSomething(item) {
+		return item !== null && item !== undefined;
+	}
+
+	exports.default = isSomething;
+
+/***/ },
+/* 24 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	// Obselete now that ES2015 is here, but
+	// still useful in browsers for a couple of years. 
+
+	function getArgumentsArray(args, start, end) {
+		return Array.prototype.slice.call(args, start, end);
+	}
+
+	exports.default = getArgumentsArray;
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _applyToOwnProp = __webpack_require__(7);
+
+	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
+
+	var _getProp = __webpack_require__(26);
+
+	var _getProp2 = _interopRequireDefault(_getProp);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function getOwnProp(obj, prop) {
+		var result = void 0;
+
+		if (prop in obj) {
+			result = (0, _applyToOwnProp2.default)(_getProp2.default, obj, prop);
+		} else {
+			throw new ReferenceError("The property '" + prop + "' does not exist in the provided object: " + JSON.stringify(obj));
+		}
+
+		return result;
+	}
+
+	exports.default = getOwnProp;
+
+/***/ },
+/* 26 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function getProp(obj, prop) {
+		return obj[prop];
+	}
+
+	exports.default = getProp;
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	/**
+	 *
+	 * halt() - Pass in a function and some arguments, and 
+	 * 		it returns a function which will call the given 
+	 * 		function with the given arguments.  Good for 
+	 * 		when you want to set up an invocation, without 
+	 * 		actually invoking yet.  
+	 * 
+	 * @param func { function } - Function to invoke. 
+	 * @param args { array } - Arguments to pass on invocation. 
+	 * 
+	 * @returns { function } - Anonymous function which invokes the 
+	 * 		given function with the given arguments.  
+	 * 
+	 */
+
+	function halt(func, args) {
+	  return function () {
+	    func.call.apply(func, [this].concat(_toConsumableArray(args)));
+	  };
+	}
+
+	exports.default = halt;
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/*==============================
+	=            invoke()            =
+	==============================*/
+
+	var invoke = function invoke(obj, method) {
+		if (obj && method && (0, _isType2.default)('function', obj[method])) {
+			return obj[method]();
+		}
+	};
+
+	/*=====  End of invoke()  ======*/
+
+	exports.default = invoke;
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _getType = __webpack_require__(9);
+
+	var _getType2 = _interopRequireDefault(_getType);
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	var _keys = __webpack_require__(19);
+
+	var _keys2 = _interopRequireDefault(_keys);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function isEmpty(item) {
+		var result = void 0;
+
+		if ((0, _isType2.default)(['string', 'array'], item)) {
+			result = item.length === 0;
+		} else if ((0, _isType2.default)('object', item)) {
+			result = isEmpty((0, _keys2.default)(item));
+		} else {
+			throw new Error("isEmpty() cannot be used on {" + item + "} because its type is: " + (0, _getType2.default)(item));
+		}
+
+		return result;
+	}
+
+	exports.default = isEmpty;
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var keyExists = function keyExists(desiredKey, keys) {
+		return keys.some(function (key) {
+			return key === desiredKey;
+		});
+	};
+
+	var hasKeys = function hasKeys(keys, obj) {
+		var result = false;
+
+		if ((0, _isType2.default)(['array', 'string'], keys) && (0, _isType2.default)('object', obj)) {
+
+			if ((0, _isType2.default)('array', keys)) {
+				result = keys.every(function (key) {
+					return keyExists(key, Object.keys(obj));
+				});
+			} else {
+				result = keyExists(keys, Object.keys(obj));
+			}
+		} else {
+			throw new TypeError('The keys and/or object provided are of an invalid type: \n\t\t\t\tkeys: ' + keys + ' \n\t\t\t\tobject: ' + JSON.stringify(obj));
+		}
+
+		return result;
+	};
+
+	exports.default = hasKeys;
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _applyToAllOwnProps = __webpack_require__(6);
+
+	var _applyToAllOwnProps2 = _interopRequireDefault(_applyToAllOwnProps);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var addPropTo = function addPropTo(receiver) {
+		return function (obj, prop) {
+			receiver[prop] = obj[prop];
+		};
+	};
+
+	var merge = function merge(first, second) {
+		(0, _applyToAllOwnProps2.default)(addPropTo(first), second);
+	};
+
+	exports.default = merge;
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function negate(action) {
+		return function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			return !action.apply(this, args);
+		};
+	}
+
+	exports.default = negate;
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isEmpty = __webpack_require__(29);
+
+	var _isEmpty2 = _interopRequireDefault(_isEmpty);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var noArguments = function noArguments(args) {
+		return (0, _isEmpty2.default)(args);
+	};
+
+	exports.default = noArguments;
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isOneOf = __webpack_require__(10);
+
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var noUniqueBetweenSets = function noUniqueBetweenSets(first, second) {
+
+		if ((0, _isType2.default)('array', first) && (0, _isType2.default)('array', second)) {
+
+			return first.every(function (item) {
+				return (0, _isOneOf2.default)(second, item);
+			}) && second.every(function (item) {
+				return (0, _isOneOf2.default)(first, item);
+			});
+		}
+	};
+
+	exports.default = noUniqueBetweenSets;
+
+/***/ },
+/* 35 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	// SOURCE: https://leanpub.com/javascriptallongesix/read
+
+	// N.B: This will not work within constructors!
+	// If used within a constructor's prototype, all
+	// instances will have the same once function,
+	// and the desired affect will not be achieved. 
+	var once = function once(fn) {
+		var hasRun = false;
+
+		return function () {
+			if (hasRun) return;
+
+			hasRun = true;
+
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			return fn.apply(this, args);
+		};
+	};
+
+	exports.default = once;
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var pipeline = function pipeline() {
+		for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
+			fns[_key] = arguments[_key];
+		}
+
+		return function (value) {
+			return fns.reduce(function (acc, fn) {
+				return fn(acc);
+			}, value);
+		};
+	};
+
+	exports.default = pipeline;
+
+/***/ },
+/* 37 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/*==============================
+	=            poll()            =
+	==============================*/
+
+	var poll = function poll(func) {
+		var interval = arguments.length <= 1 || arguments[1] === undefined ? 100 : arguments[1];
+		var timeout = arguments[2];
+
+
+		var endTime = Number(new Date()) + (timeout || 2000);
+
+		return new Promise(function checkPolledCondition(resolve, reject) {
+
+			var result = func();
+
+			if (result) {
+
+				// If the condition has been met, we're done
+				resolve(result);
+			} else if (Number(new Date()) < endTime) {
+
+				// If the condition has not been met but the timeout
+				// has not elapsed, try again
+				setTimeout(function () {
+					return checkPolledCondition(resolve, reject);
+				}, interval);
+			} else {
+
+				// Reject when the timeout expires
+				reject(new Error("poll() - Timeout of " + timeout + " milliseconds exceeded without the following condition check returning true: " + func));
+			}
+		});
+	};
+
+	/*=====  End of poll()  ======*/
+
+	exports.default = poll;
+
+/***/ },
+/* 38 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function returnItem(item) {
+		return function () {
+			return item;
+		};
+	}
+
+	exports.default = returnItem;
+
+/***/ },
+/* 39 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var throttle = function throttle(fn) {
+		var threshhold = arguments.length <= 1 || arguments[1] === undefined ? 250 : arguments[1];
+		var context = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
+
+
+		var last = void 0;
+		var deferTimer = void 0;
+
+		return function throttler() {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			var now = +new Date();
+
+			if (last && now < last + threshhold) {
+
+				// hold onto it
+				clearTimeout(deferTimer);
+
+				deferTimer = setTimeout(function () {
+
+					last = now;
+
+					fn.apply(context, args);
+				}, threshhold);
+			} else {
+
+				last = now;
+
+				fn.apply(context, args);
+			}
+		};
+	};
+
+	exports.default = throttle;
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _isSomething = __webpack_require__(23);
+
+	var _isSomething2 = _interopRequireDefault(_isSomething);
+
+	var _isType = __webpack_require__(15);
+
+	var _isType2 = _interopRequireDefault(_isType);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function throwErrorIfTrue(action, item, error) {
+		if ((0, _isType2.default)('function', action) && action(item)) {
+
+			if ((0, _isSomething2.default)(error) && (0, _isType2.default)('error', error)) {
+				throw error;
+			} else {
+				throw new Error('Threw error because given action \'' + action + '\' on item \'' + item + '\' returned true.');
+			}
+		}
+	}
+
+	exports.default = throwErrorIfTrue;
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function truthyness(item) {
+		return !!item;
+	}
+
+	exports.default = truthyness;
+
+/***/ },
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2924,7 +2888,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(45);
+	exports.isBuffer = __webpack_require__(44);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -2968,7 +2932,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(46);
+	exports.inherits = __webpack_require__(45);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -2986,10 +2950,10 @@
 	  return Object.prototype.hasOwnProperty.call(obj, prop);
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(44)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(43)))
 
 /***/ },
-/* 44 */
+/* 43 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -3089,7 +3053,7 @@
 
 
 /***/ },
-/* 45 */
+/* 44 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -3100,7 +3064,7 @@
 	}
 
 /***/ },
-/* 46 */
+/* 45 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -3127,6 +3091,86 @@
 	  }
 	}
 
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
+
+	var _events = __webpack_require__(4);
+
+	var _util = __webpack_require__(42);
+
+	/*==========================================
+	=            createWebGlManager            =
+	==========================================*/
+
+	var createWebGlManager = function createWebGlManager(canvas) {
+
+		var WebGlManager = function WebGlManager(canvas) {
+
+			this.canvas = canvas;
+		};
+
+		// Inherit from EventEmitter
+		(0, _util.inherits)(WebGlManager, _events.EventEmitter);
+
+		// Extend WebGlManager prototype with
+		// desired functionality.
+		_extends(WebGlManager.prototype, {
+			canUseWebGl: function canUseWebGl() {
+
+				if (!window.WebGLRenderingContext) return false;
+
+				var testCanvas = document.createElement('canvas');
+
+				var result = void 0;
+
+				if (testCanvas && 'getContext' in testCanvas) {
+
+					var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
+
+					// Reduce the array of webGlNames to a single boolean,
+					// which represents the result of canUseWebGl(). 
+					result = webGlNames.reduce(function (prev, curr) {
+
+						if (prev) return prev; // If 'prev' is truthy, we can use WebGL.
+
+						var context = testCanvas.getContext(curr);
+
+						if (context && context instanceof WebGLRenderingContext) return true;
+					}, false); // Start with false (default)
+				}
+
+				return result;
+			},
+			initGl: function initGl() {
+				var _this = this;
+
+				if (this.canvas) {
+
+					this.canvas.addEventListener('webglcontextrestored', function () {
+						return _this.emit('webglcontextrestored');
+					});
+				}
+			}
+		});
+
+		// Return class instance which has inherited
+		// our desired functionality
+		return new WebGlManager(canvas);
+	};
+
+	/*=====  End of createWebGlManager  ======*/
+
+	exports.default = createWebGlManager;
 
 /***/ },
 /* 47 */

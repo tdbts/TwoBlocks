@@ -1,6 +1,8 @@
 /* global window */
 
+import { EventEmitter } from 'events'; 
 import { isOneOf } from './utils/utils'; 
+import { inherits } from 'util'; 
 
 /*=====================================
 =            createSpinner()            =
@@ -30,11 +32,15 @@ const createSpinner = (panorma, options = {}) => {
 	const SEGMENTS_DEFAULT  	= 4; 
 	const VALID_SEGMENTS 		= [2, 4, 6, 9, 12]; 
 
+	let _started = false; 
+	let _startHeading = null; 
 	let segments = null; 
 	let delay = null; 
 	let increment; 
 	let interval; 
 	let timer;  
+
+	let spinner = null; 
 
 	const handlePunctuationOption = function handlePunctuationOption(options) {
 
@@ -145,12 +151,20 @@ const createSpinner = (panorma, options = {}) => {
 	const api = {
 
 		spin() {
-
+			// window.console.log('spin()'); 
+			// window.console.log("_startHeading:", _startHeading); 
 			try {
 
 				const pov = incrementHeading(panorma.getPov(), increment); 
+				// window.console.log("pov.heading:", pov.heading); 
 
 				panorma.setPov(pov); 
+				
+				if ((pov.heading % 360) === _startHeading) {
+
+					spinner.emit('revolution'); 
+
+				}
 
 				if (punctuated) {
 
@@ -168,9 +182,23 @@ const createSpinner = (panorma, options = {}) => {
 
 		start() {
 
+			if (!(_started)) {
+
+				_started = true; 
+
+				_startHeading = panorma.getPov().heading; 
+			
+			}
+
 			clearInterval(timer); 
 
-			timer = setInterval(this.spin, interval); 
+			timer = setInterval(() => this.spin(), interval); 
+
+		}, 
+
+		started() {
+
+			return _started; 
 
 		}, 
 
@@ -182,7 +210,19 @@ const createSpinner = (panorma, options = {}) => {
 	
 	};
 
-	return api; 
+	/*----------  Create Spinner instance  ----------*/
+	
+	// Create Spinner() constructor to inherit EventEmitter functionality 
+	const Spinner = function Spinner() {}; 
+
+	inherits(Spinner, EventEmitter); 
+
+	// Add API methods to prototype 
+	Object.assign(Spinner.prototype, api); 
+
+	spinner = new Spinner();
+
+	return spinner;  
 
 };
 
