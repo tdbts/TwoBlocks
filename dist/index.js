@@ -66,7 +66,7 @@
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, google */
 
 	var _createPanorama = __webpack_require__(2);
 
@@ -76,17 +76,19 @@
 
 	var _createSpinner2 = _interopRequireDefault(_createSpinner);
 
-	var _createWebGlManager = __webpack_require__(40);
+	var _createWebGlManager = __webpack_require__(41);
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
-	var _selectRandomValueOfRange = __webpack_require__(46);
+	var _selectRandomValueOfRange = __webpack_require__(47);
 
 	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
 
+	var _utils = __webpack_require__(4);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /* global document, google */
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	/*=================================
 	=            twoBlocks()          =
@@ -269,7 +271,16 @@
 		/*----------  Initialization  ----------*/
 
 		injectGapiScript().then(function () {
-			return init(canvas, latitude, longitude);
+
+			var geometryLibraryLoaded = function geometryLibraryLoaded() {
+				return 'geometry' in google.maps;
+			};
+
+			var pollForGeometryLibrary = (0, _utils.poll)(geometryLibraryLoaded, 25, 3000);
+
+			return { pollForGeometryLibrary: pollForGeometryLibrary };
+		}).then(function (appComponents) {
+			return _extends({}, appComponents, init(canvas, latitude, longitude));
 		})
 
 		// Convert array of lat / lng values to an array
@@ -362,89 +373,81 @@
 		// NYC polygon
 		.then(function (appComponents) {
 
-			return new Promise(function (resolve) {
-				var latLngMaxMin = appComponents.latLngMaxMin;
-				var nycPolygon = appComponents.nycPolygon;
+			var getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
+				var lat = latLngMaxMin.lat;
+				var lng = latLngMaxMin.lng;
 
 
-				var getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
-					var lat = latLngMaxMin.lat;
-					var lng = latLngMaxMin.lng;
+				var randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6);
+
+				var randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6);
+
+				window.console.log("randomLat:", randomLat);
+				window.console.log("randomLng:", randomLng);
+
+				var randomCoords = { randomLat: randomLat, randomLng: randomLng };
+
+				return randomCoords;
+			};
+
+			return _extends({}, appComponents, { getRandomNycCoords: getRandomNycCoords });
+		}).then(function (appComponents) {
+
+			window.console.log("appComponents:", appComponents);
+
+			var panorama = appComponents.panorama;
 
 
-					var randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6);
+			var createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
 
-					var randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6);
+				var isWithinNycBoundaries = false;
+				var randomCoords = null;
+				var randomLatLng = void 0;
 
-					window.console.log("randomLat:", randomLat);
-					window.console.log("randomLng:", randomLng);
+				while (!isWithinNycBoundaries) {
 
-					var randomCoords = { randomLat: randomLat, randomLng: randomLng };
+					randomCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
 
-					return randomCoords;
-				};
-
-				// Umm...Have to put a timeout, or else the 'geometry' library is not defined
-				// yet on the google.maps object.  WTF Google.
-				setTimeout(function () {
-					var _getRandomNycCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
-
-					var randomLat = _getRandomNycCoords.randomLat;
-					var randomLng = _getRandomNycCoords.randomLng;
+					var _randomCoords = randomCoords;
+					var randomLat = _randomCoords.randomLat;
+					var randomLng = _randomCoords.randomLng;
 
 
-					var randomLatLng = new google.maps.LatLng(randomLat, randomLng);
+					randomLatLng = new google.maps.LatLng(randomLat, randomLng);
 
-					var isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
+					isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
+				}
 
-					window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries);
+				panorama.setPosition(randomLatLng);
 
-					resolve(_extends({}, appComponents, { getRandomNycCoords: getRandomNycCoords, latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon }));
-				}, 1000);
-			}).then(function (appComponents) {
-
-				window.console.log("appComponents:", appComponents);
-
-				var getRandomNycCoords = appComponents.getRandomNycCoords;
-				var latLngMaxMin = appComponents.latLngMaxMin;
-				var nycPolygon = appComponents.nycPolygon;
-				var panorama = appComponents.panorama;
-
-
-				var createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
-
-					var isWithinNycBoundaries = false;
-					var randomCoords = null;
-					var randomLatLng = void 0;
-
-					while (!isWithinNycBoundaries) {
-
-						randomCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
-
-						var _randomCoords = randomCoords;
-						var randomLat = _randomCoords.randomLat;
-						var randomLng = _randomCoords.randomLng;
-
-
-						randomLatLng = new google.maps.LatLng(randomLat, randomLng);
-
-						isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
+				spinner = (0, _createSpinner2.default)(panorama, {
+					punctuate: {
+						segments: 4,
+						delay: 2000
 					}
+				});
+			};
 
-					panorama.setPosition(randomLatLng);
+			return _extends({}, appComponents, { createRandomNycSpinner: createRandomNycSpinner });
+		}).then(function (appComponents) {
+			var createRandomNycSpinner = appComponents.createRandomNycSpinner;
+			var getRandomNycCoords = appComponents.getRandomNycCoords;
+			var latLngMaxMin = appComponents.latLngMaxMin;
+			var nycPolygon = appComponents.nycPolygon;
+			var pollForGeometryLibrary = appComponents.pollForGeometryLibrary;
 
-					spinner = (0, _createSpinner2.default)(panorama, {
-						punctuate: {
-							segments: 4,
-							delay: 2000
-						}
-					});
-				};
 
-				setInterval(function () {
+			pollForGeometryLibrary.then(function () {
+				return setInterval(function () {
 					return createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon);
 				}, 10000);
 			});
+		}).catch(function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			return 'Caught error with args ' + args;
 		});
 	};
 
@@ -723,7 +726,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.typeIsValid = exports.truthyness = exports.throwErrorIfTrue = exports.throttle = exports.returnItem = exports.pipeline = exports.once = exports.noUniqueBetweenSets = exports.noArguments = exports.negate = exports.merge = exports.length = exports.keys = exports.hasKeys = exports.isType = exports.isSomething = exports.isOneOf = exports.isNothing = exports.isEmpty = exports.invoke = exports.halt = exports.getType = exports.getProp = exports.getOwnProp = exports.getArgumentsArray = exports.followPath = exports.existenceCheck = exports.extend = exports.emptyFunction = exports.debounce = exports.clone = exports.applyToOwnProp = exports.applyToAllOwnProps = undefined;
+	exports.typeIsValid = exports.truthyness = exports.throwErrorIfTrue = exports.throttle = exports.returnItem = exports.poll = exports.pipeline = exports.once = exports.noUniqueBetweenSets = exports.noArguments = exports.negate = exports.merge = exports.length = exports.keys = exports.hasKeys = exports.isType = exports.isSomething = exports.isOneOf = exports.isNothing = exports.isEmpty = exports.invoke = exports.halt = exports.getType = exports.getProp = exports.getOwnProp = exports.getArgumentsArray = exports.followPath = exports.existenceCheck = exports.extend = exports.emptyFunction = exports.debounce = exports.clone = exports.applyToOwnProp = exports.applyToAllOwnProps = undefined;
 
 	var _applyToAllOwnProps = __webpack_require__(5);
 
@@ -837,19 +840,23 @@
 
 	var _pipeline2 = _interopRequireDefault(_pipeline);
 
-	var _returnItem = __webpack_require__(36);
+	var _poll = __webpack_require__(36);
+
+	var _poll2 = _interopRequireDefault(_poll);
+
+	var _returnItem = __webpack_require__(37);
 
 	var _returnItem2 = _interopRequireDefault(_returnItem);
 
-	var _throttle = __webpack_require__(37);
+	var _throttle = __webpack_require__(38);
 
 	var _throttle2 = _interopRequireDefault(_throttle);
 
-	var _throwErrorIfTrue = __webpack_require__(38);
+	var _throwErrorIfTrue = __webpack_require__(39);
 
 	var _throwErrorIfTrue2 = _interopRequireDefault(_throwErrorIfTrue);
 
-	var _truthyness = __webpack_require__(39);
+	var _truthyness = __webpack_require__(40);
 
 	var _truthyness2 = _interopRequireDefault(_truthyness);
 
@@ -887,6 +894,7 @@
 	exports.noUniqueBetweenSets = _noUniqueBetweenSets2.default;
 	exports.once = _once2.default;
 	exports.pipeline = _pipeline2.default;
+	exports.poll = _poll2.default;
 	exports.returnItem = _returnItem2.default;
 	exports.throttle = _throttle2.default;
 	exports.throwErrorIfTrue = _throwErrorIfTrue2.default;
@@ -1854,6 +1862,53 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	/*==============================
+	=            poll()            =
+	==============================*/
+
+	var poll = function poll(func) {
+		var interval = arguments.length <= 1 || arguments[1] === undefined ? 100 : arguments[1];
+		var timeout = arguments[2];
+
+
+		var endTime = Number(new Date()) + (timeout || 2000);
+
+		return new Promise(function checkPolledCondition(resolve, reject) {
+
+			var result = func();
+
+			if (result) {
+
+				// If the condition has been met, we're done
+				resolve(result);
+			} else if (Number(new Date()) < endTime) {
+
+				// If the condition has not been met but the timeout
+				// has not elapsed, try again
+				setTimeout(function () {
+					return checkPolledCondition(resolve, reject);
+				}, interval);
+			} else {
+
+				// Reject when the timeout expires
+				reject(new Error("poll() - Timeout of " + timeout + " milliseconds exceeded without the following condition check returning true: " + func));
+			}
+		});
+	};
+
+	/*=====  End of poll()  ======*/
+
+	exports.default = poll;
+
+/***/ },
+/* 37 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
 	function returnItem(item) {
 		return function () {
 			return item;
@@ -1863,7 +1918,7 @@
 	exports.default = returnItem;
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1909,7 +1964,7 @@
 	exports.default = throttle;
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1942,7 +1997,7 @@
 	exports.default = throwErrorIfTrue;
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1957,7 +2012,7 @@
 	exports.default = truthyness;
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1968,9 +2023,9 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
 
-	var _events = __webpack_require__(41);
+	var _events = __webpack_require__(42);
 
-	var _util = __webpack_require__(42);
+	var _util = __webpack_require__(43);
 
 	/*==========================================
 	=            createWebGlManager            =
@@ -2037,7 +2092,7 @@
 	exports.default = createWebGlManager;
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -2341,7 +2396,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -2869,7 +2924,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(44);
+	exports.isBuffer = __webpack_require__(45);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -2913,7 +2968,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(45);
+	exports.inherits = __webpack_require__(46);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -2931,10 +2986,10 @@
 	  return Object.prototype.hasOwnProperty.call(obj, prop);
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(43)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(44)))
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -3034,7 +3089,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -3045,7 +3100,7 @@
 	}
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -3074,7 +3129,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports) {
 
 	"use strict";

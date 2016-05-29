@@ -25,7 +25,8 @@ import negate from './negate';
 import noArguments from './noArguments';
 import noUniqueBetweenSets from './noUniqueBetweenSets'; 
 import once from './once';
-import pipeline from './pipeline';    
+import pipeline from './pipeline';  
+import poll from './poll';   
 import returnItem from './returnItem';  
 import throttle from './throttle'; 
 import throwErrorIfTrue from './throwErrorIfTrue'; 
@@ -61,6 +62,7 @@ export {
 	noUniqueBetweenSets, 
 	once, 
 	pipeline, 
+	poll, 
 	returnItem, 
 	throttle, 
 	throwErrorIfTrue, 

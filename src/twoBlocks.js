@@ -3,7 +3,8 @@
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
-import selectRandomValueOfRange from './selectRandomValueOfRange'; 
+import selectRandomValueOfRange from './selectRandomValueOfRange';
+import { poll } from './utils/utils'; 
 
 /*=================================
 =            twoBlocks()          =
@@ -181,7 +182,17 @@ const twoBlocks = function twoBlocks() {
 	
 	injectGapiScript() 
 
-		.then(() => init(canvas, latitude, longitude))
+		.then(() => {
+
+			const geometryLibraryLoaded = () => 'geometry' in google.maps; 
+
+			const pollForGeometryLibrary = poll(geometryLibraryLoaded, 25, 3000); 
+
+			return { pollForGeometryLibrary }; 
+
+		})
+
+		.then(appComponents => Object.assign({}, appComponents, init(canvas, latitude, longitude)))
 
 		// Convert array of lat / lng values to an array 
 		// of LatLng class instances 
@@ -273,50 +284,33 @@ const twoBlocks = function twoBlocks() {
 		// NYC polygon 
 		.then(appComponents => {
 
-			return new Promise(resolve => {
+			const getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
+			
+				const { lat, lng } = latLngMaxMin; 
 
-				const { latLngMaxMin, nycPolygon } = appComponents; 
+				const randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6); 
 				
-				const getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
+				const randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6); 
+
+				window.console.log("randomLat:", randomLat); 
+				window.console.log("randomLng:", randomLng); 
+
+				const randomCoords = { randomLat, randomLng }; 
 				
-					const { lat, lng } = latLngMaxMin; 
+				return randomCoords; 
+			
+			}; 
+			
 
-					const randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6); 
-					
-					const randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6); 
+			return Object.assign({}, appComponents, { getRandomNycCoords }); 
 
-					window.console.log("randomLat:", randomLat); 
-					window.console.log("randomLng:", randomLng); 
+		}) 
 
-					const randomCoords = { randomLat, randomLng }; 
-					
-					return randomCoords; 
-				
-				}; 
-
-				// Umm...Have to put a timeout, or else the 'geometry' library is not defined 
-				// yet on the google.maps object.  WTF Google. 
-				setTimeout(function() {
-					
-					const { randomLat, randomLng } = getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange); 
-
-					const randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
-
-					const isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
-
-					window.console.log("isWithinNycBoundaries:", isWithinNycBoundaries); 
-					
-					resolve(Object.assign({}, appComponents, { getRandomNycCoords, latLngMaxMin, nycPolygon })); 
-
-				}, 1000);
-
-			}) 
-
-			.then(appComponents => {
+		.then(appComponents => {
 
 				window.console.log("appComponents:", appComponents); 
 
-				const { getRandomNycCoords, latLngMaxMin, nycPolygon, panorama } = appComponents; 
+				const { panorama } = appComponents; 
 
 				const createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
 				
@@ -347,11 +341,21 @@ const twoBlocks = function twoBlocks() {
 					
 				}; 
 
-				setInterval(() => createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon), 10000); 
+				return Object.assign({}, appComponents, { createRandomNycSpinner }); 
 
-			}); 
+		})
 
-		}); 
+		.then(appComponents => {
+
+			const { createRandomNycSpinner, getRandomNycCoords, latLngMaxMin, nycPolygon, pollForGeometryLibrary } = appComponents; 
+
+			pollForGeometryLibrary 
+
+				.then(() => setInterval(() => createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon), 10000)); 
+
+		})
+
+		.catch((...args) => `Caught error with args ${args}`); 
 
 }; 
 
