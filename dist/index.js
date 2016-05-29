@@ -408,6 +408,7 @@
 				var getRandomNycCoords = appComponents.getRandomNycCoords;
 				var latLngMaxMin = appComponents.latLngMaxMin;
 				var nycPolygon = appComponents.nycPolygon;
+				var panorama = appComponents.panorama;
 
 
 				var createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
@@ -430,16 +431,7 @@
 						isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
 					}
 
-					// return init(canvas, randomLat, randomLng);
-					if (spinner) {
-
-						spinner.stop();
-					}
-
-					var panorama = (0, _createPanorama2.default)(canvas, {
-						mode: "webgl",
-						position: randomLatLng
-					});
+					panorama.setPosition(randomLatLng);
 
 					spinner = (0, _createSpinner2.default)(panorama, {
 						punctuate: {
@@ -447,8 +439,6 @@
 							delay: 2000
 						}
 					});
-
-					spinner.start();
 				};
 
 				setInterval(function () {

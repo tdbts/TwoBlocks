@@ -316,7 +316,7 @@ const twoBlocks = function twoBlocks() {
 
 				window.console.log("appComponents:", appComponents); 
 
-				const { getRandomNycCoords, latLngMaxMin, nycPolygon } = appComponents; 
+				const { getRandomNycCoords, latLngMaxMin, nycPolygon, panorama } = appComponents; 
 
 				const createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
 				
@@ -336,17 +336,7 @@ const twoBlocks = function twoBlocks() {
 
 					}
 
-					// return init(canvas, randomLat, randomLng);
-					if (spinner) {
-
-						spinner.stop();  
-					
-					}
-
-					const panorama = createPanorama(canvas, { 
-						mode: "webgl", 
-						position: randomLatLng
-					}); 					
+					panorama.setPosition(randomLatLng);	 			
 				
 					spinner = createSpinner(panorama, {
 						punctuate: {
@@ -355,8 +345,6 @@ const twoBlocks = function twoBlocks() {
 						}
 					}); 	
 					
-					spinner.start(); 				
-
 				}; 
 
 				setInterval(() => createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon), 10000); 
