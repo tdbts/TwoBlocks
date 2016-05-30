@@ -408,8 +408,10 @@
 				var randomCoords = null;
 				var randomLatLng = void 0;
 
+				// Until we find coordinates within our predefined region...
 				while (!isWithinNycBoundaries) {
 
+					// 'randomCoords' is the result of getRandomNycCoords()
 					randomCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
 
 					var _randomCoords = randomCoords;
@@ -419,17 +421,11 @@
 
 					randomLatLng = new google.maps.LatLng(randomLat, randomLng);
 
+					// Check that the random coords are
 					isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
 				}
 
 				panorama.setPosition(randomLatLng);
-
-				// spinner = createSpinner(panorama, {
-				// 	punctuate: {
-				// 		segments: 4,
-				// 		delay: 2000
-				// 	}
-				// }); 	
 			};
 
 			return _extends({}, appComponents, { createRandomNycSpinner: createRandomNycSpinner });

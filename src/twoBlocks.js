@@ -320,26 +320,22 @@ const twoBlocks = function twoBlocks() {
 					let randomCoords = null;
 					let randomLatLng;  
 
+					// Until we find coordinates within our predefined region...
 					while (!(isWithinNycBoundaries)) {
 
+						// 'randomCoords' is the result of getRandomNycCoords() 
 						randomCoords = getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange); 
 						
 						const { randomLat, randomLng } = randomCoords; 
 
 						randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
 
+						// Check that the random coords are
 						isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
 
 					}
 
 					panorama.setPosition(randomLatLng);	 			
-				
-					// spinner = createSpinner(panorama, {
-					// 	punctuate: {
-					// 		segments: 4, 
-					// 		delay: 2000
-					// 	}
-					// }); 	
 					
 				}; 
 
@@ -349,7 +345,16 @@ const twoBlocks = function twoBlocks() {
 
 		.then(appComponents => {
 
-			const { createRandomNycSpinner, getRandomNycCoords, latLngMaxMin, nycPolygon, pollForGeometryLibrary, spinner } = appComponents; 
+			const { 
+			
+				createRandomNycSpinner, 
+				getRandomNycCoords, 
+				latLngMaxMin, 
+				nycPolygon, 
+				pollForGeometryLibrary, 
+				spinner 
+
+			} = appComponents; 
 
 			pollForGeometryLibrary 
 
