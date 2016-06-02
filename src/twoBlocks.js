@@ -4,6 +4,7 @@ import createPanorama from './createPanorama';
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
 import selectRandomValueOfRange from './selectRandomValueOfRange';
+import tryAtMost from './tryAtMost'; 
 import { poll } from './utils/utils'; 
 
 /*=================================
@@ -320,22 +321,69 @@ const twoBlocks = function twoBlocks() {
 					let randomCoords = null;
 					let randomLatLng;  
 
-					// Until we find coordinates within our predefined region...
-					while (!(isWithinNycBoundaries)) {
+					const getLatLngWithinBoundaries = function getLatLngWithinBoundaries() {
+					
+						isWithinNycBoundaries = false; 
 
-						// 'randomCoords' is the result of getRandomNycCoords() 
-						randomCoords = getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange); 
+						// Until we find coordinates within our predefined region...
+						while (!(isWithinNycBoundaries)) {
+
+							// 'randomCoords' is the result of getRandomNycCoords() 
+							randomCoords = getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange); 
+							
+							const { randomLat, randomLng } = randomCoords; 
+
+							randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
+
+							// Check that the random coords are
+							isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
+
+						}
+					
+					}; 
+
+					const requestNearestPanorama = function requestNearestPanorama() {
+					
+						return new Promise((resolve, reject) => {
+
+							const streetViewService = new google.maps.StreetViewService(); 
+		
+							const locationRequest = {
+								location: randomLatLng, 
+								preference: google.maps.StreetViewPreference.NEAREST
+							}; 
+
+							streetViewService.getPanorama(locationRequest, (panoData, status) => {
+								
+								window.console.log("panoData:", panoData); 
+								window.console.log("status:", status); 
+
+								if (status === 'OK') {
+
+									resolve(panoData, status);
+
+								} else {
+
+									reject(panoData, status); 
+								
+								} 
+							
+							});  
 						
-						const { randomLat, randomLng } = randomCoords; 
+						}); 
+					
+					};
 
-						randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
+					tryAtMost(requestNearestPanorama, 50, (panoData, status, maxTries) => {
+						window.console.log("panoData:", panoData); 
+						window.console.log("status:", status); 
+						window.console.log("maxTries:", maxTries);
 
-						// Check that the random coords are
-						isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
+						getLatLngWithinBoundaries(); 
 
-					}
+					})
 
-					panorama.setPosition(randomLatLng);	 			
+					.then(() => panorama.setPosition(randomLatLng)); 
 					
 				}; 
 

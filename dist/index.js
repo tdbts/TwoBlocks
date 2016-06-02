@@ -84,6 +84,10 @@
 
 	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
 
+	var _tryAtMost = __webpack_require__(48);
+
+	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
+
 	var _utils = __webpack_require__(5);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -408,24 +412,64 @@
 				var randomCoords = null;
 				var randomLatLng = void 0;
 
-				// Until we find coordinates within our predefined region...
-				while (!isWithinNycBoundaries) {
+				var getLatLngWithinBoundaries = function getLatLngWithinBoundaries() {
 
-					// 'randomCoords' is the result of getRandomNycCoords()
-					randomCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
+					isWithinNycBoundaries = false;
 
-					var _randomCoords = randomCoords;
-					var randomLat = _randomCoords.randomLat;
-					var randomLng = _randomCoords.randomLng;
+					// Until we find coordinates within our predefined region...
+					while (!isWithinNycBoundaries) {
+
+						// 'randomCoords' is the result of getRandomNycCoords()
+						randomCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
+
+						var _randomCoords = randomCoords;
+						var randomLat = _randomCoords.randomLat;
+						var randomLng = _randomCoords.randomLng;
 
 
-					randomLatLng = new google.maps.LatLng(randomLat, randomLng);
+						randomLatLng = new google.maps.LatLng(randomLat, randomLng);
 
-					// Check that the random coords are
-					isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
-				}
+						// Check that the random coords are
+						isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
+					}
+				};
 
-				panorama.setPosition(randomLatLng);
+				var requestNearestPanorama = function requestNearestPanorama() {
+
+					return new Promise(function (resolve, reject) {
+
+						var streetViewService = new google.maps.StreetViewService();
+
+						var locationRequest = {
+							location: randomLatLng,
+							preference: google.maps.StreetViewPreference.NEAREST
+						};
+
+						streetViewService.getPanorama(locationRequest, function (panoData, status) {
+
+							window.console.log("panoData:", panoData);
+							window.console.log("status:", status);
+
+							if (status === 'OK') {
+
+								resolve(panoData, status);
+							} else {
+
+								reject(panoData, status);
+							}
+						});
+					});
+				};
+
+				(0, _tryAtMost2.default)(requestNearestPanorama, 50, function (panoData, status, maxTries) {
+					window.console.log("panoData:", panoData);
+					window.console.log("status:", status);
+					window.console.log("maxTries:", maxTries);
+
+					getLatLngWithinBoundaries();
+				}).then(function () {
+					return panorama.setPosition(randomLatLng);
+				});
 			};
 
 			return _extends({}, appComponents, { createRandomNycSpinner: createRandomNycSpinner });
@@ -3192,6 +3236,42 @@
 	};
 
 	exports.default = selectRandomValueOfRange;
+
+/***/ },
+/* 48 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var tryAtMost = function tryAtMost(thenable, maxTries) {
+		var onCaught = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
+
+
+		return thenable().catch(function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			maxTries -= 1;
+
+			onCaught.apply(undefined, args.concat([maxTries]));
+
+			if (maxTries < 1) {
+
+				// Error must be thrown to be caught by
+				// the caller of tryAtMost()
+				throw new Error("Maximum number of tries exceeded.");
+			}
+
+			// Recurse
+			return tryAtMost(thenable, maxTries, onCaught);
+		});
+	};
+
+	exports.default = tryAtMost;
 
 /***/ }
 /******/ ]);
