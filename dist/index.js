@@ -276,9 +276,13 @@
 			});
 		};
 
-		/*----------  Initialization  ----------*/
+		/*----------  Add Google Maps API to environment  ----------*/
 
-		injectGapiScript().then(function () {
+		injectGapiScript()
+
+		/*----------  Poll for 'geometry' library in google.maps object  ----------*/
+
+		.then(function () {
 
 			var geometryLibraryLoaded = function geometryLibraryLoaded() {
 				return 'geometry' in google.maps;
@@ -287,12 +291,16 @@
 			var pollForGeometryLibrary = (0, _utils.poll)(geometryLibraryLoaded, 25, 3000);
 
 			return { pollForGeometryLibrary: pollForGeometryLibrary };
-		}).then(function (appComponents) {
+		})
+
+		/*----------  Initialize panorama / spinner  ----------*/
+
+		.then(function (appComponents) {
 			return _extends({}, appComponents, init(canvas, latitude, longitude));
 		})
 
-		// Convert array of lat / lng values to an array
-		// of LatLng class instances
+		/*----------  Convert lat / lng values to an array of LatLng class instances  ----------*/
+
 		.then(function (appComponents) {
 
 			var nycBoundaryLatLngs = [];
@@ -305,7 +313,8 @@
 			return _extends({}, appComponents, { nycBoundaryLatLngs: nycBoundaryLatLngs });
 		})
 
-		// Create nycPolygon using the array of LatLng instances
+		/*----------  Create nycPolygon using the array of LatLng instances  ----------*/
+
 		.then(function (appComponents) {
 			var nycBoundaryLatLngs = appComponents.nycBoundaryLatLngs;
 
@@ -321,8 +330,8 @@
 			return _extends({}, appComponents, { nycPolygon: nycPolygon });
 		})
 
-		// Create an object defining the min / max values
-		// for both lat / lng of the NYC boundary points
+		/*----------  Create an object defining the min / max values for lat / lng of the NYC boundary  ----------*/
+
 		.then(function (appComponents) {
 			var nycPolygon = appComponents.nycPolygon;
 
@@ -376,9 +385,8 @@
 			return _extends({}, appComponents, { latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon });
 		})
 
-		// Select random point from within min / max values for
-		// lat / lng, and check if they fall within our defined
-		// NYC polygon
+		/*----------  Select random point from within min / max lat / lng range and check if the point falls within our NYC polygon  ----------*/
+
 		.then(function (appComponents) {
 
 			var getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
@@ -400,39 +408,46 @@
 
 			return _extends({}, appComponents, { getRandomNycCoords: getRandomNycCoords });
 		}).then(function (appComponents) {
+			var getRandomNycCoords = appComponents.getRandomNycCoords;
+			var latLngMaxMin = appComponents.latLngMaxMin;
+
+
+			var getLatLngWithinBoundaries = function getLatLngWithinBoundaries(nycPolygon) {
+
+				var isWithinNycBoundaries = false;
+				var randomLatLng = null;
+
+				// Until we find coordinates within our predefined region...
+				while (!isWithinNycBoundaries) {
+
+					// 'randomCoords' is the result of getRandomNycCoords()
+					var randomCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
+
+					var randomLat = randomCoords.randomLat;
+					var randomLng = randomCoords.randomLng;
+
+
+					randomLatLng = new google.maps.LatLng(randomLat, randomLng);
+
+					// Check that the random coords are
+					isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
+				}
+
+				return randomLatLng;
+			};
+
+			return _extends({}, appComponents, { getLatLngWithinBoundaries: getLatLngWithinBoundaries });
+		}).then(function (appComponents) {
 
 			window.console.log("appComponents:", appComponents);
 
+			var getLatLngWithinBoundaries = appComponents.getLatLngWithinBoundaries;
 			var panorama = appComponents.panorama;
 
 
 			var createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
 
-				var isWithinNycBoundaries = false;
-				var randomCoords = null;
-				var randomLatLng = void 0;
-
-				var getLatLngWithinBoundaries = function getLatLngWithinBoundaries() {
-
-					isWithinNycBoundaries = false;
-
-					// Until we find coordinates within our predefined region...
-					while (!isWithinNycBoundaries) {
-
-						// 'randomCoords' is the result of getRandomNycCoords()
-						randomCoords = getRandomNycCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
-
-						var _randomCoords = randomCoords;
-						var randomLat = _randomCoords.randomLat;
-						var randomLng = _randomCoords.randomLng;
-
-
-						randomLatLng = new google.maps.LatLng(randomLat, randomLng);
-
-						// Check that the random coords are
-						isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
-					}
-				};
+				var randomLatLng = null;
 
 				var requestNearestPanorama = function requestNearestPanorama() {
 
@@ -466,7 +481,7 @@
 					window.console.log("status:", status);
 					window.console.log("maxTries:", maxTries);
 
-					getLatLngWithinBoundaries();
+					randomLatLng = getLatLngWithinBoundaries(nycPolygon);
 				}).then(function () {
 					return panorama.setPosition(randomLatLng);
 				});

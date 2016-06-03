@@ -181,10 +181,12 @@ const twoBlocks = function twoBlocks() {
 	
 	};
 
-	/*----------  Initialization  ----------*/
+	/*----------  Add Google Maps API to environment  ----------*/
 	
 	injectGapiScript() 
 
+		/*----------  Poll for 'geometry' library in google.maps object  ----------*/
+		
 		.then(() => {
 
 			const geometryLibraryLoaded = () => 'geometry' in google.maps; 
@@ -195,10 +197,12 @@ const twoBlocks = function twoBlocks() {
 
 		})
 
+		/*----------  Initialize panorama / spinner  ----------*/
+
 		.then(appComponents => Object.assign({}, appComponents, init(canvas, latitude, longitude)))
 
-		// Convert array of lat / lng values to an array 
-		// of LatLng class instances 
+		/*----------  Convert lat / lng values to an array of LatLng class instances  ----------*/
+		
 		.then(appComponents => {
 
 			const nycBoundaryLatLngs = []; 
@@ -213,7 +217,8 @@ const twoBlocks = function twoBlocks() {
 
 		})
 
-		// Create nycPolygon using the array of LatLng instances 
+		/*----------  Create nycPolygon using the array of LatLng instances  ----------*/
+		
 		.then(appComponents => {
 
 			const { nycBoundaryLatLngs } = appComponents; 
@@ -230,8 +235,8 @@ const twoBlocks = function twoBlocks() {
 
 		})
 
-		// Create an object defining the min / max values 
-		// for both lat / lng of the NYC boundary points 
+		/*----------  Create an object defining the min / max values for lat / lng of the NYC boundary  ----------*/
+		
 		.then(appComponents => {
 
 			const { nycPolygon } = appComponents; 
@@ -282,9 +287,8 @@ const twoBlocks = function twoBlocks() {
 
 		})
 
-		// Select random point from within min / max values for 
-		// lat / lng, and check if they fall within our defined 
-		// NYC polygon 
+		/*----------  Select random point from within min / max lat / lng range and check if the point falls within our NYC polygon  ----------*/
+		
 		.then(appComponents => {
 
 			const getRandomNycCoords = function getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange) {
@@ -311,36 +315,45 @@ const twoBlocks = function twoBlocks() {
 
 		.then(appComponents => {
 
+			const { getRandomNycCoords, latLngMaxMin } = appComponents; 
+
+			const getLatLngWithinBoundaries = function getLatLngWithinBoundaries(nycPolygon) {
+			
+				let isWithinNycBoundaries = false; 
+				let randomLatLng = null; 
+
+				// Until we find coordinates within our predefined region...
+				while (!(isWithinNycBoundaries)) {
+
+					// 'randomCoords' is the result of getRandomNycCoords() 
+					const randomCoords = getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange); 
+					
+					const { randomLat, randomLng } = randomCoords; 
+
+					randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
+
+					// Check that the random coords are
+					isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
+
+				}
+
+				return randomLatLng; 
+			
+			}; 
+
+			return Object.assign({}, appComponents, { getLatLngWithinBoundaries }); 			
+
+		})
+
+		.then(appComponents => {
+
 				window.console.log("appComponents:", appComponents); 
 
-				const { panorama } = appComponents; 
+				const { getLatLngWithinBoundaries, panorama } = appComponents; 
 
 				const createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
 				
-					let isWithinNycBoundaries = false; 
-					let randomCoords = null;
-					let randomLatLng;  
-
-					const getLatLngWithinBoundaries = function getLatLngWithinBoundaries() {
-					
-						isWithinNycBoundaries = false; 
-
-						// Until we find coordinates within our predefined region...
-						while (!(isWithinNycBoundaries)) {
-
-							// 'randomCoords' is the result of getRandomNycCoords() 
-							randomCoords = getRandomNycCoords(latLngMaxMin, selectRandomValueOfRange); 
-							
-							const { randomLat, randomLng } = randomCoords; 
-
-							randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
-
-							// Check that the random coords are
-							isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
-
-						}
-					
-					}; 
+					let randomLatLng = null;  
 
 					const requestNearestPanorama = function requestNearestPanorama() {
 					
@@ -379,7 +392,7 @@ const twoBlocks = function twoBlocks() {
 						window.console.log("status:", status); 
 						window.console.log("maxTries:", maxTries);
 
-						getLatLngWithinBoundaries(); 
+						randomLatLng = getLatLngWithinBoundaries(nycPolygon); 
 
 					})
 
