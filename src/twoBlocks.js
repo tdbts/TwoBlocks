@@ -365,11 +365,11 @@ const twoBlocks = function twoBlocks() {
 
 						if (status === 'OK') {
 
-							resolve(panoData, status);
+							resolve({ panoData, status });
 
 						} else {
 
-							reject(panoData, status); 
+							reject({ panoData, status }); 
 						
 						} 
 					
@@ -393,7 +393,12 @@ const twoBlocks = function twoBlocks() {
 				
 					let randomLatLng = getLatLngWithinBoundaries(nycPolygon);  
 
-					tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoData, status, maxTries) => {
+					tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoRequestResults, maxTries) => {
+						
+						window.console.log('onCaught()'); 
+						
+						const { panoData, status } = panoRequestResults; 
+
 						window.console.log("panoData:", panoData); 
 						window.console.log("status:", status); 
 						window.console.log("maxTries:", maxTries);

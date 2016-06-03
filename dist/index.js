@@ -457,10 +457,10 @@
 
 						if (status === 'OK') {
 
-							resolve(panoData, status);
+							resolve({ panoData: panoData, status: status });
 						} else {
 
-							reject(panoData, status);
+							reject({ panoData: panoData, status: status });
 						}
 					});
 				});
@@ -482,7 +482,14 @@
 
 				(0, _tryAtMost2.default)(function () {
 					return requestNearestPanorama(randomLatLng);
-				}, 50, function (panoData, status, maxTries) {
+				}, 50, function (panoRequestResults, maxTries) {
+
+					window.console.log('onCaught()');
+
+					var panoData = panoRequestResults.panoData;
+					var status = panoRequestResults.status;
+
+
 					window.console.log("panoData:", panoData);
 					window.console.log("status:", status);
 					window.console.log("maxTries:", maxTries);
