@@ -341,9 +341,9 @@ const twoBlocks = function twoBlocks() {
 				// Until we find coordinates within our predefined region...
 				while (!(isWithinBoundaries)) {
 
-					const randomNycCoords = getRandomCoords(latLngMaxMin, selectRandomValueOfRange); 
+					const randomCoords = getRandomCoords(latLngMaxMin, selectRandomValueOfRange); 
 					
-					const { randomLat, randomLng } = randomNycCoords; 
+					const { randomLat, randomLng } = randomCoords; 
 
 					randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
 

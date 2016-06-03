@@ -433,10 +433,10 @@
 				// Until we find coordinates within our predefined region...
 				while (!isWithinBoundaries) {
 
-					var randomNycCoords = getRandomCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
+					var randomCoords = getRandomCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
 
-					var randomLat = randomNycCoords.randomLat;
-					var randomLng = randomNycCoords.randomLng;
+					var randomLat = randomCoords.randomLat;
+					var randomLng = randomCoords.randomLng;
 
 
 					randomLatLng = new google.maps.LatLng(randomLat, randomLng);
