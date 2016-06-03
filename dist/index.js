@@ -330,59 +330,73 @@
 			return _extends({}, appComponents, { nycPolygon: nycPolygon });
 		})
 
+		/*----------  Create function which takes a set of lat / lng values, and gets the max / min for lat / lng.  ----------*/
+
+		.then(function (appComponents) {
+
+			var getLatLngMaxMin = function getLatLngMaxMin(latLngs) {
+
+				var latLngMaxMin = {
+					lat: {
+						min: null,
+						max: null
+					},
+
+					lng: {
+						min: null,
+						max: null
+					}
+				};
+
+				latLngMaxMin = latLngs.reduce(function (prev, curr, i) {
+					var lat = prev.lat;
+					var lng = prev.lng;
+
+					// On the first invocation, the Lat and Lng
+					// values are both the min and max
+
+					if (i === 0) {
+						var _curr = _slicedToArray(curr, 2);
+
+						var currLat = _curr[0];
+						var currLng = _curr[1];
+
+
+						lat.min = lat.max = currLat;
+						lng.min = lng.max = currLng;
+					} else {
+						var _curr2 = _slicedToArray(curr, 2);
+
+						var _currLat = _curr2[0];
+						var _currLng = _curr2[1];
+
+
+						lat.min = Math.min(lat.min, _currLat);
+						lat.max = Math.max(lat.max, _currLat);
+						lng.min = Math.min(lng.min, _currLng);
+						lng.max = Math.max(lng.max, _currLng);
+					}
+
+					return prev;
+				}, latLngMaxMin);
+
+				return latLngMaxMin;
+			};
+
+			return _extends({}, appComponents, { getLatLngMaxMin: getLatLngMaxMin });
+		})
+
 		/*----------  Create an object defining the min / max values for lat / lng of the NYC boundary  ----------*/
 
 		.then(function (appComponents) {
-			var nycPolygon = appComponents.nycPolygon;
+			var getLatLngMaxMin = appComponents.getLatLngMaxMin;
 
 
-			var latLngMaxMin = {
-				lat: {
-					min: null,
-					max: null
-				},
-
-				lng: {
-					min: null,
-					max: null
-				}
-			};
-
-			latLngMaxMin = nycBoundaryPoints.reduce(function (prev, curr, i) {
-				var lat = prev.lat;
-				var lng = prev.lng;
-
-				// On the first invocation, the Lat and Lng
-				// values are both the min and max
-
-				if (i === 0) {
-					var _curr = _slicedToArray(curr, 2);
-
-					var currLat = _curr[0];
-					var currLng = _curr[1];
-
-
-					lat.min = lat.max = currLat;
-					lng.min = lng.max = currLng;
-				} else {
-					var _curr2 = _slicedToArray(curr, 2);
-
-					var _currLat = _curr2[0];
-					var _currLng = _curr2[1];
-
-
-					lat.min = Math.min(lat.min, _currLat);
-					lat.max = Math.max(lat.max, _currLat);
-					lng.min = Math.min(lng.min, _currLng);
-					lng.max = Math.max(lng.max, _currLng);
-				}
-
-				return prev;
-			}, latLngMaxMin);
+			var latLngMaxMin = getLatLngMaxMin(nycBoundaryPoints);
 
 			window.console.log("latLngMaxMin:", latLngMaxMin);
 
-			return _extends({}, appComponents, { latLngMaxMin: latLngMaxMin, nycPolygon: nycPolygon });
+			return _extends({}, appComponents, { latLngMaxMin: latLngMaxMin });
 		})
 
 		/*----------  Select random point from within min / max lat / lng range and check if the point falls within our NYC polygon  ----------*/
