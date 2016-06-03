@@ -425,13 +425,13 @@
 			var getRandomCoords = appComponents.getRandomCoords;
 
 
-			var getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, nycPolygon) {
+			var getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, polygon) {
 
-				var isWithinNycBoundaries = false;
+				var isWithinBoundaries = false;
 				var randomLatLng = null;
 
 				// Until we find coordinates within our predefined region...
-				while (!isWithinNycBoundaries) {
+				while (!isWithinBoundaries) {
 
 					var randomNycCoords = getRandomCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
 
@@ -442,7 +442,7 @@
 					randomLatLng = new google.maps.LatLng(randomLat, randomLng);
 
 					// Check that the random coords are within polygon
-					isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
+					isWithinBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, polygon);
 				}
 
 				return randomLatLng;
@@ -484,16 +484,12 @@
 			window.console.log("appComponents:", appComponents);
 
 			var getLatLngWithinBoundaries = appComponents.getLatLngWithinBoundaries;
-			var nycLatLngMaxMin = appComponents.nycLatLngMaxMin;
 			var requestNearestPanorama = appComponents.requestNearestPanorama;
 
-			// createRandomNycSpinner() could be generalized to createRandomSpinner(), with the polygon
-			// determining the area within which to look for panoramas.  This means that we could ultimately
-			// generalize this to apply to any city, not just NYC. 
 
-			var createRandomNycSpinner = function createRandomNycSpinner(panorama, nycPolygon) {
+			var createRandomSpinner = function createRandomSpinner(panorama, polygon, latLngMaxMin) {
 
-				var randomLatLng = getLatLngWithinBoundaries(nycLatLngMaxMin, nycPolygon);
+				var randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);
 
 				(0, _tryAtMost2.default)(function () {
 					return requestNearestPanorama(randomLatLng);
@@ -509,15 +505,16 @@
 					window.console.log("status:", status);
 					window.console.log("maxTries:", maxTries);
 
-					randomLatLng = getLatLngWithinBoundaries(nycLatLngMaxMin, nycPolygon);
+					randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);
 				}).then(function () {
 					return panorama.setPosition(randomLatLng);
 				});
 			};
 
-			return _extends({}, appComponents, { createRandomNycSpinner: createRandomNycSpinner });
+			return _extends({}, appComponents, { createRandomSpinner: createRandomSpinner });
 		}).then(function (appComponents) {
-			var createRandomNycSpinner = appComponents.createRandomNycSpinner;
+			var createRandomSpinner = appComponents.createRandomSpinner;
+			var nycLatLngMaxMin = appComponents.nycLatLngMaxMin;
 			var nycPolygon = appComponents.nycPolygon;
 			var panorama = appComponents.panorama;
 			var pollForGeometryLibrary = appComponents.pollForGeometryLibrary;
@@ -525,7 +522,7 @@
 
 
 			pollForGeometryLibrary.then(spinner.on('revolution', function () {
-				return createRandomNycSpinner(panorama, nycPolygon);
+				return createRandomSpinner(panorama, nycPolygon, nycLatLngMaxMin);
 			}));
 		}).catch(function () {
 			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
