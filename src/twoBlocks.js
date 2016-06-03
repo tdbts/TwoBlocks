@@ -332,7 +332,7 @@ const twoBlocks = function twoBlocks() {
 
 					randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
 
-					// Check that the random coords are
+					// Check that the random coords are within polygon
 					isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon); 
 
 				}
@@ -347,47 +347,53 @@ const twoBlocks = function twoBlocks() {
 
 		.then(appComponents => {
 
+			const requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
+			
+				return new Promise((resolve, reject) => {
+
+					const streetViewService = new google.maps.StreetViewService(); 
+
+					const locationRequest = {
+						location: randomLatLng, 
+						preference: google.maps.StreetViewPreference.NEAREST
+					}; 
+
+					streetViewService.getPanorama(locationRequest, (panoData, status) => {
+						
+						window.console.log("panoData:", panoData); 
+						window.console.log("status:", status); 
+
+						if (status === 'OK') {
+
+							resolve(panoData, status);
+
+						} else {
+
+							reject(panoData, status); 
+						
+						} 
+					
+					});  
+				
+				}); 
+			
+			};
+
+			return Object.assign({}, appComponents, { requestNearestPanorama }); 
+
+		})
+
+		.then(appComponents => {
+
 				window.console.log("appComponents:", appComponents); 
 
-				const { getLatLngWithinBoundaries, panorama } = appComponents; 
+				const { getLatLngWithinBoundaries, panorama, requestNearestPanorama } = appComponents; 
 
 				const createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
 				
-					let randomLatLng = null;  
+					let randomLatLng = getLatLngWithinBoundaries(nycPolygon);  
 
-					const requestNearestPanorama = function requestNearestPanorama() {
-					
-						return new Promise((resolve, reject) => {
-
-							const streetViewService = new google.maps.StreetViewService(); 
-		
-							const locationRequest = {
-								location: randomLatLng, 
-								preference: google.maps.StreetViewPreference.NEAREST
-							}; 
-
-							streetViewService.getPanorama(locationRequest, (panoData, status) => {
-								
-								window.console.log("panoData:", panoData); 
-								window.console.log("status:", status); 
-
-								if (status === 'OK') {
-
-									resolve(panoData, status);
-
-								} else {
-
-									reject(panoData, status); 
-								
-								} 
-							
-							});  
-						
-						}); 
-					
-					};
-
-					tryAtMost(requestNearestPanorama, 50, (panoData, status, maxTries) => {
+					tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoData, status, maxTries) => {
 						window.console.log("panoData:", panoData); 
 						window.console.log("status:", status); 
 						window.console.log("maxTries:", maxTries);

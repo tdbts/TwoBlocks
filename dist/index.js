@@ -429,7 +429,7 @@
 
 					randomLatLng = new google.maps.LatLng(randomLat, randomLng);
 
-					// Check that the random coords are
+					// Check that the random coords are within polygon
 					isWithinNycBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, nycPolygon);
 				}
 
@@ -439,44 +439,50 @@
 			return _extends({}, appComponents, { getLatLngWithinBoundaries: getLatLngWithinBoundaries });
 		}).then(function (appComponents) {
 
+			var requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
+
+				return new Promise(function (resolve, reject) {
+
+					var streetViewService = new google.maps.StreetViewService();
+
+					var locationRequest = {
+						location: randomLatLng,
+						preference: google.maps.StreetViewPreference.NEAREST
+					};
+
+					streetViewService.getPanorama(locationRequest, function (panoData, status) {
+
+						window.console.log("panoData:", panoData);
+						window.console.log("status:", status);
+
+						if (status === 'OK') {
+
+							resolve(panoData, status);
+						} else {
+
+							reject(panoData, status);
+						}
+					});
+				});
+			};
+
+			return _extends({}, appComponents, { requestNearestPanorama: requestNearestPanorama });
+		}).then(function (appComponents) {
+
 			window.console.log("appComponents:", appComponents);
 
 			var getLatLngWithinBoundaries = appComponents.getLatLngWithinBoundaries;
 			var panorama = appComponents.panorama;
+			var requestNearestPanorama = appComponents.requestNearestPanorama;
 
 
 			var createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
 
-				var randomLatLng = null;
+				var randomLatLng = getLatLngWithinBoundaries(nycPolygon);
 
-				var requestNearestPanorama = function requestNearestPanorama() {
-
-					return new Promise(function (resolve, reject) {
-
-						var streetViewService = new google.maps.StreetViewService();
-
-						var locationRequest = {
-							location: randomLatLng,
-							preference: google.maps.StreetViewPreference.NEAREST
-						};
-
-						streetViewService.getPanorama(locationRequest, function (panoData, status) {
-
-							window.console.log("panoData:", panoData);
-							window.console.log("status:", status);
-
-							if (status === 'OK') {
-
-								resolve(panoData, status);
-							} else {
-
-								reject(panoData, status);
-							}
-						});
-					});
-				};
-
-				(0, _tryAtMost2.default)(requestNearestPanorama, 50, function (panoData, status, maxTries) {
+				(0, _tryAtMost2.default)(function () {
+					return requestNearestPanorama(randomLatLng);
+				}, 50, function (panoData, status, maxTries) {
 					window.console.log("panoData:", panoData);
 					window.console.log("status:", status);
 					window.console.log("maxTries:", maxTries);
