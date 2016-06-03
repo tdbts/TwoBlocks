@@ -363,7 +363,7 @@ const twoBlocks = function twoBlocks() {
 						window.console.log("panoData:", panoData); 
 						window.console.log("status:", status); 
 
-						if (status === 'OK') {
+						if ('OK' === status) {
 
 							resolve({ panoData, status });
 
@@ -387,9 +387,12 @@ const twoBlocks = function twoBlocks() {
 
 				window.console.log("appComponents:", appComponents); 
 
-				const { getLatLngWithinBoundaries, panorama, requestNearestPanorama } = appComponents; 
+				const { getLatLngWithinBoundaries, requestNearestPanorama } = appComponents; 
 
-				const createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
+				// createRandomNycSpinner() could be generalized to createRandomSpinner(), with the polygon 
+				// determining the area within which to look for panoramas.  This means that we could ultimately 
+				// generalize this to apply to any city, not just NYC.  
+				const createRandomNycSpinner = function createRandomNycSpinner(panorama, nycPolygon) {
 				
 					let randomLatLng = getLatLngWithinBoundaries(nycPolygon);  
 
@@ -419,10 +422,9 @@ const twoBlocks = function twoBlocks() {
 
 			const { 
 			
-				createRandomNycSpinner, 
-				getRandomNycCoords, 
-				latLngMaxMin, 
-				nycPolygon, 
+				createRandomNycSpinner,  
+				nycPolygon,
+				panorama,  
 				pollForGeometryLibrary, 
 				spinner 
 
@@ -430,7 +432,7 @@ const twoBlocks = function twoBlocks() {
 
 			pollForGeometryLibrary 
 
-				.then(spinner.on('revolution', () => createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon)));  
+				.then(spinner.on('revolution', () => createRandomNycSpinner(panorama, nycPolygon)));  
 
 		})
 

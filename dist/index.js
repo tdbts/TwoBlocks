@@ -455,7 +455,7 @@
 						window.console.log("panoData:", panoData);
 						window.console.log("status:", status);
 
-						if (status === 'OK') {
+						if ('OK' === status) {
 
 							resolve({ panoData: panoData, status: status });
 						} else {
@@ -472,11 +472,13 @@
 			window.console.log("appComponents:", appComponents);
 
 			var getLatLngWithinBoundaries = appComponents.getLatLngWithinBoundaries;
-			var panorama = appComponents.panorama;
 			var requestNearestPanorama = appComponents.requestNearestPanorama;
 
+			// createRandomNycSpinner() could be generalized to createRandomSpinner(), with the polygon
+			// determining the area within which to look for panoramas.  This means that we could ultimately
+			// generalize this to apply to any city, not just NYC. 
 
-			var createRandomNycSpinner = function createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon) {
+			var createRandomNycSpinner = function createRandomNycSpinner(panorama, nycPolygon) {
 
 				var randomLatLng = getLatLngWithinBoundaries(nycPolygon);
 
@@ -503,15 +505,14 @@
 			return _extends({}, appComponents, { createRandomNycSpinner: createRandomNycSpinner });
 		}).then(function (appComponents) {
 			var createRandomNycSpinner = appComponents.createRandomNycSpinner;
-			var getRandomNycCoords = appComponents.getRandomNycCoords;
-			var latLngMaxMin = appComponents.latLngMaxMin;
 			var nycPolygon = appComponents.nycPolygon;
+			var panorama = appComponents.panorama;
 			var pollForGeometryLibrary = appComponents.pollForGeometryLibrary;
 			var spinner = appComponents.spinner;
 
 
 			pollForGeometryLibrary.then(spinner.on('revolution', function () {
-				return createRandomNycSpinner(getRandomNycCoords, latLngMaxMin, nycPolygon);
+				return createRandomNycSpinner(panorama, nycPolygon);
 			}));
 		}).catch(function () {
 			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
