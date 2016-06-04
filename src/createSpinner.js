@@ -160,7 +160,7 @@ const createSpinner = (panorma, options = {}) => {
 
 				panorma.setPov(pov); 
 				
-				if ((pov.heading % 360) === _startHeading) {
+				if ((pov.heading % DEGREES_IN_A_CIRCLE) === _startHeading) {
 
 					spinner.emit('revolution'); 
 

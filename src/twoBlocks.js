@@ -44,8 +44,6 @@ const twoBlocks = function twoBlocks() {
 
 	const canvasId = "canvas-streetviewpanorama"; 
 	const canvas = document.getElementById(canvasId); 
-	// 'increment' controls the speed of panning
-	// positive values pan to the right, negatives values pan to the left
 
 	const webGlManager = createWebGlManager(canvas); 
 
