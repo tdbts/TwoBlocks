@@ -304,8 +304,7 @@
 			var nycBoundaryLatLngs = [];
 
 			nycBoundaryPoints.forEach(function (pointPair) {
-
-				nycBoundaryLatLngs.push(new (Function.prototype.bind.apply(google.maps.LatLng, [null].concat(_toConsumableArray(pointPair))))());
+				return nycBoundaryLatLngs.push(new (Function.prototype.bind.apply(google.maps.LatLng, [null].concat(_toConsumableArray(pointPair))))());
 			});
 
 			return _extends({}, appComponents, { nycBoundaryLatLngs: nycBoundaryLatLngs });

@@ -205,11 +205,7 @@ const twoBlocks = function twoBlocks() {
 
 			const nycBoundaryLatLngs = []; 
 
-			nycBoundaryPoints.forEach(pointPair => {
-
-				nycBoundaryLatLngs.push(new google.maps.LatLng(...pointPair)); 
-
-			}); 
+			nycBoundaryPoints.forEach(pointPair => nycBoundaryLatLngs.push(new google.maps.LatLng(...pointPair))); 
 
 			return Object.assign({}, appComponents, { nycBoundaryLatLngs }); 
 
