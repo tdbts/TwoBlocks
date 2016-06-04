@@ -130,8 +130,6 @@
 
 		var canvasId = "canvas-streetviewpanorama";
 		var canvas = document.getElementById(canvasId);
-		// 'increment' controls the speed of panning
-		// positive values pan to the right, negatives values pan to the left
 
 		var webGlManager = (0, _createWebGlManager2.default)(canvas);
 
