@@ -301,7 +301,7 @@ const twoBlocks = function twoBlocks() {
 		
 		.then(appComponents => {
 
-			const getRandomCoords = function getRandomCoords(latLngMaxMin, selectRandomValueOfRange) {
+			const getRandomCoords = function getRandomCoords(latLngMaxMin) {
 			
 				const { lat, lng } = latLngMaxMin; 
 
@@ -335,7 +335,7 @@ const twoBlocks = function twoBlocks() {
 				// Until we find coordinates within our predefined region...
 				while (!(isWithinBoundaries)) {
 
-					const randomCoords = getRandomCoords(latLngMaxMin, selectRandomValueOfRange); 
+					const randomCoords = getRandomCoords(latLngMaxMin); 
 					
 					const { randomLat, randomLng } = randomCoords; 
 

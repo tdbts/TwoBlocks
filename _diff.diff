@@ -1,0 +1,53 @@
+diff --git a/dist/index.js b/dist/index.js
+index f8e5ae0..1b3f7f4 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -400,14 +400,14 @@
+ 
+ 		.then(function (appComponents) {
+ 
+-			var getRandomCoords = function getRandomCoords(latLngMaxMin, selectRandomValueOfRange) {
++			var getRandomCoords = function getRandomCoords(latLngMaxMin) {
+ 				var lat = latLngMaxMin.lat;
+ 				var lng = latLngMaxMin.lng;
+ 
+ 
+-				var randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6);
++				var randomLat = (0, _selectRandomValueOfRange2.default)(lat.min, lat.max).toFixed(6);
+ 
+-				var randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6);
++				var randomLng = (0, _selectRandomValueOfRange2.default)(lng.min, lng.max).toFixed(6);
+ 
+ 				window.console.log("randomLat:", randomLat);
+ 				window.console.log("randomLng:", randomLng);
+@@ -430,7 +430,7 @@
+ 				// Until we find coordinates within our predefined region...
+ 				while (!isWithinBoundaries) {
+ 
+-					var randomCoords = getRandomCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
++					var randomCoords = getRandomCoords(latLngMaxMin);
+ 
+ 					var randomLat = randomCoords.randomLat;
+ 					var randomLng = randomCoords.randomLng;
+diff --git a/src/twoBlocks.js b/src/twoBlocks.js
+index 0b10c7b..ce65f34 100644
+--- a/src/twoBlocks.js
++++ b/src/twoBlocks.js
+@@ -301,7 +301,7 @@ const twoBlocks = function twoBlocks() {
+ 		
+ 		.then(appComponents => {
+ 
+-			const getRandomCoords = function getRandomCoords(latLngMaxMin, selectRandomValueOfRange) {
++			const getRandomCoords = function getRandomCoords(latLngMaxMin) {
+ 			
+ 				const { lat, lng } = latLngMaxMin; 
+ 
+@@ -335,7 +335,7 @@ const twoBlocks = function twoBlocks() {
+ 				// Until we find coordinates within our predefined region...
+ 				while (!(isWithinBoundaries)) {
+ 
+-					const randomCoords = getRandomCoords(latLngMaxMin, selectRandomValueOfRange); 
++					const randomCoords = getRandomCoords(latLngMaxMin); 
+ 					
+ 					const { randomLat, randomLng } = randomCoords; 
+ 

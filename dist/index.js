@@ -400,14 +400,14 @@
 
 		.then(function (appComponents) {
 
-			var getRandomCoords = function getRandomCoords(latLngMaxMin, selectRandomValueOfRange) {
+			var getRandomCoords = function getRandomCoords(latLngMaxMin) {
 				var lat = latLngMaxMin.lat;
 				var lng = latLngMaxMin.lng;
 
 
-				var randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6);
+				var randomLat = (0, _selectRandomValueOfRange2.default)(lat.min, lat.max).toFixed(6);
 
-				var randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6);
+				var randomLng = (0, _selectRandomValueOfRange2.default)(lng.min, lng.max).toFixed(6);
 
 				window.console.log("randomLat:", randomLat);
 				window.console.log("randomLng:", randomLng);
@@ -430,7 +430,7 @@
 				// Until we find coordinates within our predefined region...
 				while (!isWithinBoundaries) {
 
-					var randomCoords = getRandomCoords(latLngMaxMin, _selectRandomValueOfRange2.default);
+					var randomCoords = getRandomCoords(latLngMaxMin);
 
 					var randomLat = randomCoords.randomLat;
 					var randomLng = randomCoords.randomLng;
