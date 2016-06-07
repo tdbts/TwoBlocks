@@ -1,5 +1,7 @@
 /* global document, google */
 
+import injectGapiScript from './injectGapiScript';
+import getLatLngMaxMin from './getLatLngMaxMin'; 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
@@ -152,33 +154,6 @@ const twoBlocks = function twoBlocks() {
 		
 	};
 
-	/*----------  injectGapiScript()  ----------*/
-	
-	const injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
-
-		return new Promise(resolve => {
-
-			const script = document.createElement("script");
-			
-			let source = "https://maps.googleapis.com/maps/api/js"; 
-			
-			script.type = "text/javascript";
-			
-			if (MAPS_API_KEY) {
-				
-				source += `&key=${MAPS_API_KEY}`;
-			
-			}
-
-			script.src = source; 
-			script.onload = () => resolve(); 
-
-			document.body.appendChild(script);
-
-		}); 
-	
-	};
-
 	/*----------  Add Google Maps API to environment  ----------*/
 	
 	injectGapiScript() 
@@ -229,65 +204,9 @@ const twoBlocks = function twoBlocks() {
 
 		})
 
-		/*----------  Create function which takes a set of lat / lng values, and gets the max / min for lat / lng.  ----------*/
-		
-		.then(appComponents => {
-
-			const getLatLngMaxMin = function getLatLngMaxMin(latLngs) {
-			
-				let latLngMaxMin = {
-					lat: { 
-						min: null, 
-						max: null 
-					}, 
-					
-					lng: {
-						min: null, 
-						max: null
-					} 				
-				}; 
-
-				latLngMaxMin = latLngs.reduce((prev, curr, i) => {
-
-					const { lat, lng } = prev; 
-
-					// On the first invocation, the Lat and Lng 
-					// values are both the min and max 
-					if (i === 0) {
-
-						const [ currLat, currLng ] = curr; 
-
-						lat.min = lat.max = currLat; 
-						lng.min = lng.max = currLng; 
-
-					} else {
-
-						const [ currLat, currLng ] = curr; 
-
-						lat.min = Math.min(lat.min, currLat); 
-						lat.max = Math.max(lat.max, currLat); 
-						lng.min = Math.min(lng.min, currLng); 
-						lng.max = Math.max(lng.max, currLng); 
-
-					}
-
-					return prev; 
-
-				}, latLngMaxMin); 				
-			
-				return latLngMaxMin; 
-
-			}; 
-
-			return Object.assign({}, appComponents, { getLatLngMaxMin }); 
-
-		})
-
 		/*----------  Create an object defining the min / max values for lat / lng of the NYC boundary  ----------*/
 		
 		.then(appComponents => {
-
-			const { getLatLngMaxMin } = appComponents; 
 
 			const nycLatLngMaxMin = getLatLngMaxMin(nycBoundaryPoints); 
 
@@ -394,8 +313,6 @@ const twoBlocks = function twoBlocks() {
 
 		.then(appComponents => {
 
-				window.console.log("appComponents:", appComponents); 
-
 				const { getLatLngWithinBoundaries, requestNearestPanorama } = appComponents; 
 
 				const createRandomSpinner = function createRandomSpinner(panorama, polygon, latLngMaxMin) {
@@ -425,6 +342,8 @@ const twoBlocks = function twoBlocks() {
 		})
 
 		.then(appComponents => {
+
+			window.console.log("appComponents:", appComponents); 
 
 			const { 
 			
