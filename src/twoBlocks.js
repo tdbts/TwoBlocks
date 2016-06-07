@@ -2,10 +2,10 @@
 
 import injectGapiScript from './injectGapiScript';
 import getLatLngMaxMin from './getLatLngMaxMin'; 
+import getRandomCoords from './getRandomCoords';
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
-import selectRandomValueOfRange from './selectRandomValueOfRange';
 import tryAtMost from './tryAtMost'; 
 import { poll } from './utils/utils'; 
 
@@ -216,35 +216,7 @@ const twoBlocks = function twoBlocks() {
 
 		})
 
-		/*----------  Select random point from within min / max lat / lng range and check if the point falls within our NYC polygon  ----------*/
-		
 		.then(appComponents => {
-
-			const getRandomCoords = function getRandomCoords(latLngMaxMin) {
-			
-				const { lat, lng } = latLngMaxMin; 
-
-				const randomLat = selectRandomValueOfRange(lat.min, lat.max).toFixed(6); 
-				
-				const randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6); 
-
-				window.console.log("randomLat:", randomLat); 
-				window.console.log("randomLng:", randomLng); 
-
-				const randomCoords = { randomLat, randomLng }; 
-				
-				return randomCoords; 
-			
-			}; 
-			
-
-			return Object.assign({}, appComponents, { getRandomCoords }); 
-
-		}) 
-
-		.then(appComponents => {
-
-			const { getRandomCoords } = appComponents; 
 
 			const getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, polygon) {
 			

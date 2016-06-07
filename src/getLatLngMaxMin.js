@@ -1,7 +1,7 @@
 /**
  *
  * getLatLngMaxMin() - Function which takes a set of lat / lng 
- * values, and gets the max / min for both lat / lng 
+ *     values, and gets the max / min for both lat / lng 
  *
  */
 
