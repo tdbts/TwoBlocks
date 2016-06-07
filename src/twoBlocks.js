@@ -2,7 +2,7 @@
 
 import injectGapiScript from './injectGapiScript';
 import getLatLngMaxMin from './getLatLngMaxMin'; 
-import getRandomCoords from './getRandomCoords';
+import getLatLngWithinBoundaries from './getLatLngWithinBoundaries';
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
@@ -218,35 +218,6 @@ const twoBlocks = function twoBlocks() {
 
 		.then(appComponents => {
 
-			const getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, polygon) {
-			
-				let isWithinBoundaries = false; 
-				let randomLatLng = null; 
-
-				// Until we find coordinates within our predefined region...
-				while (!(isWithinBoundaries)) {
-
-					const randomCoords = getRandomCoords(latLngMaxMin); 
-					
-					const { randomLat, randomLng } = randomCoords; 
-
-					randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
-
-					// Check that the random coords are within polygon
-					isWithinBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, polygon); 
-
-				}
-
-				return randomLatLng; 
-			
-			}; 
-
-			return Object.assign({}, appComponents, { getLatLngWithinBoundaries }); 			
-
-		})
-
-		.then(appComponents => {
-
 			const requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
 			
 				return new Promise((resolve, reject) => {
@@ -285,7 +256,7 @@ const twoBlocks = function twoBlocks() {
 
 		.then(appComponents => {
 
-				const { getLatLngWithinBoundaries, requestNearestPanorama } = appComponents; 
+				const { requestNearestPanorama } = appComponents; 
 
 				const createRandomSpinner = function createRandomSpinner(panorama, polygon, latLngMaxMin) {
 				
