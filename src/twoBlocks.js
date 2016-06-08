@@ -4,7 +4,8 @@ import injectGapiScript from './injectGapiScript';
 import getLatLngMaxMin from './getLatLngMaxMin'; 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
-import randomizePanoramaLocation from './randomizePanoramaLocation'; 
+import randomizePanoramaLocation from './randomizePanoramaLocation';
+// import showChooseLocationMap from './showChooseLocationMap';  
 import createWebGlManager from './createWebGlManager'; 
 import { poll } from './utils/utils'; 
 
@@ -67,8 +68,8 @@ const twoBlocks = function twoBlocks() {
 	
 		const mapOptions = {
 			center: gps,
-			zoom: 16,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
+			zoom: 11,
+			mapTypeId: google.maps.MapTypeId.ROADMAP 
 		};	 
 
 		google.maps.event.addListener(panorama, 'closeclick', () => showMap(canvas, mapOptions));
@@ -208,7 +209,8 @@ const twoBlocks = function twoBlocks() {
 			window.console.log("appComponents:", appComponents); 
 
 			const { 
-			
+				
+				// nycBoundaryLatLngs, 
 				nycLatLngMaxMin,
 				nycPolygon,
 				panorama,  
@@ -218,8 +220,29 @@ const twoBlocks = function twoBlocks() {
 			} = appComponents; 
 
 			pollForGeometryLibrary 
+ 
+				.then(() => {
 
-				.then(spinner.on('revolution', () => randomizePanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin)));  
+					// setTimeout(function() {
+						
+					// 	const gps = new google.maps.LatLng(latitude, longitude); 
+
+					// 	const mapOptions = {
+					// 		center: gps
+					// 	}; 
+
+					// 	showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions); 
+						
+					// }, 3000);
+					
+				})
+
+				.then(spinner.on('revolution', () => {
+				
+					randomizePanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin);
+
+
+				}));  
 
 		})
 

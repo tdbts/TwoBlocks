@@ -66,6 +66,9 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, google */
 
+	// import showChooseLocationMap from './showChooseLocationMap'; 
+
+
 	var _injectGapiScript = __webpack_require__(2);
 
 	var _injectGapiScript2 = _interopRequireDefault(_injectGapiScript);
@@ -154,7 +157,7 @@
 
 			var mapOptions = {
 				center: gps,
-				zoom: 16,
+				zoom: 11,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			};
 
@@ -305,15 +308,33 @@
 
 			window.console.log("appComponents:", appComponents);
 
-			var nycLatLngMaxMin = appComponents.nycLatLngMaxMin;
+			var
+
+			// nycBoundaryLatLngs,
+			nycLatLngMaxMin = appComponents.nycLatLngMaxMin;
 			var nycPolygon = appComponents.nycPolygon;
 			var panorama = appComponents.panorama;
 			var pollForGeometryLibrary = appComponents.pollForGeometryLibrary;
 			var spinner = appComponents.spinner;
 
 
-			pollForGeometryLibrary.then(spinner.on('revolution', function () {
-				return (0, _randomizePanoramaLocation2.default)(panorama, nycPolygon, nycLatLngMaxMin);
+			pollForGeometryLibrary.then(function () {
+
+				// setTimeout(function() {
+
+				// 	const gps = new google.maps.LatLng(latitude, longitude);
+
+				// 	const mapOptions = {
+				// 		center: gps
+				// 	};
+
+				// 	showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions);
+
+				// }, 3000);
+
+			}).then(spinner.on('revolution', function () {
+
+				(0, _randomizePanoramaLocation2.default)(panorama, nycPolygon, nycLatLngMaxMin);
 			}));
 		}).catch(function () {
 			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -3097,7 +3118,7 @@
 
 		var randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
 
-		(0, _tryAtMost2.default)(function () {
+		return (0, _tryAtMost2.default)(function () {
 			return (0, _requestNearestPanorama2.default)(randomLatLng);
 		}, 50, function (panoRequestResults, maxTries) {
 

@@ -6,7 +6,7 @@ const randomizePanoramaLocation = function randomizePanoramaLocation(panorama, p
 
 	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
 
-	tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoRequestResults, maxTries) => {
+	return tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoRequestResults, maxTries) => {
 		
 		window.console.log('onCaught()'); 
 		
