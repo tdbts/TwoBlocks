@@ -48,7 +48,6 @@ const twoBlocks = function twoBlocks() {
 
 	const webGlManager = createWebGlManager(canvas); 
 
-	let panoid = null; 
 	let spinner;
 
 	/*----------  init()  ----------*/
@@ -63,11 +62,8 @@ const twoBlocks = function twoBlocks() {
 		
 		const panorama = createPanorama(canvas, { 
 			mode, 
-			pano: panoid, 
 			position: gps
 		}); 
-		
-		panorama.setPano(panoid);
 	
 		const mapOptions = {
 			center: gps,
@@ -76,14 +72,6 @@ const twoBlocks = function twoBlocks() {
 		};	 
 
 		google.maps.event.addListener(panorama, 'closeclick', () => showMap(canvas, mapOptions));
-		
-		google.maps.event.addListener(panorama, 'pano_changed', () => {
-			// getPano() --> [string] Returns the current panorama ID 
-			// for the Street View panorama. This id is stable within 
-			// the browser's current session only.
-			panoid = panorama.getPano();
-		
-		});
 
 		/*----------  Set up spinner  ----------*/
 		

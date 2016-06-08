@@ -135,7 +135,6 @@
 
 		var webGlManager = (0, _createWebGlManager2.default)(canvas);
 
-		var panoid = null;
 		var spinner = void 0;
 
 		/*----------  init()  ----------*/
@@ -150,11 +149,8 @@
 
 			var panorama = (0, _createPanorama2.default)(canvas, {
 				mode: mode,
-				pano: panoid,
 				position: gps
 			});
-
-			panorama.setPano(panoid);
 
 			var mapOptions = {
 				center: gps,
@@ -164,13 +160,6 @@
 
 			google.maps.event.addListener(panorama, 'closeclick', function () {
 				return showMap(canvas, mapOptions);
-			});
-
-			google.maps.event.addListener(panorama, 'pano_changed', function () {
-				// getPano() --> [string] Returns the current panorama ID
-				// for the Street View panorama. This id is stable within
-				// the browser's current session only.
-				panoid = panorama.getPano();
 			});
 
 			/*----------  Set up spinner  ----------*/
