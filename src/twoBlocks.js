@@ -2,11 +2,10 @@
 
 import injectGapiScript from './injectGapiScript';
 import getLatLngMaxMin from './getLatLngMaxMin'; 
-import getLatLngWithinBoundaries from './getLatLngWithinBoundaries';
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
+import createRandomSpinner from './createRandomSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
-import tryAtMost from './tryAtMost'; 
 import { poll } from './utils/utils'; 
 
 /*=================================
@@ -218,79 +217,10 @@ const twoBlocks = function twoBlocks() {
 
 		.then(appComponents => {
 
-			const requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
-			
-				return new Promise((resolve, reject) => {
-
-					const streetViewService = new google.maps.StreetViewService(); 
-
-					const locationRequest = {
-						location: randomLatLng, 
-						preference: google.maps.StreetViewPreference.NEAREST
-					}; 
-
-					streetViewService.getPanorama(locationRequest, (panoData, status) => {
-						
-						window.console.log("panoData:", panoData); 
-						window.console.log("status:", status); 
-
-						if ('OK' === status) {
-
-							resolve({ panoData, status });
-
-						} else {
-
-							reject({ panoData, status }); 
-						
-						} 
-					
-					});  
-				
-				}); 
-			
-			};
-
-			return Object.assign({}, appComponents, { requestNearestPanorama }); 
-
-		})
-
-		.then(appComponents => {
-
-				const { requestNearestPanorama } = appComponents; 
-
-				const createRandomSpinner = function createRandomSpinner(panorama, polygon, latLngMaxMin) {
-				
-					let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
-
-					tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoRequestResults, maxTries) => {
-						
-						window.console.log('onCaught()'); 
-						
-						const { panoData, status } = panoRequestResults; 
-
-						window.console.log("panoData:", panoData); 
-						window.console.log("status:", status); 
-						window.console.log("maxTries:", maxTries);
-
-						randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon); 
-
-					})
-
-					.then(() => panorama.setPosition(randomLatLng)); 
-					
-				}; 
-
-				return Object.assign({}, appComponents, { createRandomSpinner }); 
-
-		})
-
-		.then(appComponents => {
-
 			window.console.log("appComponents:", appComponents); 
 
 			const { 
 			
-				createRandomSpinner,  
 				nycLatLngMaxMin,
 				nycPolygon,
 				panorama,  
