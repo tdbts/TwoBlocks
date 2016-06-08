@@ -4,7 +4,7 @@ import injectGapiScript from './injectGapiScript';
 import getLatLngMaxMin from './getLatLngMaxMin'; 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
-import createRandomSpinner from './createRandomSpinner'; 
+import randomizePanoramaLocation from './randomizePanoramaLocation'; 
 import createWebGlManager from './createWebGlManager'; 
 import { poll } from './utils/utils'; 
 
@@ -231,7 +231,7 @@ const twoBlocks = function twoBlocks() {
 
 			pollForGeometryLibrary 
 
-				.then(spinner.on('revolution', () => createRandomSpinner(panorama, nycPolygon, nycLatLngMaxMin)));  
+				.then(spinner.on('revolution', () => randomizePanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin)));  
 
 		})
 

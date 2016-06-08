@@ -2,7 +2,7 @@ import getLatLngWithinBoundaries from './getLatLngWithinBoundaries';
 import requestNearestPanorama from './requestNearestPanorama'; 
 import tryAtMost from './tryAtMost'; 
 
-const createRandomSpinner = function createRandomSpinner(panorama, polygon, latLngMaxMin) {
+const randomizePanoramaLocation = function randomizePanoramaLocation(panorama, polygon, latLngMaxMin) {
 
 	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
 
@@ -24,4 +24,4 @@ const createRandomSpinner = function createRandomSpinner(panorama, polygon, latL
 	
 }; 
 
-export default createRandomSpinner; 
+export default randomizePanoramaLocation; 

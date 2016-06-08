@@ -82,9 +82,9 @@
 
 	var _createSpinner2 = _interopRequireDefault(_createSpinner);
 
-	var _createRandomSpinner = __webpack_require__(48);
+	var _randomizePanoramaLocation = __webpack_require__(48);
 
-	var _createRandomSpinner2 = _interopRequireDefault(_createRandomSpinner);
+	var _randomizePanoramaLocation2 = _interopRequireDefault(_randomizePanoramaLocation);
 
 	var _createWebGlManager = __webpack_require__(54);
 
@@ -324,7 +324,7 @@
 
 
 			pollForGeometryLibrary.then(spinner.on('revolution', function () {
-				return (0, _createRandomSpinner2.default)(panorama, nycPolygon, nycLatLngMaxMin);
+				return (0, _randomizePanoramaLocation2.default)(panorama, nycPolygon, nycLatLngMaxMin);
 			}));
 		}).catch(function () {
 			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -3104,7 +3104,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var createRandomSpinner = function createRandomSpinner(panorama, polygon, latLngMaxMin) {
+	var randomizePanoramaLocation = function randomizePanoramaLocation(panorama, polygon, latLngMaxMin) {
 
 		var randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
 
@@ -3128,7 +3128,7 @@
 		});
 	};
 
-	exports.default = createRandomSpinner;
+	exports.default = randomizePanoramaLocation;
 
 /***/ },
 /* 49 */
