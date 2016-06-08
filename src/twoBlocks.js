@@ -55,7 +55,7 @@ const twoBlocks = function twoBlocks() {
 
 	const init = function init(canvas, latitude, longitude) {
 		
-		const mode = webGlManager.canUseWebGl() ? "webgl" : "html4";
+		const mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
 
 		const gps = new google.maps.LatLng(latitude, longitude);
 

@@ -142,7 +142,7 @@
 
 		var init = function init(canvas, latitude, longitude) {
 
-			var mode = webGlManager.canUseWebGl() ? "webgl" : "html4";
+			var mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
 
 			var gps = new google.maps.LatLng(latitude, longitude);
 
