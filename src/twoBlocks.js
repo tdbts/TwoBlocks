@@ -259,6 +259,41 @@ const twoBlocks = function twoBlocks() {
 
 						});
 
+						const calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
+						
+							return google.maps.geometry.spherical.computeDistanceBetween(first, second); 	
+						
+						};
+
+						const convertMetersToMiles = function convertMetersToMiles(meters) {
+						
+							const MILES_PER_METER = 0.000621371; 
+
+							return meters * MILES_PER_METER; 
+						
+						}; 
+
+						google.maps.event.addListener(chooseLocationMarker, 'dragend', () => {
+						
+							const distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
+
+							const distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);  
+
+							window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles); 
+
+						}); 
+
+						google.maps.event.addListener(chooseLocationMap, 'click', () => {
+
+							const distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition()); 
+
+							const distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3); 
+
+							window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);  
+
+						}); 
+
+
 					}); 
 
 				}); 

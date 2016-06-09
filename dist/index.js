@@ -349,6 +349,36 @@
 						chooseLocationMarker.setPosition(latLng);
 						chooseLocationMarker.setAnimation(null);
 					});
+
+					var calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
+
+						return google.maps.geometry.spherical.computeDistanceBetween(first, second);
+					};
+
+					var convertMetersToMiles = function convertMetersToMiles(meters) {
+
+						var MILES_PER_METER = 0.000621371;
+
+						return meters * MILES_PER_METER;
+					};
+
+					google.maps.event.addListener(chooseLocationMarker, 'dragend', function () {
+
+						var distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
+
+						var distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);
+
+						window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
+					});
+
+					google.maps.event.addListener(chooseLocationMap, 'click', function () {
+
+						var distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
+
+						var distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);
+
+						window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
+					});
 				});
 			});
 		}).catch(function () {
