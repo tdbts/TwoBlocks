@@ -5,7 +5,7 @@ import getLatLngMaxMin from './getLatLngMaxMin';
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import randomizePanoramaLocation from './randomizePanoramaLocation';
-// import showChooseLocationMap from './showChooseLocationMap';  
+import showChooseLocationMap from './showChooseLocationMap';  
 import createWebGlManager from './createWebGlManager'; 
 import { poll } from './utils/utils'; 
 
@@ -63,7 +63,8 @@ const twoBlocks = function twoBlocks() {
 		
 		const panorama = createPanorama(canvas, { 
 			mode, 
-			position: gps
+			position: gps, 
+			visible: false
 		}); 
 	
 		const mapOptions = {
@@ -84,13 +85,6 @@ const twoBlocks = function twoBlocks() {
 		}); 
 
 		spinner.on('revolution', () => window.console.log('revolution')); 
-		
-		spinner.start(); 
-
-		canvas.addEventListener('mouseover', () => spinner.stop()); 
-		canvas.addEventListener('mouseout', () => spinner.start()); 
-
-		webGlManager.on('webglcontextrestored', () => spinner.spin()); 
 		
 		/*----------  Set up WebGl  ----------*/
 		
@@ -210,7 +204,7 @@ const twoBlocks = function twoBlocks() {
 
 			const { 
 				
-				// nycBoundaryLatLngs, 
+				nycBoundaryLatLngs, 
 				nycLatLngMaxMin,
 				nycPolygon,
 				panorama,  
@@ -220,29 +214,30 @@ const twoBlocks = function twoBlocks() {
 			} = appComponents; 
 
 			pollForGeometryLibrary 
- 
+
+				.then(() => randomizePanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin)) 
+
 				.then(() => {
 
-					// setTimeout(function() {
-						
-					// 	const gps = new google.maps.LatLng(latitude, longitude); 
+					panorama.setVisible(true); 
 
-					// 	const mapOptions = {
-					// 		center: gps
-					// 	}; 
+					spinner.start(); 
 
-					// 	showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions); 
-						
-					// }, 3000);
+					spinner.once('revolution', () => {
 					
-				})
+						spinner.stop(); 
 
-				.then(spinner.on('revolution', () => {
-				
-					randomizePanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin);
+						const gps = new google.maps.LatLng(latitude, longitude); 
 
+						const mapOptions = {
+							center: gps
+						}; 
 
-				}));  
+						showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions); 
+
+					}); 
+
+				}); 
 
 		})
 

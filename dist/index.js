@@ -66,9 +66,6 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, google */
 
-	// import showChooseLocationMap from './showChooseLocationMap'; 
-
-
 	var _injectGapiScript = __webpack_require__(2);
 
 	var _injectGapiScript2 = _interopRequireDefault(_injectGapiScript);
@@ -89,7 +86,11 @@
 
 	var _randomizePanoramaLocation2 = _interopRequireDefault(_randomizePanoramaLocation);
 
-	var _createWebGlManager = __webpack_require__(54);
+	var _showChooseLocationMap = __webpack_require__(54);
+
+	var _showChooseLocationMap2 = _interopRequireDefault(_showChooseLocationMap);
+
+	var _createWebGlManager = __webpack_require__(55);
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
@@ -152,7 +153,8 @@
 
 			var panorama = (0, _createPanorama2.default)(canvas, {
 				mode: mode,
-				position: gps
+				position: gps,
+				visible: false
 			});
 
 			var mapOptions = {
@@ -176,19 +178,6 @@
 
 			spinner.on('revolution', function () {
 				return window.console.log('revolution');
-			});
-
-			spinner.start();
-
-			canvas.addEventListener('mouseover', function () {
-				return spinner.stop();
-			});
-			canvas.addEventListener('mouseout', function () {
-				return spinner.start();
-			});
-
-			webGlManager.on('webglcontextrestored', function () {
-				return spinner.spin();
 			});
 
 			/*----------  Set up WebGl  ----------*/
@@ -308,10 +297,8 @@
 
 			window.console.log("appComponents:", appComponents);
 
-			var
-
-			// nycBoundaryLatLngs,
-			nycLatLngMaxMin = appComponents.nycLatLngMaxMin;
+			var nycBoundaryLatLngs = appComponents.nycBoundaryLatLngs;
+			var nycLatLngMaxMin = appComponents.nycLatLngMaxMin;
 			var nycPolygon = appComponents.nycPolygon;
 			var panorama = appComponents.panorama;
 			var pollForGeometryLibrary = appComponents.pollForGeometryLibrary;
@@ -319,23 +306,26 @@
 
 
 			pollForGeometryLibrary.then(function () {
+				return (0, _randomizePanoramaLocation2.default)(panorama, nycPolygon, nycLatLngMaxMin);
+			}).then(function () {
 
-				// setTimeout(function() {
+				panorama.setVisible(true);
 
-				// 	const gps = new google.maps.LatLng(latitude, longitude);
+				spinner.start();
 
-				// 	const mapOptions = {
-				// 		center: gps
-				// 	};
+				spinner.once('revolution', function () {
 
-				// 	showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions);
+					spinner.stop();
 
-				// }, 3000);
+					var gps = new google.maps.LatLng(latitude, longitude);
 
-			}).then(spinner.on('revolution', function () {
+					var mapOptions = {
+						center: gps
+					};
 
-				(0, _randomizePanoramaLocation2.default)(panorama, nycPolygon, nycLatLngMaxMin);
-			}));
+					(0, _showChooseLocationMap2.default)(canvas, nycBoundaryLatLngs, mapOptions);
+				});
+			});
 		}).catch(function () {
 			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 				args[_key] = arguments[_key];
@@ -574,6 +564,8 @@
 		var SEGMENTS_DEFAULT = 4;
 		var VALID_SEGMENTS = [2, 4, 6, 9, 12];
 
+		var _canSpin = false;
+		var _paused = false;
 		var _started = false;
 		var _startHeading = null;
 		var segments = null;
@@ -643,7 +635,7 @@
 
 			if (heading % (DEGREES_IN_A_CIRCLE / segments) === 0) {
 
-				api.stop();
+				_paused = true;
 
 				// If we were to pause the spinning on mouseover as
 				// the original author chose to do, we wouldn't actually
@@ -652,8 +644,15 @@
 				// and start only when the timeout has expired AND the
 				// mouse has left the canvas <div>.  This is where something
 				// like Redux is going to shine. 
+
 				setTimeout(function () {
-					return api.start();
+
+					// If the stop() method has not been called
+					// by the outside world...
+					if (_canSpin) {
+
+						api.start();
+					}
 				}, delay);
 			}
 		};
@@ -691,12 +690,12 @@
 
 		var api = {
 			spin: function spin() {
+
 				// window.console.log('spin()');
-				// window.console.log("_startHeading:", _startHeading);
+
 				try {
 
 					var pov = incrementHeading(panorma.getPov(), increment);
-					// window.console.log("pov.heading:", pov.heading);
 
 					panorma.setPov(pov);
 
@@ -717,6 +716,12 @@
 			start: function start() {
 				var _this = this;
 
+				_canSpin = true;
+
+				_paused = false;
+
+				// window.console.log('spinner start()');
+
 				if (!_started) {
 
 					_started = true;
@@ -724,11 +729,16 @@
 					_startHeading = panorma.getPov().heading;
 				}
 
-				clearInterval(timer);
+				if (!timer) {
 
-				timer = setInterval(function () {
-					return _this.spin();
-				}, interval);
+					timer = setInterval(function () {
+
+						if (_canSpin && !_paused) {
+
+							_this.spin();
+						}
+					}, interval);
+				}
 			},
 			started: function started() {
 
@@ -736,7 +746,7 @@
 			},
 			stop: function stop() {
 
-				clearInterval(timer);
+				_canSpin = false;
 			}
 		};
 
@@ -3326,6 +3336,54 @@
 
 /***/ },
 /* 54 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	/* global google */
+
+	var DEFAULT_LAT = 40.6291566;
+	var DEFAULT_LNG = -74.0287341;
+
+	var showChooseLocationMap = function showChooseLocationMap(canvas, locationLatLngs, options) {
+
+		var defaultOptions = {
+			center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),
+			mapTypeControl: false,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			streetViewControl: false,
+			zoom: 10
+		};
+
+		var mapOptions = _extends({}, defaultOptions, options);
+		var map = new google.maps.Map(canvas, mapOptions);
+
+		var worldCoordinates = [new google.maps.LatLng(0, -90), new google.maps.LatLng(0, 90), new google.maps.LatLng(90, -90), new google.maps.LatLng(90, 90)];
+
+		var centerOfTheWorld = new google.maps.Polygon({
+
+			paths: [worldCoordinates, locationLatLngs],
+			strokeColor: '#000000',
+			strokeOpacity: 0.8,
+			strokeWeight: 2,
+			fillColor: '#000000',
+			fillOpacity: 0.35
+
+		});
+
+		centerOfTheWorld.setMap(map);
+	};
+
+	exports.default = showChooseLocationMap;
+
+/***/ },
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

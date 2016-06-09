@@ -32,6 +32,8 @@ const createSpinner = (panorma, options = {}) => {
 	const SEGMENTS_DEFAULT  	= 4; 
 	const VALID_SEGMENTS 		= [2, 4, 6, 9, 12]; 
 
+	let _canSpin = false; 
+	let _paused = false; 
 	let _started = false; 
 	let _startHeading = null; 
 	let segments = null; 
@@ -102,7 +104,7 @@ const createSpinner = (panorma, options = {}) => {
 		// rotation, and it is time to pause the movement.  
 		if ((heading % (DEGREES_IN_A_CIRCLE / segments)) === 0) {
 
-			api.stop(); 
+			_paused = true;  
 
 			// If we were to pause the spinning on mouseover as 
 			// the original author chose to do, we wouldn't actually 
@@ -111,7 +113,18 @@ const createSpinner = (panorma, options = {}) => {
 			// and start only when the timeout has expired AND the 
 			// mouse has left the canvas <div>.  This is where something 
 			// like Redux is going to shine.  
-			setTimeout(() => api.start(), delay);
+
+			setTimeout(() => {
+
+				// If the stop() method has not been called 
+				// by the outside world...
+				if (_canSpin) { 
+				
+					api.start();
+				
+				}
+
+			}, delay);
 
 		} 
 	
@@ -151,12 +164,12 @@ const createSpinner = (panorma, options = {}) => {
 	const api = {
 
 		spin() {
+
 			// window.console.log('spin()'); 
-			// window.console.log("_startHeading:", _startHeading); 
+
 			try {
 
 				const pov = incrementHeading(panorma.getPov(), increment); 
-				// window.console.log("pov.heading:", pov.heading); 
 
 				panorma.setPov(pov); 
 				
@@ -182,18 +195,34 @@ const createSpinner = (panorma, options = {}) => {
 
 		start() {
 
+			_canSpin = true; 
+			
+			_paused = false; 
+
+			// window.console.log('spinner start()'); 
+
 			if (!(_started)) {
 
-				_started = true; 
+				_started = true;  
 
 				_startHeading = panorma.getPov().heading; 
 			
 			}
+ 
+			if (!(timer)) {
 
-			clearInterval(timer); 
+				timer = setInterval(() => {
+					
+					if (_canSpin && !(_paused)) {
 
-			timer = setInterval(() => this.spin(), interval); 
+						this.spin(); 
 
+					}
+
+				}, interval); 
+
+			}
+ 
 		}, 
 
 		started() {
@@ -204,7 +233,7 @@ const createSpinner = (panorma, options = {}) => {
 
 		stop() {
 
-			clearInterval(timer); 
+			_canSpin = false; 
 
 		}
 	
