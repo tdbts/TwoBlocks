@@ -233,7 +233,31 @@ const twoBlocks = function twoBlocks() {
 							center: gps
 						}; 
 
-						showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions); 
+						const chooseLocationMap = showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions);
+
+						// Outside the polygon boundaries, in the Atlantic Ocean 
+						const markerLat = 40.480993; 
+						const markerLng = -73.72798; 
+
+						const markerOptions = {
+							animation: google.maps.Animation.BOUNCE, 
+							draggable: true, 
+							map: chooseLocationMap, 
+							position: new google.maps.LatLng(markerLat, markerLng)
+						}; 
+
+						const chooseLocationMarker = new google.maps.Marker(markerOptions); 
+
+						google.maps.event.addListener(chooseLocationMarker, 'dragstart', () => chooseLocationMarker.setAnimation(null)); 
+
+						google.maps.event.addListener(chooseLocationMap, 'click', e => {
+
+							const { latLng } = e; 
+
+							chooseLocationMarker.setPosition(latLng); 
+							chooseLocationMarker.setAnimation(null); 
+
+						});
 
 					}); 
 

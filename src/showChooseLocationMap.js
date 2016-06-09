@@ -36,6 +36,8 @@ const showChooseLocationMap = function showChooseLocationMap(canvas, locationLat
 
 	centerOfTheWorld.setMap(map); 
 
+	return map; 
+
 }; 
 
 export default showChooseLocationMap; 

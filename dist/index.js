@@ -323,7 +323,32 @@
 						center: gps
 					};
 
-					(0, _showChooseLocationMap2.default)(canvas, nycBoundaryLatLngs, mapOptions);
+					var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, nycBoundaryLatLngs, mapOptions);
+
+					// Outside the polygon boundaries, in the Atlantic Ocean
+					var markerLat = 40.480993;
+					var markerLng = -73.72798;
+
+					var markerOptions = {
+						animation: google.maps.Animation.BOUNCE,
+						draggable: true,
+						map: chooseLocationMap,
+						position: new google.maps.LatLng(markerLat, markerLng)
+					};
+
+					var chooseLocationMarker = new google.maps.Marker(markerOptions);
+
+					google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
+						return chooseLocationMarker.setAnimation(null);
+					});
+
+					google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
+						var latLng = e.latLng;
+
+
+						chooseLocationMarker.setPosition(latLng);
+						chooseLocationMarker.setAnimation(null);
+					});
 				});
 			});
 		}).catch(function () {
@@ -3378,6 +3403,8 @@
 		});
 
 		centerOfTheWorld.setMap(map);
+
+		return map;
 	};
 
 	exports.default = showChooseLocationMap;
