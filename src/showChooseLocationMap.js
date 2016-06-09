@@ -7,8 +7,10 @@ const showChooseLocationMap = function showChooseLocationMap(canvas, locationLat
 
 	const defaultOptions = {
 		center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG), 
-		zoom: 10, 
-		mapTypeId: google.maps.MapTypeId.ROADMAP
+		mapTypeControl: false, 
+		mapTypeId: google.maps.MapTypeId.ROADMAP, 
+		streetViewControl: false, 
+		zoom: 10
 	}; 
 
 	const mapOptions = Object.assign({}, defaultOptions, options); 
