@@ -33,8 +33,8 @@ const twoBlocks = function twoBlocks() {
 	// LOCATION SETTINGS
 	// #################
 
-	const latitude = 40.6291566; 
-	const longitude = -74.0287341; 
+	const mapCenterLat = 40.6291566; 
+	const mapCenterLng = -74.0287341; 
 
 	const nycBoundaryPoints = [
 		// NJ, above Bronx, West side
@@ -123,7 +123,7 @@ const twoBlocks = function twoBlocks() {
 
 		/*----------  Initialize panorama / spinner  ----------*/
 
-		.then(appComponents => Object.assign({}, appComponents, init(canvas, latitude, longitude)))
+		.then(appComponents => Object.assign({}, appComponents, init(canvas, mapCenterLat, mapCenterLng)))
 
 		/*----------  Convert lat / lng values to an array of LatLng class instances  ----------*/
 		
@@ -196,7 +196,7 @@ const twoBlocks = function twoBlocks() {
 					
 						spinner.stop(); 
 
-						const gps = new google.maps.LatLng(latitude, longitude); 
+						const gps = new google.maps.LatLng(mapCenterLat, mapCenterLng); 
 
 						const mapOptions = {
 							center: gps

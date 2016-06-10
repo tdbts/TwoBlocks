@@ -125,8 +125,8 @@
 		// LOCATION SETTINGS
 		// #################
 
-		var latitude = 40.6291566;
-		var longitude = -74.0287341;
+		var mapCenterLat = 40.6291566;
+		var mapCenterLng = -74.0287341;
 
 		var nycBoundaryPoints = [
 		// NJ, above Bronx, West side
@@ -217,7 +217,7 @@
 		/*----------  Initialize panorama / spinner  ----------*/
 
 		.then(function (appComponents) {
-			return _extends({}, appComponents, init(canvas, latitude, longitude));
+			return _extends({}, appComponents, init(canvas, mapCenterLat, mapCenterLng));
 		})
 
 		/*----------  Convert lat / lng values to an array of LatLng class instances  ----------*/
@@ -283,7 +283,7 @@
 
 					spinner.stop();
 
-					var gps = new google.maps.LatLng(latitude, longitude);
+					var gps = new google.maps.LatLng(mapCenterLat, mapCenterLng);
 
 					var mapOptions = {
 						center: gps
