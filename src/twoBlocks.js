@@ -8,12 +8,26 @@ import randomizePanoramaLocation from './randomizePanoramaLocation';
 import showChooseLocationMap from './showChooseLocationMap';  
 import createWebGlManager from './createWebGlManager'; 
 import { poll } from './utils/utils'; 
+// import { createStore } from 'redux'; 
 
 /*=================================
 =            twoBlocks()          =
 =================================*/
 
 const twoBlocks = function twoBlocks() {
+
+	/*----------  Configure Redux Store  ----------*/
+	
+	// const configureStore = function configureStore(reducer, initialState) {
+
+	// 	const store = createStore(
+	// 		reducer, 
+	// 		initialState, 
+	// 		window.devToolsExtension ? window.devToolsExtension() : undefined
+	// 	);
+
+	// 	return store; 
+	// }; 
 
 	// #################
 	// LOCATION SETTINGS
@@ -66,14 +80,6 @@ const twoBlocks = function twoBlocks() {
 			position: gps, 
 			visible: false
 		}); 
-	
-		const mapOptions = {
-			center: gps,
-			zoom: 11,
-			mapTypeId: google.maps.MapTypeId.ROADMAP 
-		};	 
-
-		google.maps.event.addListener(panorama, 'closeclick', () => showMap(canvas, mapOptions));
 
 		/*----------  Set up spinner  ----------*/
 		
@@ -98,43 +104,6 @@ const twoBlocks = function twoBlocks() {
 		
 	};
 
-	/*----------  showMap()  ----------*/
-
-	/**
-	 *
-	 * It does not lie.  It shows the map.  
-	 *
-	 */
-	
-	// Refactor this to make this a more generally useful pure function.  
-	// Pass in canvas element, and LatLong instance.  Remove side effect 
-	// of assigning to 'panorama' variable.  
-	const showMap = function showMap(canvas, mapOptions) {
-
-		// Remove event listeners created in init().  
-		// Too tightly coupled here, maybe just emit an event. 
-		canvas.onmouseover = function () {};
-		canvas.onmouseout = function () {};
-		
-		// Same here.  Emit an event and stop the spinner on 
-		// that event.  
-		spinner.stop(); 
-		
-		const map = new google.maps.Map(canvas, mapOptions);
-		
-		// Add a marker to the map.  Options define which map, 
-		// what location, and whether is visible.  
-		const markerOptions = {
-			map,
-			position: mapOptions.center,
-			visible: true
-		};
-		
-		const marker = new google.maps.Marker(markerOptions);
-		
-		google.maps.event.addListener(marker, 'click', () => init(canvas, latitude, longitude));
-		
-	};
 
 	/*----------  Add Google Maps API to environment  ----------*/
 	
