@@ -293,7 +293,6 @@ const twoBlocks = function twoBlocks() {
 
 						}); 
 
-
 					}); 
 
 				}); 

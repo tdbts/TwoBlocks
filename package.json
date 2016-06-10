@@ -45,5 +45,8 @@
   },
   "peerDependencies": {
     "webpack": "^1.0.0"
+  },
+  "dependencies": {
+    "redux": "^3.5.2"
   }
 }
