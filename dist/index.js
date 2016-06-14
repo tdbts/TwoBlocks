@@ -125,25 +125,31 @@
 		// LOCATION SETTINGS
 		// #################
 
-		var mapCenterLat = 40.6291566;
-		var mapCenterLng = -74.0287341;
+		var nycCoordinates = {
 
-		var nycBoundaryPoints = [
-		// NJ, above Bronx, West side
-		[40.932251, -73.935757],
-		// LI Sound, above Bronx, East side
-		[40.866917, -73.750877],
-		// Atlantic Ocean, just South of LI,
-		// past Eastern border of Queens
-		[40.567269, -73.66539],
-		// Atlantic Ocean, just South of Rockaway penninsula and Brooklyn
-		[40.519264, -73.946915],
-		// (Lower Bay, Between Staten Island and Brooklyn) 
-		[40.572485, -74.054031],
-		// Just South of Staten Island
-		[40.477492, -74.233932],
-		// NJ, West of Staten Island
-		[40.562052, -74.352036]];
+			boundaries: [
+			// NJ, above Bronx, West side
+			[40.932251, -73.935757],
+			// LI Sound, above Bronx, East side
+			[40.866917, -73.750877],
+			// Atlantic Ocean, just South of LI,
+			// past Eastern border of Queens
+			[40.567269, -73.66539],
+			// Atlantic Ocean, just South of Rockaway penninsula and Brooklyn
+			[40.519264, -73.946915],
+			// (Lower Bay, Between Staten Island and Brooklyn) 
+			[40.572485, -74.054031],
+			// Just South of Staten Island
+			[40.477492, -74.233932],
+			// NJ, West of Staten Island
+			[40.562052, -74.352036]],
+
+			center: {
+				lat: 40.6291566,
+				lng: -74.0287341
+			}
+
+		};
 
 		// #############
 		// MORE SETTINGS
@@ -217,7 +223,7 @@
 		/*----------  Initialize panorama / spinner  ----------*/
 
 		.then(function (appComponents) {
-			return _extends({}, appComponents, init(canvas, mapCenterLat, mapCenterLng));
+			return _extends({}, appComponents, init(canvas, nycCoordinates.center.lat, nycCoordinates.center.lng));
 		})
 
 		/*----------  Convert lat / lng values to an array of LatLng class instances  ----------*/
@@ -226,7 +232,10 @@
 
 			var nycBoundaryLatLngs = [];
 
-			nycBoundaryPoints.forEach(function (pointPair) {
+			var boundaries = nycCoordinates.boundaries;
+
+
+			boundaries.forEach(function (pointPair) {
 				return nycBoundaryLatLngs.push(new (Function.prototype.bind.apply(google.maps.LatLng, [null].concat(_toConsumableArray(pointPair))))());
 			});
 
@@ -254,7 +263,7 @@
 
 		.then(function (appComponents) {
 
-			var nycLatLngMaxMin = (0, _getLatLngMaxMin2.default)(nycBoundaryPoints);
+			var nycLatLngMaxMin = (0, _getLatLngMaxMin2.default)(nycCoordinates.boundaries);
 
 			window.console.log("nycLatLngMaxMin:", nycLatLngMaxMin);
 
@@ -283,7 +292,7 @@
 
 					spinner.stop();
 
-					var gps = new google.maps.LatLng(mapCenterLat, mapCenterLng);
+					var gps = new google.maps.LatLng(nycCoordinates.center.lat, nycCoordinates.center.lng);
 
 					var mapOptions = {
 						center: gps
