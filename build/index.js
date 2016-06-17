@@ -1,20 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';  
+import 'babel-polyfill'; 
+import React from 'react'; 
+import { render } from 'react-dom'; 
+import TwoBlocks from '../src/components/TwoBlocks.jsx'; 
 
-import twoBlocks from '../src/twoBlocks'; 
-
-twoBlocks(); 
-
-class Test extends React.Component {
-	
-	render() {
-		return (
-			<h1>It works!</h1>
-		); 
-	}
-
-}
-
-const test = document.getElementById('react-test'); 
-
-ReactDOM.render(<Test />, test);
+render(<TwoBlocks />, document.getElementById('app-container')); 

@@ -2,23 +2,33 @@
 <html>
 	<head>
 		<style type="text/css">
+			
 			html, body {
 				height: 100%; 
 				margin: 0; 
 				padding: 0;
 			} 
 
+			#canvas-streetviewpanorama {
+				height: 600px; 
+				width: 1000px; 
+			}
+
 			#map {
 				height: 100%; 
 			}
+
+			.full-dimensions {
+				height: 100%; 
+				width: 100%; 
+			}
+
 		</style>
 	</head> 
 	<body>
 
-		<div style="width:1000px; height:600px;" id="canvas-streetviewpanorama"></div>
+		<div id="app-container" class="full-dimensions"></div>
 
-		<div id="react-test" height="300px" width = "750px"></div>
-	
 		<script type="text/javascript" src="../dist/index.js"></script>
 
 	</body>

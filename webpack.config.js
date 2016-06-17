@@ -14,12 +14,12 @@ module.exports = {
 		], 
 		loaders: [
 			{
-				test: /\.js$/,
+				test: /\.jsx?$/,
 				loader: 'babel-loader',
 				exclude: /node_modules/,
 				query: {
 					plugins: ['transform-object-assign'], 
-					presets: ['es2015']
+					presets: ['es2015', 'react']
         		}
       		}
     	]
