@@ -6,19 +6,24 @@
 		"mocha": true
 	},
 
-	"extends": "eslint:recommended", 
+	"extends": ["eslint:recommended", "plugin:react/recommended"], 
 	
+	"globals": {
+		// "angular": 1
+	}, 
+
 	"parserOptions": {
 		"ecmaFeatures": {
+			jsx: true, 
 			modules: true
 		}, 
 		"ecmaVersion": 6, 
 		"sourceType": "module"
 	},
 
-	"globals": {
-		// "angular": 1
-	}, 
+	"plugins": [
+		"react"
+	], 
 
 	"rules": {
 	    "eqeqeq": [2,"smart"],
