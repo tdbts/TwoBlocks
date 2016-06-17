@@ -19,7 +19,7 @@ module.exports = {
 				exclude: /node_modules/,
 				query: {
 					plugins: ['transform-object-assign'], 
-					presets: ['es2015']
+					presets: ['es2015', 'react']
         		}
       		}
     	]
