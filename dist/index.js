@@ -28318,7 +28318,7 @@
 			key: 'render',
 			value: function render() {
 
-				return _react2.default.createElement('div', { id: 'canvas-streetviewpanorama' });
+				return _react2.default.createElement('div', { id: 'twoBlocks' });
 			}
 		}]);
 
@@ -28428,7 +28428,7 @@
 		// MORE SETTINGS
 		// #############
 
-		var canvasId = "canvas-streetviewpanorama";
+		var canvasId = "twoBlocks";
 		var canvas = document.getElementById(canvasId);
 
 		var webGlManager = (0, _createWebGlManager2.default)(canvas);

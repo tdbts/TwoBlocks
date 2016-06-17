@@ -64,7 +64,7 @@ const twoBlocks = function twoBlocks() {
 	// MORE SETTINGS
 	// #############
 
-	const canvasId = "canvas-streetviewpanorama"; 
+	const canvasId = "twoBlocks"; 
 	const canvas = document.getElementById(canvasId); 
 
 	const webGlManager = createWebGlManager(canvas); 

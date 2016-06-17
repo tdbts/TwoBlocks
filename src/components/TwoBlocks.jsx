@@ -13,7 +13,7 @@ class TwoBlocks extends React.Component {
 
 		return (
 	
-			<div id="canvas-streetviewpanorama"></div>
+			<div id="twoBlocks"></div>
 	
 		); 
 
