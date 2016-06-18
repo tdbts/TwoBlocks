@@ -1,19 +1,15 @@
 import React from 'react';
-import twoBlocks from '../twoBlocks'; 
+import TwoBlocksMap from './TwoBlocksMap.jsx'; 
 
 class TwoBlocks extends React.Component {
-
-	componentDidMount() {
-	    
-	    twoBlocks();   
-	
-	}
 
 	render() {
 
 		return (
 	
-			<div id="twoBlocks"></div>
+			<div id="twoBlocks">
+				<TwoBlocksMap />
+			</div>
 	
 		); 
 
