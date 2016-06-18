@@ -28291,6 +28291,8 @@
 
 	var _TwoBlocksMap2 = _interopRequireDefault(_TwoBlocksMap);
 
+	var _constants = __webpack_require__(485);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28314,14 +28316,16 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ id: 'twoBlocks' },
-					_react2.default.createElement(_TwoBlocksMap2.default, null)
+					{ id: this.props.gameId },
+					_react2.default.createElement(_TwoBlocksMap2.default, { coordinates: _constants.NYC_COORDINATES, canvasId: this.props.canvasId })
 				);
 			}
 		}]);
 
 		return TwoBlocks;
 	}(_react2.default.Component);
+
+	TwoBlocks.defaultProps = { canvasId: "twoBlocks-map", gameId: "twoBlocks" };
 
 	exports.default = TwoBlocks;
 
@@ -28366,7 +28370,7 @@
 			key: 'componentDidMount',
 			value: function componentDidMount() {
 
-				(0, _twoBlocks2.default)();
+				(0, _twoBlocks2.default)(this.props.canvasId, this.props.coordinates);
 			}
 		}, {
 			key: 'render',
@@ -28409,15 +28413,15 @@
 
 	var _createSpinner2 = _interopRequireDefault(_createSpinner);
 
-	var _randomizePanoramaLocation = __webpack_require__(513);
+	var _randomizePanoramaLocation = __webpack_require__(514);
 
 	var _randomizePanoramaLocation2 = _interopRequireDefault(_randomizePanoramaLocation);
 
-	var _showChooseLocationMap = __webpack_require__(519);
+	var _showChooseLocationMap = __webpack_require__(520);
 
 	var _showChooseLocationMap2 = _interopRequireDefault(_showChooseLocationMap);
 
-	var _createWebGlManager = __webpack_require__(520);
+	var _createWebGlManager = __webpack_require__(521);
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
@@ -28433,7 +28437,7 @@
 	=            twoBlocks()          =
 	=================================*/
 
-	var twoBlocks = function twoBlocks() {
+	var twoBlocks = function twoBlocks(canvasId, locationCoordinates) {
 
 		/*----------  Configure Redux Store  ----------*/
 
@@ -28448,41 +28452,10 @@
 		// 	return store;
 		// };
 
-		// #################
-		// LOCATION SETTINGS
-		// #################
-
-		var nycCoordinates = {
-
-			boundaries: [
-			// NJ, above Bronx, West side
-			[40.932251, -73.935757],
-			// LI Sound, above Bronx, East side
-			[40.866917, -73.750877],
-			// Atlantic Ocean, just South of LI,
-			// past Eastern border of Queens
-			[40.567269, -73.66539],
-			// Atlantic Ocean, just South of Rockaway penninsula and Brooklyn
-			[40.519264, -73.946915],
-			// (Lower Bay, Between Staten Island and Brooklyn) 
-			[40.572485, -74.054031],
-			// Just South of Staten Island
-			[40.477492, -74.233932],
-			// NJ, West of Staten Island
-			[40.562052, -74.352036]],
-
-			center: {
-				lat: 40.6291566,
-				lng: -74.0287341
-			}
-
-		};
-
 		// #############
 		// MORE SETTINGS
 		// #############
 
-		var canvasId = "twoBlocks-map";
 		var canvas = document.getElementById(canvasId);
 
 		var webGlManager = (0, _createWebGlManager2.default)(canvas);
@@ -28550,7 +28523,7 @@
 		/*----------  Initialize panorama / spinner  ----------*/
 
 		.then(function (appComponents) {
-			return _extends({}, appComponents, init(canvas, nycCoordinates.center.lat, nycCoordinates.center.lng));
+			return _extends({}, appComponents, init(canvas, locationCoordinates.center.lat, locationCoordinates.center.lng));
 		})
 
 		/*----------  Convert lat / lng values to an array of LatLng class instances  ----------*/
@@ -28559,7 +28532,7 @@
 
 			var nycBoundaryLatLngs = [];
 
-			var boundaries = nycCoordinates.boundaries;
+			var boundaries = locationCoordinates.boundaries;
 
 
 			boundaries.forEach(function (pointPair) {
@@ -28590,7 +28563,7 @@
 
 		.then(function (appComponents) {
 
-			var nycLatLngMaxMin = (0, _getLatLngMaxMin2.default)(nycCoordinates.boundaries);
+			var nycLatLngMaxMin = (0, _getLatLngMaxMin2.default)(locationCoordinates.boundaries);
 
 			window.console.log("nycLatLngMaxMin:", nycLatLngMaxMin);
 
@@ -28619,7 +28592,7 @@
 
 					spinner.stop();
 
-					var gps = new google.maps.LatLng(nycCoordinates.center.lat, nycCoordinates.center.lng);
+					var gps = new google.maps.LatLng(locationCoordinates.center.lat, locationCoordinates.center.lng);
 
 					var mapOptions = {
 						center: gps
@@ -28889,7 +28862,7 @@
 
 	var _utils = __webpack_require__(473);
 
-	var _util = __webpack_require__(510);
+	var _util = __webpack_require__(511);
 
 	/*=====================================
 	=            createSpinner()            =
@@ -29465,23 +29438,23 @@
 
 	var _extend2 = _interopRequireDefault(_extend);
 
-	var _existenceCheck = __webpack_require__(488);
+	var _existenceCheck = __webpack_require__(489);
 
 	var _existenceCheck2 = _interopRequireDefault(_existenceCheck);
 
-	var _followPath = __webpack_require__(489);
+	var _followPath = __webpack_require__(490);
 
 	var _followPath2 = _interopRequireDefault(_followPath);
 
-	var _getArgumentsArray = __webpack_require__(492);
+	var _getArgumentsArray = __webpack_require__(493);
 
 	var _getArgumentsArray2 = _interopRequireDefault(_getArgumentsArray);
 
-	var _getOwnProp = __webpack_require__(493);
+	var _getOwnProp = __webpack_require__(494);
 
 	var _getOwnProp2 = _interopRequireDefault(_getOwnProp);
 
-	var _getProp = __webpack_require__(494);
+	var _getProp = __webpack_require__(495);
 
 	var _getProp2 = _interopRequireDefault(_getProp);
 
@@ -29489,19 +29462,19 @@
 
 	var _getType2 = _interopRequireDefault(_getType);
 
-	var _halt = __webpack_require__(495);
+	var _halt = __webpack_require__(496);
 
 	var _halt2 = _interopRequireDefault(_halt);
 
-	var _invoke = __webpack_require__(496);
+	var _invoke = __webpack_require__(497);
 
 	var _invoke2 = _interopRequireDefault(_invoke);
 
-	var _isEmpty = __webpack_require__(497);
+	var _isEmpty = __webpack_require__(498);
 
 	var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
-	var _isNothing = __webpack_require__(490);
+	var _isNothing = __webpack_require__(491);
 
 	var _isNothing2 = _interopRequireDefault(_isNothing);
 
@@ -29509,7 +29482,7 @@
 
 	var _isOneOf2 = _interopRequireDefault(_isOneOf);
 
-	var _isSomething = __webpack_require__(491);
+	var _isSomething = __webpack_require__(492);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -29517,11 +29490,11 @@
 
 	var _isType2 = _interopRequireDefault(_isType);
 
-	var _hasKeys = __webpack_require__(498);
+	var _hasKeys = __webpack_require__(499);
 
 	var _hasKeys2 = _interopRequireDefault(_hasKeys);
 
-	var _keys = __webpack_require__(487);
+	var _keys = __webpack_require__(488);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -29529,47 +29502,47 @@
 
 	var _length2 = _interopRequireDefault(_length);
 
-	var _merge = __webpack_require__(499);
+	var _merge = __webpack_require__(500);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _negate = __webpack_require__(500);
+	var _negate = __webpack_require__(501);
 
 	var _negate2 = _interopRequireDefault(_negate);
 
-	var _noArguments = __webpack_require__(501);
+	var _noArguments = __webpack_require__(502);
 
 	var _noArguments2 = _interopRequireDefault(_noArguments);
 
-	var _noUniqueBetweenSets = __webpack_require__(502);
+	var _noUniqueBetweenSets = __webpack_require__(503);
 
 	var _noUniqueBetweenSets2 = _interopRequireDefault(_noUniqueBetweenSets);
 
-	var _once = __webpack_require__(503);
+	var _once = __webpack_require__(504);
 
 	var _once2 = _interopRequireDefault(_once);
 
-	var _pipeline = __webpack_require__(504);
+	var _pipeline = __webpack_require__(505);
 
 	var _pipeline2 = _interopRequireDefault(_pipeline);
 
-	var _poll = __webpack_require__(505);
+	var _poll = __webpack_require__(506);
 
 	var _poll2 = _interopRequireDefault(_poll);
 
-	var _returnItem = __webpack_require__(506);
+	var _returnItem = __webpack_require__(507);
 
 	var _returnItem2 = _interopRequireDefault(_returnItem);
 
-	var _throttle = __webpack_require__(507);
+	var _throttle = __webpack_require__(508);
 
 	var _throttle2 = _interopRequireDefault(_throttle);
 
-	var _throwErrorIfTrue = __webpack_require__(508);
+	var _throwErrorIfTrue = __webpack_require__(509);
 
 	var _throwErrorIfTrue2 = _interopRequireDefault(_throwErrorIfTrue);
 
-	var _truthyness = __webpack_require__(509);
+	var _truthyness = __webpack_require__(510);
 
 	var _truthyness2 = _interopRequireDefault(_truthyness);
 
@@ -29896,7 +29869,7 @@
 
 	var _getType2 = _interopRequireDefault(_getType);
 
-	var _keys = __webpack_require__(487);
+	var _keys = __webpack_require__(488);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -29992,15 +29965,20 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.ALL_TYPES = undefined;
+	exports.NYC_COORDINATES = exports.ALL_TYPES = undefined;
 
 	var _ALL_TYPES = __webpack_require__(486);
 
 	var _ALL_TYPES2 = _interopRequireDefault(_ALL_TYPES);
 
+	var _NYC_COORDINATES = __webpack_require__(487);
+
+	var _NYC_COORDINATES2 = _interopRequireDefault(_NYC_COORDINATES);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.ALL_TYPES = _ALL_TYPES2.default;
+	exports.NYC_COORDINATES = _NYC_COORDINATES2.default;
 
 /***/ },
 /* 486 */
@@ -30019,6 +29997,43 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	var NYC_COORDINATES = {
+
+		boundaries: [
+		// NJ, above Bronx, West side
+		[40.932251, -73.935757],
+		// LI Sound, above Bronx, East side
+		[40.866917, -73.750877],
+		// Atlantic Ocean, just South of LI,
+		// past Eastern border of Queens
+		[40.567269, -73.66539],
+		// Atlantic Ocean, just South of Rockaway penninsula and Brooklyn
+		[40.519264, -73.946915],
+		// (Lower Bay, Between Staten Island and Brooklyn) 
+		[40.572485, -74.054031],
+		// Just South of Staten Island
+		[40.477492, -74.233932],
+		// NJ, West of Staten Island
+		[40.562052, -74.352036]],
+
+		center: {
+			lat: 40.6291566,
+			lng: -74.0287341
+		}
+
+	};
+
+	exports.default = NYC_COORDINATES;
+
+/***/ },
+/* 488 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
 	function keys(obj) {
 		return Object.keys(obj);
 	}
@@ -30026,7 +30041,7 @@
 	exports.default = keys;
 
 /***/ },
-/* 488 */
+/* 489 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30035,11 +30050,11 @@
 		value: true
 	});
 
-	var _followPath = __webpack_require__(489);
+	var _followPath = __webpack_require__(490);
 
 	var _followPath2 = _interopRequireDefault(_followPath);
 
-	var _isNothing = __webpack_require__(490);
+	var _isNothing = __webpack_require__(491);
 
 	var _isNothing2 = _interopRequireDefault(_isNothing);
 
@@ -30074,7 +30089,7 @@
 	exports.default = existenceCheck;
 
 /***/ },
-/* 489 */
+/* 490 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30153,7 +30168,7 @@
 	exports.default = followPath;
 
 /***/ },
-/* 490 */
+/* 491 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30162,7 +30177,7 @@
 		value: true
 	});
 
-	var _isSomething = __webpack_require__(491);
+	var _isSomething = __webpack_require__(492);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -30175,7 +30190,7 @@
 	exports.default = isNothing;
 
 /***/ },
-/* 491 */
+/* 492 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30190,7 +30205,7 @@
 	exports.default = isSomething;
 
 /***/ },
-/* 492 */
+/* 493 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30208,7 +30223,7 @@
 	exports.default = getArgumentsArray;
 
 /***/ },
-/* 493 */
+/* 494 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30221,7 +30236,7 @@
 
 	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
 
-	var _getProp = __webpack_require__(494);
+	var _getProp = __webpack_require__(495);
 
 	var _getProp2 = _interopRequireDefault(_getProp);
 
@@ -30242,7 +30257,7 @@
 	exports.default = getOwnProp;
 
 /***/ },
-/* 494 */
+/* 495 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30257,7 +30272,7 @@
 	exports.default = getProp;
 
 /***/ },
-/* 495 */
+/* 496 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30293,7 +30308,7 @@
 	exports.default = halt;
 
 /***/ },
-/* 496 */
+/* 497 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30323,7 +30338,7 @@
 	exports.default = invoke;
 
 /***/ },
-/* 497 */
+/* 498 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30340,7 +30355,7 @@
 
 	var _isType2 = _interopRequireDefault(_isType);
 
-	var _keys = __webpack_require__(487);
+	var _keys = __webpack_require__(488);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -30363,7 +30378,7 @@
 	exports.default = isEmpty;
 
 /***/ },
-/* 498 */
+/* 499 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30406,7 +30421,7 @@
 	exports.default = hasKeys;
 
 /***/ },
-/* 499 */
+/* 500 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30434,7 +30449,7 @@
 	exports.default = merge;
 
 /***/ },
-/* 500 */
+/* 501 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30455,7 +30470,7 @@
 	exports.default = negate;
 
 /***/ },
-/* 501 */
+/* 502 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30464,7 +30479,7 @@
 		value: true
 	});
 
-	var _isEmpty = __webpack_require__(497);
+	var _isEmpty = __webpack_require__(498);
 
 	var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
@@ -30477,7 +30492,7 @@
 	exports.default = noArguments;
 
 /***/ },
-/* 502 */
+/* 503 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30511,7 +30526,7 @@
 	exports.default = noUniqueBetweenSets;
 
 /***/ },
-/* 503 */
+/* 504 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30544,7 +30559,7 @@
 	exports.default = once;
 
 /***/ },
-/* 504 */
+/* 505 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30567,7 +30582,7 @@
 	exports.default = pipeline;
 
 /***/ },
-/* 505 */
+/* 506 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30614,7 +30629,7 @@
 	exports.default = poll;
 
 /***/ },
-/* 506 */
+/* 507 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30631,7 +30646,7 @@
 	exports.default = returnItem;
 
 /***/ },
-/* 507 */
+/* 508 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30677,7 +30692,7 @@
 	exports.default = throttle;
 
 /***/ },
-/* 508 */
+/* 509 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30686,7 +30701,7 @@
 		value: true
 	});
 
-	var _isSomething = __webpack_require__(491);
+	var _isSomething = __webpack_require__(492);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -30710,7 +30725,7 @@
 	exports.default = throwErrorIfTrue;
 
 /***/ },
-/* 509 */
+/* 510 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -30725,7 +30740,7 @@
 	exports.default = truthyness;
 
 /***/ },
-/* 510 */
+/* 511 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -31253,7 +31268,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(511);
+	exports.isBuffer = __webpack_require__(512);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -31297,7 +31312,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(512);
+	exports.inherits = __webpack_require__(513);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -31318,7 +31333,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(295)))
 
 /***/ },
-/* 511 */
+/* 512 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -31329,7 +31344,7 @@
 	}
 
 /***/ },
-/* 512 */
+/* 513 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -31358,7 +31373,7 @@
 
 
 /***/ },
-/* 513 */
+/* 514 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31367,15 +31382,15 @@
 		value: true
 	});
 
-	var _getLatLngWithinBoundaries = __webpack_require__(514);
+	var _getLatLngWithinBoundaries = __webpack_require__(515);
 
 	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
 
-	var _requestNearestPanorama = __webpack_require__(517);
+	var _requestNearestPanorama = __webpack_require__(518);
 
 	var _requestNearestPanorama2 = _interopRequireDefault(_requestNearestPanorama);
 
-	var _tryAtMost = __webpack_require__(518);
+	var _tryAtMost = __webpack_require__(519);
 
 	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
 
@@ -31408,7 +31423,7 @@
 	exports.default = randomizePanoramaLocation;
 
 /***/ },
-/* 514 */
+/* 515 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31417,7 +31432,7 @@
 		value: true
 	});
 
-	var _getRandomCoords = __webpack_require__(515);
+	var _getRandomCoords = __webpack_require__(516);
 
 	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
 
@@ -31449,7 +31464,7 @@
 	exports.default = getLatLngWithinBoundaries;
 
 /***/ },
-/* 515 */
+/* 516 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -31458,7 +31473,7 @@
 		value: true
 	});
 
-	var _selectRandomValueOfRange = __webpack_require__(516);
+	var _selectRandomValueOfRange = __webpack_require__(517);
 
 	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
 
@@ -31491,7 +31506,7 @@
 	exports.default = getRandomCoords;
 
 /***/ },
-/* 516 */
+/* 517 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -31516,7 +31531,7 @@
 	exports.default = selectRandomValueOfRange;
 
 /***/ },
-/* 517 */
+/* 518 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -31556,7 +31571,7 @@
 	exports.default = requestNearestPanorama;
 
 /***/ },
-/* 518 */
+/* 519 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -31592,7 +31607,7 @@
 	exports.default = tryAtMost;
 
 /***/ },
-/* 519 */
+/* 520 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -31642,7 +31657,7 @@
 	exports.default = showChooseLocationMap;
 
 /***/ },
-/* 520 */
+/* 521 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31655,7 +31670,7 @@
 
 	var _events = __webpack_require__(472);
 
-	var _util = __webpack_require__(510);
+	var _util = __webpack_require__(511);
 
 	/*==========================================
 	=            createWebGlManager            =

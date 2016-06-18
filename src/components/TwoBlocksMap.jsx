@@ -5,7 +5,7 @@ class TwoBlocksMap extends React.Component {
 
 	componentDidMount() {
 	    
-	    twoBlocks(); 
+	    twoBlocks(this.props.canvasId, this.props.coordinates); 
 
 	}
 

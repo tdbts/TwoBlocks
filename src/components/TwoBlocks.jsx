@@ -1,5 +1,6 @@
 import React from 'react';
-import TwoBlocksMap from './TwoBlocksMap.jsx'; 
+import TwoBlocksMap from './TwoBlocksMap.jsx';
+import { NYC_COORDINATES } from '../constants/constants';  
 
 class TwoBlocks extends React.Component {
 
@@ -7,8 +8,8 @@ class TwoBlocks extends React.Component {
 
 		return (
 	
-			<div id="twoBlocks">
-				<TwoBlocksMap />
+			<div id={ this.props.gameId }>
+				<TwoBlocksMap coordinates={ NYC_COORDINATES } canvasId={ this.props.canvasId } />
 			</div>
 	
 		); 
@@ -16,5 +17,7 @@ class TwoBlocks extends React.Component {
 	}
 
 }
+
+TwoBlocks.defaultProps = { canvasId: "twoBlocks-map", gameId: "twoBlocks" }; 
 
 export default TwoBlocks; 
