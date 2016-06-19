@@ -89,7 +89,7 @@ const twoBlocks = function twoBlocks(canvasId, locationCoordinates) {
 
 			const geometryLibraryLoaded = () => 'geometry' in google.maps; 
 
-			const pollForGeometryLibrary = poll(geometryLibraryLoaded, 25, 3000); 
+			const pollForGeometryLibrary = poll(geometryLibraryLoaded, 25, 5000); 
 
 			return { pollForGeometryLibrary }; 
 
