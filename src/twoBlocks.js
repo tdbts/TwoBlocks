@@ -4,7 +4,7 @@ import injectGapiScript from './injectGapiScript';
 import getLatLngMaxMin from './getLatLngMaxMin'; 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
-import randomizePanoramaLocation from './randomizePanoramaLocation';
+import getRandomPanoramaLocation from './getRandomPanoramaLocation';
 import showChooseLocationMap from './showChooseLocationMap';  
 import createWebGlManager from './createWebGlManager'; 
 import { poll } from './utils/utils'; 
@@ -160,7 +160,9 @@ const twoBlocks = function twoBlocks(canvasId, locationCoordinates) {
 
 			pollForGeometryLibrary 
 
-				.then(() => randomizePanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin)) 
+				.then(() => getRandomPanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin)) 
+
+				.then(randomLatLng => panorama.setPosition(randomLatLng)) 
 
 				.then(() => {
 

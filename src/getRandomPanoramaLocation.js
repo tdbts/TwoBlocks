@@ -2,7 +2,7 @@ import getLatLngWithinBoundaries from './getLatLngWithinBoundaries';
 import requestNearestPanorama from './requestNearestPanorama'; 
 import tryAtMost from './tryAtMost'; 
 
-const randomizePanoramaLocation = function randomizePanoramaLocation(panorama, polygon, latLngMaxMin) {
+const getRandomPanoramaLocation = function getRandomPanoramaLocation(panorama, polygon, latLngMaxMin) {
 
 	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
 
@@ -20,8 +20,8 @@ const randomizePanoramaLocation = function randomizePanoramaLocation(panorama, p
 
 	})
 
-	.then(() => panorama.setPosition(randomLatLng)); 
+	.then(() => randomLatLng); 
 	
 }; 
 
-export default randomizePanoramaLocation; 
+export default getRandomPanoramaLocation; 

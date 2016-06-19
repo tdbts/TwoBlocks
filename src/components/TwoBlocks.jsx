@@ -1,7 +1,7 @@
 import React from 'react';
 import TwoBlocksMap from './TwoBlocksMap.jsx';
-import { NYC_COORDINATES } from '../constants/constants'; 
 import twoBlocks from '../twoBlocks'; 
+import { NYC_COORDINATES } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -30,11 +30,12 @@ class TwoBlocks extends React.Component {
 
 			twoBlocks(this.props.canvasId, this.state.locationData);
 		
+			this.setState({
+				initialized: true
+			});
+			
 		}
 
-		this.setState({
-			initialized: true
-		});
 
 	}
 
