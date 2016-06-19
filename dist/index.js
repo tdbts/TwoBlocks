@@ -28308,17 +28308,39 @@
 	var TwoBlocks = function (_React$Component) {
 		_inherits(TwoBlocks, _React$Component);
 
-		function TwoBlocks() {
+		function TwoBlocks(props) {
 			_classCallCheck(this, TwoBlocks);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocks).apply(this, arguments));
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocks).call(this, props));
+
+			_this.state = {
+				initialized: false,
+				locationData: {}
+			};
+
+			return _this;
 		}
 
 		_createClass(TwoBlocks, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
 
-				(0, _twoBlocks2.default)(this.props.canvasId, _constants.NYC_COORDINATES);
+				this.setState({
+					locationData: _constants.NYC_COORDINATES
+				});
+			}
+		}, {
+			key: 'componentDidUpdate',
+			value: function componentDidUpdate() {
+
+				if (!this.state.initialized) {
+
+					(0, _twoBlocks2.default)(this.props.canvasId, this.state.locationData);
+				}
+
+				this.setState({
+					initialized: true
+				});
 			}
 		}, {
 			key: 'render',

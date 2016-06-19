@@ -5,9 +5,36 @@ import twoBlocks from '../twoBlocks';
 
 class TwoBlocks extends React.Component {
 
+	constructor(props) {
+
+		super(props); 
+
+		this.state = {
+			initialized: false, 
+			locationData: {}
+		}; 
+
+	}
+
 	componentDidMount() {
 	 	
-		twoBlocks(this.props.canvasId, NYC_COORDINATES); 	
+		this.setState({
+			locationData: NYC_COORDINATES
+		}); 
+
+	}
+
+	componentDidUpdate() {
+			
+		if (!(this.state.initialized)) {
+
+			twoBlocks(this.props.canvasId, this.state.locationData);
+		
+		}
+
+		this.setState({
+			initialized: true
+		});
 
 	}
 
