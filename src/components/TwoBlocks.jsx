@@ -1,7 +1,7 @@
 /* global document, window, google */
 
 import React from 'react';
-import TwoBlocksMap from './TwoBlocksMap.jsx';
+import TwoBlocksMap from './TwoBlocksMap';
 import twoBlocks from '../twoBlocks'; 
 import createGameComponents from '../createGameComponents'; 
 import { NYC_COORDINATES } from '../constants/constants'; 

@@ -4,7 +4,7 @@ import 'babel-polyfill';
 import React from 'react'; 
 import injectGapiScript from '../src/injectGapiScript'; 
 import { poll } from '../src/utils/utils'; 
-import TwoBlocks from '../src/components/TwoBlocks.jsx'; 
+import TwoBlocks from '../src/components/TwoBlocks'; 
 import { render } from 'react-dom'; 
 
 injectGapiScript() 

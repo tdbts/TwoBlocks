@@ -4,6 +4,9 @@ var path = require('path'),
 module.exports = {
 	entry: './build/index.js',
 	output: { path: path.join(__dirname, 'dist'), filename: 'index.js' },
+	resolve: {
+		extensions: ['', '.js', '.jsx']
+	},
 	module: {
 		preloaders: [
 			{
