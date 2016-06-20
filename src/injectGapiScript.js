@@ -1,12 +1,12 @@
 /* global document */
 
 const injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
-
+	window.console.log('Injecting GAPI script.'); 
 	return new Promise(resolve => {
 
 		const script = document.createElement("script");
 		
-		let source = "https://maps.googleapis.com/maps/api/js"; 
+		let source = "https://maps.googleapis.com/maps/api/js?libraries=geometry"; 
 		
 		script.type = "text/javascript";
 		
@@ -17,7 +17,7 @@ const injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
 		}
 
 		script.src = source; 
-		script.onload = () => resolve(); 
+		script.onload = resolve; 
 
 		document.body.appendChild(script);
 
