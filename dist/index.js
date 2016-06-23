@@ -73,7 +73,7 @@
 	/*----------  Poll for 'geometry' library in google.maps object  ----------*/
 
 	.then(function () {
-		window.console.log('Polling for geometry library');
+
 		var geometryLibraryLoaded = function geometryLibraryLoaded() {
 			return 'geometry' in google.maps;
 		};
@@ -13571,9 +13571,13 @@
 
 	var _twoBlocks2 = _interopRequireDefault(_twoBlocks);
 
-	var _createGameComponents = __webpack_require__(384);
+	var _createGameComponents = __webpack_require__(378);
 
 	var _createGameComponents2 = _interopRequireDefault(_createGameComponents);
+
+	var _getRandomPanoramaLocation = __webpack_require__(387);
+
+	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
 
 	var _constants = __webpack_require__(348);
 
@@ -13591,6 +13595,8 @@
 		function TwoBlocks(props) {
 			_classCallCheck(this, TwoBlocks);
 
+			// Define initial state
+
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocks).call(this, props));
 
 			_this.state = {
@@ -13601,21 +13607,39 @@
 				locationData: {}
 			};
 
+			/*----------  Save reference to original setState() method  ----------*/
+
+			_this._superSetState = _this.setState.bind(_this);
+
+			/*----------  Override setState() to be promisified  ----------*/
+
+			_this.setState = function (nextState) {
+
+				return new Promise(function (resolve) {
+
+					_this._superSetState(nextState, resolve);
+				});
+			};
+
 			return _this;
 		}
 
 		_createClass(TwoBlocks, [{
 			key: 'componentDidMount',
 			value: function componentDidMount() {
+				var _this2 = this;
 
 				this.setState({
 					canvas: document.getElementById(this.props.canvasId),
 					locationData: _constants.NYC_COORDINATES
+				}).then(function () {
+					return _this2.initializeTwoBlocks();
 				});
 			}
 		}, {
-			key: 'componentDidUpdate',
-			value: function componentDidUpdate() {
+			key: 'initializeTwoBlocks',
+			value: function initializeTwoBlocks() {
+				var _this3 = this;
 
 				if (!this.state.initialized) {
 					var _state$locationData$c = this.state.locationData.center;
@@ -13631,21 +13655,51 @@
 
 					var gameComponents = (0, _createGameComponents2.default)(this.state);
 
-					// TODO: Separate current lat / lng information into
-					// LatLng instance, and lat / lng strings
-					this.setState(_extends({}, gameComponents, {
+					/*----------  Add game components to state  ----------*/
+
+					var nextState = _extends({}, gameComponents, {
 						canvas: canvas,
-						currentLat: lat,
-						currentLng: lng,
+						currentLatLng: new google.maps.LatLng(lat, lng),
 						initialized: true
-					}));
-				} else {
+					});
 
-					window.console.log('TwoBlocks INITIALIZED.');
-
-					(0, _twoBlocks2.default)(this.state);
+					this.setState(nextState).then(function () {
+						return _this3.setRandomLocation();
+					});
 				}
 			}
+		}, {
+			key: 'setRandomLocation',
+			value: function setRandomLocation() {
+				var _this4 = this;
+
+				var _state = this.state;
+				var panorama = _state.panorama;
+				var nycPolygon = _state.nycPolygon;
+				var nycLatLngMaxMin = _state.nycLatLngMaxMin;
+
+
+				(0, _getRandomPanoramaLocation2.default)(panorama, nycPolygon, nycLatLngMaxMin).then(function (randomLatLng) {
+
+					window.console.log("randomLatLng.lat():", randomLatLng.lat());
+					window.console.log("randomLatLng.lng():", randomLatLng.lng());
+
+					_this4.setState({
+						currentLatLng: randomLatLng
+					}).then(function () {
+						return (0, _twoBlocks2.default)(_this4.state);
+					});
+				}).catch(function () {
+					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+						args[_key] = arguments[_key];
+					}
+
+					return 'Caught error with args ' + args;
+				});
+			}
+
+			/*----------  render()  ----------*/
+
 		}, {
 			key: 'render',
 			value: function render() {
@@ -13653,7 +13707,7 @@
 				return _react2.default.createElement(
 					'div',
 					{ id: this.props.gameId },
-					_react2.default.createElement(_TwoBlocksMap2.default, null)
+					_react2.default.createElement(_TwoBlocksMap2.default, { panorama: this.state.panorama, latLng: this.state.currentLatLng })
 				);
 			}
 		}]);
@@ -13702,6 +13756,20 @@
 		}
 
 		_createClass(TwoBlocksMap, [{
+			key: "componentDidUpdate",
+			value: function componentDidUpdate(previousProps) {
+				var _props = this.props;
+				var latLng = _props.latLng;
+				var panorama = _props.panorama;
+
+
+				if (!latLng || !panorama) return;
+
+				if (latLng.equals(previousProps.latLng)) return;
+
+				panorama.setPosition(latLng);
+			}
+		}, {
 			key: "render",
 			value: function render() {
 
@@ -13724,11 +13792,7 @@
 		value: true
 	});
 
-	var _getRandomPanoramaLocation = __webpack_require__(377);
-
-	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
-
-	var _showChooseLocationMap = __webpack_require__(383);
+	var _showChooseLocationMap = __webpack_require__(377);
 
 	var _showChooseLocationMap2 = _interopRequireDefault(_showChooseLocationMap);
 
@@ -13739,8 +13803,6 @@
 	/*=================================
 	=            twoBlocks()          =
 	=================================*/
-
-	/* global document, google */
 
 	var twoBlocks = function twoBlocks(gameComponents) {
 
@@ -13760,336 +13822,91 @@
 		var canvas = gameComponents.canvas;
 		var locationData = gameComponents.locationData;
 		var nycBoundaryLatLngs = gameComponents.nycBoundaryLatLngs;
-		var nycLatLngMaxMin = gameComponents.nycLatLngMaxMin;
-		var nycPolygon = gameComponents.nycPolygon;
 		var panorama = gameComponents.panorama;
 		var spinner = gameComponents.spinner;
 
 
-		(0, _getRandomPanoramaLocation2.default)(panorama, nycPolygon, nycLatLngMaxMin).then(function (randomLatLng) {
-			return panorama.setPosition(randomLatLng);
-		}).then(function () {
+		panorama.setVisible(true);
 
-			panorama.setVisible(true);
+		spinner.start();
 
-			spinner.start();
+		spinner.once('revolution', function () {
 
-			spinner.once('revolution', function () {
+			spinner.stop();
 
-				spinner.stop();
+			var gps = new google.maps.LatLng(locationData.center.lat, locationData.center.lng);
 
-				var gps = new google.maps.LatLng(locationData.center.lat, locationData.center.lng);
+			var mapOptions = {
+				center: gps
+			};
 
-				var mapOptions = {
-					center: gps
-				};
+			var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, nycBoundaryLatLngs, mapOptions);
 
-				var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, nycBoundaryLatLngs, mapOptions);
+			// Outside the polygon boundaries, in the Atlantic Ocean
+			var markerLat = 40.480993;
+			var markerLng = -73.72798;
 
-				// Outside the polygon boundaries, in the Atlantic Ocean
-				var markerLat = 40.480993;
-				var markerLng = -73.72798;
+			var markerOptions = {
+				animation: google.maps.Animation.BOUNCE,
+				draggable: true,
+				map: chooseLocationMap,
+				position: new google.maps.LatLng(markerLat, markerLng)
+			};
 
-				var markerOptions = {
-					animation: google.maps.Animation.BOUNCE,
-					draggable: true,
-					map: chooseLocationMap,
-					position: new google.maps.LatLng(markerLat, markerLng)
-				};
+			var chooseLocationMarker = new google.maps.Marker(markerOptions);
 
-				var chooseLocationMarker = new google.maps.Marker(markerOptions);
-
-				google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
-					return chooseLocationMarker.setAnimation(null);
-				});
-
-				google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
-					var latLng = e.latLng;
-
-
-					chooseLocationMarker.setPosition(latLng);
-					chooseLocationMarker.setAnimation(null);
-				});
-
-				var calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
-
-					return google.maps.geometry.spherical.computeDistanceBetween(first, second);
-				};
-
-				var convertMetersToMiles = function convertMetersToMiles(meters) {
-
-					var MILES_PER_METER = 0.000621371;
-
-					return meters * MILES_PER_METER;
-				};
-
-				google.maps.event.addListener(chooseLocationMarker, 'dragend', function () {
-
-					var distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
-
-					var distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);
-
-					window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
-				});
-
-				google.maps.event.addListener(chooseLocationMap, 'click', function () {
-
-					var distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
-
-					var distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);
-
-					window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
-				});
+			google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
+				return chooseLocationMarker.setAnimation(null);
 			});
-		}).catch(function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
 
-			return 'Caught error with args ' + args;
+			google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
+				var latLng = e.latLng;
+
+
+				chooseLocationMarker.setPosition(latLng);
+				chooseLocationMarker.setAnimation(null);
+			});
+
+			var calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
+
+				return google.maps.geometry.spherical.computeDistanceBetween(first, second);
+			};
+
+			var convertMetersToMiles = function convertMetersToMiles(meters) {
+
+				var MILES_PER_METER = 0.000621371;
+
+				return meters * MILES_PER_METER;
+			};
+
+			google.maps.event.addListener(chooseLocationMarker, 'dragend', function () {
+
+				var distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
+
+				var distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);
+
+				window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
+			});
+
+			google.maps.event.addListener(chooseLocationMap, 'click', function () {
+
+				var distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
+
+				var distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);
+
+				window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
+			});
 		});
 	};
 
 	/*=====  End of twoBlocks()  ======*/
 
+	/* global document, google */
+
 	exports.default = twoBlocks;
 
 /***/ },
 /* 377 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _getLatLngWithinBoundaries = __webpack_require__(378);
-
-	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
-
-	var _requestNearestPanorama = __webpack_require__(381);
-
-	var _requestNearestPanorama2 = _interopRequireDefault(_requestNearestPanorama);
-
-	var _tryAtMost = __webpack_require__(382);
-
-	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var getRandomPanoramaLocation = function getRandomPanoramaLocation(panorama, polygon, latLngMaxMin) {
-
-		var randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
-
-		return (0, _tryAtMost2.default)(function () {
-			return (0, _requestNearestPanorama2.default)(randomLatLng);
-		}, 50, function (panoRequestResults, maxTries) {
-
-			window.console.log('onCaught()');
-
-			var panoData = panoRequestResults.panoData;
-			var status = panoRequestResults.status;
-
-
-			window.console.log("panoData:", panoData);
-			window.console.log("status:", status);
-			window.console.log("maxTries:", maxTries);
-
-			randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
-		}).then(function () {
-			return randomLatLng;
-		});
-	};
-
-	exports.default = getRandomPanoramaLocation;
-
-/***/ },
-/* 378 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _getRandomCoords = __webpack_require__(379);
-
-	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, polygon) {
-
-		var isWithinBoundaries = false;
-		var randomLatLng = null;
-
-		// Until we find coordinates within our predefined region...
-		while (!isWithinBoundaries) {
-
-			var randomCoords = (0, _getRandomCoords2.default)(latLngMaxMin);
-
-			var randomLat = randomCoords.randomLat;
-			var randomLng = randomCoords.randomLng;
-
-
-			randomLatLng = new google.maps.LatLng(randomLat, randomLng);
-
-			// Check that the random coords are within polygon
-			isWithinBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, polygon);
-		}
-
-		return randomLatLng;
-	}; /* global google */
-
-	exports.default = getLatLngWithinBoundaries;
-
-/***/ },
-/* 379 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _selectRandomValueOfRange = __webpack_require__(380);
-
-	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	/**
-	 *
-	 * getRandomCoords() - Select random point from within min / max 
-	 *     lat / lng range
-	 *
-	 */
-
-	var getRandomCoords = function getRandomCoords(latLngMaxMin) {
-		var lat = latLngMaxMin.lat;
-		var lng = latLngMaxMin.lng;
-
-
-		var randomLat = (0, _selectRandomValueOfRange2.default)(lat.min, lat.max).toFixed(6);
-
-		var randomLng = (0, _selectRandomValueOfRange2.default)(lng.min, lng.max).toFixed(6);
-
-		window.console.log("randomLat:", randomLat);
-		window.console.log("randomLng:", randomLng);
-
-		var randomCoords = { randomLat: randomLat, randomLng: randomLng };
-
-		return randomCoords;
-	}; /* global window */
-
-	exports.default = getRandomCoords;
-
-/***/ },
-/* 380 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var selectRandomValueOfRange = function selectRandomValueOfRange(min, max) {
-
-		// If the order is incorrect, switch.
-		if (!(min <= max)) {
-			var _ref = [max, min];
-			min = _ref[0];
-			max = _ref[1];
-		}
-
-		var difference = max - min;
-
-		return min + Math.random() * difference;
-	};
-
-	exports.default = selectRandomValueOfRange;
-
-/***/ },
-/* 381 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	/* global google, window */
-
-	var requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
-
-		return new Promise(function (resolve, reject) {
-
-			var streetViewService = new google.maps.StreetViewService();
-
-			var locationRequest = {
-				location: randomLatLng,
-				preference: google.maps.StreetViewPreference.NEAREST
-			};
-
-			streetViewService.getPanorama(locationRequest, function (panoData, status) {
-
-				window.console.log("panoData:", panoData);
-				window.console.log("status:", status);
-
-				if ('OK' === status) {
-
-					resolve({ panoData: panoData, status: status });
-				} else {
-
-					reject({ panoData: panoData, status: status });
-				}
-			});
-		});
-	};
-
-	exports.default = requestNearestPanorama;
-
-/***/ },
-/* 382 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var tryAtMost = function tryAtMost(thenable, maxTries) {
-		var onCaught = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
-
-
-		return thenable().catch(function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-
-			maxTries -= 1;
-
-			onCaught.apply(undefined, args.concat([maxTries]));
-
-			if (maxTries < 1) {
-
-				// Error must be thrown to be caught by
-				// the caller of tryAtMost()
-				throw new Error("Maximum number of tries exceeded.");
-			}
-
-			// Recurse
-			return tryAtMost(thenable, maxTries, onCaught);
-		});
-	};
-
-	exports.default = tryAtMost;
-
-/***/ },
-/* 383 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -14139,7 +13956,7 @@
 	exports.default = showChooseLocationMap;
 
 /***/ },
-/* 384 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14148,19 +13965,19 @@
 		value: true
 	});
 
-	var _createPanorama = __webpack_require__(385);
+	var _createPanorama = __webpack_require__(379);
 
 	var _createPanorama2 = _interopRequireDefault(_createPanorama);
 
-	var _createSpinner = __webpack_require__(386);
+	var _createSpinner = __webpack_require__(380);
 
 	var _createSpinner2 = _interopRequireDefault(_createSpinner);
 
-	var _createWebGlManager = __webpack_require__(391);
+	var _createWebGlManager = __webpack_require__(385);
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
-	var _getLatLngMaxMin = __webpack_require__(392);
+	var _getLatLngMaxMin = __webpack_require__(386);
 
 	var _getLatLngMaxMin2 = _interopRequireDefault(_getLatLngMaxMin);
 
@@ -14254,7 +14071,7 @@
 	exports.default = createGameComponents;
 
 /***/ },
-/* 385 */
+/* 379 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -14324,7 +14141,7 @@
 	exports.default = createPanorama;
 
 /***/ },
-/* 386 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14335,11 +14152,11 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
 
-	var _events = __webpack_require__(387);
+	var _events = __webpack_require__(381);
 
 	var _utils = __webpack_require__(336);
 
-	var _util = __webpack_require__(388);
+	var _util = __webpack_require__(382);
 
 	/*=====================================
 	=            createSpinner()            =
@@ -14577,7 +14394,7 @@
 	exports.default = createSpinner;
 
 /***/ },
-/* 387 */
+/* 381 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -14881,7 +14698,7 @@
 
 
 /***/ },
-/* 388 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -15409,7 +15226,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(389);
+	exports.isBuffer = __webpack_require__(383);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -15453,7 +15270,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(390);
+	exports.inherits = __webpack_require__(384);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -15474,7 +15291,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(295)))
 
 /***/ },
-/* 389 */
+/* 383 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -15485,7 +15302,7 @@
 	}
 
 /***/ },
-/* 390 */
+/* 384 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -15514,7 +15331,7 @@
 
 
 /***/ },
-/* 391 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15525,9 +15342,9 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
 
-	var _events = __webpack_require__(387);
+	var _events = __webpack_require__(381);
 
-	var _util = __webpack_require__(388);
+	var _util = __webpack_require__(382);
 
 	/*==========================================
 	=            createWebGlManager            =
@@ -15594,7 +15411,7 @@
 	exports.default = createWebGlManager;
 
 /***/ },
-/* 392 */
+/* 386 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -15662,6 +15479,240 @@
 	};
 
 	exports.default = getLatLngMaxMin;
+
+/***/ },
+/* 387 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _getLatLngWithinBoundaries = __webpack_require__(388);
+
+	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
+
+	var _requestNearestPanorama = __webpack_require__(391);
+
+	var _requestNearestPanorama2 = _interopRequireDefault(_requestNearestPanorama);
+
+	var _tryAtMost = __webpack_require__(392);
+
+	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var getRandomPanoramaLocation = function getRandomPanoramaLocation(panorama, polygon, latLngMaxMin) {
+
+		var randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
+
+		return (0, _tryAtMost2.default)(function () {
+			return (0, _requestNearestPanorama2.default)(randomLatLng);
+		}, 50, function (panoRequestResults, maxTries) {
+
+			window.console.log('onCaught()');
+
+			var panoData = panoRequestResults.panoData;
+			var status = panoRequestResults.status;
+
+
+			window.console.log("panoData:", panoData);
+			window.console.log("status:", status);
+			window.console.log("maxTries:", maxTries);
+
+			randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
+		}).then(function () {
+			return randomLatLng;
+		});
+	};
+
+	exports.default = getRandomPanoramaLocation;
+
+/***/ },
+/* 388 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _getRandomCoords = __webpack_require__(389);
+
+	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, polygon) {
+
+		var isWithinBoundaries = false;
+		var randomLatLng = null;
+
+		// Until we find coordinates within our predefined region...
+		while (!isWithinBoundaries) {
+
+			var randomCoords = (0, _getRandomCoords2.default)(latLngMaxMin);
+
+			var randomLat = randomCoords.randomLat;
+			var randomLng = randomCoords.randomLng;
+
+
+			randomLatLng = new google.maps.LatLng(randomLat, randomLng);
+
+			// Check that the random coords are within polygon
+			isWithinBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, polygon);
+		}
+
+		return randomLatLng;
+	}; /* global google */
+
+	exports.default = getLatLngWithinBoundaries;
+
+/***/ },
+/* 389 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _selectRandomValueOfRange = __webpack_require__(390);
+
+	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 *
+	 * getRandomCoords() - Select random point from within min / max 
+	 *     lat / lng range
+	 *
+	 */
+
+	var getRandomCoords = function getRandomCoords(latLngMaxMin) {
+		var lat = latLngMaxMin.lat;
+		var lng = latLngMaxMin.lng;
+
+
+		var randomLat = (0, _selectRandomValueOfRange2.default)(lat.min, lat.max).toFixed(6);
+
+		var randomLng = (0, _selectRandomValueOfRange2.default)(lng.min, lng.max).toFixed(6);
+
+		window.console.log("randomLat:", randomLat);
+		window.console.log("randomLng:", randomLng);
+
+		var randomCoords = { randomLat: randomLat, randomLng: randomLng };
+
+		return randomCoords;
+	}; /* global window */
+
+	exports.default = getRandomCoords;
+
+/***/ },
+/* 390 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var selectRandomValueOfRange = function selectRandomValueOfRange(min, max) {
+
+		// If the order is incorrect, switch.
+		if (!(min <= max)) {
+			var _ref = [max, min];
+			min = _ref[0];
+			max = _ref[1];
+		}
+
+		var difference = max - min;
+
+		return min + Math.random() * difference;
+	};
+
+	exports.default = selectRandomValueOfRange;
+
+/***/ },
+/* 391 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/* global google, window */
+
+	var requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
+
+		return new Promise(function (resolve, reject) {
+
+			var streetViewService = new google.maps.StreetViewService();
+
+			var locationRequest = {
+				location: randomLatLng,
+				preference: google.maps.StreetViewPreference.NEAREST
+			};
+
+			streetViewService.getPanorama(locationRequest, function (panoData, status) {
+
+				window.console.log("panoData:", panoData);
+				window.console.log("status:", status);
+
+				if ('OK' === status) {
+
+					resolve({ panoData: panoData, status: status });
+				} else {
+
+					reject({ panoData: panoData, status: status });
+				}
+			});
+		});
+	};
+
+	exports.default = requestNearestPanorama;
+
+/***/ },
+/* 392 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var tryAtMost = function tryAtMost(thenable, maxTries) {
+		var onCaught = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
+
+
+		return thenable().catch(function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			maxTries -= 1;
+
+			onCaught.apply(undefined, args.concat([maxTries]));
+
+			if (maxTries < 1) {
+
+				// Error must be thrown to be caught by
+				// the caller of tryAtMost()
+				throw new Error("Maximum number of tries exceeded.");
+			}
+
+			// Recurse
+			return tryAtMost(thenable, maxTries, onCaught);
+		});
+	};
+
+	exports.default = tryAtMost;
 
 /***/ },
 /* 393 */

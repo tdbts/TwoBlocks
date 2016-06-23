@@ -3,7 +3,8 @@
 import React from 'react';
 import TwoBlocksMap from './TwoBlocksMap';
 import twoBlocks from '../twoBlocks'; 
-import createGameComponents from '../createGameComponents'; 
+import createGameComponents from '../createGameComponents';
+import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
 import { NYC_COORDINATES } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
@@ -12,12 +13,29 @@ class TwoBlocks extends React.Component {
 
 		super(props); 
 
+		// Define initial state 
 		this.state = {
 			canvas: null,
 			currentLat: '', 
 			currentLng: '',  
 			initialized: false, 
 			locationData: {}
+		}; 
+
+		/*----------  Save reference to original setState() method  ----------*/
+		
+		this._superSetState = this.setState.bind(this); 
+
+		/*----------  Override setState() to be promisified  ----------*/
+		
+		this.setState = nextState => {
+
+			return new Promise(resolve => {
+
+				this._superSetState(nextState, resolve); 
+
+			}); 
+
 		}; 
 
 	}
@@ -27,14 +45,16 @@ class TwoBlocks extends React.Component {
 		this.setState({
 			canvas: document.getElementById(this.props.canvasId), 
 			locationData: NYC_COORDINATES
-		});
+		})
+
+		.then(() => this.initializeTwoBlocks()); 
 
 	}
 
-	componentDidUpdate() {
-			
+	initializeTwoBlocks() {
+
 		if (!(this.state.initialized)) {
-  
+
 			const { lat, lng } = this.state.locationData.center; 
 			const canvas = this.state.canvas; 
 
@@ -46,31 +66,53 @@ class TwoBlocks extends React.Component {
 
 			const gameComponents = createGameComponents(this.state); 
 			
-			// TODO: Separate current lat / lng information into 
-			// LatLng instance, and lat / lng strings 
-			this.setState(Object.assign({}, gameComponents, {
+			/*----------  Add game components to state  ----------*/
+			
+			const nextState = Object.assign({}, gameComponents, {
 				canvas, 
-				currentLat: lat, 
-				currentLng: lng, 
+				currentLatLng: new google.maps.LatLng(lat, lng), 
 				initialized: true
-			}));
+			}); 
 
-		} else {
+			this.setState(nextState)
 
-			window.console.log('TwoBlocks INITIALIZED.'); 
+				.then(() => this.setRandomLocation());
 
-			twoBlocks(this.state); 
-
-		}
+		}		
 
 	}
 
+	setRandomLocation() {
+
+		const { panorama, nycPolygon, nycLatLngMaxMin } = this.state; 
+
+		getRandomPanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin) 
+
+			.then(randomLatLng => {
+
+				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
+				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
+
+				this.setState({ 
+					currentLatLng: randomLatLng 
+				})
+
+				.then(() => twoBlocks(this.state));  
+
+			})
+
+			.catch((...args) => `Caught error with args ${args}`); 		
+
+	}
+
+	/*----------  render()  ----------*/
+	
 	render() {
 
 		return (
 	
 			<div id={ this.props.gameId }>
-				<TwoBlocksMap />
+				<TwoBlocksMap panorama={ this.state.panorama } latLng={ this.state.currentLatLng } />
 			</div>
 	
 		); 

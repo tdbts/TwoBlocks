@@ -12,7 +12,7 @@ injectGapiScript()
 	/*----------  Poll for 'geometry' library in google.maps object  ----------*/
 
 	.then(() => {
-		window.console.log('Polling for geometry library'); 
+
 		const geometryLibraryLoaded = () => 'geometry' in google.maps; 
 
 		const pollForGeometryLibrary = poll(geometryLibraryLoaded, 25, 5000); 

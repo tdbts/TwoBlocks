@@ -1,6 +1,5 @@
 /* global document, google */
   
-import getRandomPanoramaLocation from './getRandomPanoramaLocation';
 import showChooseLocationMap from './showChooseLocationMap';  
 // import { createStore } from 'redux'; 
 
@@ -23,93 +22,83 @@ const twoBlocks = function twoBlocks(gameComponents) {
 	// 	return store; 
 	// }; 
 
-	const { canvas, locationData, nycBoundaryLatLngs, nycLatLngMaxMin, nycPolygon, panorama, spinner } = gameComponents; 
+	const { canvas, locationData, nycBoundaryLatLngs, panorama, spinner } = gameComponents; 
 
-	getRandomPanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin)
+		panorama.setVisible(true); 
 
-		.then(randomLatLng => panorama.setPosition(randomLatLng)) 
+		spinner.start(); 
 
-		.then(() => {
+		spinner.once('revolution', () => {
+		
+			spinner.stop(); 
 
-			panorama.setVisible(true); 
+			const gps = new google.maps.LatLng(locationData.center.lat, locationData.center.lng); 
 
-			spinner.start(); 
+			const mapOptions = {
+				center: gps
+			}; 
 
-			spinner.once('revolution', () => {
+			const chooseLocationMap = showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions);
+
+			// Outside the polygon boundaries, in the Atlantic Ocean 
+			const markerLat = 40.480993; 
+			const markerLng = -73.72798; 
+
+			const markerOptions = {
+				animation: google.maps.Animation.BOUNCE, 
+				draggable: true, 
+				map: chooseLocationMap, 
+				position: new google.maps.LatLng(markerLat, markerLng)
+			}; 
+
+			const chooseLocationMarker = new google.maps.Marker(markerOptions); 
+
+			google.maps.event.addListener(chooseLocationMarker, 'dragstart', () => chooseLocationMarker.setAnimation(null)); 
+
+			google.maps.event.addListener(chooseLocationMap, 'click', e => {
+
+				const { latLng } = e; 
+
+				chooseLocationMarker.setPosition(latLng); 
+				chooseLocationMarker.setAnimation(null); 
+
+			});
+
+			const calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
 			
-				spinner.stop(); 
+				return google.maps.geometry.spherical.computeDistanceBetween(first, second); 	
+			
+			};
 
-				const gps = new google.maps.LatLng(locationData.center.lat, locationData.center.lng); 
+			const convertMetersToMiles = function convertMetersToMiles(meters) {
+			
+				const MILES_PER_METER = 0.000621371; 
 
-				const mapOptions = {
-					center: gps
-				}; 
+				return meters * MILES_PER_METER; 
+			
+			}; 
 
-				const chooseLocationMap = showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions);
+			google.maps.event.addListener(chooseLocationMarker, 'dragend', () => {
+			
+				const distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
 
-				// Outside the polygon boundaries, in the Atlantic Ocean 
-				const markerLat = 40.480993; 
-				const markerLng = -73.72798; 
+				const distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);  
 
-				const markerOptions = {
-					animation: google.maps.Animation.BOUNCE, 
-					draggable: true, 
-					map: chooseLocationMap, 
-					position: new google.maps.LatLng(markerLat, markerLng)
-				}; 
-
-				const chooseLocationMarker = new google.maps.Marker(markerOptions); 
-
-				google.maps.event.addListener(chooseLocationMarker, 'dragstart', () => chooseLocationMarker.setAnimation(null)); 
-
-				google.maps.event.addListener(chooseLocationMap, 'click', e => {
-
-					const { latLng } = e; 
-
-					chooseLocationMarker.setPosition(latLng); 
-					chooseLocationMarker.setAnimation(null); 
-
-				});
-
-				const calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
-				
-					return google.maps.geometry.spherical.computeDistanceBetween(first, second); 	
-				
-				};
-
-				const convertMetersToMiles = function convertMetersToMiles(meters) {
-				
-					const MILES_PER_METER = 0.000621371; 
-
-					return meters * MILES_PER_METER; 
-				
-				}; 
-
-				google.maps.event.addListener(chooseLocationMarker, 'dragend', () => {
-				
-					const distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition());
-
-					const distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3);  
-
-					window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles); 
-
-				}); 
-
-				google.maps.event.addListener(chooseLocationMap, 'click', () => {
-
-					const distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition()); 
-
-					const distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3); 
-
-					window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);  
-
-				}); 
+				window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles); 
 
 			}); 
 
-		})		
+			google.maps.event.addListener(chooseLocationMap, 'click', () => {
 
-		.catch((...args) => `Caught error with args ${args}`); 
+				const distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), chooseLocationMarker.getPosition()); 
+
+				const distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3); 
+
+				window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);  
+
+			}); 
+
+		});  
 
 }; 
 
