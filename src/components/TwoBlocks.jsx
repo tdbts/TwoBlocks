@@ -2,6 +2,7 @@
 
 import React from 'react';
 import TwoBlocksMap from './TwoBlocksMap';
+import TwoBlocksPrompt from './TwoBlocksPrompt'; 
 import twoBlocks from '../twoBlocks'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
@@ -19,7 +20,8 @@ class TwoBlocks extends React.Component {
 			currentLat: '', 
 			currentLng: '',  
 			initialized: false, 
-			locationData: {}
+			locationData: {}, 
+			promptText: 'loading...'
 		}; 
 
 		/*----------  Save reference to original setState() method  ----------*/
@@ -94,7 +96,8 @@ class TwoBlocks extends React.Component {
 				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
 
 				this.setState({ 
-					currentLatLng: randomLatLng 
+					currentLatLng: randomLatLng, 
+					promptText: 'Where is this?' 
 				})
 
 				.then(() => twoBlocks(this.state));  
@@ -113,6 +116,7 @@ class TwoBlocks extends React.Component {
 	
 			<div id={ this.props.gameId }>
 				<TwoBlocksMap panorama={ this.state.panorama } latLng={ this.state.currentLatLng } />
+				<TwoBlocksPrompt text={ this.state.promptText } />
 			</div>
 	
 		); 
