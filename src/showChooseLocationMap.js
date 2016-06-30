@@ -14,27 +14,8 @@ const showChooseLocationMap = function showChooseLocationMap(canvas, locationLat
 	}; 
 
 	const mapOptions = Object.assign({}, defaultOptions, options); 
+
 	const map = new google.maps.Map(canvas, mapOptions); 
-
-	const worldCoordinates = [
-		new google.maps.LatLng(0, -90),
-		new google.maps.LatLng(0, 90),
-		new google.maps.LatLng(90, -90),
-		new google.maps.LatLng(90, 90)
-	]; 
-
-	const centerOfTheWorld = new google.maps.Polygon({
-
-		paths: [worldCoordinates, locationLatLngs],
-		strokeColor: '#000000',
-		strokeOpacity: 0.8,
-		strokeWeight: 2,
-		fillColor: '#000000',
-		fillOpacity: 0.35							
-	
-	}); 	
-
-	centerOfTheWorld.setMap(map); 
 
 	return map; 
 

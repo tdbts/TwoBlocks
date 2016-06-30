@@ -1,6 +1,7 @@
 /* global document, google */
   
 import showChooseLocationMap from './showChooseLocationMap';  
+import NYC_BOUNDARIES_DATASET_URL from './constants/NYC_BOUNDARIES_DATASET_URL'; 
 // import { createStore } from 'redux'; 
 
 /*=================================
@@ -97,6 +98,26 @@ const twoBlocks = function twoBlocks(gameComponents) {
 				window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);  
 
 			}); 
+
+			// Each borough is a feature 
+			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, features => {
+				window.console.log("features:", features); 	
+
+				features.forEach(feature => window.console.log("feature.getProperty('boro_name'):", feature.getProperty('boro_name'))); 
+
+			}); 
+
+			chooseLocationMap.data.addListener('mouseover', event => {
+				
+				chooseLocationMap.data.revertStyle(); 
+				
+				chooseLocationMap.data.overrideStyle(event.feature, {
+					fillColor: "#A8FFFC"
+				}); 
+			
+			}); 
+
+			chooseLocationMap.data.addListener('mouseout', () => chooseLocationMap.data.revertStyle()); 
 
 		});  
 
