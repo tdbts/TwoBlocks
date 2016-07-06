@@ -12771,7 +12771,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.NYC_COORDINATES = exports.NYC_BOUNDARIES_DATASET_URL = exports.ALL_TYPES = undefined;
+	exports.nycCoordinates = exports.NYC_BOUNDARIES_DATASET_URL = exports.ALL_TYPES = undefined;
 
 	var _ALL_TYPES = __webpack_require__(349);
 
@@ -12781,15 +12781,15 @@
 
 	var _NYC_BOUNDARIES_DATASET_URL2 = _interopRequireDefault(_NYC_BOUNDARIES_DATASET_URL);
 
-	var _NYC_COORDINATES = __webpack_require__(351);
+	var _nycCoordinates = __webpack_require__(351);
 
-	var _NYC_COORDINATES2 = _interopRequireDefault(_NYC_COORDINATES);
+	var _nycCoordinates2 = _interopRequireDefault(_nycCoordinates);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.ALL_TYPES = _ALL_TYPES2.default;
 	exports.NYC_BOUNDARIES_DATASET_URL = _NYC_BOUNDARIES_DATASET_URL2.default;
-	exports.NYC_COORDINATES = _NYC_COORDINATES2.default;
+	exports.nycCoordinates = _nycCoordinates2.default;
 
 /***/ },
 /* 349 */
@@ -12821,7 +12821,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	var NYC_COORDINATES = {
+	var nycCoordinates = {
 
 		boundaries: [
 		// NJ, above Bronx, West side
@@ -12840,14 +12840,16 @@
 		// NJ, West of Staten Island
 		[40.562052, -74.352036]],
 
-		center: {
+		features: null,
+
+		CENTER: {
 			lat: 40.6291566,
 			lng: -74.0287341
 		}
 
 	};
 
-	exports.default = NYC_COORDINATES;
+	exports.default = nycCoordinates;
 
 /***/ },
 /* 352 */
@@ -13601,6 +13603,10 @@
 
 	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
 
+	var _showChooseLocationMap = __webpack_require__(379);
+
+	var _showChooseLocationMap2 = _interopRequireDefault(_showChooseLocationMap);
+
 	var _constants = __webpack_require__(348);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -13651,9 +13657,12 @@
 			value: function componentDidMount() {
 				var _this2 = this;
 
+				var CENTER = _constants.nycCoordinates.CENTER;
+
+
 				this.setState({
 					canvas: document.getElementById(this.props.canvasId),
-					locationData: _constants.NYC_COORDINATES
+					locationData: _constants.nycCoordinates
 				}).then(function () {
 					return _this2.initializeTwoBlocks();
 				});
@@ -13665,9 +13674,9 @@
 
 				if (this.state.initialized) return;
 
-				var _state$locationData$c = this.state.locationData.center;
-				var lat = _state$locationData$c.lat;
-				var lng = _state$locationData$c.lng;
+				var _state$locationData$C = this.state.locationData.CENTER;
+				var lat = _state$locationData$C.lat;
+				var lng = _state$locationData$C.lng;
 
 				var canvas = this.state.canvas;
 
@@ -13676,20 +13685,18 @@
 					throw new Error('No element with ID #' + this.props.canvasId + ' could be found on the page.');
 				}
 
-				// gameCompnents: panorama, spinner, nycPolygon, nycLatLngMaxMin
-				var gameComponents = (0, _createGameComponents2.default)(this.state);
-
-				console.log("gameComponents:", gameComponents);
-
 				/*----------  Add game components to state  ----------*/
 
-				var nextState = _extends({}, gameComponents, {
+				var nextState = _extends({}, {
 					canvas: canvas,
 					currentLatLng: new google.maps.LatLng(lat, lng),
-					initialized: true
+					initialized: true,
+					view: 'map'
 				});
 
 				this.setState(nextState).then(function () {
+					return _this3.showPregameMap();
+				}).then(function () {
 					return _this3.setRandomLocation();
 				});
 			}
@@ -13698,28 +13705,83 @@
 			value: function setRandomLocation() {
 				var _this4 = this;
 
-				var _state = this.state;
-				var nycPolygon = _state.nycPolygon;
-				var nycLatLngMaxMin = _state.nycLatLngMaxMin;
+				// gameCompnents: panorama, spinner, nycPolygon, nycLatLngMaxMin
+				var gameComponents = (0, _createGameComponents2.default)(this.state);
+
+				console.log("gameComponents:", gameComponents);
+				this.setState(gameComponents).then(function () {
+					var _state = _this4.state;
+					var nycPolygon = _state.nycPolygon;
+					var nycLatLngMaxMin = _state.nycLatLngMaxMin;
 
 
-				(0, _getRandomPanoramaLocation2.default)(nycPolygon, nycLatLngMaxMin).then(function (randomLatLng) {
+					(0, _getRandomPanoramaLocation2.default)(nycPolygon, nycLatLngMaxMin).then(function (randomLatLng) {
 
-					window.console.log("randomLatLng.lat():", randomLatLng.lat());
-					window.console.log("randomLatLng.lng():", randomLatLng.lng());
+						window.console.log("randomLatLng.lat():", randomLatLng.lat());
+						window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
-					_this4.setState({
-						currentLatLng: randomLatLng,
-						promptText: 'Where is this?'
-					}).then(function () {
-						return (0, _twoBlocks2.default)(_this4.state);
+						_this4.setState({
+							currentLatLng: randomLatLng,
+							promptText: 'Where is this?'
+						}).then(function () {
+							return (0, _twoBlocks2.default)(_this4.state);
+						});
+					}).catch(function () {
+						for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+							args[_key] = arguments[_key];
+						}
+
+						return 'Caught error with args ' + args;
 					});
-				}).catch(function () {
-					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-						args[_key] = arguments[_key];
-					}
+				});
+			}
+		}, {
+			key: 'showPregameMap',
+			value: function showPregameMap() {
+				var _this5 = this;
 
-					return 'Caught error with args ' + args;
+				return new Promise(function (resolve) {
+					var canvas = _this5.state.canvas;
+
+
+					var mapOptions = {
+						center: _this5.state.currentLatLng
+					};
+
+					var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, mapOptions);
+
+					// Each borough is a feature
+					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (features) {
+						window.console.log("features:", features);
+
+						features.forEach(function (feature) {
+							return window.console.log("feature.getProperty('boro_name'):", feature.getProperty('boro_name'));
+						});
+
+						_constants.nycCoordinates.features = features;
+
+						_this5.setState({ nycCoordinates: _constants.nycCoordinates });
+					});
+
+					chooseLocationMap.data.addListener('mouseover', function (event) {
+
+						chooseLocationMap.data.revertStyle();
+
+						chooseLocationMap.data.overrideStyle(event.feature, {
+							fillColor: "#A8FFFC"
+						});
+					});
+
+					chooseLocationMap.data.addListener('mouseout', function () {
+						return chooseLocationMap.data.revertStyle();
+					});
+
+					setTimeout(function () {
+
+						_this5.setState({ view: 'panorama' });
+
+						resolve();
+					}, 10000);
 				});
 			}
 
@@ -13732,7 +13794,7 @@
 				return _react2.default.createElement(
 					'div',
 					{ id: this.props.gameId },
-					_react2.default.createElement(_TwoBlocksMap2.default, { panorama: this.state.panorama, latLng: this.state.currentLatLng }),
+					_react2.default.createElement(_TwoBlocksMap2.default, { view: this.state.view, panorama: this.state.panorama, latLng: this.state.currentLatLng }),
 					_react2.default.createElement(_TwoBlocksPrompt2.default, { text: this.state.promptText })
 				);
 			}
@@ -13752,7 +13814,7 @@
 /* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -13782,24 +13844,27 @@
 		}
 
 		_createClass(TwoBlocksMap, [{
-			key: "componentDidUpdate",
+			key: 'componentDidUpdate',
 			value: function componentDidUpdate(previousProps) {
 				var _props = this.props;
 				var latLng = _props.latLng;
 				var panorama = _props.panorama;
+				var view = _props.view;
 
 
 				if (!latLng || !panorama) return;
 
 				if (latLng.equals(previousProps.latLng)) return;
 
+				if ('map' === view) return;
+
 				panorama.setPosition(latLng);
 			}
 		}, {
-			key: "render",
+			key: 'render',
 			value: function render() {
 
-				return _react2.default.createElement("div", { id: "twoBlocks-map", className: "inherit-dimensions" });
+				return _react2.default.createElement('div', { id: 'twoBlocks-map', className: 'inherit-dimensions' });
 			}
 		}]);
 
@@ -13917,7 +13982,7 @@
 
 			spinner.stop();
 
-			var gps = new google.maps.LatLng(locationData.center.lat, locationData.center.lng);
+			var gps = new google.maps.LatLng(locationData.CENTER.lat, locationData.CENTER.lng);
 
 			var mapOptions = {
 				center: gps

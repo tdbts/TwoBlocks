@@ -18,6 +18,8 @@ const nycCoordinates = {
 		[40.562052, -74.352036]
 	], 
 
+	features: null, 
+
 	CENTER: {
 		lat: 40.6291566, 
 		lng: -74.0287341

@@ -6,7 +6,8 @@ import TwoBlocksPrompt from './TwoBlocksPrompt';
 import twoBlocks from '../twoBlocks'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
-import { NYC_COORDINATES } from '../constants/constants'; 
+import showChooseLocationMap from '../showChooseLocationMap'; 
+import { NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -43,9 +44,11 @@ class TwoBlocks extends React.Component {
 
 	componentDidMount() {
 	 	
+		const { CENTER } = nycCoordinates; 
+
 		this.setState({
 			canvas: document.getElementById(this.props.canvasId), 
-			locationData: NYC_COORDINATES
+			locationData: nycCoordinates
 		})
 
 		.then(() => this.initializeTwoBlocks()); 
@@ -56,29 +59,27 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.initialized) return; 
 
-		const { lat, lng } = this.state.locationData.center; 
+		const { lat, lng } = this.state.locationData.CENTER; 
 		const canvas = this.state.canvas; 
 
 		if (!(canvas)) {
 
 			throw new Error(`No element with ID #${this.props.canvasId} could be found on the page.`); 
 
-		}
-	
-		// gameCompnents: panorama, spinner, nycPolygon, nycLatLngMaxMin 
-		const gameComponents = createGameComponents(this.state); 
-
-		console.log("gameComponents:", gameComponents); 
+		} 
 		
 		/*----------  Add game components to state  ----------*/
 		
-		const nextState = Object.assign({}, gameComponents, {
+		const nextState = Object.assign({}, {
 			canvas, 
 			currentLatLng: new google.maps.LatLng(lat, lng), 
-			initialized: true
+			initialized: true, 
+			view: 'map'
 		}); 
 
 		this.setState(nextState)
+
+			.then(() => this.showPregameMap())
 
 			.then(() => this.setRandomLocation());
 
@@ -86,25 +87,83 @@ class TwoBlocks extends React.Component {
 
 	setRandomLocation() {
 
-		const { nycPolygon, nycLatLngMaxMin } = this.state; 
+		// gameCompnents: panorama, spinner, nycPolygon, nycLatLngMaxMin 
+		const gameComponents = createGameComponents(this.state); 
 
-		getRandomPanoramaLocation(nycPolygon, nycLatLngMaxMin) 
+		console.log("gameComponents:", gameComponents);		
+		this.setState(gameComponents) 
 
-			.then(randomLatLng => {
+			.then(() => {
 
-				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
-				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
+				const { nycPolygon, nycLatLngMaxMin } = this.state; 
 
-				this.setState({ 
-					currentLatLng: randomLatLng, 
-					promptText: 'Where is this?' 
-				})
+				getRandomPanoramaLocation(nycPolygon, nycLatLngMaxMin) 
 
-				.then(() => twoBlocks(this.state));  
+					.then(randomLatLng => {
 
-			})
+						window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
+						window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
 
-			.catch((...args) => `Caught error with args ${args}`); 		
+						this.setState({ 
+							currentLatLng: randomLatLng, 
+							promptText: 'Where is this?' 
+						})
+
+						.then(() => twoBlocks(this.state));  
+
+					})
+
+					.catch((...args) => `Caught error with args ${args}`); 		
+			
+			}); 
+
+	}
+
+	showPregameMap() {
+
+		return new Promise(resolve => { 
+
+			const { canvas } = this.state; 
+
+			const mapOptions = {
+				center: this.state.currentLatLng
+			}; 
+
+			const chooseLocationMap = showChooseLocationMap(canvas, mapOptions);			
+
+			// Each borough is a feature 
+			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, features => {
+				window.console.log("features:", features); 	
+
+				features.forEach(feature => window.console.log("feature.getProperty('boro_name'):", feature.getProperty('boro_name'))); 
+
+				nycCoordinates.features = features; 
+
+				this.setState({ nycCoordinates }); 
+
+			}); 
+
+			chooseLocationMap.data.addListener('mouseover', event => {
+				
+				chooseLocationMap.data.revertStyle(); 
+				
+				chooseLocationMap.data.overrideStyle(event.feature, {
+					fillColor: "#A8FFFC"
+				}); 
+			
+			}); 
+
+			chooseLocationMap.data.addListener('mouseout', () => chooseLocationMap.data.revertStyle()); 	
+
+			setTimeout(() => {
+				
+				this.setState({ view: 'panorama' }); 
+
+				resolve(); 
+
+			}, 10000); 					
+
+		}); 	
 
 	}
 
@@ -115,7 +174,7 @@ class TwoBlocks extends React.Component {
 		return (
 	
 			<div id={ this.props.gameId }>
-				<TwoBlocksMap panorama={ this.state.panorama } latLng={ this.state.currentLatLng } />
+				<TwoBlocksMap view={ this.state.view } panorama={ this.state.panorama } latLng={ this.state.currentLatLng } />
 				<TwoBlocksPrompt text={ this.state.promptText } />
 			</div>
 	

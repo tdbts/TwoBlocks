@@ -33,7 +33,7 @@ const twoBlocks = function twoBlocks(gameComponents) {
 		
 			spinner.stop(); 
 
-			const gps = new google.maps.LatLng(locationData.center.lat, locationData.center.lng); 
+			const gps = new google.maps.LatLng(locationData.CENTER.lat, locationData.CENTER.lng); 
 
 			const mapOptions = {
 				center: gps
