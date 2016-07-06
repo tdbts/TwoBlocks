@@ -3,7 +3,7 @@
 const DEFAULT_LAT = 40.6291566; 
 const DEFAULT_LNG = -74.0287341; 
 
-const showChooseLocationMap = function showChooseLocationMap(canvas, locationLatLngs, options) {
+const showChooseLocationMap = function showChooseLocationMap(canvas, options) {
 
 	const defaultOptions = {
 		center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG), 

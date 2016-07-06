@@ -33,6 +33,7 @@
 	    "no-loop-func": 2,
 	    "no-new-wrappers": 2,
 	    "no-return-assign": 2,
+	    "no-unused-vars": ["error", { "vars": "all", "args": "all" }], 
 	    "no-useless-call": 2,
 	    "no-with": 2,
 	    "comma-spacing": [1,{"after":true}],

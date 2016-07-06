@@ -2,7 +2,7 @@ import getLatLngWithinBoundaries from './getLatLngWithinBoundaries';
 import requestNearestPanorama from './requestNearestPanorama'; 
 import tryAtMost from './tryAtMost'; 
 
-const getRandomPanoramaLocation = function getRandomPanoramaLocation(panorama, polygon, latLngMaxMin) {
+const getRandomPanoramaLocation = function getRandomPanoramaLocation(polygon, latLngMaxMin) {
 
 	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
 

@@ -58,7 +58,7 @@
 
 	var _utils = __webpack_require__(336);
 
-	var _TwoBlocks = __webpack_require__(374);
+	var _TwoBlocks = __webpack_require__(375);
 
 	var _TwoBlocks2 = _interopRequireDefault(_TwoBlocks);
 
@@ -12244,23 +12244,23 @@
 
 	var _extend2 = _interopRequireDefault(_extend);
 
-	var _existenceCheck = __webpack_require__(352);
+	var _existenceCheck = __webpack_require__(353);
 
 	var _existenceCheck2 = _interopRequireDefault(_existenceCheck);
 
-	var _followPath = __webpack_require__(353);
+	var _followPath = __webpack_require__(354);
 
 	var _followPath2 = _interopRequireDefault(_followPath);
 
-	var _getArgumentsArray = __webpack_require__(356);
+	var _getArgumentsArray = __webpack_require__(357);
 
 	var _getArgumentsArray2 = _interopRequireDefault(_getArgumentsArray);
 
-	var _getOwnProp = __webpack_require__(357);
+	var _getOwnProp = __webpack_require__(358);
 
 	var _getOwnProp2 = _interopRequireDefault(_getOwnProp);
 
-	var _getProp = __webpack_require__(358);
+	var _getProp = __webpack_require__(359);
 
 	var _getProp2 = _interopRequireDefault(_getProp);
 
@@ -12268,19 +12268,19 @@
 
 	var _getType2 = _interopRequireDefault(_getType);
 
-	var _halt = __webpack_require__(359);
+	var _halt = __webpack_require__(360);
 
 	var _halt2 = _interopRequireDefault(_halt);
 
-	var _invoke = __webpack_require__(360);
+	var _invoke = __webpack_require__(361);
 
 	var _invoke2 = _interopRequireDefault(_invoke);
 
-	var _isEmpty = __webpack_require__(361);
+	var _isEmpty = __webpack_require__(362);
 
 	var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
-	var _isNothing = __webpack_require__(354);
+	var _isNothing = __webpack_require__(355);
 
 	var _isNothing2 = _interopRequireDefault(_isNothing);
 
@@ -12288,7 +12288,7 @@
 
 	var _isOneOf2 = _interopRequireDefault(_isOneOf);
 
-	var _isSomething = __webpack_require__(355);
+	var _isSomething = __webpack_require__(356);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -12296,11 +12296,11 @@
 
 	var _isType2 = _interopRequireDefault(_isType);
 
-	var _hasKeys = __webpack_require__(362);
+	var _hasKeys = __webpack_require__(363);
 
 	var _hasKeys2 = _interopRequireDefault(_hasKeys);
 
-	var _keys = __webpack_require__(351);
+	var _keys = __webpack_require__(352);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -12308,47 +12308,47 @@
 
 	var _length2 = _interopRequireDefault(_length);
 
-	var _merge = __webpack_require__(363);
+	var _merge = __webpack_require__(364);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _negate = __webpack_require__(364);
+	var _negate = __webpack_require__(365);
 
 	var _negate2 = _interopRequireDefault(_negate);
 
-	var _noArguments = __webpack_require__(365);
+	var _noArguments = __webpack_require__(366);
 
 	var _noArguments2 = _interopRequireDefault(_noArguments);
 
-	var _noUniqueBetweenSets = __webpack_require__(366);
+	var _noUniqueBetweenSets = __webpack_require__(367);
 
 	var _noUniqueBetweenSets2 = _interopRequireDefault(_noUniqueBetweenSets);
 
-	var _once = __webpack_require__(367);
+	var _once = __webpack_require__(368);
 
 	var _once2 = _interopRequireDefault(_once);
 
-	var _pipeline = __webpack_require__(368);
+	var _pipeline = __webpack_require__(369);
 
 	var _pipeline2 = _interopRequireDefault(_pipeline);
 
-	var _poll = __webpack_require__(369);
+	var _poll = __webpack_require__(370);
 
 	var _poll2 = _interopRequireDefault(_poll);
 
-	var _returnItem = __webpack_require__(370);
+	var _returnItem = __webpack_require__(371);
 
 	var _returnItem2 = _interopRequireDefault(_returnItem);
 
-	var _throttle = __webpack_require__(371);
+	var _throttle = __webpack_require__(372);
 
 	var _throttle2 = _interopRequireDefault(_throttle);
 
-	var _throwErrorIfTrue = __webpack_require__(372);
+	var _throwErrorIfTrue = __webpack_require__(373);
 
 	var _throwErrorIfTrue2 = _interopRequireDefault(_throwErrorIfTrue);
 
-	var _truthyness = __webpack_require__(373);
+	var _truthyness = __webpack_require__(374);
 
 	var _truthyness2 = _interopRequireDefault(_truthyness);
 
@@ -12675,7 +12675,7 @@
 
 	var _getType2 = _interopRequireDefault(_getType);
 
-	var _keys = __webpack_require__(351);
+	var _keys = __webpack_require__(352);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -12771,19 +12771,24 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.NYC_COORDINATES = exports.ALL_TYPES = undefined;
+	exports.NYC_COORDINATES = exports.NYC_BOUNDARIES_DATASET_URL = exports.ALL_TYPES = undefined;
 
 	var _ALL_TYPES = __webpack_require__(349);
 
 	var _ALL_TYPES2 = _interopRequireDefault(_ALL_TYPES);
 
-	var _NYC_COORDINATES = __webpack_require__(350);
+	var _NYC_BOUNDARIES_DATASET_URL = __webpack_require__(350);
+
+	var _NYC_BOUNDARIES_DATASET_URL2 = _interopRequireDefault(_NYC_BOUNDARIES_DATASET_URL);
+
+	var _NYC_COORDINATES = __webpack_require__(351);
 
 	var _NYC_COORDINATES2 = _interopRequireDefault(_NYC_COORDINATES);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.ALL_TYPES = _ALL_TYPES2.default;
+	exports.NYC_BOUNDARIES_DATASET_URL = _NYC_BOUNDARIES_DATASET_URL2.default;
 	exports.NYC_COORDINATES = _NYC_COORDINATES2.default;
 
 /***/ },
@@ -12796,6 +12801,19 @@
 
 /***/ },
 /* 350 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var NYC_BOUNDARIES_DATASET_URL = "https://data.cityofnewyork.us/api/views/6jcb-t2g6/rows.geojson";
+
+	exports.default = NYC_BOUNDARIES_DATASET_URL;
+
+/***/ },
+/* 351 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -12832,7 +12850,7 @@
 	exports.default = NYC_COORDINATES;
 
 /***/ },
-/* 351 */
+/* 352 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -12847,7 +12865,7 @@
 	exports.default = keys;
 
 /***/ },
-/* 352 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12856,11 +12874,11 @@
 		value: true
 	});
 
-	var _followPath = __webpack_require__(353);
+	var _followPath = __webpack_require__(354);
 
 	var _followPath2 = _interopRequireDefault(_followPath);
 
-	var _isNothing = __webpack_require__(354);
+	var _isNothing = __webpack_require__(355);
 
 	var _isNothing2 = _interopRequireDefault(_isNothing);
 
@@ -12895,7 +12913,7 @@
 	exports.default = existenceCheck;
 
 /***/ },
-/* 353 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12974,7 +12992,7 @@
 	exports.default = followPath;
 
 /***/ },
-/* 354 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12983,7 +13001,7 @@
 		value: true
 	});
 
-	var _isSomething = __webpack_require__(355);
+	var _isSomething = __webpack_require__(356);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -12996,7 +13014,7 @@
 	exports.default = isNothing;
 
 /***/ },
-/* 355 */
+/* 356 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13011,7 +13029,7 @@
 	exports.default = isSomething;
 
 /***/ },
-/* 356 */
+/* 357 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13029,7 +13047,7 @@
 	exports.default = getArgumentsArray;
 
 /***/ },
-/* 357 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13042,7 +13060,7 @@
 
 	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
 
-	var _getProp = __webpack_require__(358);
+	var _getProp = __webpack_require__(359);
 
 	var _getProp2 = _interopRequireDefault(_getProp);
 
@@ -13063,7 +13081,7 @@
 	exports.default = getOwnProp;
 
 /***/ },
-/* 358 */
+/* 359 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13078,7 +13096,7 @@
 	exports.default = getProp;
 
 /***/ },
-/* 359 */
+/* 360 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13114,7 +13132,7 @@
 	exports.default = halt;
 
 /***/ },
-/* 360 */
+/* 361 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13144,7 +13162,7 @@
 	exports.default = invoke;
 
 /***/ },
-/* 361 */
+/* 362 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13161,7 +13179,7 @@
 
 	var _isType2 = _interopRequireDefault(_isType);
 
-	var _keys = __webpack_require__(351);
+	var _keys = __webpack_require__(352);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -13184,7 +13202,7 @@
 	exports.default = isEmpty;
 
 /***/ },
-/* 362 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13227,7 +13245,7 @@
 	exports.default = hasKeys;
 
 /***/ },
-/* 363 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13255,7 +13273,7 @@
 	exports.default = merge;
 
 /***/ },
-/* 364 */
+/* 365 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13276,7 +13294,7 @@
 	exports.default = negate;
 
 /***/ },
-/* 365 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13285,7 +13303,7 @@
 		value: true
 	});
 
-	var _isEmpty = __webpack_require__(361);
+	var _isEmpty = __webpack_require__(362);
 
 	var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
@@ -13298,7 +13316,7 @@
 	exports.default = noArguments;
 
 /***/ },
-/* 366 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13332,7 +13350,7 @@
 	exports.default = noUniqueBetweenSets;
 
 /***/ },
-/* 367 */
+/* 368 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13365,7 +13383,7 @@
 	exports.default = once;
 
 /***/ },
-/* 368 */
+/* 369 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13388,7 +13406,7 @@
 	exports.default = pipeline;
 
 /***/ },
-/* 369 */
+/* 370 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13435,7 +13453,7 @@
 	exports.default = poll;
 
 /***/ },
-/* 370 */
+/* 371 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13452,7 +13470,7 @@
 	exports.default = returnItem;
 
 /***/ },
-/* 371 */
+/* 372 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13498,7 +13516,7 @@
 	exports.default = throttle;
 
 /***/ },
-/* 372 */
+/* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13507,7 +13525,7 @@
 		value: true
 	});
 
-	var _isSomething = __webpack_require__(355);
+	var _isSomething = __webpack_require__(356);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -13531,7 +13549,7 @@
 	exports.default = throwErrorIfTrue;
 
 /***/ },
-/* 373 */
+/* 374 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13546,7 +13564,7 @@
 	exports.default = truthyness;
 
 /***/ },
-/* 374 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13563,15 +13581,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TwoBlocksMap = __webpack_require__(375);
+	var _TwoBlocksMap = __webpack_require__(376);
 
 	var _TwoBlocksMap2 = _interopRequireDefault(_TwoBlocksMap);
 
-	var _TwoBlocksPrompt = __webpack_require__(376);
+	var _TwoBlocksPrompt = __webpack_require__(377);
 
 	var _TwoBlocksPrompt2 = _interopRequireDefault(_TwoBlocksPrompt);
 
-	var _twoBlocks = __webpack_require__(377);
+	var _twoBlocks = __webpack_require__(378);
 
 	var _twoBlocks2 = _interopRequireDefault(_twoBlocks);
 
@@ -13605,8 +13623,7 @@
 
 			_this.state = {
 				canvas: null,
-				currentLat: '',
-				currentLng: '',
+				currentLatLng: null,
 				initialized: false,
 				locationData: {},
 				promptText: 'loading...'
@@ -13646,32 +13663,35 @@
 			value: function initializeTwoBlocks() {
 				var _this3 = this;
 
-				if (!this.state.initialized) {
-					var _state$locationData$c = this.state.locationData.center;
-					var lat = _state$locationData$c.lat;
-					var lng = _state$locationData$c.lng;
+				if (this.state.initialized) return;
 
-					var canvas = this.state.canvas;
+				var _state$locationData$c = this.state.locationData.center;
+				var lat = _state$locationData$c.lat;
+				var lng = _state$locationData$c.lng;
 
-					if (!canvas) {
+				var canvas = this.state.canvas;
 
-						throw new Error('No element with ID #' + this.props.canvasId + ' could be found on the page.');
-					}
+				if (!canvas) {
 
-					var gameComponents = (0, _createGameComponents2.default)(this.state);
-
-					/*----------  Add game components to state  ----------*/
-
-					var nextState = _extends({}, gameComponents, {
-						canvas: canvas,
-						currentLatLng: new google.maps.LatLng(lat, lng),
-						initialized: true
-					});
-
-					this.setState(nextState).then(function () {
-						return _this3.setRandomLocation();
-					});
+					throw new Error('No element with ID #' + this.props.canvasId + ' could be found on the page.');
 				}
+
+				// gameCompnents: panorama, spinner, nycPolygon, nycLatLngMaxMin
+				var gameComponents = (0, _createGameComponents2.default)(this.state);
+
+				console.log("gameComponents:", gameComponents);
+
+				/*----------  Add game components to state  ----------*/
+
+				var nextState = _extends({}, gameComponents, {
+					canvas: canvas,
+					currentLatLng: new google.maps.LatLng(lat, lng),
+					initialized: true
+				});
+
+				this.setState(nextState).then(function () {
+					return _this3.setRandomLocation();
+				});
 			}
 		}, {
 			key: 'setRandomLocation',
@@ -13679,12 +13699,11 @@
 				var _this4 = this;
 
 				var _state = this.state;
-				var panorama = _state.panorama;
 				var nycPolygon = _state.nycPolygon;
 				var nycLatLngMaxMin = _state.nycLatLngMaxMin;
 
 
-				(0, _getRandomPanoramaLocation2.default)(panorama, nycPolygon, nycLatLngMaxMin).then(function (randomLatLng) {
+				(0, _getRandomPanoramaLocation2.default)(nycPolygon, nycLatLngMaxMin).then(function (randomLatLng) {
 
 					window.console.log("randomLatLng.lat():", randomLatLng.lat());
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
@@ -13730,7 +13749,7 @@
 	exports.default = TwoBlocks;
 
 /***/ },
-/* 375 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -13790,7 +13809,7 @@
 	exports.default = TwoBlocksMap;
 
 /***/ },
-/* 376 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13844,7 +13863,7 @@
 	exports.default = TwoBlocksPrompt;
 
 /***/ },
-/* 377 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13853,13 +13872,11 @@
 		value: true
 	});
 
-	var _showChooseLocationMap = __webpack_require__(378);
+	var _showChooseLocationMap = __webpack_require__(379);
 
 	var _showChooseLocationMap2 = _interopRequireDefault(_showChooseLocationMap);
 
-	var _NYC_BOUNDARIES_DATASET_URL = __webpack_require__(379);
-
-	var _NYC_BOUNDARIES_DATASET_URL2 = _interopRequireDefault(_NYC_BOUNDARIES_DATASET_URL);
+	var _constants = __webpack_require__(348);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -13888,7 +13905,6 @@
 
 		var canvas = gameComponents.canvas;
 		var locationData = gameComponents.locationData;
-		var nycBoundaryLatLngs = gameComponents.nycBoundaryLatLngs;
 		var panorama = gameComponents.panorama;
 		var spinner = gameComponents.spinner;
 
@@ -13907,7 +13923,7 @@
 				center: gps
 			};
 
-			var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, nycBoundaryLatLngs, mapOptions);
+			var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, mapOptions);
 
 			// Outside the polygon boundaries, in the Atlantic Ocean
 			var markerLat = 40.480993;
@@ -13965,7 +13981,7 @@
 			});
 
 			// Each borough is a feature
-			chooseLocationMap.data.loadGeoJson(_NYC_BOUNDARIES_DATASET_URL2.default, {}, function (features) {
+			chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (features) {
 				window.console.log("features:", features);
 
 				features.forEach(function (feature) {
@@ -13993,7 +14009,7 @@
 	exports.default = twoBlocks;
 
 /***/ },
-/* 378 */
+/* 379 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -14009,7 +14025,7 @@
 	var DEFAULT_LAT = 40.6291566;
 	var DEFAULT_LNG = -74.0287341;
 
-	var showChooseLocationMap = function showChooseLocationMap(canvas, locationLatLngs, options) {
+	var showChooseLocationMap = function showChooseLocationMap(canvas, options) {
 
 		var defaultOptions = {
 			center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),
@@ -14027,19 +14043,6 @@
 	};
 
 	exports.default = showChooseLocationMap;
-
-/***/ },
-/* 379 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var NYC_BOUNDARIES_DATASET_URL = "https://data.cityofnewyork.us/api/views/6jcb-t2g6/rows.geojson";
-
-	exports.default = NYC_BOUNDARIES_DATASET_URL;
 
 /***/ },
 /* 380 */
@@ -15590,7 +15593,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var getRandomPanoramaLocation = function getRandomPanoramaLocation(panorama, polygon, latLngMaxMin) {
+	var getRandomPanoramaLocation = function getRandomPanoramaLocation(polygon, latLngMaxMin) {
 
 		var randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
 

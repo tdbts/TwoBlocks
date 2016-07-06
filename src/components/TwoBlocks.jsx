@@ -17,8 +17,7 @@ class TwoBlocks extends React.Component {
 		// Define initial state 
 		this.state = {
 			canvas: null,
-			currentLat: '', 
-			currentLng: '',  
+			currentLatLng: null, 
 			initialized: false, 
 			locationData: {}, 
 			promptText: 'loading...'
@@ -55,40 +54,41 @@ class TwoBlocks extends React.Component {
 
 	initializeTwoBlocks() {
 
-		if (!(this.state.initialized)) {
+		if (this.state.initialized) return; 
 
-			const { lat, lng } = this.state.locationData.center; 
-			const canvas = this.state.canvas; 
+		const { lat, lng } = this.state.locationData.center; 
+		const canvas = this.state.canvas; 
 
-			if (!(canvas)) {
+		if (!(canvas)) {
 
-				throw new Error(`No element with ID #${this.props.canvasId} could be found on the page.`); 
+			throw new Error(`No element with ID #${this.props.canvasId} could be found on the page.`); 
 
-			}
+		}
+	
+		// gameCompnents: panorama, spinner, nycPolygon, nycLatLngMaxMin 
+		const gameComponents = createGameComponents(this.state); 
 
-			const gameComponents = createGameComponents(this.state); 
-			
-			/*----------  Add game components to state  ----------*/
-			
-			const nextState = Object.assign({}, gameComponents, {
-				canvas, 
-				currentLatLng: new google.maps.LatLng(lat, lng), 
-				initialized: true
-			}); 
+		console.log("gameComponents:", gameComponents); 
+		
+		/*----------  Add game components to state  ----------*/
+		
+		const nextState = Object.assign({}, gameComponents, {
+			canvas, 
+			currentLatLng: new google.maps.LatLng(lat, lng), 
+			initialized: true
+		}); 
 
-			this.setState(nextState)
+		this.setState(nextState)
 
-				.then(() => this.setRandomLocation());
-
-		}		
+			.then(() => this.setRandomLocation());
 
 	}
 
 	setRandomLocation() {
 
-		const { panorama, nycPolygon, nycLatLngMaxMin } = this.state; 
+		const { nycPolygon, nycLatLngMaxMin } = this.state; 
 
-		getRandomPanoramaLocation(panorama, nycPolygon, nycLatLngMaxMin) 
+		getRandomPanoramaLocation(nycPolygon, nycLatLngMaxMin) 
 
 			.then(randomLatLng => {
 

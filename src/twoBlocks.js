@@ -1,7 +1,7 @@
 /* global document, google */
   
 import showChooseLocationMap from './showChooseLocationMap';  
-import NYC_BOUNDARIES_DATASET_URL from './constants/NYC_BOUNDARIES_DATASET_URL'; 
+import { NYC_BOUNDARIES_DATASET_URL } from './constants/constants'; 
 // import { createStore } from 'redux'; 
 
 /*=================================
@@ -23,7 +23,7 @@ const twoBlocks = function twoBlocks(gameComponents) {
 	// 	return store; 
 	// }; 
 
-	const { canvas, locationData, nycBoundaryLatLngs, panorama, spinner } = gameComponents; 
+	const { canvas, locationData, panorama, spinner } = gameComponents; 
 
 		panorama.setVisible(true); 
 
@@ -39,7 +39,7 @@ const twoBlocks = function twoBlocks(gameComponents) {
 				center: gps
 			}; 
 
-			const chooseLocationMap = showChooseLocationMap(canvas, nycBoundaryLatLngs, mapOptions);
+			const chooseLocationMap = showChooseLocationMap(canvas, mapOptions);
 
 			// Outside the polygon boundaries, in the Atlantic Ocean 
 			const markerLat = 40.480993; 
