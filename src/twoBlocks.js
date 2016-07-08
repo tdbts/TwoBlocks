@@ -1,6 +1,7 @@
 /* global document, google */
   
-import showChooseLocationMap from './showChooseLocationMap';  
+import showChooseLocationMap from './showChooseLocationMap';
+import selectRandomWeightedLinearRing from './google-maps-utils/selectRandomWeightedLinearRing';   
 import { NYC_BOUNDARIES_DATASET_URL } from './constants/constants'; 
 // import { createStore } from 'redux'; 
 
@@ -104,6 +105,8 @@ const twoBlocks = function twoBlocks(gameComponents) {
 				window.console.log("features:", features); 	
 
 				features.forEach(feature => window.console.log("feature.getProperty('boro_name'):", feature.getProperty('boro_name'))); 
+
+				selectRandomWeightedLinearRing(features[0]); 
 
 			}); 
 

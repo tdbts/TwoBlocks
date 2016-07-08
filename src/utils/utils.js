@@ -27,6 +27,7 @@ import noUniqueBetweenSets from './noUniqueBetweenSets';
 import once from './once';
 import pipeline from './pipeline';  
 import poll from './poll';   
+import recurseUntilTrue from './recurseUntilTrue'; 
 import returnItem from './returnItem';  
 import throttle from './throttle'; 
 import throwErrorIfTrue from './throwErrorIfTrue'; 
@@ -63,6 +64,7 @@ export {
 	once, 
 	pipeline, 
 	poll, 
+	recurseUntilTrue, 
 	returnItem, 
 	throttle, 
 	throwErrorIfTrue, 

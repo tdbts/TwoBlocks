@@ -43,8 +43,6 @@ class TwoBlocks extends React.Component {
 	}
 
 	componentDidMount() {
-	 	
-		const { CENTER } = nycCoordinates; 
 
 		this.setState({
 			canvas: document.getElementById(this.props.canvasId), 
@@ -67,8 +65,6 @@ class TwoBlocks extends React.Component {
 			throw new Error(`No element with ID #${this.props.canvasId} could be found on the page.`); 
 
 		} 
-		
-		/*----------  Add game components to state  ----------*/
 		
 		const nextState = Object.assign({}, {
 			canvas, 
@@ -94,7 +90,7 @@ class TwoBlocks extends React.Component {
 		this.setState(gameComponents) 
 
 			.then(() => {
-
+				console.log("nycPolygon:", nycPolygon); 
 				const { nycPolygon, nycLatLngMaxMin } = this.state; 
 
 				getRandomPanoramaLocation(nycPolygon, nycLatLngMaxMin) 
@@ -137,9 +133,17 @@ class TwoBlocks extends React.Component {
 
 				features.forEach(feature => window.console.log("feature.getProperty('boro_name'):", feature.getProperty('boro_name'))); 
 
-				nycCoordinates.features = features; 
+				this.setState({ 
+					locationData: Object.assign({}, this.state.locationData, { features }) 
+				}); 
 
-				this.setState({ nycCoordinates }); 
+				setTimeout(() => {
+					
+					this.setState({ view: 'panorama' }); 
+
+					resolve(); 
+
+				}, 10000); 		
 
 			}); 
 
@@ -153,17 +157,11 @@ class TwoBlocks extends React.Component {
 			
 			}); 
 
-			chooseLocationMap.data.addListener('mouseout', () => chooseLocationMap.data.revertStyle()); 	
+			chooseLocationMap.data.addListener('mouseout', () => 
 
-			setTimeout(() => {
-				
-				this.setState({ view: 'panorama' }); 
+				chooseLocationMap.data.revertStyle()); 	
 
-				resolve(); 
-
-			}, 10000); 					
-
-		}); 	
+			}); 	
 
 	}
 
