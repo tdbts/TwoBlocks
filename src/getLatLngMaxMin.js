@@ -27,19 +27,15 @@ const getLatLngMaxMin = function getLatLngMaxMin(latLngs) {
 		// values are both the min and max 
 		if (i === 0) {
 
-			const [ currLat, currLng ] = curr; 
-
-			lat.min = lat.max = currLat; 
-			lng.min = lng.max = currLng; 
+			lat.min = lat.max = curr.lat(); 
+			lng.min = lng.max = curr.lng(); 
 
 		} else {
 
-			const [ currLat, currLng ] = curr; 
-
-			lat.min = Math.min(lat.min, currLat); 
-			lat.max = Math.max(lat.max, currLat); 
-			lng.min = Math.min(lng.min, currLng); 
-			lng.max = Math.max(lng.max, currLng); 
+			lat.min = Math.min(lat.min, curr.lat()); 
+			lat.max = Math.max(lat.max, curr.lat()); 
+			lng.min = Math.min(lng.min, curr.lng()); 
+			lng.max = Math.max(lng.max, curr.lng()); 
 
 		}
 

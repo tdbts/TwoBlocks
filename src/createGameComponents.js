@@ -66,7 +66,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	/*----------  Create an object defining the min / max values for lat / lng of the NYC boundary  ----------*/	
 
-	const nycLatLngMaxMin = getLatLngMaxMin(boundaries); 
+	const nycLatLngMaxMin = getLatLngMaxMin(nycBoundaryLatLngs); 
 
 	window.console.log("nycLatLngMaxMin:", nycLatLngMaxMin); 
 

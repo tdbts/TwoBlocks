@@ -14511,7 +14511,7 @@
 
 		/*----------  Create an object defining the min / max values for lat / lng of the NYC boundary  ----------*/
 
-		var nycLatLngMaxMin = (0, _getLatLngMaxMin2.default)(boundaries);
+		var nycLatLngMaxMin = (0, _getLatLngMaxMin2.default)(nycBoundaryLatLngs);
 
 		window.console.log("nycLatLngMaxMin:", nycLatLngMaxMin);
 
@@ -15875,9 +15875,6 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 	/**
 	 *
 	 * getLatLngMaxMin() - Function which takes a set of lat / lng 
@@ -15907,25 +15904,15 @@
 			// values are both the min and max
 
 			if (i === 0) {
-				var _curr = _slicedToArray(curr, 2);
 
-				var currLat = _curr[0];
-				var currLng = _curr[1];
-
-
-				lat.min = lat.max = currLat;
-				lng.min = lng.max = currLng;
+				lat.min = lat.max = curr.lat();
+				lng.min = lng.max = curr.lng();
 			} else {
-				var _curr2 = _slicedToArray(curr, 2);
 
-				var _currLat = _curr2[0];
-				var _currLng = _curr2[1];
-
-
-				lat.min = Math.min(lat.min, _currLat);
-				lat.max = Math.max(lat.max, _currLat);
-				lng.min = Math.min(lng.min, _currLng);
-				lng.max = Math.max(lng.max, _currLng);
+				lat.min = Math.min(lat.min, curr.lat());
+				lat.max = Math.max(lat.max, curr.lat());
+				lng.min = Math.min(lng.min, curr.lng());
+				lng.max = Math.max(lng.max, curr.lng());
 			}
 
 			return prev;
