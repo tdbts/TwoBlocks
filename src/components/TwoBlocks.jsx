@@ -95,25 +95,25 @@ class TwoBlocks extends React.Component {
 
 				const { featureCollection } = this.state.locationData;  
 
-				getRandomPanoramaLocation(featureCollection) 
-
-					.then(randomLatLng => {
-
-						window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
-						window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
-
-						this.setState({ 
-							currentLatLng: randomLatLng, 
-							promptText: 'Where is this?' 
-						})
-
-						.then(() => twoBlocks(this.state));  
-
-					})
-
-					.catch((...args) => `Caught error with args ${args}`); 		
+				return getRandomPanoramaLocation(featureCollection) 
 			
-			}); 
+			})
+
+			.then(randomLatLng => {
+
+				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
+				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
+
+				return this.setState({ 
+					currentLatLng: randomLatLng, 
+					promptText: 'Where is this?' 
+				});   
+
+			})
+
+			.then(() => twoBlocks(this.state))
+
+			.catch((...args) => `Caught error with args ${args}`); 				
 
 	}
 

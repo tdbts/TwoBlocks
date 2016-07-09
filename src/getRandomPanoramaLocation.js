@@ -26,7 +26,7 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 	
 	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
 
-	return tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoRequestResults, maxTries) => {
+	return tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoRequestResults, requestAttemptsLeft) => {
 		
 		window.console.log('onCaught()'); 
 		
@@ -34,7 +34,7 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 
 		window.console.log("panoData:", panoData); 
 		window.console.log("status:", status); 
-		window.console.log("maxTries:", maxTries);
+		window.console.log("requestAttemptsLeft:", requestAttemptsLeft);
 
 		randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon); 
 

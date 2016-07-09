@@ -13718,24 +13718,24 @@
 					var featureCollection = _this4.state.locationData.featureCollection;
 
 
-					(0, _getRandomPanoramaLocation2.default)(featureCollection).then(function (randomLatLng) {
+					return (0, _getRandomPanoramaLocation2.default)(featureCollection);
+				}).then(function (randomLatLng) {
 
-						window.console.log("randomLatLng.lat():", randomLatLng.lat());
-						window.console.log("randomLatLng.lng():", randomLatLng.lng());
+					window.console.log("randomLatLng.lat():", randomLatLng.lat());
+					window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
-						_this4.setState({
-							currentLatLng: randomLatLng,
-							promptText: 'Where is this?'
-						}).then(function () {
-							return (0, _twoBlocks2.default)(_this4.state);
-						});
-					}).catch(function () {
-						for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-							args[_key] = arguments[_key];
-						}
-
-						return 'Caught error with args ' + args;
+					return _this4.setState({
+						currentLatLng: randomLatLng,
+						promptText: 'Where is this?'
 					});
+				}).then(function () {
+					return (0, _twoBlocks2.default)(_this4.state);
+				}).catch(function () {
+					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+						args[_key] = arguments[_key];
+					}
+
+					return 'Caught error with args ' + args;
 				});
 			}
 		}, {
@@ -15844,7 +15844,7 @@
 
 		return (0, _tryAtMost2.default)(function () {
 			return (0, _requestNearestPanorama2.default)(randomLatLng);
-		}, 50, function (panoRequestResults, maxTries) {
+		}, 50, function (panoRequestResults, requestAttemptsLeft) {
 
 			window.console.log('onCaught()');
 
@@ -15854,7 +15854,7 @@
 
 			window.console.log("panoData:", panoData);
 			window.console.log("status:", status);
-			window.console.log("maxTries:", maxTries);
+			window.console.log("requestAttemptsLeft:", requestAttemptsLeft);
 
 			randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
 		}).then(function () {
