@@ -7,9 +7,9 @@ import selectRandomWeightedLinearRing from './google-maps-utils/selectRandomWeig
 import getLatLngMaxMin from './getLatLngMaxMin'; 
 import tryAtMost from './tryAtMost'; 
 
-const getRandomPanoramaLocation = function getRandomPanoramaLocation(features) {
+const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
 
-	const selectedFeature = getRandomFeature(features); 
+	const selectedFeature = getRandomFeature(featureCollection); 
 
 	window.console.log("selectedFeature.getProperty('boro_name'):", selectedFeature.getProperty('boro_name')); 
 

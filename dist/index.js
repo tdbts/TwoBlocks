@@ -12828,24 +12828,7 @@
 	});
 	var nycCoordinates = {
 
-		boundaries: [
-		// NJ, above Bronx, West side
-		[40.932251, -73.935757],
-		// LI Sound, above Bronx, East side
-		[40.866917, -73.750877],
-		// Atlantic Ocean, just South of LI,
-		// past Eastern border of Queens
-		[40.567269, -73.66539],
-		// Atlantic Ocean, just South of Rockaway penninsula and Brooklyn
-		[40.519264, -73.946915],
-		// (Lower Bay, Between Staten Island and Brooklyn) 
-		[40.572485, -74.054031],
-		// Just South of Staten Island
-		[40.477492, -74.233932],
-		// NJ, West of Staten Island
-		[40.562052, -74.352036]],
-
-		features: null,
+		featureCollection: null,
 
 		CENTER: {
 			lat: 40.6291566,
@@ -13732,10 +13715,10 @@
 				console.log("gameComponents:", gameComponents);
 
 				this.setState(gameComponents).then(function () {
-					var features = _this4.state.locationData.features;
+					var featureCollection = _this4.state.locationData.featureCollection;
 
 
-					(0, _getRandomPanoramaLocation2.default)(features).then(function (randomLatLng) {
+					(0, _getRandomPanoramaLocation2.default)(featureCollection).then(function (randomLatLng) {
 
 						window.console.log("randomLatLng.lat():", randomLatLng.lat());
 						window.console.log("randomLatLng.lng():", randomLatLng.lng());
@@ -13771,10 +13754,10 @@
 					var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, mapOptions);
 
 					// Each borough is a feature
-					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (features) {
+					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
 
 						_this5.setState({
-							locationData: _extends({}, _this5.state.locationData, { features: features })
+							locationData: _extends({}, _this5.state.locationData, { featureCollection: featureCollection })
 						});
 
 						setTimeout(function () {
@@ -15840,9 +15823,9 @@
 
 	/* global google */
 
-	var getRandomPanoramaLocation = function getRandomPanoramaLocation(features) {
+	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
 
-		var selectedFeature = (0, _getRandomFeature2.default)(features);
+		var selectedFeature = (0, _getRandomFeature2.default)(featureCollection);
 
 		window.console.log("selectedFeature.getProperty('boro_name'):", selectedFeature.getProperty('boro_name'));
 

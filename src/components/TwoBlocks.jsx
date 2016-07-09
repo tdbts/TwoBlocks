@@ -93,9 +93,9 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				const { features } = this.state.locationData;  
+				const { featureCollection } = this.state.locationData;  
 
-				getRandomPanoramaLocation(features) 
+				getRandomPanoramaLocation(featureCollection) 
 
 					.then(randomLatLng => {
 
@@ -130,10 +130,10 @@ class TwoBlocks extends React.Component {
 			const chooseLocationMap = showChooseLocationMap(canvas, mapOptions);			
 
 			// Each borough is a feature 
-			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, features => {
+			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
 
 				this.setState({ 
-					locationData: Object.assign({}, this.state.locationData, { features }) 
+					locationData: Object.assign({}, this.state.locationData, { featureCollection }) 
 				}); 
 
 				setTimeout(() => {
