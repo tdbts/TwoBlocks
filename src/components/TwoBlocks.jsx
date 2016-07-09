@@ -58,6 +58,7 @@ class TwoBlocks extends React.Component {
 		if (this.state.initialized) return; 
 
 		const { lat, lng } = this.state.locationData.CENTER; 
+		
 		const canvas = this.state.canvas; 
 
 		if (!(canvas)) {
@@ -83,15 +84,15 @@ class TwoBlocks extends React.Component {
 
 	setRandomLocation() {
 
-		// gameCompnents: panorama, spinner, nycPolygon, nycLatLngMaxMin 
+		// gameCompnents: panorama, spinner 
 		const gameComponents = createGameComponents(this.state); 
 
 		console.log("gameComponents:", gameComponents);		
+		
 		this.setState(gameComponents) 
 
 			.then(() => {
-				// console.log("nycPolygon:", nycPolygon); 
-				// const { nycPolygon, nycLatLngMaxMin } = this.state;
+
 				const { features } = this.state.locationData;  
 
 				getRandomPanoramaLocation(features) 
@@ -130,9 +131,6 @@ class TwoBlocks extends React.Component {
 
 			// Each borough is a feature 
 			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, features => {
-				window.console.log("features:", features); 	
-
-				features.forEach(feature => window.console.log("feature.getProperty('boro_name'):", feature.getProperty('boro_name'))); 
 
 				this.setState({ 
 					locationData: Object.assign({}, this.state.locationData, { features }) 

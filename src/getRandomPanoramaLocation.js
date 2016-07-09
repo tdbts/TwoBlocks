@@ -8,7 +8,7 @@ import getLatLngMaxMin from './getLatLngMaxMin';
 import tryAtMost from './tryAtMost'; 
 
 const getRandomPanoramaLocation = function getRandomPanoramaLocation(features) {
-	window.console.log("******* getRandomPanoramaLocation() ******"); 
+
 	const selectedFeature = getRandomFeature(features); 
 
 	window.console.log("selectedFeature.getProperty('boro_name'):", selectedFeature.getProperty('boro_name')); 
@@ -17,13 +17,12 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(features) {
 
 	const latLngMaxMin = getLatLngMaxMin(selectedLinearRing.getArray()); 
 
+	// Data.Polygon instance must be passed an array 
 	const dataPolygon = new google.maps.Data.Polygon([selectedLinearRing]); 
 
 	const polygon = new google.maps.Polygon({
 		paths: dataPolygon.getAt(0).getArray()
 	}); 
-
-	window.console.log("polygon:", polygon); 
 	
 	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
 

@@ -3,7 +3,6 @@
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
-import getLatLngMaxMin from './getLatLngMaxMin'; 
 
 const createGameComponents = function createGameComponents(gameState) {
 
@@ -13,8 +12,10 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { canvas, currentLat, currentLng, locationData } = gameState; 
+	const { canvas, currentLat, currentLng } = gameState; 
+	
 	const webGlManager = createWebGlManager(canvas); 
+	
 	const mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
 
 	const gps = new google.maps.LatLng(currentLat, currentLng);	
@@ -46,34 +47,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	}
 
-	/*----------  Convert lat / lng values to an array of LatLng class instances  ----------*/
-
-	const nycBoundaryLatLngs = []; 
-
-	const { boundaries } = locationData; 
-
-	boundaries.forEach(pointPair => nycBoundaryLatLngs.push(new google.maps.LatLng(...pointPair))); 		
-
-	/*----------  Create nycPolygon using the array of LatLng instances  ----------*/
-
-	const nycPolygon = new google.maps.Polygon({
-
-		paths: nycBoundaryLatLngs
-	
-	}); 
-
-	window.console.log("nycPolygon:", nycPolygon);		
-
-	/*----------  Create an object defining the min / max values for lat / lng of the NYC boundary  ----------*/	
-
-	const nycLatLngMaxMin = getLatLngMaxMin(nycBoundaryLatLngs); 
-
-	window.console.log("nycLatLngMaxMin:", nycLatLngMaxMin); 
-
 	return {
-		nycBoundaryLatLngs, 
-		nycLatLngMaxMin, 
-		nycPolygon, 
 		panorama, 
 		spinner
 	}; 

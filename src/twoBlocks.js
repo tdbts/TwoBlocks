@@ -102,9 +102,6 @@ const twoBlocks = function twoBlocks(gameComponents) {
 
 			// Each borough is a feature 
 			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, features => {
-				window.console.log("features:", features); 	
-
-				features.forEach(feature => window.console.log("feature.getProperty('boro_name'):", feature.getProperty('boro_name'))); 
 
 				selectRandomWeightedLinearRing(features[0]); 
 
