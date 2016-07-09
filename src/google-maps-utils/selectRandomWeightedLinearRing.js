@@ -7,21 +7,14 @@ import weightedRandomSelection from './weightedRandomSelection';
 const selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(feature) {
 
 	const polygonCollection = getGeometricConstituents('MultiPolygon', feature.getGeometry()); 
-
-	window.console.log("polygonCollection:", polygonCollection); 
 	
 	const linearRingCollection = polygonCollection
 
 		.map(polygon => getGeometricConstituents('Polygon', polygon))
 
-		// This assumes our polygons don't have any "holes" in them 
-		.map(linearRings => linearRings.pop()); 
-
-	window.console.log("linearRingCollection:", linearRingCollection); 	
+		.map(linearRings => linearRings.shift()); 
 
 	const linearRingPathLengths = linearRingCollection.map(linearRing => linearRing.getLength()); 
-
-	window.console.log("linearRingPathLengths:", linearRingPathLengths); 
 
 	// Create map for quick lookup later 
 	const linearRingLengthMap = linearRingCollection.reduce((prev = {}, curr) => {
@@ -30,15 +23,9 @@ const selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(f
 
 		return prev; 
 
-	}); // Start with empty array 
-
-	window.console.log("linearRingLengthMap:", linearRingLengthMap); 
-
-	// return linearRingPathLengths; 
+	});  
 
 	let sortedLinearRingPathLengths = sortLeastToGreatest(linearRingPathLengths.slice()); 
-
-	window.console.log("sortedLinearRingPathLengths:", sortedLinearRingPathLengths); 	
 
 	// Drop smallest LinearRing 
 	if ((sortedLinearRingPathLengths.length % 2) !== 0) {
@@ -54,11 +41,9 @@ const selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(f
 	// Playoff returns an array of length 1 (winner)
 	const lengthOfSelectedLinearRing = playoff(sortedLinearRingPathLengths, playOneRound, initializer).pop(); 
 
-	window.console.log("lengthOfSelectedLinearRing:", lengthOfSelectedLinearRing); 
+	const selectedLinearRing = linearRingLengthMap[lengthOfSelectedLinearRing];  
 
-	const selectedLinearRing = linearRingLengthMap[lengthOfSelectedLinearRing]; 
-
-	window.console.log("selectedLinearRing:", selectedLinearRing); 
+	return selectedLinearRing; 
 
 }; 
 

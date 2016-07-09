@@ -90,10 +90,11 @@ class TwoBlocks extends React.Component {
 		this.setState(gameComponents) 
 
 			.then(() => {
-				console.log("nycPolygon:", nycPolygon); 
-				const { nycPolygon, nycLatLngMaxMin } = this.state; 
+				// console.log("nycPolygon:", nycPolygon); 
+				// const { nycPolygon, nycLatLngMaxMin } = this.state;
+				const { features } = this.state.locationData;  
 
-				getRandomPanoramaLocation(nycPolygon, nycLatLngMaxMin) 
+				getRandomPanoramaLocation(features) 
 
 					.then(randomLatLng => {
 
