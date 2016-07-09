@@ -58,7 +58,7 @@
 
 	var _utils = __webpack_require__(336);
 
-	var _TwoBlocks = __webpack_require__(376);
+	var _TwoBlocks = __webpack_require__(377);
 
 	var _TwoBlocks2 = _interopRequireDefault(_TwoBlocks);
 
@@ -12218,7 +12218,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.typeIsValid = exports.truthyness = exports.throwErrorIfTrue = exports.throttle = exports.returnItem = exports.recurseUntilTrue = exports.poll = exports.pipeline = exports.once = exports.noUniqueBetweenSets = exports.noArguments = exports.negate = exports.merge = exports.length = exports.keys = exports.hasKeys = exports.isType = exports.isSomething = exports.isOneOf = exports.isNothing = exports.isEmpty = exports.invoke = exports.halt = exports.getType = exports.getProp = exports.getOwnProp = exports.getArgumentsArray = exports.followPath = exports.existenceCheck = exports.extend = exports.emptyFunction = exports.debounce = exports.clone = exports.applyToOwnProp = exports.applyToAllOwnProps = undefined;
+	exports.typeIsValid = exports.tryAtMost = exports.truthyness = exports.throwErrorIfTrue = exports.throttle = exports.returnItem = exports.recurseUntilTrue = exports.poll = exports.pipeline = exports.once = exports.noUniqueBetweenSets = exports.noArguments = exports.negate = exports.merge = exports.length = exports.keys = exports.hasKeys = exports.isType = exports.isSomething = exports.isOneOf = exports.isNothing = exports.isEmpty = exports.invoke = exports.halt = exports.getType = exports.getProp = exports.getOwnProp = exports.getArgumentsArray = exports.followPath = exports.existenceCheck = exports.extend = exports.emptyFunction = exports.debounce = exports.clone = exports.applyToOwnProp = exports.applyToAllOwnProps = undefined;
 
 	var _applyToAllOwnProps = __webpack_require__(337);
 
@@ -12356,6 +12356,10 @@
 
 	var _truthyness2 = _interopRequireDefault(_truthyness);
 
+	var _tryAtMost = __webpack_require__(376);
+
+	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
+
 	var _typeIsValid = __webpack_require__(347);
 
 	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
@@ -12396,6 +12400,7 @@
 	exports.throttle = _throttle2.default;
 	exports.throwErrorIfTrue = _throwErrorIfTrue2.default;
 	exports.truthyness = _truthyness2.default;
+	exports.tryAtMost = _tryAtMost2.default;
 	exports.typeIsValid = _typeIsValid2.default;
 
 /***/ },
@@ -12828,12 +12833,17 @@
 	});
 	var nycCoordinates = {
 
-		featureCollection: null,
-
 		CENTER: {
 			lat: 40.6291566,
 			lng: -74.0287341
-		}
+		},
+
+		MARKER_PLACEMENT: {
+			lat: 40.480993,
+			lng: -73.72798
+		},
+
+		featureCollection: null
 
 	};
 
@@ -13575,6 +13585,42 @@
 
 /***/ },
 /* 376 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var tryAtMost = function tryAtMost(thenable, maxTries) {
+		var onCaught = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
+
+
+		return thenable().catch(function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			maxTries -= 1;
+
+			onCaught.apply(undefined, args.concat([maxTries]));
+
+			if (maxTries < 1) {
+
+				// Error must be thrown to be caught by
+				// the caller of tryAtMost()
+				throw new Error("Maximum number of tries exceeded.");
+			}
+
+			// Recurse
+			return tryAtMost(thenable, maxTries, onCaught);
+		});
+	};
+
+	exports.default = tryAtMost;
+
+/***/ },
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13591,27 +13637,27 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TwoBlocksMap = __webpack_require__(377);
+	var _TwoBlocksMap = __webpack_require__(378);
 
 	var _TwoBlocksMap2 = _interopRequireDefault(_TwoBlocksMap);
 
-	var _TwoBlocksPrompt = __webpack_require__(378);
+	var _TwoBlocksPrompt = __webpack_require__(379);
 
 	var _TwoBlocksPrompt2 = _interopRequireDefault(_TwoBlocksPrompt);
 
-	var _twoBlocks = __webpack_require__(379);
+	var _twoBlocks = __webpack_require__(380);
 
 	var _twoBlocks2 = _interopRequireDefault(_twoBlocks);
 
-	var _createGameComponents = __webpack_require__(387);
+	var _createGameComponents = __webpack_require__(382);
 
 	var _createGameComponents2 = _interopRequireDefault(_createGameComponents);
 
-	var _getRandomPanoramaLocation = __webpack_require__(395);
+	var _getRandomPanoramaLocation = __webpack_require__(390);
 
 	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
 
-	var _showChooseLocationMap = __webpack_require__(380);
+	var _showChooseLocationMap = __webpack_require__(381);
 
 	var _showChooseLocationMap2 = _interopRequireDefault(_showChooseLocationMap);
 
@@ -13709,7 +13755,7 @@
 			value: function setRandomLocation() {
 				var _this4 = this;
 
-				// gameCompnents: panorama, spinner
+				// gameComponents: panorama, spinner
 				var gameComponents = (0, _createGameComponents2.default)(this.state);
 
 				console.log("gameComponents:", gameComponents);
@@ -13809,7 +13855,7 @@
 	exports.default = TwoBlocks;
 
 /***/ },
-/* 377 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13872,7 +13918,7 @@
 	exports.default = TwoBlocksMap;
 
 /***/ },
-/* 378 */
+/* 379 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13926,7 +13972,7 @@
 	exports.default = TwoBlocksPrompt;
 
 /***/ },
-/* 379 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13935,13 +13981,9 @@
 		value: true
 	});
 
-	var _showChooseLocationMap = __webpack_require__(380);
+	var _showChooseLocationMap = __webpack_require__(381);
 
 	var _showChooseLocationMap2 = _interopRequireDefault(_showChooseLocationMap);
-
-	var _selectRandomWeightedLinearRing = __webpack_require__(381);
-
-	var _selectRandomWeightedLinearRing2 = _interopRequireDefault(_selectRandomWeightedLinearRing);
 
 	var _constants = __webpack_require__(348);
 
@@ -13952,6 +13994,8 @@
 	/*=================================
 	=            twoBlocks()          =
 	=================================*/
+
+	/* global document, google */
 
 	var twoBlocks = function twoBlocks(gameComponents) {
 
@@ -13991,8 +14035,8 @@
 			var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, mapOptions);
 
 			// Outside the polygon boundaries, in the Atlantic Ocean
-			var markerLat = 40.480993;
-			var markerLng = -73.72798;
+			var markerLat = locationData.MARKER_PLACEMENT.lat;
+			var markerLng = locationData.MARKER_PLACEMENT.lng;
 
 			var markerOptions = {
 				animation: google.maps.Animation.BOUNCE,
@@ -14046,10 +14090,7 @@
 			});
 
 			// Each borough is a feature
-			chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (features) {
-
-				(0, _selectRandomWeightedLinearRing2.default)(features[0]);
-			});
+			chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL);
 
 			chooseLocationMap.data.addListener('mouseover', function (event) {
 
@@ -14068,12 +14109,10 @@
 
 	/*=====  End of twoBlocks()  ======*/
 
-	/* global document, google */
-
 	exports.default = twoBlocks;
 
 /***/ },
-/* 380 */
+/* 381 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -14109,264 +14148,7 @@
 	exports.default = showChooseLocationMap;
 
 /***/ },
-/* 381 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _getGeometricConstituents = __webpack_require__(382);
-
-	var _getGeometricConstituents2 = _interopRequireDefault(_getGeometricConstituents);
-
-	var _sortLeastToGreatest = __webpack_require__(383);
-
-	var _sortLeastToGreatest2 = _interopRequireDefault(_sortLeastToGreatest);
-
-	var _playoff = __webpack_require__(384);
-
-	var _playoff2 = _interopRequireDefault(_playoff);
-
-	var _headToHeadMatchups = __webpack_require__(385);
-
-	var _headToHeadMatchups2 = _interopRequireDefault(_headToHeadMatchups);
-
-	var _weightedRandomSelection = __webpack_require__(386);
-
-	var _weightedRandomSelection2 = _interopRequireDefault(_weightedRandomSelection);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(feature) {
-
-		var polygonCollection = (0, _getGeometricConstituents2.default)('MultiPolygon', feature.getGeometry());
-
-		var linearRingCollection = polygonCollection.map(function (polygon) {
-			return (0, _getGeometricConstituents2.default)('Polygon', polygon);
-		}).map(function (linearRings) {
-			return linearRings.shift();
-		});
-
-		var linearRingPathLengths = linearRingCollection.map(function (linearRing) {
-			return linearRing.getLength();
-		});
-
-		// Create map for quick lookup later
-		var linearRingLengthMap = linearRingCollection.reduce(function () {
-			var prev = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-			var curr = arguments[1];
-
-
-			prev[curr.getLength()] = curr;
-
-			return prev;
-		});
-
-		var sortedLinearRingPathLengths = (0, _sortLeastToGreatest2.default)(linearRingPathLengths.slice());
-
-		// Drop smallest LinearRing
-		if (sortedLinearRingPathLengths.length % 2 !== 0) {
-
-			sortedLinearRingPathLengths = sortedLinearRingPathLengths.slice(1);
-		}
-
-		var initializer = function initializer(winners) {
-			return (0, _sortLeastToGreatest2.default)(winners.slice());
-		};
-
-		var playOneRound = function playOneRound(players) {
-			return (0, _headToHeadMatchups2.default)(players, _weightedRandomSelection2.default);
-		};
-
-		// Playoff returns an array of length 1 (winner)
-		var lengthOfSelectedLinearRing = (0, _playoff2.default)(sortedLinearRingPathLengths, playOneRound, initializer).pop();
-
-		var selectedLinearRing = linearRingLengthMap[lengthOfSelectedLinearRing];
-
-		return selectedLinearRing;
-	};
-
-	exports.default = selectRandomWeightedLinearRing;
-
-/***/ },
 /* 382 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	/**
-	 *
-	 * @param desiredType - String 
-	 * @param geometry - MultiPolygon | Polygon | LinearRing 
-	 *
-	 * @desc Returns an array of the geometry's constituent 
-	 *     parts, e.g. MultiPolygon --> Polygon(s), 
-	 *     Polygon --> LinearRing(s) 
-	 *
-	 */
-
-	var getGeometricConstituents = function getGeometricConstituents(desiredType, geometry) {
-
-	  var result = null;
-
-	  if (desiredType === geometry.getType()) {
-
-	    result = geometry.getArray();
-	  }
-
-	  return result;
-	};
-
-	exports.default = getGeometricConstituents;
-
-/***/ },
-/* 383 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var sortLeastToGreatest = function sortLeastToGreatest(numbers) {
-
-		return numbers.slice() // Don't modify the given array
-
-		.sort(function (a, b) {
-
-			if (a < b) return -1;
-			if (a > b) return 1;
-			if (a === b) return 0;
-		});
-	};
-
-	exports.default = sortLeastToGreatest;
-
-/***/ },
-/* 384 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _utils = __webpack_require__(336);
-
-	var playoff = function playoff(players, playOneRound, initializer) {
-
-		if (players.length % 2 !== 0) {
-
-			throw new Error("There must be an even number of players passed to playoff().");
-		}
-
-		// Func
-		var process = function process(players) {
-
-			if (initializer) {
-
-				players = initializer(players);
-			}
-
-			return playOneRound(players);
-		};
-
-		// Condition
-		var onePlayerLeft = function onePlayerLeft(players) {
-			return players.length === 1;
-		};
-
-		return (0, _utils.recurseUntilTrue)(process, onePlayerLeft, players);
-	};
-
-	exports.default = playoff;
-
-/***/ },
-/* 385 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var headToHeadMatchups = function headToHeadMatchups(players, playGame) {
-
-		var winners = [];
-
-		var i = 0;
-
-		while (i < players.length / 2) {
-
-			// Play game with first and last player, second and
-			// second-to-last player, and so on...
-			var winner = playGame(players[i], players[players.length - (i + 1)]);
-
-			winners.push(winner);
-
-			i += 1;
-		}
-
-		return winners;
-	};
-
-	exports.default = headToHeadMatchups;
-
-/***/ },
-/* 386 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var weightedRandomSelection = function weightedRandomSelection(a, b) {
-
-		var argsAreValid = [a, b].every(function (num) {
-
-			return num > 0 && num % 1 === 0;
-		});
-
-		if (!argsAreValid) {
-
-			throw new Error("Given numbers must be positive integers");
-		}
-
-		// Switch arguments if greater number is not first 
-		if (a < b) {
-			var _ref = [b, a];
-			a = _ref[0];
-			b = _ref[1];
-		}
-
-		var total = a + b;
-
-		// Math.random() generates a (pseudo)-random
-		// number between 0 and 1.  If that random
-		// number is greater than the proportion of
-		// the total that belongs to 'a', then 'b'
-		// has won. 
-		if (Math.random() > a / total) {
-
-			return b;
-		} else {
-
-			return a;
-		}
-	};
-
-	exports.default = weightedRandomSelection;
-
-/***/ },
-/* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14375,15 +14157,15 @@
 		value: true
 	});
 
-	var _createPanorama = __webpack_require__(388);
+	var _createPanorama = __webpack_require__(383);
 
 	var _createPanorama2 = _interopRequireDefault(_createPanorama);
 
-	var _createSpinner = __webpack_require__(389);
+	var _createSpinner = __webpack_require__(384);
 
 	var _createSpinner2 = _interopRequireDefault(_createSpinner);
 
-	var _createWebGlManager = __webpack_require__(394);
+	var _createWebGlManager = __webpack_require__(389);
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
@@ -14446,7 +14228,7 @@
 	exports.default = createGameComponents;
 
 /***/ },
-/* 388 */
+/* 383 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -14516,7 +14298,7 @@
 	exports.default = createPanorama;
 
 /***/ },
-/* 389 */
+/* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14527,11 +14309,11 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
 
-	var _events = __webpack_require__(390);
+	var _events = __webpack_require__(385);
 
 	var _utils = __webpack_require__(336);
 
-	var _util = __webpack_require__(391);
+	var _util = __webpack_require__(386);
 
 	/*=====================================
 	=            createSpinner()            =
@@ -14769,7 +14551,7 @@
 	exports.default = createSpinner;
 
 /***/ },
-/* 390 */
+/* 385 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -15073,7 +14855,7 @@
 
 
 /***/ },
-/* 391 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -15601,7 +15383,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(392);
+	exports.isBuffer = __webpack_require__(387);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -15645,7 +15427,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(393);
+	exports.inherits = __webpack_require__(388);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -15666,7 +15448,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(295)))
 
 /***/ },
-/* 392 */
+/* 387 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -15677,7 +15459,7 @@
 	}
 
 /***/ },
-/* 393 */
+/* 388 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -15706,7 +15488,7 @@
 
 
 /***/ },
-/* 394 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15717,9 +15499,9 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
 
-	var _events = __webpack_require__(390);
+	var _events = __webpack_require__(385);
 
-	var _util = __webpack_require__(391);
+	var _util = __webpack_require__(386);
 
 	/*==========================================
 	=            createWebGlManager            =
@@ -15786,7 +15568,7 @@
 	exports.default = createWebGlManager;
 
 /***/ },
-/* 395 */
+/* 390 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15795,29 +15577,27 @@
 		value: true
 	});
 
-	var _getLatLngWithinBoundaries = __webpack_require__(396);
+	var _getLatLngWithinBoundaries = __webpack_require__(391);
 
 	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
 
-	var _requestNearestPanorama = __webpack_require__(399);
+	var _requestNearestPanorama = __webpack_require__(394);
 
 	var _requestNearestPanorama2 = _interopRequireDefault(_requestNearestPanorama);
 
-	var _getRandomFeature = __webpack_require__(400);
+	var _getRandomFeature = __webpack_require__(395);
 
 	var _getRandomFeature2 = _interopRequireDefault(_getRandomFeature);
 
-	var _selectRandomWeightedLinearRing = __webpack_require__(381);
+	var _selectRandomWeightedLinearRing = __webpack_require__(396);
 
 	var _selectRandomWeightedLinearRing2 = _interopRequireDefault(_selectRandomWeightedLinearRing);
 
-	var _getLatLngMaxMin = __webpack_require__(401);
+	var _getLatLngMaxMin = __webpack_require__(402);
 
 	var _getLatLngMaxMin2 = _interopRequireDefault(_getLatLngMaxMin);
 
-	var _tryAtMost = __webpack_require__(402);
-
-	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
+	var _utils = __webpack_require__(336);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15842,7 +15622,7 @@
 
 		var randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
 
-		return (0, _tryAtMost2.default)(function () {
+		return (0, _utils.tryAtMost)(function () {
 			return (0, _requestNearestPanorama2.default)(randomLatLng);
 		}, 50, function (panoRequestResults, requestAttemptsLeft) {
 
@@ -15865,7 +15645,7 @@
 	exports.default = getRandomPanoramaLocation;
 
 /***/ },
-/* 396 */
+/* 391 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15874,7 +15654,7 @@
 		value: true
 	});
 
-	var _getRandomCoords = __webpack_require__(397);
+	var _getRandomCoords = __webpack_require__(392);
 
 	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
 
@@ -15906,7 +15686,7 @@
 	exports.default = getLatLngWithinBoundaries;
 
 /***/ },
-/* 397 */
+/* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15915,7 +15695,7 @@
 		value: true
 	});
 
-	var _selectRandomValueOfRange = __webpack_require__(398);
+	var _selectRandomValueOfRange = __webpack_require__(393);
 
 	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
 
@@ -15948,7 +15728,7 @@
 	exports.default = getRandomCoords;
 
 /***/ },
-/* 398 */
+/* 393 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -15973,7 +15753,7 @@
 	exports.default = selectRandomValueOfRange;
 
 /***/ },
-/* 399 */
+/* 394 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16013,7 +15793,7 @@
 	exports.default = requestNearestPanorama;
 
 /***/ },
-/* 400 */
+/* 395 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16031,7 +15811,264 @@
 	exports.default = getRandomFeature;
 
 /***/ },
+/* 396 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _getGeometricConstituents = __webpack_require__(397);
+
+	var _getGeometricConstituents2 = _interopRequireDefault(_getGeometricConstituents);
+
+	var _sortLeastToGreatest = __webpack_require__(398);
+
+	var _sortLeastToGreatest2 = _interopRequireDefault(_sortLeastToGreatest);
+
+	var _playoff = __webpack_require__(399);
+
+	var _playoff2 = _interopRequireDefault(_playoff);
+
+	var _headToHeadMatchups = __webpack_require__(400);
+
+	var _headToHeadMatchups2 = _interopRequireDefault(_headToHeadMatchups);
+
+	var _weightedRandomSelection = __webpack_require__(401);
+
+	var _weightedRandomSelection2 = _interopRequireDefault(_weightedRandomSelection);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(feature) {
+
+		var polygonCollection = (0, _getGeometricConstituents2.default)('MultiPolygon', feature.getGeometry());
+
+		var linearRingCollection = polygonCollection.map(function (polygon) {
+			return (0, _getGeometricConstituents2.default)('Polygon', polygon);
+		}).map(function (linearRings) {
+			return linearRings.shift();
+		});
+
+		var linearRingPathLengths = linearRingCollection.map(function (linearRing) {
+			return linearRing.getLength();
+		});
+
+		// Create map for quick lookup later
+		var linearRingLengthMap = linearRingCollection.reduce(function () {
+			var prev = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			var curr = arguments[1];
+
+
+			prev[curr.getLength()] = curr;
+
+			return prev;
+		});
+
+		var sortedLinearRingPathLengths = (0, _sortLeastToGreatest2.default)(linearRingPathLengths.slice());
+
+		// Drop smallest LinearRing
+		if (sortedLinearRingPathLengths.length % 2 !== 0) {
+
+			sortedLinearRingPathLengths = sortedLinearRingPathLengths.slice(1);
+		}
+
+		var initializer = function initializer(winners) {
+			return (0, _sortLeastToGreatest2.default)(winners.slice());
+		};
+
+		var playOneRound = function playOneRound(players) {
+			return (0, _headToHeadMatchups2.default)(players, _weightedRandomSelection2.default);
+		};
+
+		// Playoff returns an array of length 1 (winner)
+		var lengthOfSelectedLinearRing = (0, _playoff2.default)(sortedLinearRingPathLengths, playOneRound, initializer).pop();
+
+		var selectedLinearRing = linearRingLengthMap[lengthOfSelectedLinearRing];
+
+		return selectedLinearRing;
+	};
+
+	exports.default = selectRandomWeightedLinearRing;
+
+/***/ },
+/* 397 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 *
+	 * @param desiredType - String 
+	 * @param geometry - MultiPolygon | Polygon | LinearRing 
+	 *
+	 * @desc Returns an array of the geometry's constituent 
+	 *     parts, e.g. MultiPolygon --> Polygon(s), 
+	 *     Polygon --> LinearRing(s) 
+	 *
+	 */
+
+	var getGeometricConstituents = function getGeometricConstituents(desiredType, geometry) {
+
+	  var result = null;
+
+	  if (desiredType === geometry.getType()) {
+
+	    result = geometry.getArray();
+	  }
+
+	  return result;
+	};
+
+	exports.default = getGeometricConstituents;
+
+/***/ },
+/* 398 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var sortLeastToGreatest = function sortLeastToGreatest(numbers) {
+
+		return numbers.slice() // Don't modify the given array
+
+		.sort(function (a, b) {
+
+			if (a < b) return -1;
+			if (a > b) return 1;
+			if (a === b) return 0;
+		});
+	};
+
+	exports.default = sortLeastToGreatest;
+
+/***/ },
+/* 399 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _utils = __webpack_require__(336);
+
+	var playoff = function playoff(players, playOneRound, initializer) {
+
+		if (players.length % 2 !== 0) {
+
+			throw new Error("There must be an even number of players passed to playoff().");
+		}
+
+		// Func
+		var process = function process(players) {
+
+			if (initializer) {
+
+				players = initializer(players);
+			}
+
+			return playOneRound(players);
+		};
+
+		// Condition
+		var onePlayerLeft = function onePlayerLeft(players) {
+			return players.length === 1;
+		};
+
+		return (0, _utils.recurseUntilTrue)(process, onePlayerLeft, players);
+	};
+
+	exports.default = playoff;
+
+/***/ },
+/* 400 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var headToHeadMatchups = function headToHeadMatchups(players, playGame) {
+
+		var winners = [];
+
+		var i = 0;
+
+		while (i < players.length / 2) {
+
+			// Play game with first and last player, second and
+			// second-to-last player, and so on...
+			var winner = playGame(players[i], players[players.length - (i + 1)]);
+
+			winners.push(winner);
+
+			i += 1;
+		}
+
+		return winners;
+	};
+
+	exports.default = headToHeadMatchups;
+
+/***/ },
 /* 401 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var weightedRandomSelection = function weightedRandomSelection(a, b) {
+
+		var argsAreValid = [a, b].every(function (num) {
+
+			return num > 0 && num % 1 === 0;
+		});
+
+		if (!argsAreValid) {
+
+			throw new Error("Given numbers must be positive integers");
+		}
+
+		// Switch arguments if greater number is not first 
+		if (a < b) {
+			var _ref = [b, a];
+			a = _ref[0];
+			b = _ref[1];
+		}
+
+		var total = a + b;
+
+		// Math.random() generates a (pseudo)-random
+		// number between 0 and 1.  If that random
+		// number is greater than the proportion of
+		// the total that belongs to 'a', then 'b'
+		// has won. 
+		if (Math.random() > a / total) {
+
+			return b;
+		} else {
+
+			return a;
+		}
+	};
+
+	exports.default = weightedRandomSelection;
+
+/***/ },
+/* 402 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16086,42 +16123,6 @@
 	};
 
 	exports.default = getLatLngMaxMin;
-
-/***/ },
-/* 402 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var tryAtMost = function tryAtMost(thenable, maxTries) {
-		var onCaught = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
-
-
-		return thenable().catch(function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-
-			maxTries -= 1;
-
-			onCaught.apply(undefined, args.concat([maxTries]));
-
-			if (maxTries < 1) {
-
-				// Error must be thrown to be caught by
-				// the caller of tryAtMost()
-				throw new Error("Maximum number of tries exceeded.");
-			}
-
-			// Recurse
-			return tryAtMost(thenable, maxTries, onCaught);
-		});
-	};
-
-	exports.default = tryAtMost;
 
 /***/ },
 /* 403 */

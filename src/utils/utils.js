@@ -32,6 +32,7 @@ import returnItem from './returnItem';
 import throttle from './throttle'; 
 import throwErrorIfTrue from './throwErrorIfTrue'; 
 import truthyness from './truthyness'; 
+import tryAtMost from './tryAtMost'; 
 import typeIsValid from './typeIsValid';   
 
 export {
@@ -69,5 +70,6 @@ export {
 	throttle, 
 	throwErrorIfTrue, 
 	truthyness,
+	tryAtMost, 
 	typeIsValid 
 };

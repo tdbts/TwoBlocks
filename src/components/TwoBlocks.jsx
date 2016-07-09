@@ -84,7 +84,7 @@ class TwoBlocks extends React.Component {
 
 	setRandomLocation() {
 
-		// gameCompnents: panorama, spinner 
+		// gameComponents: panorama, spinner 
 		const gameComponents = createGameComponents(this.state); 
 
 		console.log("gameComponents:", gameComponents);		

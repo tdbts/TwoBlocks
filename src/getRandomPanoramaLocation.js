@@ -2,10 +2,10 @@
 
 import getLatLngWithinBoundaries from './getLatLngWithinBoundaries'; 
 import requestNearestPanorama from './requestNearestPanorama'; 
-import getRandomFeature from './google-maps-utils/getRandomFeature'; 
-import selectRandomWeightedLinearRing from './google-maps-utils/selectRandomWeightedLinearRing'; 
+import getRandomFeature from './getRandomFeature'; 
+import selectRandomWeightedLinearRing from './selectRandomWeightedLinearRing'; 
 import getLatLngMaxMin from './getLatLngMaxMin'; 
-import tryAtMost from './tryAtMost'; 
+import { tryAtMost } from './utils/utils'; 
 
 const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
 

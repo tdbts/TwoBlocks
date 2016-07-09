@@ -1,7 +1,6 @@
 /* global document, google */
   
-import showChooseLocationMap from './showChooseLocationMap';
-import selectRandomWeightedLinearRing from './google-maps-utils/selectRandomWeightedLinearRing';   
+import showChooseLocationMap from './showChooseLocationMap';   
 import { NYC_BOUNDARIES_DATASET_URL } from './constants/constants'; 
 // import { createStore } from 'redux'; 
 
@@ -43,8 +42,8 @@ const twoBlocks = function twoBlocks(gameComponents) {
 			const chooseLocationMap = showChooseLocationMap(canvas, mapOptions);
 
 			// Outside the polygon boundaries, in the Atlantic Ocean 
-			const markerLat = 40.480993; 
-			const markerLng = -73.72798; 
+			const markerLat = locationData.MARKER_PLACEMENT.lat; 
+			const markerLng = locationData.MARKER_PLACEMENT.lng; 
 
 			const markerOptions = {
 				animation: google.maps.Animation.BOUNCE, 
@@ -101,11 +100,7 @@ const twoBlocks = function twoBlocks(gameComponents) {
 			}); 
 
 			// Each borough is a feature 
-			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, features => {
-
-				selectRandomWeightedLinearRing(features[0]); 
-
-			}); 
+			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL); 
 
 			chooseLocationMap.data.addListener('mouseover', event => {
 				
