@@ -1,7 +1,7 @@
 /* global document, google, window */
 
 import React from 'react';
-import TwoBlocksMap from './TwoBlocksMap';
+import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksPrompt from './TwoBlocksPrompt'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
@@ -85,13 +85,13 @@ class TwoBlocks extends React.Component {
 
 		const { canvas, locationData, panorama, spinner } = this.state; 
 
+		const { lat: centerLat, lng: centerLng } = locationData.CENTER; 
+
 		spinner.stop(); 
 
-		const gps = new google.maps.LatLng(locationData.CENTER.lat, locationData.CENTER.lng); 
+		const center = new google.maps.LatLng(centerLat, centerLng); 
 
-		const mapOptions = {
-			center: gps
-		}; 
+		const mapOptions = { center }; 
 
 		const chooseLocationMap = showChooseLocationMap(canvas, mapOptions);
 
@@ -287,7 +287,7 @@ class TwoBlocks extends React.Component {
 		return (
 	
 			<div id={ this.props.gameId }>
-				<TwoBlocksMap view={ this.state.view } panorama={ this.state.panorama } latLng={ this.state.currentLatLng } />
+				<TwoBlocksView view={ this.state.view } panorama={ this.state.panorama } latLng={ this.state.currentLatLng } />
 				<TwoBlocksPrompt text={ this.state.promptText } />
 			</div>
 	

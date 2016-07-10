@@ -5,7 +5,7 @@ class TwoBlocksMap extends React.Component {
 	componentDidUpdate(previousProps) {
 
 		const { latLng, panorama, view } = this.props; 
-		
+
 		if (!(latLng) || !(panorama)) return; 
 
 		if (latLng.equals(previousProps.latLng)) return;
