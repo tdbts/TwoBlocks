@@ -13725,17 +13725,17 @@
 
 				if (this.state.initialized) return;
 
-				var _state$locationData$C = this.state.locationData.CENTER;
-				var lat = _state$locationData$C.lat;
-				var lng = _state$locationData$C.lng;
-
-
 				var canvas = this.state.canvas;
 
 				if (!canvas) {
 
 					throw new Error('No element with ID #' + this.props.canvasId + ' could be found on the page.');
 				}
+
+				var _state$locationData$C = this.state.locationData.CENTER;
+				var lat = _state$locationData$C.lat;
+				var lng = _state$locationData$C.lng;
+
 
 				var nextState = _extends({}, {
 					canvas: canvas,
@@ -13774,6 +13774,8 @@
 						currentLatLng: randomLatLng,
 						promptText: 'Where is this?'
 					});
+				}).then(function () {
+					return window.console.log("this.state:", _this4.state);
 				}).then(function () {
 					return (0, _twoBlocks2.default)(_this4.state);
 				}).catch(function () {
@@ -14035,8 +14037,10 @@
 			var chooseLocationMap = (0, _showChooseLocationMap2.default)(canvas, mapOptions);
 
 			// Outside the polygon boundaries, in the Atlantic Ocean
-			var markerLat = locationData.MARKER_PLACEMENT.lat;
-			var markerLng = locationData.MARKER_PLACEMENT.lng;
+			var _locationData$MARKER_ = locationData.MARKER_PLACEMENT;
+			var markerLat = _locationData$MARKER_.lat;
+			var markerLng = _locationData$MARKER_.lng;
+
 
 			var markerOptions = {
 				animation: google.maps.Animation.BOUNCE,

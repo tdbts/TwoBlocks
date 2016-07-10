@@ -57,8 +57,6 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.initialized) return; 
 
-		const { lat, lng } = this.state.locationData.CENTER; 
-		
 		const canvas = this.state.canvas; 
 
 		if (!(canvas)) {
@@ -66,6 +64,8 @@ class TwoBlocks extends React.Component {
 			throw new Error(`No element with ID #${this.props.canvasId} could be found on the page.`); 
 
 		} 
+
+		const { lat, lng } = this.state.locationData.CENTER; 
 		
 		const nextState = Object.assign({}, {
 			canvas, 
@@ -110,6 +110,8 @@ class TwoBlocks extends React.Component {
 				});   
 
 			})
+
+			.then(() => window.console.log("this.state:", this.state))
 
 			.then(() => twoBlocks(this.state))
 

@@ -42,8 +42,7 @@ const twoBlocks = function twoBlocks(gameComponents) {
 			const chooseLocationMap = showChooseLocationMap(canvas, mapOptions);
 
 			// Outside the polygon boundaries, in the Atlantic Ocean 
-			const markerLat = locationData.MARKER_PLACEMENT.lat; 
-			const markerLng = locationData.MARKER_PLACEMENT.lng; 
+			const { lat: markerLat, lng: markerLng } = locationData.MARKER_PLACEMENT; 
 
 			const markerOptions = {
 				animation: google.maps.Animation.BOUNCE, 
