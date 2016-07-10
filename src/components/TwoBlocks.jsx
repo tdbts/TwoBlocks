@@ -77,9 +77,18 @@ class TwoBlocks extends React.Component {
 		const { lat, lng } = this.state.locationData.CENTER; 
 
 		const mapLatLng = new google.maps.LatLng(lat, lng);  
+
+		// gameComponents: panorama, spinner 
+		const gameComponents = createGameComponents(this.state); 
+
+		console.log("gameComponents:", gameComponents);		
+
+		const { panorama, spinner } = gameComponents; 
 		
 		const nextState = Object.assign({}, {
 			mapLatLng,   
+			panorama, 
+			spinner, 
 			initialized: true, 
 			view: 'map'
 		}); 
@@ -199,24 +208,11 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	setRandomLocation() {
-
-		// gameComponents: panorama, spinner 
-		const gameComponents = createGameComponents(this.state); 
-
-		console.log("gameComponents:", gameComponents);		
-
-		const { panorama, spinner } = gameComponents; 
+	setRandomLocation() {		
+ 
+		const { featureCollection } = this.state.locationData;  
 		
-		return this.setState({ panorama, spinner })
-
-			.then(() => {
-
-				const { featureCollection } = this.state.locationData;  
-
-				return getRandomPanoramaLocation(featureCollection) 
-			
-			})
+		return getRandomPanoramaLocation(featureCollection) 
 
 			.then(randomLatLng => {
 

@@ -13747,8 +13747,19 @@
 
 				var mapLatLng = new google.maps.LatLng(lat, lng);
 
+				// gameComponents: panorama, spinner
+				var gameComponents = (0, _createGameComponents2.default)(this.state);
+
+				console.log("gameComponents:", gameComponents);
+
+				var panorama = gameComponents.panorama;
+				var spinner = gameComponents.spinner;
+
+
 				var nextState = _extends({}, {
 					mapLatLng: mapLatLng,
+					panorama: panorama,
+					spinner: spinner,
 					initialized: true,
 					view: 'map'
 				});
@@ -13877,21 +13888,10 @@
 			value: function setRandomLocation() {
 				var _this4 = this;
 
-				// gameComponents: panorama, spinner
-				var gameComponents = (0, _createGameComponents2.default)(this.state);
-
-				console.log("gameComponents:", gameComponents);
-
-				var panorama = gameComponents.panorama;
-				var spinner = gameComponents.spinner;
+				var featureCollection = this.state.locationData.featureCollection;
 
 
-				return this.setState({ panorama: panorama, spinner: spinner }).then(function () {
-					var featureCollection = _this4.state.locationData.featureCollection;
-
-
-					return (0, _getRandomPanoramaLocation2.default)(featureCollection);
-				}).then(function (randomLatLng) {
+				return (0, _getRandomPanoramaLocation2.default)(featureCollection).then(function (randomLatLng) {
 
 					window.console.log("randomLatLng.lat():", randomLatLng.lat());
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
