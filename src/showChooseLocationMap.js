@@ -5,6 +5,12 @@ const DEFAULT_LNG = -74.0287341;
 
 const showChooseLocationMap = function showChooseLocationMap(canvas, options) {
 
+	if (!(canvas)) {
+
+		throw new Error("No canvas passed to showChooseLocationMap()."); 
+
+	}
+
 	const defaultOptions = {
 		center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG), 
 		mapTypeControl: false, 

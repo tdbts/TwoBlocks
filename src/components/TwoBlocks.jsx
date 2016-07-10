@@ -16,11 +16,12 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = {
-			canvas: null,
-			currentLatLng: null, 
 			initialized: false, 
 			locationData: {}, 
-			promptText: 'loading...'
+			mapLatLng: null, 
+			panoramaLatLng: null, 
+			promptText: 'loading...', 
+			view: 'map' 
 		}; 
 
 		/*----------  Save reference to original setState() method  ----------*/
@@ -44,7 +45,8 @@ class TwoBlocks extends React.Component {
 	componentDidMount() {
 
 		this.setState({
-			canvas: document.getElementById(this.props.canvasId), 
+			mapCanvas: document.getElementById(this.props.mapCanvasId), 
+			panoramaCanvas: document.getElementById(this.props.panoramaCanvasId), 
 			locationData: nycCoordinates
 		})
 
@@ -56,19 +58,24 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.initialized) return; 
 
-		const canvas = this.state.canvas; 
+		const { mapCanvas, panoramaCanvas } = this.state; 
 
-		if (!(canvas)) {
+		[ mapCanvas, panoramaCanvas ].forEach(canvas => {
 
-			throw new Error(`No element with ID '#${this.props.canvasId}' could be found on the page.`); 
+			if (!(canvas)) {
 
-		} 
+				throw new Error(`No element with ID '#${this.props[ mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId" ]}' could be found on the page.`); 
+
+			}
+
+		}); 
 
 		const { lat, lng } = this.state.locationData.CENTER; 
+
+		const mapLatLng = new google.maps.LatLng(lat, lng);  
 		
 		const nextState = Object.assign({}, {
-			canvas, 
-			currentLatLng: new google.maps.LatLng(lat, lng), 
+			mapLatLng,   
 			initialized: true, 
 			view: 'map'
 		}); 
@@ -83,7 +90,7 @@ class TwoBlocks extends React.Component {
 
 	onSpinnerRevolution() {
 
-		const { canvas, locationData, panorama, spinner } = this.state; 
+		const { mapCanvas, locationData, panorama, spinner } = this.state; 
 
 		const { lat: centerLat, lng: centerLng } = locationData.CENTER; 
 
@@ -93,7 +100,11 @@ class TwoBlocks extends React.Component {
 
 		const mapOptions = { center }; 
 
-		const chooseLocationMap = showChooseLocationMap(canvas, mapOptions);
+		const chooseLocationMap = showChooseLocationMap(mapCanvas, mapOptions);
+
+		this.setState({
+			view: 'map'
+		}); 
 
 		// Outside the polygon boundaries, in the Atlantic Ocean 
 		const { lat: markerLat, lng: markerLng } = locationData.MARKER_PLACEMENT; 
@@ -188,8 +199,10 @@ class TwoBlocks extends React.Component {
 		const gameComponents = createGameComponents(this.state); 
 
 		console.log("gameComponents:", gameComponents);		
+
+		const { panorama, spinner } = gameComponents; 
 		
-		this.setState(gameComponents) 
+		this.setState({ panorama, spinner })
 
 			.then(() => {
 
@@ -205,7 +218,7 @@ class TwoBlocks extends React.Component {
 				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
 
 				return this.setState({ 
-					currentLatLng: randomLatLng, 
+					panoramaLatLng: randomLatLng, 
 					promptText: 'Where is this?' 
 				});   
 
@@ -225,13 +238,13 @@ class TwoBlocks extends React.Component {
 
 		return new Promise(resolve => { 
 
-			const { canvas } = this.state; 
+			const { mapCanvas } = this.state; 
 
 			const mapOptions = {
-				center: this.state.currentLatLng
+				center: this.state.mapLatLng
 			}; 
 
-			const chooseLocationMap = showChooseLocationMap(canvas, mapOptions);			
+			const chooseLocationMap = showChooseLocationMap(mapCanvas, mapOptions);			
 
 			// Each borough is a feature 
 			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
@@ -246,7 +259,7 @@ class TwoBlocks extends React.Component {
 
 					resolve(); 
 
-				}, 10000); 		
+				}, 10000); 	 	
 
 			}); 
 
@@ -287,7 +300,11 @@ class TwoBlocks extends React.Component {
 		return (
 	
 			<div id={ this.props.gameId }>
-				<TwoBlocksView view={ this.state.view } panorama={ this.state.panorama } latLng={ this.state.currentLatLng } />
+				<TwoBlocksView 
+					view={ this.state.view } 
+					panorama={ this.state.panorama } 
+					mapLatLng={ this.state.mapLatLng } 
+					panoramaLatLng={ this.state.panoramaLatLng } />
 				<TwoBlocksPrompt text={ this.state.promptText } />
 			</div>
 	
@@ -298,6 +315,6 @@ class TwoBlocks extends React.Component {
 }
 
 // Assign default props to the constructor 
-TwoBlocks.defaultProps = { canvasId: "twoBlocks-map", gameId: "twoBlocks" }; 
+TwoBlocks.defaultProps = { mapCanvasId: "twoBlocks-map", gameId: "twoBlocks", panoramaCanvasId: "twoBlocks-panorama" }; 
 
 export default TwoBlocks; 

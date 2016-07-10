@@ -12,9 +12,9 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { canvas, currentLat, currentLng } = gameState; 
+	const { panoramaCanvas, currentLat, currentLng } = gameState; 
 	
-	const webGlManager = createWebGlManager(canvas); 
+	const webGlManager = createWebGlManager(panoramaCanvas); 
 	
 	const mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
 
@@ -22,7 +22,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	/*----------  Set up panorama  ----------*/
 
-	const panorama = createPanorama(canvas, { 
+	const panorama = createPanorama(panoramaCanvas, { 
 		mode, 
 		position: gps, 
 		visible: true
