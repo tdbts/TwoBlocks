@@ -13653,9 +13653,9 @@
 
 	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
 
-	var _showChooseLocationMap = __webpack_require__(404);
+	var _createChooseLocationMap = __webpack_require__(404);
 
-	var _showChooseLocationMap2 = _interopRequireDefault(_showChooseLocationMap);
+	var _createChooseLocationMap2 = _interopRequireDefault(_createChooseLocationMap);
 
 	var _constants = __webpack_require__(348);
 
@@ -13679,10 +13679,14 @@
 
 			_this.state = {
 				initialized: false,
-				locationData: {},
+				locationData: null,
+				mapCanvas: null,
 				mapLatLng: null,
+				panorama: null,
+				panoramaCanvas: null,
 				panoramaLatLng: null,
 				promptText: 'loading...',
+				spinner: null,
 				view: 'map'
 			};
 
@@ -13753,6 +13757,8 @@
 					return _this3.showPregameMap();
 				}).then(function () {
 					return _this3.setRandomLocation();
+				}).then(function () {
+					return _this3.startGame();
 				});
 			}
 		}, {
@@ -13768,13 +13774,13 @@
 				var centerLng = _locationData$CENTER.lng;
 
 
-				spinner.stop();
-
 				var center = new google.maps.LatLng(centerLat, centerLng);
 
 				var mapOptions = { center: center };
 
-				var chooseLocationMap = (0, _showChooseLocationMap2.default)(mapCanvas, mapOptions);
+				var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
+
+				spinner.stop();
 
 				this.setState({
 					view: 'map'
@@ -13880,7 +13886,7 @@
 				var spinner = gameComponents.spinner;
 
 
-				this.setState({ panorama: panorama, spinner: spinner }).then(function () {
+				return this.setState({ panorama: panorama, spinner: spinner }).then(function () {
 					var featureCollection = _this4.state.locationData.featureCollection;
 
 
@@ -13896,8 +13902,6 @@
 					});
 				}).then(function () {
 					return window.console.log("this.state:", _this4.state);
-				}).then(function () {
-					return _this4.showSpinner();
 				})
 
 				// .then(() => twoBlocks(this.state))
@@ -13923,7 +13927,7 @@
 						center: _this5.state.mapLatLng
 					};
 
-					var chooseLocationMap = (0, _showChooseLocationMap2.default)(mapCanvas, mapOptions);
+					var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
 
 					// Each borough is a feature
 					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
@@ -13955,8 +13959,8 @@
 				});
 			}
 		}, {
-			key: 'showSpinner',
-			value: function showSpinner() {
+			key: 'startGame',
+			value: function startGame() {
 				var _this6 = this;
 
 				var _state3 = this.state;
@@ -13983,10 +13987,10 @@
 					'div',
 					{ id: this.props.gameId },
 					_react2.default.createElement(_TwoBlocksView2.default, {
-						view: this.state.view,
-						panorama: this.state.panorama,
 						mapLatLng: this.state.mapLatLng,
-						panoramaLatLng: this.state.panoramaLatLng }),
+						panorama: this.state.panorama,
+						panoramaLatLng: this.state.panoramaLatLng,
+						view: this.state.view }),
 					_react2.default.createElement(_TwoBlocksPrompt2.default, { text: this.state.promptText })
 				);
 			}
@@ -16241,11 +16245,11 @@
 	var DEFAULT_LAT = 40.6291566;
 	var DEFAULT_LNG = -74.0287341;
 
-	var showChooseLocationMap = function showChooseLocationMap(canvas, options) {
+	var createChooseLocationMap = function createChooseLocationMap(canvas, options) {
 
 		if (!canvas) {
 
-			throw new Error("No canvas passed to showChooseLocationMap().");
+			throw new Error("No canvas passed to createChooseLocationMap().");
 		}
 
 		var defaultOptions = {
@@ -16263,7 +16267,7 @@
 		return map;
 	};
 
-	exports.default = showChooseLocationMap;
+	exports.default = createChooseLocationMap;
 
 /***/ },
 /* 405 */

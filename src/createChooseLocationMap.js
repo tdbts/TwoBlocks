@@ -3,11 +3,11 @@
 const DEFAULT_LAT = 40.6291566; 
 const DEFAULT_LNG = -74.0287341; 
 
-const showChooseLocationMap = function showChooseLocationMap(canvas, options) {
+const createChooseLocationMap = function createChooseLocationMap(canvas, options) {
 
 	if (!(canvas)) {
 
-		throw new Error("No canvas passed to showChooseLocationMap()."); 
+		throw new Error("No canvas passed to createChooseLocationMap()."); 
 
 	}
 
@@ -27,4 +27,4 @@ const showChooseLocationMap = function showChooseLocationMap(canvas, options) {
 
 }; 
 
-export default showChooseLocationMap; 
+export default createChooseLocationMap; 

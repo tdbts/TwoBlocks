@@ -5,7 +5,7 @@ import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksPrompt from './TwoBlocksPrompt'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
-import showChooseLocationMap from '../showChooseLocationMap'; 
+import createChooseLocationMap from '../createChooseLocationMap'; 
 import { NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
@@ -17,10 +17,14 @@ class TwoBlocks extends React.Component {
 		// Define initial state 
 		this.state = {
 			initialized: false, 
-			locationData: {}, 
+			locationData: null, 
+			mapCanvas: null, 
 			mapLatLng: null, 
+			panorama: null, 
+			panoramaCanvas: null, 
 			panoramaLatLng: null, 
-			promptText: 'loading...', 
+			promptText: 'loading...',
+			spinner: null,  
 			view: 'map' 
 		}; 
 
@@ -84,7 +88,9 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.showPregameMap())
 
-			.then(() => this.setRandomLocation());
+			.then(() => this.setRandomLocation()) 
+
+			.then(() => this.startGame()); 
 
 	}
 
@@ -94,13 +100,13 @@ class TwoBlocks extends React.Component {
 
 		const { lat: centerLat, lng: centerLng } = locationData.CENTER; 
 
-		spinner.stop(); 
-
 		const center = new google.maps.LatLng(centerLat, centerLng); 
 
 		const mapOptions = { center }; 
 
-		const chooseLocationMap = showChooseLocationMap(mapCanvas, mapOptions);
+		const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);
+
+		spinner.stop(); 
 
 		this.setState({
 			view: 'map'
@@ -202,7 +208,7 @@ class TwoBlocks extends React.Component {
 
 		const { panorama, spinner } = gameComponents; 
 		
-		this.setState({ panorama, spinner })
+		return this.setState({ panorama, spinner })
 
 			.then(() => {
 
@@ -226,8 +232,6 @@ class TwoBlocks extends React.Component {
 
 			.then(() => window.console.log("this.state:", this.state))
 
-			.then(() => this.showSpinner())
-
 			// .then(() => twoBlocks(this.state))
 
 			.catch((...args) => `Caught error with args ${args}`); 				
@@ -244,7 +248,7 @@ class TwoBlocks extends React.Component {
 				center: this.state.mapLatLng
 			}; 
 
-			const chooseLocationMap = showChooseLocationMap(mapCanvas, mapOptions);			
+			const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);			
 
 			// Each borough is a feature 
 			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
@@ -281,8 +285,8 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	showSpinner() {
-
+	startGame() {
+		
 		const { panorama, spinner } = this.state; 
 
 		panorama.setVisible(true); 
@@ -301,10 +305,10 @@ class TwoBlocks extends React.Component {
 	
 			<div id={ this.props.gameId }>
 				<TwoBlocksView 
-					view={ this.state.view } 
-					panorama={ this.state.panorama } 
 					mapLatLng={ this.state.mapLatLng } 
-					panoramaLatLng={ this.state.panoramaLatLng } />
+					panorama={ this.state.panorama } 
+					panoramaLatLng={ this.state.panoramaLatLng } 
+					view={ this.state.view } />
 				<TwoBlocksPrompt text={ this.state.promptText } />
 			</div>
 	
