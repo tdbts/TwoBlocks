@@ -3,6 +3,7 @@
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
+import createChooseLocationMap from './createChooseLocationMap'; 
 
 const createGameComponents = function createGameComponents(gameState) {
 
@@ -12,7 +13,8 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { panoramaCanvas, currentLat, currentLng } = gameState; 
+	// 'currentLat' and 'currentLng' are deprecated...
+	const { panoramaCanvas, currentLat, currentLng, mapCanvas, mapLatLng } = gameState; 
 	
 	const webGlManager = createWebGlManager(panoramaCanvas); 
 	
@@ -39,6 +41,14 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	spinner.on('revolution', () => window.console.log('revolution')); 
 	
+	/*----------  Set up chooseLocationMap  ----------*/
+	
+	const mapOptions = {
+		center: mapLatLng
+	}; 
+
+	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);			
+
 	/*----------  Set up WebGl  ----------*/
 	
 	if (webGlManager.canUseWebGl()) {
@@ -48,6 +58,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	}
 
 	return {
+		chooseLocationMap, 
 		panorama, 
 		spinner
 	}; 

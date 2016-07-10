@@ -13649,13 +13649,9 @@
 
 	var _createGameComponents2 = _interopRequireDefault(_createGameComponents);
 
-	var _getRandomPanoramaLocation = __webpack_require__(391);
+	var _getRandomPanoramaLocation = __webpack_require__(392);
 
 	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
-
-	var _createChooseLocationMap = __webpack_require__(404);
-
-	var _createChooseLocationMap2 = _interopRequireDefault(_createChooseLocationMap);
 
 	var _constants = __webpack_require__(348);
 
@@ -13747,19 +13743,13 @@
 
 				var mapLatLng = new google.maps.LatLng(lat, lng);
 
-				// gameComponents: panorama, spinner
+				// gameComponents: chooseLocationMap, panorama, spinner
 				var gameComponents = (0, _createGameComponents2.default)(this.state);
 
 				console.log("gameComponents:", gameComponents);
 
-				var panorama = gameComponents.panorama;
-				var spinner = gameComponents.spinner;
-
-
-				var nextState = _extends({}, {
+				var nextState = _extends({}, gameComponents, {
 					mapLatLng: mapLatLng,
-					panorama: panorama,
-					spinner: spinner,
 					initialized: true,
 					view: 'map'
 				});
@@ -13776,6 +13766,7 @@
 			key: 'onSpinnerRevolution',
 			value: function onSpinnerRevolution() {
 				var _state2 = this.state;
+				var chooseLocationMap = _state2.chooseLocationMap;
 				var mapCanvas = _state2.mapCanvas;
 				var locationData = _state2.locationData;
 				var panorama = _state2.panorama;
@@ -13788,8 +13779,6 @@
 				var center = new google.maps.LatLng(centerLat, centerLng);
 
 				var mapOptions = { center: center };
-
-				var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
 
 				spinner.stop();
 
@@ -13920,16 +13909,10 @@
 				var _this5 = this;
 
 				return new Promise(function (resolve) {
-					var mapCanvas = _this5.state.mapCanvas;
-
-
-					var mapOptions = {
-						center: _this5.state.mapLatLng
-					};
-
-					var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
+					var chooseLocationMap = _this5.state.chooseLocationMap;
 
 					// Each borough is a feature
+
 					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
 
 						_this5.setState({
@@ -14273,7 +14256,13 @@
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
+	var _createChooseLocationMap = __webpack_require__(391);
+
+	var _createChooseLocationMap2 = _interopRequireDefault(_createChooseLocationMap);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/* global google */
 
 	var createGameComponents = function createGameComponents(gameState) {
 
@@ -14282,9 +14271,12 @@
 			throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page.");
 		}
 
+		// 'currentLat' and 'currentLng' are deprecated...
 		var panoramaCanvas = gameState.panoramaCanvas;
 		var currentLat = gameState.currentLat;
 		var currentLng = gameState.currentLng;
+		var mapCanvas = gameState.mapCanvas;
+		var mapLatLng = gameState.mapLatLng;
 
 
 		var webGlManager = (0, _createWebGlManager2.default)(panoramaCanvas);
@@ -14314,6 +14306,14 @@
 			return window.console.log('revolution');
 		});
 
+		/*----------  Set up chooseLocationMap  ----------*/
+
+		var mapOptions = {
+			center: mapLatLng
+		};
+
+		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
+
 		/*----------  Set up WebGl  ----------*/
 
 		if (webGlManager.canUseWebGl()) {
@@ -14324,10 +14324,11 @@
 		}
 
 		return {
+			chooseLocationMap: chooseLocationMap,
 			panorama: panorama,
 			spinner: spinner
 		};
-	}; /* global google */
+	};
 
 	exports.default = createGameComponents;
 
@@ -15673,6 +15674,47 @@
 
 /***/ },
 /* 391 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	/* global google */
+
+	var DEFAULT_LAT = 40.6291566;
+	var DEFAULT_LNG = -74.0287341;
+
+	var createChooseLocationMap = function createChooseLocationMap(canvas, options) {
+
+		if (!canvas) {
+
+			throw new Error("No canvas passed to createChooseLocationMap().");
+		}
+
+		var defaultOptions = {
+			center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),
+			mapTypeControl: false,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			streetViewControl: false,
+			zoom: 10
+		};
+
+		var mapOptions = _extends({}, defaultOptions, options);
+
+		var map = new google.maps.Map(canvas, mapOptions);
+
+		return map;
+	};
+
+	exports.default = createChooseLocationMap;
+
+/***/ },
+/* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15681,23 +15723,23 @@
 		value: true
 	});
 
-	var _getLatLngWithinBoundaries = __webpack_require__(392);
+	var _getLatLngWithinBoundaries = __webpack_require__(393);
 
 	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
 
-	var _requestNearestPanorama = __webpack_require__(395);
+	var _requestNearestPanorama = __webpack_require__(396);
 
 	var _requestNearestPanorama2 = _interopRequireDefault(_requestNearestPanorama);
 
-	var _getRandomFeature = __webpack_require__(396);
+	var _getRandomFeature = __webpack_require__(397);
 
 	var _getRandomFeature2 = _interopRequireDefault(_getRandomFeature);
 
-	var _selectRandomWeightedLinearRing = __webpack_require__(397);
+	var _selectRandomWeightedLinearRing = __webpack_require__(398);
 
 	var _selectRandomWeightedLinearRing2 = _interopRequireDefault(_selectRandomWeightedLinearRing);
 
-	var _getLatLngMaxMin = __webpack_require__(403);
+	var _getLatLngMaxMin = __webpack_require__(404);
 
 	var _getLatLngMaxMin2 = _interopRequireDefault(_getLatLngMaxMin);
 
@@ -15749,7 +15791,7 @@
 	exports.default = getRandomPanoramaLocation;
 
 /***/ },
-/* 392 */
+/* 393 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15758,7 +15800,7 @@
 		value: true
 	});
 
-	var _getRandomCoords = __webpack_require__(393);
+	var _getRandomCoords = __webpack_require__(394);
 
 	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
 
@@ -15790,7 +15832,7 @@
 	exports.default = getLatLngWithinBoundaries;
 
 /***/ },
-/* 393 */
+/* 394 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -15799,7 +15841,7 @@
 		value: true
 	});
 
-	var _selectRandomValueOfRange = __webpack_require__(394);
+	var _selectRandomValueOfRange = __webpack_require__(395);
 
 	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
 
@@ -15832,7 +15874,7 @@
 	exports.default = getRandomCoords;
 
 /***/ },
-/* 394 */
+/* 395 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -15857,7 +15899,7 @@
 	exports.default = selectRandomValueOfRange;
 
 /***/ },
-/* 395 */
+/* 396 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -15897,7 +15939,7 @@
 	exports.default = requestNearestPanorama;
 
 /***/ },
-/* 396 */
+/* 397 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -15915,7 +15957,7 @@
 	exports.default = getRandomFeature;
 
 /***/ },
-/* 397 */
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15924,23 +15966,23 @@
 		value: true
 	});
 
-	var _getGeometricConstituents = __webpack_require__(398);
+	var _getGeometricConstituents = __webpack_require__(399);
 
 	var _getGeometricConstituents2 = _interopRequireDefault(_getGeometricConstituents);
 
-	var _sortLeastToGreatest = __webpack_require__(399);
+	var _sortLeastToGreatest = __webpack_require__(400);
 
 	var _sortLeastToGreatest2 = _interopRequireDefault(_sortLeastToGreatest);
 
-	var _playoff = __webpack_require__(400);
+	var _playoff = __webpack_require__(401);
 
 	var _playoff2 = _interopRequireDefault(_playoff);
 
-	var _headToHeadMatchups = __webpack_require__(401);
+	var _headToHeadMatchups = __webpack_require__(402);
 
 	var _headToHeadMatchups2 = _interopRequireDefault(_headToHeadMatchups);
 
-	var _weightedRandomSelection = __webpack_require__(402);
+	var _weightedRandomSelection = __webpack_require__(403);
 
 	var _weightedRandomSelection2 = _interopRequireDefault(_weightedRandomSelection);
 
@@ -15998,7 +16040,7 @@
 	exports.default = selectRandomWeightedLinearRing;
 
 /***/ },
-/* 398 */
+/* 399 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16032,7 +16074,7 @@
 	exports.default = getGeometricConstituents;
 
 /***/ },
-/* 399 */
+/* 400 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16055,7 +16097,7 @@
 	exports.default = sortLeastToGreatest;
 
 /***/ },
-/* 400 */
+/* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -16095,7 +16137,7 @@
 	exports.default = playoff;
 
 /***/ },
-/* 401 */
+/* 402 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16126,7 +16168,7 @@
 	exports.default = headToHeadMatchups;
 
 /***/ },
-/* 402 */
+/* 403 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16172,7 +16214,7 @@
 	exports.default = weightedRandomSelection;
 
 /***/ },
-/* 403 */
+/* 404 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16227,47 +16269,6 @@
 	};
 
 	exports.default = getLatLngMaxMin;
-
-/***/ },
-/* 404 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	/* global google */
-
-	var DEFAULT_LAT = 40.6291566;
-	var DEFAULT_LNG = -74.0287341;
-
-	var createChooseLocationMap = function createChooseLocationMap(canvas, options) {
-
-		if (!canvas) {
-
-			throw new Error("No canvas passed to createChooseLocationMap().");
-		}
-
-		var defaultOptions = {
-			center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),
-			mapTypeControl: false,
-			mapTypeId: google.maps.MapTypeId.ROADMAP,
-			streetViewControl: false,
-			zoom: 10
-		};
-
-		var mapOptions = _extends({}, defaultOptions, options);
-
-		var map = new google.maps.Map(canvas, mapOptions);
-
-		return map;
-	};
-
-	exports.default = createChooseLocationMap;
 
 /***/ },
 /* 405 */

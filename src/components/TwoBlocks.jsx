@@ -5,7 +5,6 @@ import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksPrompt from './TwoBlocksPrompt'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
-import createChooseLocationMap from '../createChooseLocationMap'; 
 import { NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
@@ -78,17 +77,13 @@ class TwoBlocks extends React.Component {
 
 		const mapLatLng = new google.maps.LatLng(lat, lng);  
 
-		// gameComponents: panorama, spinner 
+		// gameComponents: chooseLocationMap, panorama, spinner 
 		const gameComponents = createGameComponents(this.state); 
 
-		console.log("gameComponents:", gameComponents);		
-
-		const { panorama, spinner } = gameComponents; 
+		console.log("gameComponents:", gameComponents);		 
 		
-		const nextState = Object.assign({}, {
+		const nextState = Object.assign({}, gameComponents, {
 			mapLatLng,   
-			panorama, 
-			spinner, 
 			initialized: true, 
 			view: 'map'
 		}); 
@@ -105,15 +100,13 @@ class TwoBlocks extends React.Component {
 
 	onSpinnerRevolution() {
 
-		const { mapCanvas, locationData, panorama, spinner } = this.state; 
+		const { chooseLocationMap, mapCanvas, locationData, panorama, spinner } = this.state; 
 
 		const { lat: centerLat, lng: centerLng } = locationData.CENTER; 
 
 		const center = new google.maps.LatLng(centerLat, centerLng); 
 
 		const mapOptions = { center }; 
-
-		const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);
 
 		spinner.stop(); 
 
@@ -238,13 +231,7 @@ class TwoBlocks extends React.Component {
 
 		return new Promise(resolve => { 
 
-			const { mapCanvas } = this.state; 
-
-			const mapOptions = {
-				center: this.state.mapLatLng
-			}; 
-
-			const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);			
+			const { chooseLocationMap } = this.state; 	
 
 			// Each borough is a feature 
 			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
