@@ -20,7 +20,7 @@ class TwoBlocksMap extends React.Component {
 
 		return (
 
-			<div id="twoBlocks-map" className="inherit-dimensions"></div>		
+			<div id="twoBlocks-map" className="inherit-dimensions layered"></div>		
 		
 		); 
 

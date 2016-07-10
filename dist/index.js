@@ -14089,7 +14089,7 @@
 			key: 'render',
 			value: function render() {
 
-				return _react2.default.createElement('div', { id: 'twoBlocks-map', className: 'inherit-dimensions' });
+				return _react2.default.createElement('div', { id: 'twoBlocks-map', className: 'inherit-dimensions layered' });
 			}
 		}]);
 
