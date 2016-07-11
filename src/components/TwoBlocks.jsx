@@ -77,18 +77,24 @@ class TwoBlocks extends React.Component {
 
 		const mapLatLng = new google.maps.LatLng(lat, lng);  
 
-		// gameComponents: chooseLocationMap, panorama, spinner 
-		const gameComponents = createGameComponents(this.state); 
-
-		console.log("gameComponents:", gameComponents);		 
-		
-		const nextState = Object.assign({}, gameComponents, {
+		const nextState = Object.assign({}, {
 			mapLatLng,   
 			initialized: true, 
 			view: 'map'
 		}); 
 
 		this.setState(nextState)
+
+			.then(() => {
+				
+				// gameComponents: chooseLocationMap, panorama, spinner 
+				const gameComponents = createGameComponents(this.state); 
+
+				console.log("gameComponents:", gameComponents);		 
+				
+				return this.setState(gameComponents); 
+
+			})
 
 			.then(() => this.showPregameMap())
 

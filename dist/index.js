@@ -13743,18 +13743,21 @@
 
 				var mapLatLng = new google.maps.LatLng(lat, lng);
 
-				// gameComponents: chooseLocationMap, panorama, spinner
-				var gameComponents = (0, _createGameComponents2.default)(this.state);
-
-				console.log("gameComponents:", gameComponents);
-
-				var nextState = _extends({}, gameComponents, {
+				var nextState = _extends({}, {
 					mapLatLng: mapLatLng,
 					initialized: true,
 					view: 'map'
 				});
 
 				this.setState(nextState).then(function () {
+
+					// gameComponents: chooseLocationMap, panorama, spinner
+					var gameComponents = (0, _createGameComponents2.default)(_this3.state);
+
+					console.log("gameComponents:", gameComponents);
+
+					return _this3.setState(gameComponents);
+				}).then(function () {
 					return _this3.showPregameMap();
 				}).then(function () {
 					return _this3.setRandomLocation();
@@ -14307,7 +14310,7 @@
 		});
 
 		/*----------  Set up chooseLocationMap  ----------*/
-
+		window.console.log("mapLatLng:", mapLatLng);
 		var mapOptions = {
 			center: mapLatLng
 		};

@@ -42,7 +42,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	spinner.on('revolution', () => window.console.log('revolution')); 
 	
 	/*----------  Set up chooseLocationMap  ----------*/
-	
+	window.console.log("mapLatLng:", mapLatLng); 
 	const mapOptions = {
 		center: mapLatLng
 	}; 
