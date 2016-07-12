@@ -13760,8 +13760,6 @@
 				}).then(function () {
 					return _this3.showPregameMap();
 				}).then(function () {
-					return _this3.setRandomLocation();
-				}).then(function () {
 					return _this3.startGame();
 				});
 			}
@@ -13889,16 +13887,11 @@
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
 					return _this4.setState({
-						panoramaLatLng: randomLatLng,
-						promptText: 'Where is this?'
+						panoramaLatLng: randomLatLng
 					});
 				}).then(function () {
 					return window.console.log("this.state:", _this4.state);
-				})
-
-				// .then(() => twoBlocks(this.state))
-
-				.catch(function () {
+				}).catch(function () {
 					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 						args[_key] = arguments[_key];
 					}
@@ -13922,12 +13915,7 @@
 							locationData: _extends({}, _this5.state.locationData, { featureCollection: featureCollection })
 						});
 
-						setTimeout(function () {
-
-							_this5.setState({ view: 'panorama' });
-
-							resolve();
-						}, 10000);
+						resolve();
 					});
 
 					chooseLocationMap.data.addListener('mouseover', function (event) {
@@ -13949,17 +13937,23 @@
 			value: function startGame() {
 				var _this6 = this;
 
-				var _state3 = this.state;
-				var panorama = _state3.panorama;
-				var spinner = _state3.spinner;
+				return this.setRandomLocation().then(function () {
+
+					setTimeout(function () {
+						var spinner = _this6.state.spinner;
 
 
-				panorama.setVisible(true);
+						_this6.setState({
+							promptText: 'Where is this?',
+							view: 'panorama'
+						});
 
-				spinner.start();
+						spinner.start();
 
-				spinner.once('revolution', function () {
-					return _this6.onSpinnerRevolution();
+						spinner.once('revolution', function () {
+							return _this6.onSpinnerRevolution();
+						});
+					}, 5000);
 				});
 			}
 

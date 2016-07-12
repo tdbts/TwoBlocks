@@ -98,8 +98,6 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.showPregameMap())
 
-			.then(() => this.setRandomLocation()) 
-
 			.then(() => this.startGame()); 
 
 	}
@@ -219,15 +217,12 @@ class TwoBlocks extends React.Component {
 				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
 
 				return this.setState({ 
-					panoramaLatLng: randomLatLng, 
-					promptText: 'Where is this?' 
+					panoramaLatLng: randomLatLng
 				});   
 
 			})
 
 			.then(() => window.console.log("this.state:", this.state))
-
-			// .then(() => twoBlocks(this.state))
 
 			.catch((...args) => `Caught error with args ${args}`); 				
 
@@ -246,13 +241,7 @@ class TwoBlocks extends React.Component {
 					locationData: Object.assign({}, this.state.locationData, { featureCollection }) 
 				}); 
 
-				setTimeout(() => {
-					
-					this.setState({ view: 'panorama' }); 
-
-					resolve(); 
-
-				}, 10000); 	 	
+				resolve();  	 	
 
 			}); 
 
@@ -275,14 +264,27 @@ class TwoBlocks extends React.Component {
 	}
 
 	startGame() {
+
+		return this.setRandomLocation()
 		
-		const { panorama, spinner } = this.state; 
+			.then(() => {
 
-		panorama.setVisible(true); 
+				setTimeout(() => {
 
-		spinner.start(); 
+					const { spinner } = this.state; 
 
-		spinner.once('revolution', () => this.onSpinnerRevolution()); 
+					this.setState({
+						promptText: 'Where is this?',  
+						view: 'panorama'
+					});		
+
+					spinner.start(); 
+
+					spinner.once('revolution', () => this.onSpinnerRevolution()); 
+				
+				}, 5000);
+
+			}); 
 
 	}
 
