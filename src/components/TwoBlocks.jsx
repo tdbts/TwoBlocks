@@ -2,7 +2,8 @@
 
 import React from 'react';
 import TwoBlocksView from './TwoBlocksView';
-import TwoBlocksPrompt from './TwoBlocksPrompt'; 
+import TwoBlocksPrompt from './TwoBlocksPrompt';
+import calculateDistanceFromMarkerToLocation from '../calculateDistanceFromMarkerToLocation'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
 import { NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
@@ -141,6 +142,7 @@ class TwoBlocks extends React.Component {
 
 		const chooseLocationMarker = new google.maps.Marker(markerOptions); 
 
+		// Stop bouncing 
 		google.maps.event.addListener(chooseLocationMarker, 'dragstart', () => chooseLocationMarker.setAnimation(null)); 
 
 		google.maps.event.addListener(chooseLocationMap, 'click', e => {
@@ -151,36 +153,6 @@ class TwoBlocks extends React.Component {
 			chooseLocationMarker.setAnimation(null); 
 
 		});
-
-		const calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
-		
-			return google.maps.geometry.spherical.computeDistanceBetween(first, second); 	
-		
-		};
-
-		const convertMetersToMiles = function convertMetersToMiles(meters) {
-		
-			const MILES_PER_METER = 0.000621371; 
-
-			return meters * MILES_PER_METER; 
-		
-		}; 
-
-		const calculateDistanceFromMarkerToLocation = (panorama, marker, units = 'miles') => {
-
-			const distanceFromPanoramaInMeters = calculateDistanceBetweenLatLngs(panorama.getPosition(), marker.getPosition()); 
-
-			if ('meters' === units) {
-
-				return distanceFromPanoramaInMeters; 
-
-			}
-
-			const distanceFromPanoramaInMiles = convertMetersToMiles(distanceFromPanoramaInMeters).toFixed(3); 
-
-			return distanceFromPanoramaInMiles; 
-
-		}; 
 
 		const eventToEntityMap = {
 			'dragend': chooseLocationMarker, 
