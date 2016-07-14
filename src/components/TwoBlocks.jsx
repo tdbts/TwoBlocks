@@ -16,7 +16,7 @@ class TwoBlocks extends React.Component {
 		// Define initial state 
 		this.state = {
 			initialized: false, 
-			locationData: null, 
+			locationData: nycCoordinates, 
 			mapCanvas: null, 
 			mapLatLng: null, 
 			panorama: null, 
@@ -45,15 +45,20 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	componentDidMount() {
+	componentDidUpdate(prevProps, prevState) {  // eslint-disable-line no-unused-vars
 
-		this.setState({
-			mapCanvas: document.getElementById(this.props.mapCanvasId), 
-			panoramaCanvas: document.getElementById(this.props.panoramaCanvasId), 
-			locationData: nycCoordinates
-		})
+		if (this.state.initialized) return; 
 
-		.then(() => this.initializeTwoBlocks()); 
+		// Children TwoBlocksMap and TwoBlocksPanorama 
+		// components will call methods which update this 
+		// component's state with the child components' 
+		// respective DOM elements.  Once both elements 
+		// exist in state, initialize TwoBlocks.  
+		if (this.state.mapCanvas && this.state.panoramaCanvas) {
+
+			this.initializeTwoBlocks(); 
+
+		}
 
 	}
 
@@ -90,7 +95,7 @@ class TwoBlocks extends React.Component {
 				// gameComponents: chooseLocationMap, panorama, spinner 
 				const gameComponents = createGameComponents(this.state); 
 
-				console.log("gameComponents:", gameComponents);		 
+				window.console.log("gameComponents:", gameComponents);		 
 				
 				return this.setState(gameComponents); 
 
@@ -102,15 +107,21 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	onMapMounted(mapCanvas) {
+
+		this.setState({ mapCanvas }); 
+
+	}
+
+	onPanoramaMounted(panoramaCanvas) {
+
+		this.setState({ panoramaCanvas }); 
+
+	}
+
 	onSpinnerRevolution() {
 
-		const { chooseLocationMap, mapCanvas, locationData, panorama, spinner } = this.state; 
-
-		const { lat: centerLat, lng: centerLng } = locationData.CENTER; 
-
-		const center = new google.maps.LatLng(centerLat, centerLng); 
-
-		const mapOptions = { center }; 
+		const { chooseLocationMap, locationData, panorama, spinner } = this.state; 
 
 		spinner.stop(); 
 
@@ -296,11 +307,18 @@ class TwoBlocks extends React.Component {
 	
 			<div id={ this.props.gameId }>
 				<TwoBlocksView 
-					mapLatLng={ this.state.mapLatLng } 
+					mapCanvasId={ this.state.mapCanvasId }
+					mapLatLng={ this.state.mapLatLng }
+					onMapMounted={ this.onMapMounted.bind(this) }
+					onPanoramaMounted={ this.onPanoramaMounted.bind(this) } 
 					panorama={ this.state.panorama } 
 					panoramaLatLng={ this.state.panoramaLatLng } 
-					view={ this.state.view } />
-				<TwoBlocksPrompt text={ this.state.promptText } />
+					view={ this.state.view } 
+				/>
+				<TwoBlocksPrompt 
+					promptId={ this.props.promptId } 
+					text={ this.state.promptText } 
+				/>
 			</div>
 	
 		); 
@@ -309,7 +327,19 @@ class TwoBlocks extends React.Component {
 
 }
 
+TwoBlocks.propTypes = {
+	gameId 				: React.PropTypes.string.isRequired, 	
+	mapCanvasId 		: React.PropTypes.string.isRequired, 
+	panoramaCanvasId 	: React.PropTypes.string.isRequired, 
+	promptId 			: React.PropTypes.string.isRequired
+}; 
+
 // Assign default props to the constructor 
-TwoBlocks.defaultProps = { mapCanvasId: "twoBlocks-map", gameId: "twoBlocks", panoramaCanvasId: "twoBlocks-panorama" }; 
+TwoBlocks.defaultProps = { 
+	gameId 				: "twoBlocks", 
+	mapCanvasId 		: "twoBlocks-map", 
+	panoramaCanvasId 	: "twoBlocks-panorama", 
+	promptId 			: "twoBlocks-prompt"
+}; 
 
 export default TwoBlocks; 

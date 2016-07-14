@@ -1,7 +1,15 @@
+/* global window */
+
 import React from 'react'; 
 import getViewLayerClassName from './component-utils/getViewLayerClassName'; 
 
 class TwoBlocksPanorama extends React.Component {
+
+	componentDidMount() {
+		
+		this.props.onPanoramaMounted(this._panoramaCanvas); 
+
+	}
 
 	componentDidUpdate(previousProps) {
 
@@ -19,12 +27,25 @@ class TwoBlocksPanorama extends React.Component {
 
 		return (
 			
-			<div id="twoBlocks-panorama" className={ getViewLayerClassName.call(this) }></div>
+			<div 
+				id="twoBlocks-panorama" 
+				className={ getViewLayerClassName.call(this) } 
+				ref={ panoramaCanvas => (this._panoramaCanvas = panoramaCanvas) }
+			>
+			</div>
 
 		); 
 
 	}
 
 } 
+
+TwoBlocksPanorama.propTypes = {
+	
+	latLng 				: React.PropTypes.object,
+	onPanoramaMounted 	: React.PropTypes.func.isRequired, 
+	panorama 			: React.PropTypes.object
+
+}; 
 
 export default TwoBlocksPanorama; 

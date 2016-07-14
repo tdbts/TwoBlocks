@@ -13675,7 +13675,7 @@
 
 			_this.state = {
 				initialized: false,
-				locationData: null,
+				locationData: _constants.nycCoordinates,
 				mapCanvas: null,
 				mapLatLng: null,
 				panorama: null,
@@ -13704,22 +13704,26 @@
 		}
 
 		_createClass(TwoBlocks, [{
-			key: 'componentDidMount',
-			value: function componentDidMount() {
-				var _this2 = this;
+			key: 'componentDidUpdate',
+			value: function componentDidUpdate(prevProps, prevState) {
+				// eslint-disable-line no-unused-vars
 
-				this.setState({
-					mapCanvas: document.getElementById(this.props.mapCanvasId),
-					panoramaCanvas: document.getElementById(this.props.panoramaCanvasId),
-					locationData: _constants.nycCoordinates
-				}).then(function () {
-					return _this2.initializeTwoBlocks();
-				});
+				if (this.state.initialized) return;
+
+				// Children TwoBlocksMap and TwoBlocksPanorama
+				// components will call methods which update this
+				// component's state with the child components'
+				// respective DOM elements.  Once both elements
+				// exist in state, initialize TwoBlocks. 
+				if (this.state.mapCanvas && this.state.panoramaCanvas) {
+
+					this.initializeTwoBlocks();
+				}
 			}
 		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
-				var _this3 = this;
+				var _this2 = this;
 
 				if (this.state.initialized) return;
 
@@ -13732,7 +13736,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this3.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
+						throw new Error('No element with ID \'#' + _this2.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
 					}
 				});
 
@@ -13752,34 +13756,38 @@
 				this.setState(nextState).then(function () {
 
 					// gameComponents: chooseLocationMap, panorama, spinner
-					var gameComponents = (0, _createGameComponents2.default)(_this3.state);
+					var gameComponents = (0, _createGameComponents2.default)(_this2.state);
 
-					console.log("gameComponents:", gameComponents);
+					window.console.log("gameComponents:", gameComponents);
 
-					return _this3.setState(gameComponents);
+					return _this2.setState(gameComponents);
 				}).then(function () {
-					return _this3.showPregameMap();
+					return _this2.showPregameMap();
 				}).then(function () {
-					return _this3.startGame();
+					return _this2.startGame();
 				});
+			}
+		}, {
+			key: 'onMapMounted',
+			value: function onMapMounted(mapCanvas) {
+
+				this.setState({ mapCanvas: mapCanvas });
+			}
+		}, {
+			key: 'onPanoramaMounted',
+			value: function onPanoramaMounted(panoramaCanvas) {
+
+				this.setState({ panoramaCanvas: panoramaCanvas });
 			}
 		}, {
 			key: 'onSpinnerRevolution',
 			value: function onSpinnerRevolution() {
 				var _state2 = this.state;
 				var chooseLocationMap = _state2.chooseLocationMap;
-				var mapCanvas = _state2.mapCanvas;
 				var locationData = _state2.locationData;
 				var panorama = _state2.panorama;
 				var spinner = _state2.spinner;
-				var _locationData$CENTER = locationData.CENTER;
-				var centerLat = _locationData$CENTER.lat;
-				var centerLng = _locationData$CENTER.lng;
 
-
-				var center = new google.maps.LatLng(centerLat, centerLng);
-
-				var mapOptions = { center: center };
 
 				spinner.stop();
 
@@ -13876,7 +13884,7 @@
 		}, {
 			key: 'setRandomLocation',
 			value: function setRandomLocation() {
-				var _this4 = this;
+				var _this3 = this;
 
 				var featureCollection = this.state.locationData.featureCollection;
 
@@ -13886,11 +13894,11 @@
 					window.console.log("randomLatLng.lat():", randomLatLng.lat());
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
-					return _this4.setState({
+					return _this3.setState({
 						panoramaLatLng: randomLatLng
 					});
 				}).then(function () {
-					return window.console.log("this.state:", _this4.state);
+					return window.console.log("this.state:", _this3.state);
 				}).catch(function () {
 					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 						args[_key] = arguments[_key];
@@ -13902,17 +13910,17 @@
 		}, {
 			key: 'showPregameMap',
 			value: function showPregameMap() {
-				var _this5 = this;
+				var _this4 = this;
 
 				return new Promise(function (resolve) {
-					var chooseLocationMap = _this5.state.chooseLocationMap;
+					var chooseLocationMap = _this4.state.chooseLocationMap;
 
 					// Each borough is a feature
 
 					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
 
-						_this5.setState({
-							locationData: _extends({}, _this5.state.locationData, { featureCollection: featureCollection })
+						_this4.setState({
+							locationData: _extends({}, _this4.state.locationData, { featureCollection: featureCollection })
 						});
 
 						resolve();
@@ -13935,15 +13943,15 @@
 		}, {
 			key: 'startGame',
 			value: function startGame() {
-				var _this6 = this;
+				var _this5 = this;
 
 				return this.setRandomLocation().then(function () {
 
 					setTimeout(function () {
-						var spinner = _this6.state.spinner;
+						var spinner = _this5.state.spinner;
 
 
-						_this6.setState({
+						_this5.setState({
 							promptText: 'Where is this?',
 							view: 'panorama'
 						});
@@ -13951,7 +13959,7 @@
 						spinner.start();
 
 						spinner.once('revolution', function () {
-							return _this6.onSpinnerRevolution();
+							return _this5.onSpinnerRevolution();
 						});
 					}, 5000);
 				});
@@ -13967,11 +13975,18 @@
 					'div',
 					{ id: this.props.gameId },
 					_react2.default.createElement(_TwoBlocksView2.default, {
+						mapCanvasId: this.state.mapCanvasId,
 						mapLatLng: this.state.mapLatLng,
+						onMapMounted: this.onMapMounted.bind(this),
+						onPanoramaMounted: this.onPanoramaMounted.bind(this),
 						panorama: this.state.panorama,
 						panoramaLatLng: this.state.panoramaLatLng,
-						view: this.state.view }),
-					_react2.default.createElement(_TwoBlocksPrompt2.default, { text: this.state.promptText })
+						view: this.state.view
+					}),
+					_react2.default.createElement(_TwoBlocksPrompt2.default, {
+						promptId: this.props.promptId,
+						text: this.state.promptText
+					})
 				);
 			}
 		}]);
@@ -13979,10 +13994,20 @@
 		return TwoBlocks;
 	}(_react2.default.Component);
 
+	TwoBlocks.propTypes = {
+		gameId: _react2.default.PropTypes.string.isRequired,
+		mapCanvasId: _react2.default.PropTypes.string.isRequired,
+		panoramaCanvasId: _react2.default.PropTypes.string.isRequired,
+		promptId: _react2.default.PropTypes.string.isRequired
+	};
+
 	// Assign default props to the constructor
-
-
-	TwoBlocks.defaultProps = { mapCanvasId: "twoBlocks-map", gameId: "twoBlocks", panoramaCanvasId: "twoBlocks-panorama" };
+	TwoBlocks.defaultProps = {
+		gameId: "twoBlocks",
+		mapCanvasId: "twoBlocks-map",
+		panoramaCanvasId: "twoBlocks-panorama",
+		promptId: "twoBlocks-prompt"
+	};
 
 	exports.default = TwoBlocks;
 
@@ -14034,14 +14059,38 @@
 				return _react2.default.createElement(
 					'div',
 					{ id: 'twoBlocks-view', className: 'inherit-dimensions' },
-					_react2.default.createElement(_TwoBlocksMap2.default, { visible: 'map' === this.props.view, latLng: this.props.mapLatLng }),
-					_react2.default.createElement(_TwoBlocksPanorama2.default, { visible: 'panorama' === this.props.view, panorama: this.props.panorama, latLng: this.props.panoramaLatLng })
+					_react2.default.createElement(_TwoBlocksMap2.default, {
+						id: this.props.mapCanvasId,
+						latLng: this.props.mapLatLng,
+						onMapMounted: this.props.onMapMounted,
+						visible: 'map' === this.props.view
+					}),
+					_react2.default.createElement(_TwoBlocksPanorama2.default, {
+						id: this.props.panoramaCanvasId,
+						latLng: this.props.panoramaLatLng,
+						onPanoramaMounted: this.props.onPanoramaMounted,
+						panorama: this.props.panorama,
+						visible: 'panorama' === this.props.view
+					})
 				);
 			}
 		}]);
 
 		return TwoBlocksView;
 	}(_react2.default.Component);
+
+	TwoBlocksView.propTypes = {
+
+		mapCanvasId: _react2.default.PropTypes.string,
+		mapLatLng: _react2.default.PropTypes.object,
+		onMapMounted: _react2.default.PropTypes.func.isRequired,
+		onPanoramaMounted: _react2.default.PropTypes.func.isRequired,
+		panorama: _react2.default.PropTypes.object,
+		panoramaCanvasId: _react2.default.PropTypes.string,
+		panoramaLatLng: _react2.default.PropTypes.object,
+		view: _react2.default.PropTypes.string.isRequired
+
+	};
 
 	exports.default = TwoBlocksView;
 
@@ -14083,15 +14132,34 @@
 		}
 
 		_createClass(TwoBlocksMap, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+
+				this.props.onMapMounted(this._mapCanvas);
+			}
+		}, {
 			key: 'render',
 			value: function render() {
+				var _this2 = this;
 
-				return _react2.default.createElement('div', { id: 'twoBlocks-map', className: _getViewLayerClassName2.default.call(this) });
+				return _react2.default.createElement('div', {
+					id: 'twoBlocks-map',
+					className: _getViewLayerClassName2.default.call(this),
+					ref: function ref(mapCanvas) {
+						return _this2._mapCanvas = mapCanvas;
+					}
+				});
 			}
 		}]);
 
 		return TwoBlocksMap;
 	}(_react2.default.Component);
+
+	TwoBlocksMap.propTypes = {
+
+		onMapMounted: _react2.default.PropTypes.func.isRequired
+
+	};
 
 	exports.default = TwoBlocksMap;
 
@@ -14139,7 +14207,7 @@
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global window */
 
 	var TwoBlocksPanorama = function (_React$Component) {
 		_inherits(TwoBlocksPanorama, _React$Component);
@@ -14151,6 +14219,12 @@
 		}
 
 		_createClass(TwoBlocksPanorama, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+
+				this.props.onPanoramaMounted(this._panoramaCanvas);
+			}
+		}, {
 			key: 'componentDidUpdate',
 			value: function componentDidUpdate(previousProps) {
 				var _props = this.props;
@@ -14167,13 +14241,28 @@
 		}, {
 			key: 'render',
 			value: function render() {
+				var _this2 = this;
 
-				return _react2.default.createElement('div', { id: 'twoBlocks-panorama', className: _getViewLayerClassName2.default.call(this) });
+				return _react2.default.createElement('div', {
+					id: 'twoBlocks-panorama',
+					className: _getViewLayerClassName2.default.call(this),
+					ref: function ref(panoramaCanvas) {
+						return _this2._panoramaCanvas = panoramaCanvas;
+					}
+				});
 			}
 		}]);
 
 		return TwoBlocksPanorama;
 	}(_react2.default.Component);
+
+	TwoBlocksPanorama.propTypes = {
+
+		latLng: _react2.default.PropTypes.object,
+		onPanoramaMounted: _react2.default.PropTypes.func.isRequired,
+		panorama: _react2.default.PropTypes.object
+
+	};
 
 	exports.default = TwoBlocksPanorama;
 
@@ -14228,6 +14317,14 @@
 
 		return TwoBlocksPrompt;
 	}(_react2.default.Component);
+
+	TwoBlocksPrompt.propTypes = {
+
+		promptId: _react2.default.PropTypes.string.isRequired,
+
+		text: _react2.default.PropTypes.string
+
+	};
 
 	exports.default = TwoBlocksPrompt;
 

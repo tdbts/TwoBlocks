@@ -16,4 +16,12 @@ class TwoBlocksPrompt extends React.Component {
 
 }
 
+TwoBlocksPrompt.propTypes = {
+	
+	promptId: React.PropTypes.string.isRequired, 
+	
+	text: React.PropTypes.string
+
+}; 
+
 export default TwoBlocksPrompt; 
