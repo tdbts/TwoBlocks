@@ -13864,19 +13864,6 @@
 						window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
 					});
 				}
-
-				chooseLocationMap.data.addListener('mouseover', function (event) {
-
-					chooseLocationMap.data.revertStyle();
-
-					chooseLocationMap.data.overrideStyle(event.feature, {
-						fillColor: "#A8FFFC"
-					});
-				});
-
-				chooseLocationMap.data.addListener('mouseout', function () {
-					return chooseLocationMap.data.revertStyle();
-				});
 			}
 		}, {
 			key: 'setRandomLocation',

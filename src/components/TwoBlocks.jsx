@@ -197,19 +197,7 @@ class TwoBlocks extends React.Component {
 
 			}); 
 
-		}
-
-		chooseLocationMap.data.addListener('mouseover', event => {
-			
-			chooseLocationMap.data.revertStyle(); 
-			
-			chooseLocationMap.data.overrideStyle(event.feature, {
-				fillColor: "#A8FFFC"
-			}); 
-		
-		}); 
-
-		chooseLocationMap.data.addListener('mouseout', () => chooseLocationMap.data.revertStyle()); 		
+		} 		
 
 	}
 
