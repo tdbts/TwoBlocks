@@ -16,10 +16,13 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = {
+			chooseLocationMap: null, 
+			chooseLocationMarker: null, 
 			initialized: false, 
 			locationData: nycCoordinates, 
 			mapCanvas: null, 
-			mapLatLng: null, 
+			mapLatLng: null,
+			mapMarkerVisible: false,  
 			panorama: null, 
 			panoramaCanvas: null, 
 			panoramaLatLng: null, 
@@ -122,37 +125,14 @@ class TwoBlocks extends React.Component {
 
 	onSpinnerRevolution() {
 
-		const { chooseLocationMap, locationData, panorama, spinner } = this.state; 
+		const { chooseLocationMap, chooseLocationMarker, panorama, spinner } = this.state; 
 
 		spinner.stop(); 
 
 		this.setState({
+			mapMarkerVisible: true, 
 			view: 'map'
 		}); 
-
-		// Outside the polygon boundaries, in the Atlantic Ocean 
-		const { lat: markerLat, lng: markerLng } = locationData.MARKER_PLACEMENT; 
-
-		const markerOptions = {
-			animation: google.maps.Animation.BOUNCE, 
-			draggable: true, 
-			map: chooseLocationMap, 
-			position: new google.maps.LatLng(markerLat, markerLng)
-		}; 
-
-		const chooseLocationMarker = new google.maps.Marker(markerOptions); 
-
-		// Stop bouncing 
-		google.maps.event.addListener(chooseLocationMarker, 'dragstart', () => chooseLocationMarker.setAnimation(null)); 
-
-		google.maps.event.addListener(chooseLocationMap, 'click', e => {
-
-			const { latLng } = e; 
-
-			chooseLocationMarker.setPosition(latLng); 
-			chooseLocationMarker.setAnimation(null); 
-
-		});
 
 		const eventToEntityMap = {
 			'dragend': chooseLocationMarker, 
@@ -266,6 +246,8 @@ class TwoBlocks extends React.Component {
 				<TwoBlocksView 
 					mapCanvasId={ this.state.mapCanvasId }
 					mapLatLng={ this.state.mapLatLng }
+					mapMarker={ this.state.chooseLocationMarker }
+					mapMarkerVisible={ this.state.mapMarkerVisible }
 					onMapMounted={ this.onMapMounted.bind(this) }
 					onPanoramaMounted={ this.onPanoramaMounted.bind(this) } 
 					panorama={ this.state.panorama } 

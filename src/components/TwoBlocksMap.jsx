@@ -9,12 +9,22 @@ class TwoBlocksMap extends React.Component {
 
 	}
 
+	componentDidUpdate(prevProps) {
+
+		const { mapMarkerVisible, mapMarker } = this.props; 
+
+		if (mapMarkerVisible === prevProps.mapMarkerVisible) return; 
+
+		mapMarker.setVisible(mapMarkerVisible); 
+
+	}
+
 	render() {
 
 		return (
 
 			<div 
-				id="twoBlocks-map" 
+				id={ this.props.id } 
 				className={getViewLayerClassName.call(this)} 
 				ref={ mapCanvas => (this._mapCanvas = mapCanvas) }
 			>
@@ -28,7 +38,10 @@ class TwoBlocksMap extends React.Component {
 
 TwoBlocksMap.propTypes = {
 
-	onMapMounted: React.PropTypes.func.isRequired
+	id 					: React.PropTypes.string, 
+	mapMarker 			: React.PropTypes.object, 
+	mapMarkerVisible 	: React.PropTypes.bool, 
+	onMapMounted 		: React.PropTypes.func.isRequired
 
 }; 
 

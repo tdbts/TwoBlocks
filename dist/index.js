@@ -13696,10 +13696,13 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocks).call(this, props));
 
 			_this.state = {
+				chooseLocationMap: null,
+				chooseLocationMarker: null,
 				initialized: false,
 				locationData: _constants.nycCoordinates,
 				mapCanvas: null,
 				mapLatLng: null,
+				mapMarkerVisible: false,
 				panorama: null,
 				panoramaCanvas: null,
 				panoramaLatLng: null,
@@ -13806,7 +13809,7 @@
 			value: function onSpinnerRevolution() {
 				var _state2 = this.state;
 				var chooseLocationMap = _state2.chooseLocationMap;
-				var locationData = _state2.locationData;
+				var chooseLocationMarker = _state2.chooseLocationMarker;
 				var panorama = _state2.panorama;
 				var spinner = _state2.spinner;
 
@@ -13814,35 +13817,8 @@
 				spinner.stop();
 
 				this.setState({
+					mapMarkerVisible: true,
 					view: 'map'
-				});
-
-				// Outside the polygon boundaries, in the Atlantic Ocean
-				var _locationData$MARKER_ = locationData.MARKER_PLACEMENT;
-				var markerLat = _locationData$MARKER_.lat;
-				var markerLng = _locationData$MARKER_.lng;
-
-
-				var markerOptions = {
-					animation: google.maps.Animation.BOUNCE,
-					draggable: true,
-					map: chooseLocationMap,
-					position: new google.maps.LatLng(markerLat, markerLng)
-				};
-
-				var chooseLocationMarker = new google.maps.Marker(markerOptions);
-
-				// Stop bouncing
-				google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
-					return chooseLocationMarker.setAnimation(null);
-				});
-
-				google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
-					var latLng = e.latLng;
-
-
-					chooseLocationMarker.setPosition(latLng);
-					chooseLocationMarker.setAnimation(null);
 				});
 
 				var eventToEntityMap = {
@@ -13956,6 +13932,8 @@
 					_react2.default.createElement(_TwoBlocksView2.default, {
 						mapCanvasId: this.state.mapCanvasId,
 						mapLatLng: this.state.mapLatLng,
+						mapMarker: this.state.chooseLocationMarker,
+						mapMarkerVisible: this.state.mapMarkerVisible,
 						onMapMounted: this.onMapMounted.bind(this),
 						onPanoramaMounted: this.onPanoramaMounted.bind(this),
 						panorama: this.state.panorama,
@@ -14042,6 +14020,8 @@
 						id: this.props.mapCanvasId,
 						latLng: this.props.mapLatLng,
 						onMapMounted: this.props.onMapMounted,
+						mapMarker: this.props.mapMarker,
+						mapMarkerVisible: this.props.mapMarkerVisible,
 						visible: 'map' === this.props.view
 					}),
 					_react2.default.createElement(_TwoBlocksPanorama2.default, {
@@ -14062,6 +14042,8 @@
 
 		mapCanvasId: _react2.default.PropTypes.string,
 		mapLatLng: _react2.default.PropTypes.object,
+		mapMarker: _react2.default.PropTypes.object,
+		mapMarkerVisible: _react2.default.PropTypes.bool,
 		onMapMounted: _react2.default.PropTypes.func.isRequired,
 		onPanoramaMounted: _react2.default.PropTypes.func.isRequired,
 		panorama: _react2.default.PropTypes.object,
@@ -14117,12 +14099,24 @@
 				this.props.onMapMounted(this._mapCanvas);
 			}
 		}, {
+			key: 'componentDidUpdate',
+			value: function componentDidUpdate(prevProps) {
+				var _props = this.props;
+				var mapMarkerVisible = _props.mapMarkerVisible;
+				var mapMarker = _props.mapMarker;
+
+
+				if (mapMarkerVisible === prevProps.mapMarkerVisible) return;
+
+				mapMarker.setVisible(mapMarkerVisible);
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				var _this2 = this;
 
 				return _react2.default.createElement('div', {
-					id: 'twoBlocks-map',
+					id: this.props.id,
 					className: _getViewLayerClassName2.default.call(this),
 					ref: function ref(mapCanvas) {
 						return _this2._mapCanvas = mapCanvas;
@@ -14136,6 +14130,9 @@
 
 	TwoBlocksMap.propTypes = {
 
+		id: _react2.default.PropTypes.string,
+		mapMarker: _react2.default.PropTypes.object,
+		mapMarkerVisible: _react2.default.PropTypes.bool,
 		onMapMounted: _react2.default.PropTypes.func.isRequired
 
 	};
@@ -14422,24 +14419,22 @@
 		}
 
 		// 'currentLat' and 'currentLng' are deprecated...
-		var panoramaCanvas = gameState.panoramaCanvas;
-		var currentLat = gameState.currentLat;
-		var currentLng = gameState.currentLng;
+		var locationData = gameState.locationData;
 		var mapCanvas = gameState.mapCanvas;
 		var mapLatLng = gameState.mapLatLng;
+		var mapMarkerVisible = gameState.mapMarkerVisible;
+		var panoramaCanvas = gameState.panoramaCanvas;
 
 
 		var webGlManager = (0, _createWebGlManager2.default)(panoramaCanvas);
 
 		var mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
 
-		var gps = new google.maps.LatLng(currentLat, currentLng);
-
 		/*----------  Set up panorama  ----------*/
 
 		var panorama = (0, _createPanorama2.default)(panoramaCanvas, {
 			mode: mode,
-			position: gps,
+			position: null,
 			visible: true
 		});
 
@@ -14457,12 +14452,43 @@
 		});
 
 		/*----------  Set up chooseLocationMap  ----------*/
-		window.console.log("mapLatLng:", mapLatLng);
+
 		var mapOptions = {
 			center: mapLatLng
 		};
 
 		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
+
+		/*----------  Set up marker  ----------*/
+
+		// Outside the polygon boundaries, in the Atlantic Ocean
+		var _locationData$MARKER_ = locationData.MARKER_PLACEMENT;
+		var markerLat = _locationData$MARKER_.lat;
+		var markerLng = _locationData$MARKER_.lng;
+
+
+		var markerOptions = {
+			animation: google.maps.Animation.BOUNCE,
+			draggable: true,
+			map: chooseLocationMap,
+			position: new google.maps.LatLng(markerLat, markerLng),
+			visible: mapMarkerVisible
+		};
+
+		var chooseLocationMarker = new google.maps.Marker(markerOptions);
+
+		// Stop bouncing
+		google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
+			return chooseLocationMarker.setAnimation(null);
+		});
+
+		google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
+			var latLng = e.latLng;
+
+
+			chooseLocationMarker.setPosition(latLng);
+			chooseLocationMarker.setAnimation(null);
+		});
 
 		/*----------  Set up WebGl  ----------*/
 
@@ -14475,6 +14501,7 @@
 
 		return {
 			chooseLocationMap: chooseLocationMap,
+			chooseLocationMarker: chooseLocationMarker,
 			panorama: panorama,
 			spinner: spinner
 		};

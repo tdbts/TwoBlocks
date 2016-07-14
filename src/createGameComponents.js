@@ -14,19 +14,17 @@ const createGameComponents = function createGameComponents(gameState) {
 	}
 
 	// 'currentLat' and 'currentLng' are deprecated...
-	const { panoramaCanvas, currentLat, currentLng, mapCanvas, mapLatLng } = gameState; 
+	const { locationData, mapCanvas, mapLatLng, mapMarkerVisible, panoramaCanvas } = gameState; 
 	
 	const webGlManager = createWebGlManager(panoramaCanvas); 
 	
 	const mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
 
-	const gps = new google.maps.LatLng(currentLat, currentLng);	
-
 	/*----------  Set up panorama  ----------*/
 
 	const panorama = createPanorama(panoramaCanvas, { 
 		mode, 
-		position: gps, 
+		position: null, 
 		visible: true
 	}); 
 
@@ -42,12 +40,39 @@ const createGameComponents = function createGameComponents(gameState) {
 	spinner.on('revolution', () => window.console.log('revolution')); 
 	
 	/*----------  Set up chooseLocationMap  ----------*/
-	window.console.log("mapLatLng:", mapLatLng); 
+
 	const mapOptions = {
 		center: mapLatLng
 	}; 
 
 	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);			
+
+	/*----------  Set up marker  ----------*/
+
+	// Outside the polygon boundaries, in the Atlantic Ocean 
+	const { lat: markerLat, lng: markerLng } = locationData.MARKER_PLACEMENT; 
+
+	const markerOptions = {
+		animation: google.maps.Animation.BOUNCE, 
+		draggable: true, 
+		map: chooseLocationMap, 
+		position: new google.maps.LatLng(markerLat, markerLng), 
+		visible: mapMarkerVisible
+	}; 
+
+	const chooseLocationMarker = new google.maps.Marker(markerOptions); 
+
+	// Stop bouncing 
+	google.maps.event.addListener(chooseLocationMarker, 'dragstart', () => chooseLocationMarker.setAnimation(null)); 
+
+	google.maps.event.addListener(chooseLocationMap, 'click', e => {
+
+		const { latLng } = e; 
+
+		chooseLocationMarker.setPosition(latLng); 
+		chooseLocationMarker.setAnimation(null); 
+
+	});
 
 	/*----------  Set up WebGl  ----------*/
 	
@@ -59,6 +84,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	return {
 		chooseLocationMap, 
+		chooseLocationMarker, 
 		panorama, 
 		spinner
 	}; 

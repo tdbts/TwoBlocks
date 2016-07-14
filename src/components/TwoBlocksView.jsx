@@ -13,6 +13,8 @@ class TwoBlocksView extends React.Component {
 					id={ this.props.mapCanvasId } 
 					latLng={ this.props.mapLatLng } 
 					onMapMounted={ this.props.onMapMounted }
+					mapMarker={ this.props.mapMarker }
+					mapMarkerVisible={ this.props.mapMarkerVisible }
 					visible={ 'map' === this.props.view } 
 				/>
 				<TwoBlocksPanorama 
@@ -34,6 +36,8 @@ TwoBlocksView.propTypes = {
 	
 	mapCanvasId 		: React.PropTypes.string, 
 	mapLatLng 			: React.PropTypes.object, 
+	mapMarker 			: React.PropTypes.object, 
+	mapMarkerVisible 	: React.PropTypes.bool, 
 	onMapMounted 		: React.PropTypes.func.isRequired, 
 	onPanoramaMounted 	: React.PropTypes.func.isRequired, 
 	panorama 			: React.PropTypes.object, 
