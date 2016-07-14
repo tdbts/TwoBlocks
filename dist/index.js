@@ -13865,9 +13865,6 @@
 					});
 				}
 
-				// Each borough is a feature
-				chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL);
-
 				chooseLocationMap.data.addListener('mouseover', function (event) {
 
 					chooseLocationMap.data.revertStyle();

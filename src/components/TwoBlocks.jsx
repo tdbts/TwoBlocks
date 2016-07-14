@@ -199,9 +199,6 @@ class TwoBlocks extends React.Component {
 
 		}
 
-		// Each borough is a feature 
-		chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL); 
-
 		chooseLocationMap.data.addListener('mouseover', event => {
 			
 			chooseLocationMap.data.revertStyle(); 
