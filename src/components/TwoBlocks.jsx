@@ -3,6 +3,7 @@
 import React from 'react';
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksPrompt from './TwoBlocksPrompt';
+import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
 import calculateDistanceFromMarkerToLocation from '../calculateDistanceFromMarkerToLocation'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
@@ -28,6 +29,7 @@ class TwoBlocks extends React.Component {
 			panoramaCanvas: null, 
 			panoramaLatLng: null, 
 			promptText: 'loading...',
+			selectedBorough: null, 
 			spinner: null,  
 			view: 'map' 
 		}; 
@@ -164,23 +166,29 @@ class TwoBlocks extends React.Component {
 
 			}); 
 
-			/*----------  Style chooseLocationMap  ----------*/
+			/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
 			
 			chooseLocationMap.data.addListener('mouseover', event => {
 				
+				window.console.log("event:", event); 
+
 				chooseLocationMap.data.revertStyle(); 
 				
 				chooseLocationMap.data.overrideStyle(event.feature, {
 					fillColor: "#A8FFFC"
 				}); 
+
+				this.updateSelectedBorough(event.feature); 
 			
 			});
 
-			chooseLocationMap.data.addListener('mouseout', () => {
+			chooseLocationMap.data.addListener('mouseout', event => {
 
 				chooseLocationMap.data.revertStyle(); 
 
-			}); 				
+				this.updateSelectedBorough(event.feature);
+
+			}); 		
 
 		}); 
 
@@ -270,6 +278,18 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	updateSelectedBorough(feature) {
+
+		const boroughName = feature.getProperty('boro_name'); 
+
+		if (this.state.selectedBorough === boroughName) return; 
+
+		this.setState({
+			selectedBorough: boroughName
+		}); 
+
+	}
+
 	/*----------  render()  ----------*/
 	
 	render() {
@@ -291,6 +311,9 @@ class TwoBlocks extends React.Component {
 				<TwoBlocksPrompt 
 					promptId={ this.props.promptId } 
 					text={ this.state.promptText } 
+				/>
+				<TwoBlocksSubmitter 
+					selectedBorough={ this.state.selectedBorough }
 				/>
 			</div>
 	
