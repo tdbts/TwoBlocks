@@ -13771,7 +13771,7 @@
 
 
 					this.setState({
-						promptText: 'Where is this?',
+						promptText: 'Look closely...where is this?',
 						view: 'panorama'
 					});
 
@@ -13892,6 +13892,7 @@
 
 				this.setState({
 					mapMarkerVisible: true,
+					promptText: "Where in the city was the last panorama located?",
 					view: 'map'
 				});
 
