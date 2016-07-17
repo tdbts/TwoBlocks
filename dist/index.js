@@ -13733,17 +13733,12 @@
 			value: function componentDidUpdate(prevProps, prevState) {
 				// eslint-disable-line no-unused-vars
 
-				if (this.state.initialized) return;
-
-				// Children TwoBlocksMap and TwoBlocksPanorama
+				// Child <TwoBlocksMap /> and <TwoBlocksPanorama />
 				// components will call methods which update this
 				// component's state with the child components'
 				// respective DOM elements.  Once both elements
 				// exist in state, initialize TwoBlocks. 
-				if (this.state.mapCanvas && this.state.panoramaCanvas) {
-
-					this.initializeTwoBlocks();
-				}
+				this.initializeTwoBlocks();
 			}
 		}, {
 			key: 'initializeTwoBlocks',
@@ -13751,6 +13746,8 @@
 				var _this2 = this;
 
 				if (this.state.initialized) return;
+
+				if (!(this.state.mapCanvas && this.state.panoramaCanvas)) return;
 
 				var _state = this.state;
 				var mapCanvas = _state.mapCanvas;

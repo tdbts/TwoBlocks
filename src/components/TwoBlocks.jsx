@@ -51,24 +51,20 @@ class TwoBlocks extends React.Component {
 
 	componentDidUpdate(prevProps, prevState) {  // eslint-disable-line no-unused-vars
 
-		if (this.state.initialized) return; 
-
-		// Children TwoBlocksMap and TwoBlocksPanorama 
+		// Child <TwoBlocksMap /> and <TwoBlocksPanorama /> 
 		// components will call methods which update this 
 		// component's state with the child components' 
 		// respective DOM elements.  Once both elements 
 		// exist in state, initialize TwoBlocks.  
-		if (this.state.mapCanvas && this.state.panoramaCanvas) {
-
-			this.initializeTwoBlocks(); 
-
-		}
+		this.initializeTwoBlocks(); 
 
 	}
 
 	initializeTwoBlocks() {
 
 		if (this.state.initialized) return; 
+
+		if (!(this.state.mapCanvas && this.state.panoramaCanvas)) return; 
 
 		const { mapCanvas, panoramaCanvas } = this.state; 
 
