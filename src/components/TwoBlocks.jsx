@@ -101,9 +101,56 @@ class TwoBlocks extends React.Component {
 
 			})
 
-			.then(() => this.showPregameMap())
+			.then(() => this.loadCityGeoJSON())
 
 			.then(() => this.startGame()); 
+
+	}
+
+	loadCityGeoJSON() {
+
+		return new Promise(resolve => {
+
+			const { chooseLocationMap } = this.state; 
+
+			if (!(chooseLocationMap)) {
+
+				throw new Error("No 'chooseLocationMap' found in state.  Cannot load city's GeoJSON data."); 
+
+			}
+
+			/*----------  Load GeoJSON  ----------*/
+			
+			// Each borough is a feature 
+			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
+
+				this.setState({
+					locationData: Object.assign({}, this.state.locationData, { featureCollection })
+				}); 
+
+				resolve();  
+
+			}); 
+
+			/*----------  Style chooseLocationMap  ----------*/
+			
+			chooseLocationMap.data.addListener('mouseover', event => {
+				
+				chooseLocationMap.data.revertStyle(); 
+				
+				chooseLocationMap.data.overrideStyle(event.feature, {
+					fillColor: "#A8FFFC"
+				}); 
+			
+			});
+
+			chooseLocationMap.data.addListener('mouseout', () => {
+
+				chooseLocationMap.data.revertStyle(); 
+
+			}); 				
+
+		}); 
 
 	}
 
@@ -169,41 +216,6 @@ class TwoBlocks extends React.Component {
 			.then(() => window.console.log("this.state:", this.state))
 
 			.catch((...args) => `Caught error with args ${args}`); 				
-
-	}
-
-	showPregameMap() {
-
-		return new Promise(resolve => { 
-
-			const { chooseLocationMap } = this.state; 	
-
-			// Each borough is a feature 
-			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
-
-				this.setState({ 
-					locationData: Object.assign({}, this.state.locationData, { featureCollection }) 
-				}); 
-
-				resolve();  	 	
-
-			}); 
-
-			chooseLocationMap.data.addListener('mouseover', event => {
-				
-				chooseLocationMap.data.revertStyle(); 
-				
-				chooseLocationMap.data.overrideStyle(event.feature, {
-					fillColor: "#A8FFFC"
-				}); 
-			
-			}); 
-
-			chooseLocationMap.data.addListener('mouseout', () => 
-
-				chooseLocationMap.data.revertStyle()); 	
-
-			}); 	
 
 	}
 

@@ -13784,9 +13784,52 @@
 
 					return _this2.setState(gameComponents);
 				}).then(function () {
-					return _this2.showPregameMap();
+					return _this2.loadCityGeoJSON();
 				}).then(function () {
 					return _this2.startGame();
+				});
+			}
+		}, {
+			key: 'loadCityGeoJSON',
+			value: function loadCityGeoJSON() {
+				var _this3 = this;
+
+				return new Promise(function (resolve) {
+					var chooseLocationMap = _this3.state.chooseLocationMap;
+
+
+					if (!chooseLocationMap) {
+
+						throw new Error("No 'chooseLocationMap' found in state.  Cannot load city's GeoJSON data.");
+					}
+
+					/*----------  Load GeoJSON  ----------*/
+
+					// Each borough is a feature
+					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
+
+						_this3.setState({
+							locationData: _extends({}, _this3.state.locationData, { featureCollection: featureCollection })
+						});
+
+						resolve();
+					});
+
+					/*----------  Style chooseLocationMap  ----------*/
+
+					chooseLocationMap.data.addListener('mouseover', function (event) {
+
+						chooseLocationMap.data.revertStyle();
+
+						chooseLocationMap.data.overrideStyle(event.feature, {
+							fillColor: "#A8FFFC"
+						});
+					});
+
+					chooseLocationMap.data.addListener('mouseout', function () {
+
+						chooseLocationMap.data.revertStyle();
+					});
 				});
 			}
 		}, {
@@ -13836,7 +13879,7 @@
 		}, {
 			key: 'setRandomLocation',
 			value: function setRandomLocation() {
-				var _this3 = this;
+				var _this4 = this;
 
 				var featureCollection = this.state.locationData.featureCollection;
 
@@ -13846,50 +13889,17 @@
 					window.console.log("randomLatLng.lat():", randomLatLng.lat());
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
-					return _this3.setState({
+					return _this4.setState({
 						panoramaLatLng: randomLatLng
 					});
 				}).then(function () {
-					return window.console.log("this.state:", _this3.state);
+					return window.console.log("this.state:", _this4.state);
 				}).catch(function () {
 					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 						args[_key] = arguments[_key];
 					}
 
 					return 'Caught error with args ' + args;
-				});
-			}
-		}, {
-			key: 'showPregameMap',
-			value: function showPregameMap() {
-				var _this4 = this;
-
-				return new Promise(function (resolve) {
-					var chooseLocationMap = _this4.state.chooseLocationMap;
-
-					// Each borough is a feature
-
-					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
-
-						_this4.setState({
-							locationData: _extends({}, _this4.state.locationData, { featureCollection: featureCollection })
-						});
-
-						resolve();
-					});
-
-					chooseLocationMap.data.addListener('mouseover', function (event) {
-
-						chooseLocationMap.data.revertStyle();
-
-						chooseLocationMap.data.overrideStyle(event.feature, {
-							fillColor: "#A8FFFC"
-						});
-					});
-
-					chooseLocationMap.data.addListener('mouseout', function () {
-						return chooseLocationMap.data.revertStyle();
-					});
 				});
 			}
 		}, {
