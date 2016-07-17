@@ -16,9 +16,10 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = {
+			canvasesLoaded: false, 
 			chooseLocationMap: null, 
 			chooseLocationMarker: null, 
-			initialized: false, 
+			gameStage: null, 
 			locationData: nycCoordinates, 
 			mapCanvas: null, 
 			mapLatLng: null,
@@ -58,11 +59,47 @@ class TwoBlocks extends React.Component {
 		// exist in state, initialize TwoBlocks.  
 		this.initializeTwoBlocks(); 
 
+		this.handleGameStageTransition(prevProps, prevState); 
+
+	}
+
+	handleGameStageTransition(prevProps, prevState) {  // eslint-disable-line no-unused-vars
+
+		if (prevState.gameStage === this.state.gameStage) return; 
+
+		if ('pregame' === this.state.gameStage) {
+
+			const { lat, lng } = this.state.locationData.CENTER; 
+
+			const mapLatLng = new google.maps.LatLng(lat, lng);  
+
+			const nextState = {
+				mapLatLng,   
+				view: 'map'
+			}; 
+
+			this.setState(nextState); 
+			
+		} else if ('gameplay' === this.state.gameStage) {
+
+			const { spinner } = this.state; 
+
+			this.setState({
+				promptText: 'Where is this?',  
+				view: 'panorama'
+			});		
+
+			spinner.start(); 
+
+			spinner.once('revolution', () => this.onSpinnerRevolution()); 
+			
+		}
+
 	}
 
 	initializeTwoBlocks() {
 
-		if (this.state.initialized) return; 
+		if (this.state.canvasesLoaded) return; 
 
 		if (!(this.state.mapCanvas && this.state.panoramaCanvas)) return; 
 
@@ -78,15 +115,10 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
-		const { lat, lng } = this.state.locationData.CENTER; 
-
-		const mapLatLng = new google.maps.LatLng(lat, lng);  
-
-		const nextState = Object.assign({}, {
-			mapLatLng,   
-			initialized: true, 
-			view: 'map'
-		}); 
+		const nextState = {
+			canvasesLoaded: true, 
+			gameStage: 'pregame'
+		}; 
 
 		this.setState(nextState)
 
@@ -227,16 +259,9 @@ class TwoBlocks extends React.Component {
 
 				setTimeout(() => {
 
-					const { spinner } = this.state; 
-
 					this.setState({
-						promptText: 'Where is this?',  
-						view: 'panorama'
-					});		
-
-					spinner.start(); 
-
-					spinner.once('revolution', () => this.onSpinnerRevolution()); 
+						gameStage: 'gameplay'
+					}); 
 				
 				}, 5000);
 

@@ -13696,9 +13696,10 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocks).call(this, props));
 
 			_this.state = {
+				canvasesLoaded: false,
 				chooseLocationMap: null,
 				chooseLocationMarker: null,
-				initialized: false,
+				gameStage: null,
 				locationData: _constants.nycCoordinates,
 				mapCanvas: null,
 				mapLatLng: null,
@@ -13739,13 +13740,54 @@
 				// respective DOM elements.  Once both elements
 				// exist in state, initialize TwoBlocks. 
 				this.initializeTwoBlocks();
+
+				this.handleGameStageTransition(prevProps, prevState);
+			}
+		}, {
+			key: 'handleGameStageTransition',
+			value: function handleGameStageTransition(prevProps, prevState) {
+				var _this2 = this;
+
+				// eslint-disable-line no-unused-vars
+
+				if (prevState.gameStage === this.state.gameStage) return;
+
+				if ('pregame' === this.state.gameStage) {
+					var _state$locationData$C = this.state.locationData.CENTER;
+					var lat = _state$locationData$C.lat;
+					var lng = _state$locationData$C.lng;
+
+
+					var mapLatLng = new google.maps.LatLng(lat, lng);
+
+					var nextState = {
+						mapLatLng: mapLatLng,
+						view: 'map'
+					};
+
+					this.setState(nextState);
+				} else if ('gameplay' === this.state.gameStage) {
+					var spinner = this.state.spinner;
+
+
+					this.setState({
+						promptText: 'Where is this?',
+						view: 'panorama'
+					});
+
+					spinner.start();
+
+					spinner.once('revolution', function () {
+						return _this2.onSpinnerRevolution();
+					});
+				}
 			}
 		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
-				var _this2 = this;
+				var _this3 = this;
 
-				if (this.state.initialized) return;
+				if (this.state.canvasesLoaded) return;
 
 				if (!(this.state.mapCanvas && this.state.panoramaCanvas)) return;
 
@@ -13758,44 +13800,36 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this2.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
+						throw new Error('No element with ID \'#' + _this3.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
 					}
 				});
 
-				var _state$locationData$C = this.state.locationData.CENTER;
-				var lat = _state$locationData$C.lat;
-				var lng = _state$locationData$C.lng;
-
-
-				var mapLatLng = new google.maps.LatLng(lat, lng);
-
-				var nextState = _extends({}, {
-					mapLatLng: mapLatLng,
-					initialized: true,
-					view: 'map'
-				});
+				var nextState = {
+					canvasesLoaded: true,
+					gameStage: 'pregame'
+				};
 
 				this.setState(nextState).then(function () {
 
 					// gameComponents: chooseLocationMap, panorama, spinner
-					var gameComponents = (0, _createGameComponents2.default)(_this2.state);
+					var gameComponents = (0, _createGameComponents2.default)(_this3.state);
 
 					window.console.log("gameComponents:", gameComponents);
 
-					return _this2.setState(gameComponents);
+					return _this3.setState(gameComponents);
 				}).then(function () {
-					return _this2.loadCityGeoJSON();
+					return _this3.loadCityGeoJSON();
 				}).then(function () {
-					return _this2.startGame();
+					return _this3.startGame();
 				});
 			}
 		}, {
 			key: 'loadCityGeoJSON',
 			value: function loadCityGeoJSON() {
-				var _this3 = this;
+				var _this4 = this;
 
 				return new Promise(function (resolve) {
-					var chooseLocationMap = _this3.state.chooseLocationMap;
+					var chooseLocationMap = _this4.state.chooseLocationMap;
 
 
 					if (!chooseLocationMap) {
@@ -13808,8 +13842,8 @@
 					// Each borough is a feature
 					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
 
-						_this3.setState({
-							locationData: _extends({}, _this3.state.locationData, { featureCollection: featureCollection })
+						_this4.setState({
+							locationData: _extends({}, _this4.state.locationData, { featureCollection: featureCollection })
 						});
 
 						resolve();
@@ -13879,7 +13913,7 @@
 		}, {
 			key: 'setRandomLocation',
 			value: function setRandomLocation() {
-				var _this4 = this;
+				var _this5 = this;
 
 				var featureCollection = this.state.locationData.featureCollection;
 
@@ -13889,11 +13923,11 @@
 					window.console.log("randomLatLng.lat():", randomLatLng.lat());
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
-					return _this4.setState({
+					return _this5.setState({
 						panoramaLatLng: randomLatLng
 					});
 				}).then(function () {
-					return window.console.log("this.state:", _this4.state);
+					return window.console.log("this.state:", _this5.state);
 				}).catch(function () {
 					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 						args[_key] = arguments[_key];
@@ -13905,23 +13939,14 @@
 		}, {
 			key: 'startGame',
 			value: function startGame() {
-				var _this5 = this;
+				var _this6 = this;
 
 				return this.setRandomLocation().then(function () {
 
 					setTimeout(function () {
-						var spinner = _this5.state.spinner;
 
-
-						_this5.setState({
-							promptText: 'Where is this?',
-							view: 'panorama'
-						});
-
-						spinner.start();
-
-						spinner.once('revolution', function () {
-							return _this5.onSpinnerRevolution();
+						_this6.setState({
+							gameStage: 'gameplay'
 						});
 					}, 5000);
 				});
