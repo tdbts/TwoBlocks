@@ -1,16 +1,11 @@
 import React from 'react'; 
+import stylizeBoroughName from '../stylizeBoroughName'; 
 
 class TwoBlocksSubmitter extends React.Component {
 
-	componentDidUpdate() {
-
-		window.console.log("this.props.selectedBorough:", this.props.selectedBorough); 
-		
-	}
-
 	onSubmissionButtonClick() {
 
-		window.console.log("Submission button clicked!"); 
+		this.props.evaluateFinalAnswer(); 
 
 	}
 
@@ -22,7 +17,7 @@ class TwoBlocksSubmitter extends React.Component {
 
 	render() {
 
-		const text = this.styleText(this.props.selectedBorough || ''); 
+		const text = this.styleText(stylizeBoroughName(this.props.selectedBorough) || ''); 
 		const buttonLabel = "Final answer?"; 
 
 		return (

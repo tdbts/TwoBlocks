@@ -8,10 +8,12 @@ import getLatLngMaxMin from './getLatLngMaxMin';
 import { tryAtMost } from './utils/utils'; 
 
 const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
-
+ 
 	const selectedFeature = getRandomFeature(featureCollection); 
 
 	window.console.log("selectedFeature.getProperty('boro_name'):", selectedFeature.getProperty('boro_name')); 
+
+	const boroughName = selectedFeature.getProperty('boro_name'); 
 
 	const selectedLinearRing = selectRandomWeightedLinearRing(selectedFeature); 
 
@@ -40,7 +42,9 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 
 	})
 
-	.then(() => randomLatLng); 
+	// N.B - Parentheses must be wrapped around an object literal 
+	// returned by an arrow function
+	.then(() => ( { boroughName, randomLatLng } )); 
 	
 }; 
 

@@ -7,6 +7,7 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import calculateDistanceFromMarkerToLocation from '../calculateDistanceFromMarkerToLocation'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
+import stylizeBoroughName from '../stylizeBoroughName'; 
 import { NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
@@ -26,6 +27,7 @@ class TwoBlocks extends React.Component {
 			mapLatLng: null,
 			mapMarkerVisible: false,  
 			panorama: null, 
+			panoramaBorough: null, 
 			panoramaCanvas: null, 
 			panoramaLatLng: null, 
 			promptText: 'loading...',
@@ -62,6 +64,22 @@ class TwoBlocks extends React.Component {
 		this.initializeTwoBlocks(); 
 
 		this.handleGameStageTransition(prevProps, prevState); 
+
+	}
+
+	evaluateFinalAnswer() {
+
+		window.console.log("Evaluating final answer!"); 
+
+		if (this.state.selectedBorough === this.state.panoramaBorough) {
+
+			window.console.log(`Correct!  The Street View shown was from ${stylizeBoroughName(this.state.panoramaBorough)}`); 
+		
+		} else {
+
+			window.console.log(`Sorry, ${stylizeBoroughName(this.state.selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(this.state.panoramaBorough)}`); 
+
+		}
 
 	}
 
@@ -238,17 +256,20 @@ class TwoBlocks extends React.Component {
 	}
 
 	setRandomLocation() {		
- 
+
 		const { featureCollection } = this.state.locationData;  
 		
 		return getRandomPanoramaLocation(featureCollection) 
 
-			.then(randomLatLng => {
+			.then(randomLocationDetails => {
+				
+				const { boroughName, randomLatLng } = randomLocationDetails; 
 
 				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
 				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
 
 				return this.setState({ 
+					panoramaBorough: boroughName,  
 					panoramaLatLng: randomLatLng
 				});   
 
@@ -314,6 +335,7 @@ class TwoBlocks extends React.Component {
 				/>
 				<TwoBlocksSubmitter 
 					selectedBorough={ this.state.selectedBorough }
+					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
 				/>
 			</div>
 	

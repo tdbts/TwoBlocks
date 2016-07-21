@@ -26,7 +26,9 @@
 	], 
 
 	"rules": {
-        // React
+
+        /*----------  React.js  ----------*/
+        
         "react/display-name": 0,
         "react/jsx-boolean-value": 1,
         "react/jsx-closing-bracket-location": 1,
@@ -51,6 +53,8 @@
         "react/self-closing-comp": 1,
         "react/sort-comp": 1,
         "react/wrap-multilines": 1,
+
+        /*----------  Javascript  ----------*/
 
 	    "eqeqeq": [2,"smart"],
 	    "no-eval": 2,
