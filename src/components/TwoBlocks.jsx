@@ -73,11 +73,11 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.selectedBorough === this.state.panoramaBorough) {
 
-			window.console.log(`Correct!  The Street View shown was from ${stylizeBoroughName(this.state.panoramaBorough)}`); 
+			this.onCorrectBorough(this.state.panoramaBorough); 
 		
 		} else {
 
-			window.console.log(`Sorry, ${stylizeBoroughName(this.state.selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(this.state.panoramaBorough)}`); 
+			this.onIncorrectBorough(this.state.selectedBorough, this.state.panoramaBorough); 
 
 		}
 
@@ -209,6 +209,18 @@ class TwoBlocks extends React.Component {
 			}); 		
 
 		}); 
+
+	}
+
+	onCorrectBorough(panoramaBorough) {
+
+		window.console.log(`Correct!  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}`);
+	
+	}
+
+	onIncorrectBorough(selectedBorough, panoramaBorough) {
+
+		window.console.log(`Sorry, ${stylizeBoroughName(selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}`); 
 
 	}
 

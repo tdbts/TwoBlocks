@@ -13761,10 +13761,10 @@
 
 				if (this.state.selectedBorough === this.state.panoramaBorough) {
 
-					window.console.log('Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(this.state.panoramaBorough));
+					this.onCorrectBorough(this.state.panoramaBorough);
 				} else {
 
-					window.console.log('Sorry, ' + (0, _stylizeBoroughName2.default)(this.state.selectedBorough) + ' is incorrect.  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(this.state.panoramaBorough));
+					this.onIncorrectBorough(this.state.selectedBorough, this.state.panoramaBorough);
 				}
 			}
 		}, {
@@ -13895,6 +13895,18 @@
 						_this4.updateSelectedBorough(event.feature);
 					});
 				});
+			}
+		}, {
+			key: 'onCorrectBorough',
+			value: function onCorrectBorough(panoramaBorough) {
+
+				window.console.log('Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough));
+			}
+		}, {
+			key: 'onIncorrectBorough',
+			value: function onIncorrectBorough(selectedBorough, panoramaBorough) {
+
+				window.console.log('Sorry, ' + (0, _stylizeBoroughName2.default)(selectedBorough) + ' is incorrect.  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough));
 			}
 		}, {
 			key: 'onMapMounted',
