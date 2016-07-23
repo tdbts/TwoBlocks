@@ -13770,46 +13770,23 @@
 		}, {
 			key: 'handleGameStageTransition',
 			value: function handleGameStageTransition(prevProps, prevState) {
-				var _this2 = this;
-
 				// eslint-disable-line no-unused-vars
 
+				// If the game stage has not changed, exit
 				if (prevState.gameStage === this.state.gameStage) return;
 
 				if ('pregame' === this.state.gameStage) {
-					var _state$locationData$C = this.state.locationData.CENTER;
-					var lat = _state$locationData$C.lat;
-					var lng = _state$locationData$C.lng;
 
-
-					var mapLatLng = new google.maps.LatLng(lat, lng);
-
-					var nextState = {
-						mapLatLng: mapLatLng,
-						view: 'map'
-					};
-
-					this.setState(nextState);
+					this.onTransitionToPregame();
 				} else if ('gameplay' === this.state.gameStage) {
-					var spinner = this.state.spinner;
 
-
-					this.setState({
-						promptText: 'Look closely...where is this?',
-						view: 'panorama'
-					});
-
-					spinner.start();
-
-					spinner.once('revolution', function () {
-						return _this2.onSpinnerRevolution();
-					});
+					this.onTransitionToGameplay();
 				}
 			}
 		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
-				var _this3 = this;
+				var _this2 = this;
 
 				if (this.state.canvasesLoaded) return;
 
@@ -13824,7 +13801,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this3.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
+						throw new Error('No element with ID \'#' + _this2.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
 					}
 				});
 
@@ -13836,24 +13813,24 @@
 				this.setState(nextState).then(function () {
 
 					// gameComponents: chooseLocationMap, panorama, spinner
-					var gameComponents = (0, _createGameComponents2.default)(_this3.state);
+					var gameComponents = (0, _createGameComponents2.default)(_this2.state);
 
 					window.console.log("gameComponents:", gameComponents);
 
-					return _this3.setState(gameComponents);
+					return _this2.setState(gameComponents);
 				}).then(function () {
-					return _this3.loadCityGeoJSON();
+					return _this2.loadCityGeoJSON();
 				}).then(function () {
-					return _this3.startGame();
+					return _this2.startGame();
 				});
 			}
 		}, {
 			key: 'loadCityGeoJSON',
 			value: function loadCityGeoJSON() {
-				var _this4 = this;
+				var _this3 = this;
 
 				return new Promise(function (resolve) {
-					var chooseLocationMap = _this4.state.chooseLocationMap;
+					var chooseLocationMap = _this3.state.chooseLocationMap;
 
 
 					if (!chooseLocationMap) {
@@ -13866,8 +13843,8 @@
 					// Each borough is a feature
 					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
 
-						_this4.setState({
-							locationData: _extends({}, _this4.state.locationData, { featureCollection: featureCollection })
+						_this3.setState({
+							locationData: _extends({}, _this3.state.locationData, { featureCollection: featureCollection })
 						});
 
 						resolve();
@@ -13885,14 +13862,14 @@
 							fillColor: "#A8FFFC"
 						});
 
-						_this4.updateSelectedBorough(event.feature);
+						_this3.updateSelectedBorough(event.feature);
 					});
 
 					chooseLocationMap.data.addListener('mouseout', function (event) {
 
 						chooseLocationMap.data.revertStyle();
 
-						_this4.updateSelectedBorough(event.feature);
+						_this3.updateSelectedBorough(event.feature);
 					});
 				});
 			}
@@ -13951,6 +13928,45 @@
 
 						window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
 					});
+				}
+			}
+		}, {
+			key: 'onTransitionToGameplay',
+			value: function onTransitionToGameplay() {
+				var _this4 = this;
+
+				var spinner = this.state.spinner;
+
+
+				this.setState({
+					promptText: 'Look closely...where is this?',
+					view: 'panorama'
+				});
+
+				spinner.start();
+
+				spinner.once('revolution', function () {
+					return _this4.onSpinnerRevolution();
+				});
+			}
+		}, {
+			key: 'onTransitionToPregame',
+			value: function onTransitionToPregame() {
+
+				if ('pregame' === this.state.gameStage) {
+					var _state$locationData$C = this.state.locationData.CENTER;
+					var lat = _state$locationData$C.lat;
+					var lng = _state$locationData$C.lng;
+
+
+					var mapLatLng = new google.maps.LatLng(lat, lng);
+
+					var nextState = {
+						mapLatLng: mapLatLng,
+						view: 'map'
+					};
+
+					this.setState(nextState);
 				}
 			}
 		}, {

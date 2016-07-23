@@ -85,33 +85,16 @@ class TwoBlocks extends React.Component {
 
 	handleGameStageTransition(prevProps, prevState) {  // eslint-disable-line no-unused-vars
 
+		// If the game stage has not changed, exit 
 		if (prevState.gameStage === this.state.gameStage) return; 
 
 		if ('pregame' === this.state.gameStage) {
 
-			const { lat, lng } = this.state.locationData.CENTER; 
+			this.onTransitionToPregame(); 
 
-			const mapLatLng = new google.maps.LatLng(lat, lng);  
-
-			const nextState = {
-				mapLatLng,   
-				view: 'map'
-			}; 
-
-			this.setState(nextState); 
-			
 		} else if ('gameplay' === this.state.gameStage) {
 
-			const { spinner } = this.state; 
-
-			this.setState({
-				promptText: 'Look closely...where is this?',  
-				view: 'panorama'
-			});		
-
-			spinner.start(); 
-
-			spinner.once('revolution', () => this.onSpinnerRevolution()); 
+			this.onTransitionToGameplay();
 
 		}
 
@@ -264,6 +247,40 @@ class TwoBlocks extends React.Component {
 			}); 
 
 		} 		
+
+	}
+
+	onTransitionToGameplay() {
+
+		const { spinner } = this.state; 
+
+		this.setState({
+			promptText: 'Look closely...where is this?',  
+			view: 'panorama'
+		});		
+
+		spinner.start(); 
+
+		spinner.once('revolution', () => this.onSpinnerRevolution()); 
+
+	}
+
+	onTransitionToPregame() {
+
+		if ('pregame' === this.state.gameStage) {
+
+			const { lat, lng } = this.state.locationData.CENTER; 
+
+			const mapLatLng = new google.maps.LatLng(lat, lng);  
+
+			const nextState = {
+				mapLatLng,   
+				view: 'map'
+			}; 
+
+			this.setState(nextState); 
+		
+		}
 
 	}
 
