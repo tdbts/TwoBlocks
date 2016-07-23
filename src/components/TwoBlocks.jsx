@@ -7,7 +7,8 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import calculateDistanceFromMarkerToLocation from '../calculateDistanceFromMarkerToLocation'; 
 import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
-import stylizeBoroughName from '../stylizeBoroughName'; 
+import stylizeBoroughName from '../stylizeBoroughName';
+import createPromiseTimeout from '../createPromiseTimeout';  
 import { NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
@@ -32,7 +33,8 @@ class TwoBlocks extends React.Component {
 			panoramaLatLng: null, 
 			promptText: 'loading...',
 			selectedBorough: null, 
-			spinner: null,  
+			spinner: null, 
+			totalTurns: 0,  
 			view: 'map' 
 		}; 
 
@@ -78,6 +80,17 @@ class TwoBlocks extends React.Component {
 		} else {
 
 			this.onIncorrectBorough(this.state.selectedBorough, this.state.panoramaBorough); 
+
+		}
+		
+		// Placeholder 
+		if (this.state.totalTurns < 5) {
+
+			this.nextTurn(); 
+
+		} else {
+
+			window.console.log("GAME OVER."); 
 
 		}
 
@@ -195,6 +208,38 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	nextTurn() {
+		
+		this.setRandomLocation() 
+
+		.then(() => createPromiseTimeout(2000)) 
+
+		.then(() => {
+
+			return this.setState({
+				promptText: 'Look closely...where is this?',  
+				view: 'panorama'
+			}); 
+
+		})		
+
+		.then(() => {
+
+			const { spinner } = this.state; 
+
+			spinner.start(); 
+
+			spinner.once('revolution', () => this.onSpinnerRevolution()); 
+
+			this.setState({
+				totalTurns: this.state.totalTurns + 1
+			});
+
+		}); 
+
+
+	}
+
 	onCorrectBorough(panoramaBorough) {
 
 		window.console.log(`Correct!  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}`);
@@ -252,35 +297,22 @@ class TwoBlocks extends React.Component {
 
 	onTransitionToGameplay() {
 
-		const { spinner } = this.state; 
-
-		this.setState({
-			promptText: 'Look closely...where is this?',  
-			view: 'panorama'
-		});		
-
-		spinner.start(); 
-
-		spinner.once('revolution', () => this.onSpinnerRevolution()); 
+		this.nextTurn(); 
 
 	}
 
 	onTransitionToPregame() {
 
-		if ('pregame' === this.state.gameStage) {
+		const { lat, lng } = this.state.locationData.CENTER; 
 
-			const { lat, lng } = this.state.locationData.CENTER; 
+		const mapLatLng = new google.maps.LatLng(lat, lng);  
 
-			const mapLatLng = new google.maps.LatLng(lat, lng);  
+		const nextState = {
+			mapLatLng,   
+			view: 'map'
+		}; 
 
-			const nextState = {
-				mapLatLng,   
-				view: 'map'
-			}; 
-
-			this.setState(nextState); 
-		
-		}
+		this.setState(nextState); 
 
 	}
 
