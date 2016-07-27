@@ -23,6 +23,7 @@ class TwoBlocks extends React.Component {
 			chooseLocationMap: null, 
 			chooseLocationMarker: null, 
 			gameStage: null, 
+			hoveredBorough: null, 
 			locationData: nycCoordinates, 
 			mapCanvas: null, 
 			mapLatLng: null,
@@ -69,6 +70,33 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	addEventListenersToGameComponents(gameComponents) {
+
+		/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
+
+		const { chooseLocationMap, chooseLocationMarker, panorama } = gameComponents; 
+		
+		const eventToEntityMap = {
+			'dragend': chooseLocationMarker, 
+			'click': chooseLocationMap
+		}; 
+
+		const logDistanceFromPanorama = () => {
+
+			const distanceFromPanoramaInMiles = calculateDistanceFromMarkerToLocation(panorama, chooseLocationMarker); 
+
+			window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles); 
+
+		}; 
+
+		for (const event in eventToEntityMap) {
+
+			google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama); 
+
+		} 					
+
+	}
+
 	evaluateFinalAnswer() {
 
 		window.console.log("Evaluating final answer!"); 
@@ -86,7 +114,11 @@ class TwoBlocks extends React.Component {
 		// Placeholder 
 		if (this.state.totalTurns < 5) {
 
-			this.nextTurn(); 
+			this.setState({
+				selectedBorough: null
+			})
+
+			.then(() => this.nextTurn());  
 
 		} else {
 
@@ -141,9 +173,11 @@ class TwoBlocks extends React.Component {
 			.then(() => {
 				
 				// gameComponents: chooseLocationMap, panorama, spinner 
-				const gameComponents = createGameComponents(this.state); 
+				const gameComponents = createGameComponents(this.state);
 
 				window.console.log("gameComponents:", gameComponents);		 
+
+				this.addEventListenersToGameComponents(gameComponents);  
 				
 				return this.setState(gameComponents); 
 
@@ -192,17 +226,29 @@ class TwoBlocks extends React.Component {
 					fillColor: "#A8FFFC"
 				}); 
 
-				this.updateSelectedBorough(event.feature); 
+				this.updateHoveredBorough(event.feature); 
 			
 			});
 
-			chooseLocationMap.data.addListener('mouseout', event => {
+			chooseLocationMap.data.addListener('mouseout', () => {
 
 				chooseLocationMap.data.revertStyle(); 
 
-				this.updateSelectedBorough(event.feature);
+				this.updateHoveredBorough('');
 
-			}); 		
+			}); 	
+
+			chooseLocationMap.data.addListener('click', event => {
+
+				chooseLocationMap.data.revertStyle(); 
+
+				chooseLocationMap.data.overrideStyle(event.feature, {
+					fillColor: "#FFFFFF"
+				}); 
+
+				this.updateSelectedBorough(event.feature); 
+
+			}); 
 
 		}); 
 
@@ -266,7 +312,7 @@ class TwoBlocks extends React.Component {
 
 	onSpinnerRevolution() {
 
-		const { chooseLocationMap, chooseLocationMarker, panorama, spinner } = this.state; 
+		const { spinner } = this.state; 
 
 		spinner.stop(); 
 
@@ -275,23 +321,6 @@ class TwoBlocks extends React.Component {
 			promptText: "Where in the city was the last panorama located?", 
 			view: 'map'
 		}); 
-
-		const eventToEntityMap = {
-			'dragend': chooseLocationMarker, 
-			'click': chooseLocationMap
-		}; 
-
-		for (const event in eventToEntityMap) {
-
-			google.maps.event.addListener(eventToEntityMap[event], event, () => {
-
-				const distanceFromPanoramaInMiles = calculateDistanceFromMarkerToLocation(panorama, chooseLocationMarker); 
-
-				window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles); 
-
-			}); 
-
-		} 		
 
 	}
 
@@ -360,6 +389,26 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	updateHoveredBorough(feature) {
+
+		if (!(feature)) {
+
+			return this.setState({
+				hoveredBorough: ''
+			}); 
+
+		}
+
+		const boroughName = feature.getProperty('boro_name'); 
+
+		if (this.state.hoveredBorough === boroughName) return; 
+
+		this.setState({
+			hoveredBorough: boroughName
+		}); 
+
+	}
+
 	updateSelectedBorough(feature) {
 
 		const boroughName = feature.getProperty('boro_name'); 
@@ -390,13 +439,15 @@ class TwoBlocks extends React.Component {
 					panoramaLatLng={ this.state.panoramaLatLng } 
 					view={ this.state.view } 
 				/>
-				<TwoBlocksPrompt 
+				<TwoBlocksPrompt
+					hoveredBorough={ this.state.hoveredBorough } 
 					promptId={ this.props.promptId } 
 					text={ this.state.promptText } 
 				/>
 				<TwoBlocksSubmitter 
-					selectedBorough={ this.state.selectedBorough }
+					hoveredBorough={ this.state.hoveredBorough }
 					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
+					selectedBorough={ this.state.selectedBorough }
 				/>
 			</div>
 	

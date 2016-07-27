@@ -13663,7 +13663,7 @@
 
 	var _TwoBlocksPrompt2 = _interopRequireDefault(_TwoBlocksPrompt);
 
-	var _TwoBlocksSubmitter = __webpack_require__(384);
+	var _TwoBlocksSubmitter = __webpack_require__(385);
 
 	var _TwoBlocksSubmitter2 = _interopRequireDefault(_TwoBlocksSubmitter);
 
@@ -13679,7 +13679,7 @@
 
 	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
 
-	var _stylizeBoroughName = __webpack_require__(385);
+	var _stylizeBoroughName = __webpack_require__(384);
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
@@ -13712,6 +13712,7 @@
 				chooseLocationMap: null,
 				chooseLocationMarker: null,
 				gameStage: null,
+				hoveredBorough: null,
 				locationData: _constants.nycCoordinates,
 				mapCanvas: null,
 				mapLatLng: null,
@@ -13759,8 +13760,37 @@
 				this.handleGameStageTransition(prevProps, prevState);
 			}
 		}, {
+			key: 'addEventListenersToGameComponents',
+			value: function addEventListenersToGameComponents(gameComponents) {
+
+				/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
+
+				var chooseLocationMap = gameComponents.chooseLocationMap;
+				var chooseLocationMarker = gameComponents.chooseLocationMarker;
+				var panorama = gameComponents.panorama;
+
+
+				var eventToEntityMap = {
+					'dragend': chooseLocationMarker,
+					'click': chooseLocationMap
+				};
+
+				var logDistanceFromPanorama = function logDistanceFromPanorama() {
+
+					var distanceFromPanoramaInMiles = (0, _calculateDistanceFromMarkerToLocation2.default)(panorama, chooseLocationMarker);
+
+					window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
+				};
+
+				for (var event in eventToEntityMap) {
+
+					google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama);
+				}
+			}
+		}, {
 			key: 'evaluateFinalAnswer',
 			value: function evaluateFinalAnswer() {
+				var _this2 = this;
 
 				window.console.log("Evaluating final answer!");
 
@@ -13775,7 +13805,11 @@
 				// Placeholder
 				if (this.state.totalTurns < 5) {
 
-					this.nextTurn();
+					this.setState({
+						selectedBorough: null
+					}).then(function () {
+						return _this2.nextTurn();
+					});
 				} else {
 
 					window.console.log("GAME OVER.");
@@ -13800,7 +13834,7 @@
 		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
-				var _this2 = this;
+				var _this3 = this;
 
 				if (this.state.canvasesLoaded) return;
 
@@ -13815,7 +13849,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this2.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
+						throw new Error('No element with ID \'#' + _this3.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
 					}
 				});
 
@@ -13827,24 +13861,26 @@
 				this.setState(nextState).then(function () {
 
 					// gameComponents: chooseLocationMap, panorama, spinner
-					var gameComponents = (0, _createGameComponents2.default)(_this2.state);
+					var gameComponents = (0, _createGameComponents2.default)(_this3.state);
 
 					window.console.log("gameComponents:", gameComponents);
 
-					return _this2.setState(gameComponents);
+					_this3.addEventListenersToGameComponents(gameComponents);
+
+					return _this3.setState(gameComponents);
 				}).then(function () {
-					return _this2.loadCityGeoJSON();
+					return _this3.loadCityGeoJSON();
 				}).then(function () {
-					return _this2.startGame();
+					return _this3.startGame();
 				});
 			}
 		}, {
 			key: 'loadCityGeoJSON',
 			value: function loadCityGeoJSON() {
-				var _this3 = this;
+				var _this4 = this;
 
 				return new Promise(function (resolve) {
-					var chooseLocationMap = _this3.state.chooseLocationMap;
+					var chooseLocationMap = _this4.state.chooseLocationMap;
 
 
 					if (!chooseLocationMap) {
@@ -13857,8 +13893,8 @@
 					// Each borough is a feature
 					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
 
-						_this3.setState({
-							locationData: _extends({}, _this3.state.locationData, { featureCollection: featureCollection })
+						_this4.setState({
+							locationData: _extends({}, _this4.state.locationData, { featureCollection: featureCollection })
 						});
 
 						resolve();
@@ -13876,42 +13912,53 @@
 							fillColor: "#A8FFFC"
 						});
 
-						_this3.updateSelectedBorough(event.feature);
+						_this4.updateHoveredBorough(event.feature);
 					});
 
-					chooseLocationMap.data.addListener('mouseout', function (event) {
+					chooseLocationMap.data.addListener('mouseout', function () {
 
 						chooseLocationMap.data.revertStyle();
 
-						_this3.updateSelectedBorough(event.feature);
+						_this4.updateHoveredBorough('');
+					});
+
+					chooseLocationMap.data.addListener('click', function (event) {
+
+						chooseLocationMap.data.revertStyle();
+
+						chooseLocationMap.data.overrideStyle(event.feature, {
+							fillColor: "#FFFFFF"
+						});
+
+						_this4.updateSelectedBorough(event.feature);
 					});
 				});
 			}
 		}, {
 			key: 'nextTurn',
 			value: function nextTurn() {
-				var _this4 = this;
+				var _this5 = this;
 
 				this.setRandomLocation().then(function () {
 					return (0, _createPromiseTimeout2.default)(2000);
 				}).then(function () {
 
-					return _this4.setState({
+					return _this5.setState({
 						promptText: 'Look closely...where is this?',
 						view: 'panorama'
 					});
 				}).then(function () {
-					var spinner = _this4.state.spinner;
+					var spinner = _this5.state.spinner;
 
 
 					spinner.start();
 
 					spinner.once('revolution', function () {
-						return _this4.onSpinnerRevolution();
+						return _this5.onSpinnerRevolution();
 					});
 
-					_this4.setState({
-						totalTurns: _this4.state.totalTurns + 1
+					_this5.setState({
+						totalTurns: _this5.state.totalTurns + 1
 					});
 				});
 			}
@@ -13942,11 +13989,7 @@
 		}, {
 			key: 'onSpinnerRevolution',
 			value: function onSpinnerRevolution() {
-				var _state2 = this.state;
-				var chooseLocationMap = _state2.chooseLocationMap;
-				var chooseLocationMarker = _state2.chooseLocationMarker;
-				var panorama = _state2.panorama;
-				var spinner = _state2.spinner;
+				var spinner = this.state.spinner;
 
 
 				spinner.stop();
@@ -13956,21 +13999,6 @@
 					promptText: "Where in the city was the last panorama located?",
 					view: 'map'
 				});
-
-				var eventToEntityMap = {
-					'dragend': chooseLocationMarker,
-					'click': chooseLocationMap
-				};
-
-				for (var event in eventToEntityMap) {
-
-					google.maps.event.addListener(eventToEntityMap[event], event, function () {
-
-						var distanceFromPanoramaInMiles = (0, _calculateDistanceFromMarkerToLocation2.default)(panorama, chooseLocationMarker);
-
-						window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
-					});
-				}
 			}
 		}, {
 			key: 'onTransitionToGameplay',
@@ -13998,7 +14026,7 @@
 		}, {
 			key: 'setRandomLocation',
 			value: function setRandomLocation() {
-				var _this5 = this;
+				var _this6 = this;
 
 				var featureCollection = this.state.locationData.featureCollection;
 
@@ -14011,12 +14039,12 @@
 					window.console.log("randomLatLng.lat():", randomLatLng.lat());
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
-					return _this5.setState({
+					return _this6.setState({
 						panoramaBorough: boroughName,
 						panoramaLatLng: randomLatLng
 					});
 				}).then(function () {
-					return window.console.log("this.state:", _this5.state);
+					return window.console.log("this.state:", _this6.state);
 				}).catch(function () {
 					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 						args[_key] = arguments[_key];
@@ -14028,16 +14056,35 @@
 		}, {
 			key: 'startGame',
 			value: function startGame() {
-				var _this6 = this;
+				var _this7 = this;
 
 				return this.setRandomLocation().then(function () {
 
 					setTimeout(function () {
 
-						_this6.setState({
+						_this7.setState({
 							gameStage: 'gameplay'
 						});
 					}, 5000);
+				});
+			}
+		}, {
+			key: 'updateHoveredBorough',
+			value: function updateHoveredBorough(feature) {
+
+				if (!feature) {
+
+					return this.setState({
+						hoveredBorough: ''
+					});
+				}
+
+				var boroughName = feature.getProperty('boro_name');
+
+				if (this.state.hoveredBorough === boroughName) return;
+
+				this.setState({
+					hoveredBorough: boroughName
 				});
 			}
 		}, {
@@ -14058,7 +14105,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this7 = this;
+				var _this8 = this;
 
 				return _react2.default.createElement(
 					'div',
@@ -14075,14 +14122,16 @@
 						view: this.state.view
 					}),
 					_react2.default.createElement(_TwoBlocksPrompt2.default, {
+						hoveredBorough: this.state.hoveredBorough,
 						promptId: this.props.promptId,
 						text: this.state.promptText
 					}),
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
-						selectedBorough: this.state.selectedBorough,
+						hoveredBorough: this.state.hoveredBorough,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this7.evaluateFinalAnswer();
-						}
+							return _this8.evaluateFinalAnswer();
+						},
+						selectedBorough: this.state.selectedBorough
 					})
 				);
 			}
@@ -14398,6 +14447,10 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _stylizeBoroughName = __webpack_require__(384);
+
+	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14416,6 +14469,12 @@
 		}
 
 		_createClass(TwoBlocksPrompt, [{
+			key: 'getTextAddition',
+			value: function getTextAddition() {
+
+				return this.props.hoveredBorough ? (0, _stylizeBoroughName2.default)(this.props.hoveredBorough) + "?" : '';
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 
@@ -14425,7 +14484,7 @@
 					_react2.default.createElement(
 						'h3',
 						null,
-						this.props.text
+						[this.props.text, this.getTextAddition()].join(' ')
 					)
 				);
 			}
@@ -14446,6 +14505,24 @@
 
 /***/ },
 /* 384 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var stylizeBoroughName = function stylizeBoroughName(boroughName) {
+
+		if ('Bronx' !== boroughName) return boroughName;
+
+		return 'The ' + boroughName;
+	};
+
+	exports.default = stylizeBoroughName;
+
+/***/ },
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14460,7 +14537,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _stylizeBoroughName = __webpack_require__(385);
+	var _stylizeBoroughName = __webpack_require__(384);
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
@@ -14482,23 +14559,30 @@
 		}
 
 		_createClass(TwoBlocksSubmitter, [{
+			key: 'getBorough',
+			value: function getBorough() {
+
+				return this.props.selectedBorough ? (0, _stylizeBoroughName2.default)(this.props.selectedBorough) : '';
+			}
+		}, {
+			key: 'getText',
+			value: function getText() {
+
+				return this.props.selectedBorough ? "You chose: " : "";
+			}
+		}, {
 			key: 'onSubmissionButtonClick',
 			value: function onSubmissionButtonClick() {
 
 				this.props.evaluateFinalAnswer();
 			}
 		}, {
-			key: 'styleText',
-			value: function styleText(text) {
-
-				return text;
-			}
-		}, {
 			key: 'render',
 			value: function render() {
 				var _this2 = this;
 
-				var text = this.styleText((0, _stylizeBoroughName2.default)(this.props.selectedBorough) || '');
+				var text = this.getText();
+				var borough = this.getBorough();
 				var buttonLabel = "Final answer?";
 
 				return _react2.default.createElement(
@@ -14509,11 +14593,16 @@
 						{ id: 'twoBlocks-submitter-text' },
 						' ',
 						text,
-						' '
+						' ',
+						_react2.default.createElement(
+							'span',
+							{ id: 'two-blocks-submitter-borough-name' },
+							borough
+						)
 					),
 					_react2.default.createElement(
 						'button',
-						{ id: 'twoBlocks-submitter-button', onClick: function onClick() {
+						{ id: 'twoBlocks-submitter-button', className: this.props.selectedBorough ? '' : 'hidden', onClick: function onClick() {
 								return _this2.onSubmissionButtonClick();
 							} },
 						buttonLabel
@@ -14526,24 +14615,6 @@
 	}(_react2.default.Component);
 
 	exports.default = TwoBlocksSubmitter;
-
-/***/ },
-/* 385 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var stylizeBoroughName = function stylizeBoroughName(boroughName) {
-
-		if ('Bronx' !== boroughName) return boroughName;
-
-		return 'The ' + boroughName;
-	};
-
-	exports.default = stylizeBoroughName;
 
 /***/ },
 /* 386 */
