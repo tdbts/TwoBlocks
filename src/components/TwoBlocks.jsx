@@ -288,13 +288,17 @@ class TwoBlocks extends React.Component {
 
 	onCorrectBorough(panoramaBorough) {
 
-		window.console.log(`Correct!  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}`);
+		this.setState({
+			promptText: `Correct!  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}.`
+		}); 
 	
 	}
 
 	onIncorrectBorough(selectedBorough, panoramaBorough) {
 
-		window.console.log(`Sorry, ${stylizeBoroughName(selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}`); 
+		this.setState({
+			promptText: `Sorry, ${stylizeBoroughName(selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}.`
+		}); 
 
 	}
 

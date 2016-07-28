@@ -13966,13 +13966,17 @@
 			key: 'onCorrectBorough',
 			value: function onCorrectBorough(panoramaBorough) {
 
-				window.console.log('Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough));
+				this.setState({
+					promptText: 'Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough) + '.'
+				});
 			}
 		}, {
 			key: 'onIncorrectBorough',
 			value: function onIncorrectBorough(selectedBorough, panoramaBorough) {
 
-				window.console.log('Sorry, ' + (0, _stylizeBoroughName2.default)(selectedBorough) + ' is incorrect.  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough));
+				this.setState({
+					promptText: 'Sorry, ' + (0, _stylizeBoroughName2.default)(selectedBorough) + ' is incorrect.  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough) + '.'
+				});
 			}
 		}, {
 			key: 'onMapMounted',
