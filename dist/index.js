@@ -13804,6 +13804,10 @@
 
 				// Placeholder
 				if (this.state.totalTurns < 5) {
+					var chooseLocationMap = this.state.chooseLocationMap;
+
+
+					chooseLocationMap.data.revertStyle();
 
 					this.setState({
 						selectedBorough: null
@@ -13893,6 +13897,8 @@
 					// Each borough is a feature
 					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
 
+						window.console.log("featureCollection:", featureCollection);
+
 						_this4.setState({
 							locationData: _extends({}, _this4.state.locationData, { featureCollection: featureCollection })
 						});
@@ -13903,28 +13909,47 @@
 					/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
 
 					chooseLocationMap.data.addListener('mouseover', function (event) {
+						var selectedBorough = _this4.state.selectedBorough;
 
-						window.console.log("event:", event);
 
-						chooseLocationMap.data.revertStyle();
+						if (selectedBorough !== event.feature.getProperty('boro_name')) {
 
-						chooseLocationMap.data.overrideStyle(event.feature, {
-							fillColor: "#A8FFFC"
-						});
+							chooseLocationMap.data.overrideStyle(event.feature, {
+								fillColor: "#A8FFFC"
+							});
+						}
 
 						_this4.updateHoveredBorough(event.feature);
 					});
 
-					chooseLocationMap.data.addListener('mouseout', function () {
+					chooseLocationMap.data.addListener('mouseout', function (event) {
+						var selectedBorough = _this4.state.selectedBorough;
 
-						chooseLocationMap.data.revertStyle();
+
+						if (selectedBorough !== event.feature.getProperty('boro_name')) {
+
+							chooseLocationMap.data.revertStyle(event.feature);
+						}
 
 						_this4.updateHoveredBorough('');
 					});
 
 					chooseLocationMap.data.addListener('click', function (event) {
+						var selectedBorough = _this4.state.selectedBorough;
 
-						chooseLocationMap.data.revertStyle();
+
+						if (selectedBorough !== event.feature.getProperty('boro_name')) {
+							var featureCollection = _this4.state.locationData.featureCollection;
+
+
+							var allOtherBoroughs = featureCollection.filter(function (feature) {
+								return feature.getProperty('boro_name') !== event.feature.getProperty('boro_name');
+							});
+
+							allOtherBoroughs.forEach(function (feature) {
+								return chooseLocationMap.data.revertStyle(feature);
+							});
+						}
 
 						chooseLocationMap.data.overrideStyle(event.feature, {
 							fillColor: "#FFFFFF"
@@ -16245,8 +16270,6 @@
 	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
 
 		var selectedFeature = (0, _getRandomFeature2.default)(featureCollection);
-
-		window.console.log("selectedFeature.getProperty('boro_name'):", selectedFeature.getProperty('boro_name'));
 
 		var boroughName = selectedFeature.getProperty('boro_name');
 

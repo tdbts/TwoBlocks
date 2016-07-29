@@ -114,6 +114,10 @@ class TwoBlocks extends React.Component {
 		// Placeholder 
 		if (this.state.totalTurns < 5) {
 
+			const { chooseLocationMap } = this.state; 
+
+			chooseLocationMap.data.revertStyle(); 
+
 			this.setState({
 				selectedBorough: null
 			})
@@ -206,6 +210,8 @@ class TwoBlocks extends React.Component {
 			// Each borough is a feature 
 			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
 
+				window.console.log("featureCollection:", featureCollection); 
+
 				this.setState({
 					locationData: Object.assign({}, this.state.locationData, { featureCollection })
 				}); 
@@ -218,21 +224,29 @@ class TwoBlocks extends React.Component {
 			
 			chooseLocationMap.data.addListener('mouseover', event => {
 				
-				window.console.log("event:", event); 
+				const { selectedBorough } = this.state; 
 
-				chooseLocationMap.data.revertStyle(); 
-				
-				chooseLocationMap.data.overrideStyle(event.feature, {
-					fillColor: "#A8FFFC"
-				}); 
+				if (selectedBorough !== event.feature.getProperty('boro_name')) {
+
+					chooseLocationMap.data.overrideStyle(event.feature, {
+						fillColor: "#A8FFFC"
+					}); 
+
+				}
 
 				this.updateHoveredBorough(event.feature); 
 			
 			});
 
-			chooseLocationMap.data.addListener('mouseout', () => {
+			chooseLocationMap.data.addListener('mouseout', event => {
 
-				chooseLocationMap.data.revertStyle(); 
+				const { selectedBorough } = this.state; 
+
+				if (selectedBorough !== event.feature.getProperty('boro_name')) {
+
+					chooseLocationMap.data.revertStyle(event.feature); 
+
+				}
 
 				this.updateHoveredBorough('');
 
@@ -240,7 +254,17 @@ class TwoBlocks extends React.Component {
 
 			chooseLocationMap.data.addListener('click', event => {
 
-				chooseLocationMap.data.revertStyle(); 
+				const { selectedBorough } = this.state; 
+
+				if (selectedBorough !== event.feature.getProperty('boro_name')) {
+
+					const { featureCollection } = this.state.locationData; 
+
+					const allOtherBoroughs = featureCollection.filter(feature => feature.getProperty('boro_name') !== event.feature.getProperty('boro_name')); 
+
+					allOtherBoroughs.forEach(feature => chooseLocationMap.data.revertStyle(feature)); 
+
+				}
 
 				chooseLocationMap.data.overrideStyle(event.feature, {
 					fillColor: "#FFFFFF"

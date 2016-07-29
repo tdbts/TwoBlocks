@@ -11,8 +11,6 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
  
 	const selectedFeature = getRandomFeature(featureCollection); 
 
-	window.console.log("selectedFeature.getProperty('boro_name'):", selectedFeature.getProperty('boro_name')); 
-
 	const boroughName = selectedFeature.getProperty('boro_name'); 
 
 	const selectedLinearRing = selectRandomWeightedLinearRing(selectedFeature); 
