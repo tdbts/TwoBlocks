@@ -9,7 +9,7 @@ import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
+import { DEFAULT_TOTAL_ROUNDS, NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -36,7 +36,7 @@ class TwoBlocks extends React.Component {
 			promptText: 'loading...',
 			selectedBorough: null, 
 			spinner: null, 
-			totalTurns: 0,  
+			totalRounds: 0,  
 			view: 'map' 
 		}; 
 
@@ -140,14 +140,22 @@ class TwoBlocks extends React.Component {
 
 		}
 
-		this.onTurnComplete(); 
+		createPromiseTimeout(3000)
+
+			.then(() => this.onTurnComplete()); 
 
 	}
 
 	gameIsOver() {
 
-		return this.state.totalTurns === 5;  // Placeholder
+		return this.state.totalRounds === DEFAULT_TOTAL_ROUNDS;  // Placeholder
 	
+	}
+
+	getTotalCorrectAnswers() {
+
+		return this.state.gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.panoramaBorough).length; 
+		
 	}
 
 	handleGameStageTransition(prevProps, prevState) {  // eslint-disable-line no-unused-vars
@@ -320,7 +328,7 @@ class TwoBlocks extends React.Component {
 			spinner.once('revolution', () => this.onSpinnerRevolution()); 
 
 			this.setState({
-				totalTurns: this.state.totalTurns + 1
+				totalRounds: this.state.totalRounds + 1
 			});
 
 		}); 
@@ -339,6 +347,18 @@ class TwoBlocks extends React.Component {
 	onGameOver() {
 
 		window.console.log("GAME OVER."); 
+
+		const totalCorrect = this.getTotalCorrectAnswers(); 
+
+		return this.beforeNextTurn()
+
+			.then(() => {
+
+				return this.setState({
+					promptText: `Game over.  You correctly guessed ${totalCorrect.toString()} / ${DEFAULT_TOTAL_ROUNDS.toString()} of the Street View locations.` 
+				}); 
+
+			}); 
 
 	}
 
