@@ -13711,6 +13711,7 @@
 				canvasesLoaded: false,
 				chooseLocationMap: null,
 				chooseLocationMarker: null,
+				gameHistory: [],
 				gameStage: null,
 				hoveredBorough: null,
 				locationData: _constants.nycCoordinates,
@@ -13788,9 +13789,36 @@
 				}
 			}
 		}, {
+			key: 'addTurnToGameHistory',
+			value: function addTurnToGameHistory() {
+
+				var turnHistory = {
+					panoramaBorough: this.state.panoramaBorough,
+					panoramaLatLng: this.state.panoramaLatLng,
+					selectedBorough: this.state.selectedBorough
+				};
+
+				return this.setState({
+
+					gameHistory: this.state.gameHistory.concat(turnHistory)
+
+				});
+			}
+		}, {
+			key: 'beforeNextTurn',
+			value: function beforeNextTurn() {
+				var chooseLocationMap = this.state.chooseLocationMap;
+
+
+				chooseLocationMap.data.revertStyle();
+
+				return this.setState({
+					selectedBorough: null
+				});
+			}
+		}, {
 			key: 'evaluateFinalAnswer',
 			value: function evaluateFinalAnswer() {
-				var _this2 = this;
 
 				window.console.log("Evaluating final answer!");
 
@@ -13802,22 +13830,13 @@
 					this.onIncorrectBorough(this.state.selectedBorough, this.state.panoramaBorough);
 				}
 
-				// Placeholder
-				if (this.state.totalTurns < 5) {
-					var chooseLocationMap = this.state.chooseLocationMap;
+				this.onTurnComplete();
+			}
+		}, {
+			key: 'gameIsOver',
+			value: function gameIsOver() {
 
-
-					chooseLocationMap.data.revertStyle();
-
-					this.setState({
-						selectedBorough: null
-					}).then(function () {
-						return _this2.nextTurn();
-					});
-				} else {
-
-					window.console.log("GAME OVER.");
-				}
+				return this.state.totalTurns === 5; // Placeholder
 			}
 		}, {
 			key: 'handleGameStageTransition',
@@ -13838,7 +13857,7 @@
 		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
-				var _this3 = this;
+				var _this2 = this;
 
 				if (this.state.canvasesLoaded) return;
 
@@ -13853,7 +13872,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this3.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
+						throw new Error('No element with ID \'#' + _this2.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
 					}
 				});
 
@@ -13865,26 +13884,26 @@
 				this.setState(nextState).then(function () {
 
 					// gameComponents: chooseLocationMap, panorama, spinner
-					var gameComponents = (0, _createGameComponents2.default)(_this3.state);
+					var gameComponents = (0, _createGameComponents2.default)(_this2.state);
 
 					window.console.log("gameComponents:", gameComponents);
 
-					_this3.addEventListenersToGameComponents(gameComponents);
+					_this2.addEventListenersToGameComponents(gameComponents);
 
-					return _this3.setState(gameComponents);
+					return _this2.setState(gameComponents);
 				}).then(function () {
-					return _this3.loadCityGeoJSON();
+					return _this2.loadCityGeoJSON();
 				}).then(function () {
-					return _this3.startGame();
+					return _this2.startGame();
 				});
 			}
 		}, {
 			key: 'loadCityGeoJSON',
 			value: function loadCityGeoJSON() {
-				var _this4 = this;
+				var _this3 = this;
 
 				return new Promise(function (resolve) {
-					var chooseLocationMap = _this4.state.chooseLocationMap;
+					var chooseLocationMap = _this3.state.chooseLocationMap;
 
 
 					if (!chooseLocationMap) {
@@ -13899,8 +13918,8 @@
 
 						window.console.log("featureCollection:", featureCollection);
 
-						_this4.setState({
-							locationData: _extends({}, _this4.state.locationData, { featureCollection: featureCollection })
+						_this3.setState({
+							locationData: _extends({}, _this3.state.locationData, { featureCollection: featureCollection })
 						});
 
 						resolve();
@@ -13909,7 +13928,7 @@
 					/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
 
 					chooseLocationMap.data.addListener('mouseover', function (event) {
-						var selectedBorough = _this4.state.selectedBorough;
+						var selectedBorough = _this3.state.selectedBorough;
 
 
 						if (selectedBorough !== event.feature.getProperty('boro_name')) {
@@ -13919,11 +13938,11 @@
 							});
 						}
 
-						_this4.updateHoveredBorough(event.feature);
+						_this3.updateHoveredBorough(event.feature);
 					});
 
 					chooseLocationMap.data.addListener('mouseout', function (event) {
-						var selectedBorough = _this4.state.selectedBorough;
+						var selectedBorough = _this3.state.selectedBorough;
 
 
 						if (selectedBorough !== event.feature.getProperty('boro_name')) {
@@ -13931,15 +13950,15 @@
 							chooseLocationMap.data.revertStyle(event.feature);
 						}
 
-						_this4.updateHoveredBorough('');
+						_this3.updateHoveredBorough('');
 					});
 
 					chooseLocationMap.data.addListener('click', function (event) {
-						var selectedBorough = _this4.state.selectedBorough;
+						var selectedBorough = _this3.state.selectedBorough;
 
 
 						if (selectedBorough !== event.feature.getProperty('boro_name')) {
-							var featureCollection = _this4.state.locationData.featureCollection;
+							var featureCollection = _this3.state.locationData.featureCollection;
 
 
 							var allOtherBoroughs = featureCollection.filter(function (feature) {
@@ -13955,35 +13974,35 @@
 							fillColor: "#FFFFFF"
 						});
 
-						_this4.updateSelectedBorough(event.feature);
+						_this3.updateSelectedBorough(event.feature);
 					});
 				});
 			}
 		}, {
 			key: 'nextTurn',
 			value: function nextTurn() {
-				var _this5 = this;
+				var _this4 = this;
 
 				this.setRandomLocation().then(function () {
 					return (0, _createPromiseTimeout2.default)(2000);
 				}).then(function () {
 
-					return _this5.setState({
+					return _this4.setState({
 						promptText: 'Look closely...where is this?',
 						view: 'panorama'
 					});
 				}).then(function () {
-					var spinner = _this5.state.spinner;
+					var spinner = _this4.state.spinner;
 
 
 					spinner.start();
 
 					spinner.once('revolution', function () {
-						return _this5.onSpinnerRevolution();
+						return _this4.onSpinnerRevolution();
 					});
 
-					_this5.setState({
-						totalTurns: _this5.state.totalTurns + 1
+					_this4.setState({
+						totalTurns: _this4.state.totalTurns + 1
 					});
 				});
 			}
@@ -13994,6 +14013,12 @@
 				this.setState({
 					promptText: 'Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough) + '.'
 				});
+			}
+		}, {
+			key: 'onGameOver',
+			value: function onGameOver() {
+
+				window.console.log("GAME OVER.");
 			}
 		}, {
 			key: 'onIncorrectBorough',
@@ -14024,7 +14049,7 @@
 				spinner.stop();
 
 				this.setState({
-					mapMarkerVisible: true,
+					mapMarkerVisible: false, // Set to true for location guessing 
 					promptText: "Where in the city was the last panorama located?",
 					view: 'map'
 				});
@@ -14051,6 +14076,23 @@
 				};
 
 				this.setState(nextState);
+			}
+		}, {
+			key: 'onTurnComplete',
+			value: function onTurnComplete() {
+				var _this5 = this;
+
+				this.addTurnToGameHistory();
+
+				if (!this.gameIsOver()) {
+
+					this.beforeNextTurn().then(function () {
+						return _this5.nextTurn();
+					});
+				} else {
+
+					this.onGameOver();
+				}
 			}
 		}, {
 			key: 'setRandomLocation',
@@ -16269,11 +16311,11 @@
 
 	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
 
-		var selectedFeature = (0, _getRandomFeature2.default)(featureCollection);
+		var selectedBorough = (0, _getRandomFeature2.default)(featureCollection);
 
-		var boroughName = selectedFeature.getProperty('boro_name');
+		var boroughName = selectedBorough.getProperty('boro_name');
 
-		var selectedLinearRing = (0, _selectRandomWeightedLinearRing2.default)(selectedFeature);
+		var selectedLinearRing = (0, _selectRandomWeightedLinearRing2.default)(selectedBorough);
 
 		var latLngMaxMin = (0, _getLatLngMaxMin2.default)(selectedLinearRing.getArray());
 
@@ -16306,7 +16348,7 @@
 		// N.B - Parentheses must be wrapped around an object literal
 		// returned by an arrow function
 		.then(function () {
-			return { boroughName: boroughName, randomLatLng: randomLatLng };
+			return { boroughName: boroughName, randomLatLng: randomLatLng, selectedBorough: selectedBorough };
 		});
 	};
 

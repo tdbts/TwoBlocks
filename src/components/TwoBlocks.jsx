@@ -22,6 +22,7 @@ class TwoBlocks extends React.Component {
 			canvasesLoaded: false, 
 			chooseLocationMap: null, 
 			chooseLocationMarker: null, 
+			gameHistory: [], 
 			gameStage: null, 
 			hoveredBorough: null, 
 			locationData: nycCoordinates, 
@@ -97,6 +98,34 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	addTurnToGameHistory() {
+
+		const turnHistory = {
+			panoramaBorough: this.state.panoramaBorough, 
+			panoramaLatLng: this.state.panoramaLatLng, 
+			selectedBorough: this.state.selectedBorough
+		}; 
+
+		return this.setState({
+
+			gameHistory: this.state.gameHistory.concat(turnHistory)
+
+		}); 
+
+	}
+
+	beforeNextTurn() {
+
+		const { chooseLocationMap } = this.state; 
+
+		chooseLocationMap.data.revertStyle(); 
+
+		return this.setState({
+			selectedBorough: null
+		}); 
+
+	}
+
 	evaluateFinalAnswer() {
 
 		window.console.log("Evaluating final answer!"); 
@@ -110,26 +139,15 @@ class TwoBlocks extends React.Component {
 			this.onIncorrectBorough(this.state.selectedBorough, this.state.panoramaBorough); 
 
 		}
-		
-		// Placeholder 
-		if (this.state.totalTurns < 5) {
 
-			const { chooseLocationMap } = this.state; 
+		this.onTurnComplete(); 
 
-			chooseLocationMap.data.revertStyle(); 
+	}
 
-			this.setState({
-				selectedBorough: null
-			})
+	gameIsOver() {
 
-			.then(() => this.nextTurn());  
-
-		} else {
-
-			window.console.log("GAME OVER."); 
-
-		}
-
+		return this.state.totalTurns === 5;  // Placeholder
+	
 	}
 
 	handleGameStageTransition(prevProps, prevState) {  // eslint-disable-line no-unused-vars
@@ -318,6 +336,12 @@ class TwoBlocks extends React.Component {
 	
 	}
 
+	onGameOver() {
+
+		window.console.log("GAME OVER."); 
+
+	}
+
 	onIncorrectBorough(selectedBorough, panoramaBorough) {
 
 		this.setState({
@@ -345,7 +369,7 @@ class TwoBlocks extends React.Component {
 		spinner.stop(); 
 
 		this.setState({
-			mapMarkerVisible: true, 
+			mapMarkerVisible: false,  // Set to true for location guessing  
 			promptText: "Where in the city was the last panorama located?", 
 			view: 'map'
 		}); 
@@ -370,6 +394,24 @@ class TwoBlocks extends React.Component {
 		}; 
 
 		this.setState(nextState); 
+
+	}
+
+	onTurnComplete() {
+
+		this.addTurnToGameHistory(); 
+
+		if (!(this.gameIsOver())) {
+
+			this.beforeNextTurn()
+
+				.then(() => this.nextTurn());  
+
+		} else {
+
+			this.onGameOver(); 
+
+		}		
 
 	}
 
