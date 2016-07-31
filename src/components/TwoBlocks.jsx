@@ -9,7 +9,7 @@ import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { DEFAULT_TOTAL_ROUNDS, NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
+import { DEFAULT_TOTAL_ROUNDS, GAME_LOAD_DELAY, NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -155,7 +155,7 @@ class TwoBlocks extends React.Component {
 	getTotalCorrectAnswers() {
 
 		return this.state.gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.panoramaBorough).length; 
-		
+
 	}
 
 	handleGameStageTransition(prevProps, prevState) {  // eslint-disable-line no-unused-vars
@@ -473,7 +473,7 @@ class TwoBlocks extends React.Component {
 						gameStage: 'gameplay'
 					}); 
 				
-				}, 5000);
+				}, GAME_LOAD_DELAY);
 
 			}); 
 

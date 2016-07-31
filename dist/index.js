@@ -14189,7 +14189,7 @@
 						_this9.setState({
 							gameStage: 'gameplay'
 						});
-					}, 5000);
+					}, _constants.GAME_LOAD_DELAY);
 				});
 			}
 		}, {
