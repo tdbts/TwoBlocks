@@ -14603,8 +14603,8 @@
 
 	TwoBlocksPrompt.propTypes = {
 
+		hoveredBorough: _react2.default.PropTypes.string,
 		promptId: _react2.default.PropTypes.string.isRequired,
-
 		text: _react2.default.PropTypes.string
 
 	};
@@ -14721,6 +14721,13 @@
 
 		return TwoBlocksSubmitter;
 	}(_react2.default.Component);
+
+	TwoBlocksSubmitter.propTypes = {
+
+		evaluateFinalAnswer: _react2.default.PropTypes.func.isRequired,
+		selectedBorough: _react2.default.PropTypes.string
+
+	};
 
 	exports.default = TwoBlocksSubmitter;
 

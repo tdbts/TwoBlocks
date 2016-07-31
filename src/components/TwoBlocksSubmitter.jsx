@@ -40,4 +40,11 @@ class TwoBlocksSubmitter extends React.Component {
 
 }
 
+TwoBlocksSubmitter.propTypes = {
+
+	evaluateFinalAnswer: React.PropTypes.func.isRequired, 
+	selectedBorough: React.PropTypes.string
+
+}; 
+
 export default TwoBlocksSubmitter; 

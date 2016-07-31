@@ -24,9 +24,9 @@ class TwoBlocksPrompt extends React.Component {
 }
 
 TwoBlocksPrompt.propTypes = {
-	
+
+	hoveredBorough: React.PropTypes.string, 
 	promptId: React.PropTypes.string.isRequired, 
-	
 	text: React.PropTypes.string
 
 }; 
