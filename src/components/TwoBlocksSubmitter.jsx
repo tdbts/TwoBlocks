@@ -42,8 +42,8 @@ class TwoBlocksSubmitter extends React.Component {
 
 TwoBlocksSubmitter.propTypes = {
 
-	evaluateFinalAnswer: React.PropTypes.func.isRequired, 
-	selectedBorough: React.PropTypes.string
+	evaluateFinalAnswer 	: React.PropTypes.func.isRequired, 
+	selectedBorough 		: React.PropTypes.string
 
 }; 
 
