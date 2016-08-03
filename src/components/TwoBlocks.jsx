@@ -10,7 +10,7 @@ import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { DEFAULT_TOTAL_ROUNDS, GAME_LOAD_DELAY, NYC_BOUNDARIES_DATASET_URL, nycCoordinates } from '../constants/constants'; 
+import { DEFAULT_TOTAL_ROUNDS, GAME_LOAD_DELAY, NYC_BOUNDARIES_DATASET_URL } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -27,7 +27,7 @@ class TwoBlocks extends React.Component {
 			gameInstance: null, 
 			gameStage: null, 
 			hoveredBorough: null, 
-			locationData: nycCoordinates, 
+			locationData: null, 
 			mapCanvas: null, 
 			mapLatLng: null,
 			mapMarkerVisible: false,  
@@ -104,6 +104,10 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on('gamestage', gameStage => this.setState({ gameStage })); 
 
+		twoBlocks.on('location_data', locationData => this.setState({ locationData })); 
+
+		twoBlocks.on('view', viewState => this.setState(viewState)); 
+
 	}
 
 	addTurnToGameHistory() {
@@ -171,11 +175,7 @@ class TwoBlocks extends React.Component {
 		// If the game stage has not changed, exit 
 		if (prevState.gameStage === this.state.gameStage) return; 
 
-		if ('pregame' === this.state.gameStage) {
-
-			this.onTransitionToPregame(); 
-
-		} else if ('gameplay' === this.state.gameStage) {
+		if ('gameplay' === this.state.gameStage) {
 
 			this.onTransitionToGameplay();
 
@@ -413,21 +413,6 @@ class TwoBlocks extends React.Component {
 	onTransitionToGameplay() {
 
 		this.nextTurn(); 
-
-	}
-
-	onTransitionToPregame() {
-
-		const { lat, lng } = this.state.locationData.CENTER; 
-
-		const mapLatLng = new google.maps.LatLng(lat, lng);  
-
-		const nextState = {
-			mapLatLng,   
-			view: 'map'
-		}; 
-
-		this.setState(nextState); 
 
 	}
 

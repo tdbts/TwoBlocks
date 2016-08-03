@@ -13751,7 +13751,7 @@
 				gameInstance: null,
 				gameStage: null,
 				hoveredBorough: null,
-				locationData: _constants.nycCoordinates,
+				locationData: null,
 				mapCanvas: null,
 				mapLatLng: null,
 				mapMarkerVisible: false,
@@ -13833,6 +13833,14 @@
 				twoBlocks.on('gamestage', function (gameStage) {
 					return _this2.setState({ gameStage: gameStage });
 				});
+
+				twoBlocks.on('location_data', function (locationData) {
+					return _this2.setState({ locationData: locationData });
+				});
+
+				twoBlocks.on('view', function (viewState) {
+					return _this2.setState(viewState);
+				});
 			}
 		}, {
 			key: 'addTurnToGameHistory',
@@ -13903,10 +13911,7 @@
 				// If the game stage has not changed, exit
 				if (prevState.gameStage === this.state.gameStage) return;
 
-				if ('pregame' === this.state.gameStage) {
-
-					this.onTransitionToPregame();
-				} else if ('gameplay' === this.state.gameStage) {
+				if ('gameplay' === this.state.gameStage) {
 
 					this.onTransitionToGameplay();
 				}
@@ -14134,23 +14139,6 @@
 				this.nextTurn();
 			}
 		}, {
-			key: 'onTransitionToPregame',
-			value: function onTransitionToPregame() {
-				var _state$locationData$C = this.state.locationData.CENTER;
-				var lat = _state$locationData$C.lat;
-				var lng = _state$locationData$C.lng;
-
-
-				var mapLatLng = new google.maps.LatLng(lat, lng);
-
-				var nextState = {
-					mapLatLng: mapLatLng,
-					view: 'map'
-				};
-
-				this.setState(nextState);
-			}
-		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
 				var _this8 = this;
@@ -14317,6 +14305,8 @@
 
 	var _util = __webpack_require__(383);
 
+	var _constants = __webpack_require__(348);
+
 	var TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 		this.validateArgs(mapCanvas, panoramaCanvas);
@@ -14335,6 +14325,20 @@
 		startGame: function startGame() {
 
 			this.emit('gamestage', 'pregame');
+
+			this.emit('location_data', _constants.nycCoordinates);
+
+			var _nycCoordinates$CENTE = _constants.nycCoordinates.CENTER;
+			var lat = _nycCoordinates$CENTE.lat;
+			var lng = _nycCoordinates$CENTE.lng;
+
+
+			var mapLatLng = new google.maps.LatLng(lat, lng);
+
+			this.emit('view', {
+				mapLatLng: mapLatLng,
+				view: 'map'
+			});
 		},
 		validateArgs: function validateArgs(mapCanvas, panoramaCanvas) {
 
