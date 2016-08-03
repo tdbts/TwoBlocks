@@ -313,7 +313,7 @@ class TwoBlocks extends React.Component {
 		.then(() => {
 
 			return this.setState({
-				promptText: 'Look closely...where is this?',  
+				promptText: 'Look closely...where in the city is this Street View?',  
 				view: 'panorama'
 			}); 
 

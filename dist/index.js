@@ -14031,7 +14031,7 @@
 				}).then(function () {
 
 					return _this5.setState({
-						promptText: 'Look closely...where is this?',
+						promptText: 'Look closely...where in the city is this Street View?',
 						view: 'panorama'
 					});
 				}).then(function () {
