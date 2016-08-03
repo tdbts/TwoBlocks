@@ -42,7 +42,13 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 
 	// N.B - Parentheses must be wrapped around an object literal 
 	// returned by an arrow function
-	.then(() => ( { boroughName, randomLatLng, selectedBorough } )); 
+	.then(() => ( { boroughName, randomLatLng, selectedBorough } ))
+
+	.catch(() => {
+
+		window.console.log("Failure to request nearest panorama.  Panorama request attempts exceeded maximum."); 
+
+	}); 
 	
 }; 
 

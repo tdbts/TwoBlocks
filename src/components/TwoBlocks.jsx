@@ -1,6 +1,7 @@
 /* global document, google, window */
 
 import React from 'react';
+import TwoBlocksGame from '../TwoBlocksGame'; 
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksPrompt from './TwoBlocksPrompt';
 import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
@@ -23,6 +24,7 @@ class TwoBlocks extends React.Component {
 			chooseLocationMap: null, 
 			chooseLocationMarker: null, 
 			gameHistory: [], 
+			gameInstance: null, 
 			gameStage: null, 
 			hoveredBorough: null, 
 			locationData: nycCoordinates, 
@@ -95,6 +97,12 @@ class TwoBlocks extends React.Component {
 			google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama); 
 
 		} 					
+
+	}
+
+	addGameEventListeners(twoBlocks) {
+
+		twoBlocks.on('gamestage', gameStage => this.setState({ gameStage })); 
 
 	}
 
@@ -179,7 +187,7 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.canvasesLoaded) return; 
 
-		if (!(this.state.mapCanvas && this.state.panoramaCanvas)) return; 
+		if (!(this.state.mapCanvas) || !(this.state.panoramaCanvas)) return; 
 
 		const { mapCanvas, panoramaCanvas } = this.state; 
 
@@ -193,9 +201,15 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
+		const twoBlocks = new TwoBlocksGame(mapCanvas, panoramaCanvas); 
+
+		this.addGameEventListeners(twoBlocks); 
+
+		twoBlocks.startGame(); 
+
 		const nextState = {
 			canvasesLoaded: true, 
-			gameStage: 'pregame'
+			gameInstance: twoBlocks
 		}; 
 
 		this.setState(nextState)
