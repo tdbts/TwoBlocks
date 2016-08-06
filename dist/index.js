@@ -14056,7 +14056,7 @@
 				}).then(function () {
 
 					return _this6.setState({
-						promptText: 'Look closely...where in the city is this Street View?',
+						promptText: 'Look closely...in which borough was this Street View taken?',
 						view: 'panorama'
 					});
 				}).then(function () {
@@ -14128,7 +14128,7 @@
 
 				this.setState({
 					mapMarkerVisible: false, // Set to true for location guessing 
-					promptText: "Where in the city was the last panorama located?",
+					promptText: "In which borough was the last panorama located?",
 					view: 'map'
 				});
 			}
