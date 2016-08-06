@@ -13679,8 +13679,6 @@
 		value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(299);
@@ -13691,31 +13689,23 @@
 
 	var _TwoBlocksGame2 = _interopRequireDefault(_TwoBlocksGame);
 
-	var _TwoBlocksView = __webpack_require__(386);
+	var _TwoBlocksView = __webpack_require__(394);
 
 	var _TwoBlocksView2 = _interopRequireDefault(_TwoBlocksView);
 
-	var _TwoBlocksPrompt = __webpack_require__(390);
+	var _TwoBlocksPrompt = __webpack_require__(398);
 
 	var _TwoBlocksPrompt2 = _interopRequireDefault(_TwoBlocksPrompt);
 
-	var _TwoBlocksSubmitter = __webpack_require__(392);
+	var _TwoBlocksSubmitter = __webpack_require__(400);
 
 	var _TwoBlocksSubmitter2 = _interopRequireDefault(_TwoBlocksSubmitter);
-
-	var _calculateDistanceFromMarkerToLocation = __webpack_require__(393);
-
-	var _calculateDistanceFromMarkerToLocation2 = _interopRequireDefault(_calculateDistanceFromMarkerToLocation);
-
-	var _createGameComponents = __webpack_require__(396);
-
-	var _createGameComponents2 = _interopRequireDefault(_createGameComponents);
 
 	var _getRandomPanoramaLocation = __webpack_require__(401);
 
 	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
 
-	var _stylizeBoroughName = __webpack_require__(391);
+	var _stylizeBoroughName = __webpack_require__(399);
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
@@ -13731,7 +13721,7 @@
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global document, google, window */
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global document, window */
 
 	var TwoBlocks = function (_React$Component) {
 		_inherits(TwoBlocks, _React$Component);
@@ -13798,48 +13788,89 @@
 				this.handleGameStageTransition(prevProps, prevState);
 			}
 		}, {
-			key: 'addEventListenersToGameComponents',
-			value: function addEventListenersToGameComponents(gameComponents) {
+			key: 'addChooseLocationMapEventListeners',
+			value: function addChooseLocationMapEventListeners() {
+				var _this2 = this;
 
-				/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
+				/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
 
-				var chooseLocationMap = gameComponents.chooseLocationMap;
-				var chooseLocationMarker = gameComponents.chooseLocationMarker;
-				var panorama = gameComponents.panorama;
+				var chooseLocationMap = this.state.chooseLocationMap;
 
 
-				var eventToEntityMap = {
-					'dragend': chooseLocationMarker,
-					'click': chooseLocationMap
-				};
+				chooseLocationMap.data.addListener('mouseover', function (event) {
+					var selectedBorough = _this2.state.selectedBorough;
 
-				var logDistanceFromPanorama = function logDistanceFromPanorama() {
 
-					var distanceFromPanoramaInMiles = (0, _calculateDistanceFromMarkerToLocation2.default)(panorama, chooseLocationMarker);
+					if (selectedBorough !== event.feature.getProperty('boro_name')) {
 
-					window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
-				};
+						chooseLocationMap.data.overrideStyle(event.feature, {
+							fillColor: "#A8FFFC"
+						});
+					}
 
-				for (var event in eventToEntityMap) {
+					_this2.updateHoveredBorough(event.feature);
+				});
 
-					google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama);
-				}
+				chooseLocationMap.data.addListener('mouseout', function (event) {
+					var selectedBorough = _this2.state.selectedBorough;
+
+
+					if (selectedBorough !== event.feature.getProperty('boro_name')) {
+
+						chooseLocationMap.data.revertStyle(event.feature);
+					}
+
+					_this2.updateHoveredBorough('');
+				});
+
+				chooseLocationMap.data.addListener('click', function (event) {
+					var selectedBorough = _this2.state.selectedBorough;
+
+
+					if (selectedBorough !== event.feature.getProperty('boro_name')) {
+						var featureCollection = _this2.state.locationData.featureCollection;
+
+
+						var allOtherBoroughs = featureCollection.filter(function (feature) {
+							return feature.getProperty('boro_name') !== event.feature.getProperty('boro_name');
+						});
+
+						allOtherBoroughs.forEach(function (feature) {
+							return chooseLocationMap.data.revertStyle(feature);
+						});
+					}
+
+					chooseLocationMap.data.overrideStyle(event.feature, {
+						fillColor: "#FFFFFF"
+					});
+
+					_this2.updateSelectedBorough(event.feature);
+				});
 			}
 		}, {
 			key: 'addGameEventListeners',
 			value: function addGameEventListeners(twoBlocks) {
-				var _this2 = this;
+				var _this3 = this;
 
 				twoBlocks.on('gamestage', function (gameStage) {
-					return _this2.setState({ gameStage: gameStage });
+					return _this3.setState({ gameStage: gameStage });
 				});
 
 				twoBlocks.on('location_data', function (locationData) {
-					return _this2.setState({ locationData: locationData });
+					return _this3.setState({ locationData: locationData });
 				});
 
 				twoBlocks.on('view', function (viewState) {
-					return _this2.setState(viewState);
+					return _this3.setState(viewState);
+				});
+
+				twoBlocks.on('game_components', function (gameComponents) {
+
+					window.console.log("gameComponents:", gameComponents);
+
+					_this3.setState(gameComponents).then(function () {
+						return _this3.addChooseLocationMapEventListeners();
+					});
 				});
 			}
 		}, {
@@ -13873,7 +13904,7 @@
 		}, {
 			key: 'evaluateFinalAnswer',
 			value: function evaluateFinalAnswer() {
-				var _this3 = this;
+				var _this4 = this;
 
 				window.console.log("Evaluating final answer!");
 
@@ -13886,7 +13917,7 @@
 				}
 
 				(0, _createPromiseTimeout2.default)(3000).then(function () {
-					return _this3.onTurnComplete();
+					return _this4.onTurnComplete();
 				});
 			}
 		}, {
@@ -13919,7 +13950,7 @@
 		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
-				var _this4 = this;
+				var _this5 = this;
 
 				if (this.state.canvasesLoaded) return;
 
@@ -13934,7 +13965,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this4.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
+						throw new Error('No element with ID \'#' + _this5.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
 					}
 				});
 
@@ -13949,102 +13980,7 @@
 					gameInstance: twoBlocks
 				};
 
-				this.setState(nextState).then(function () {
-
-					// gameComponents: chooseLocationMap, panorama, spinner
-					var gameComponents = (0, _createGameComponents2.default)(_this4.state);
-
-					window.console.log("gameComponents:", gameComponents);
-
-					_this4.addEventListenersToGameComponents(gameComponents);
-
-					return _this4.setState(gameComponents);
-				}).then(function () {
-					return _this4.loadCityGeoJSON();
-				}).then(function () {
-					return _this4.startGame();
-				});
-			}
-		}, {
-			key: 'loadCityGeoJSON',
-			value: function loadCityGeoJSON() {
-				var _this5 = this;
-
-				return new Promise(function (resolve) {
-					var chooseLocationMap = _this5.state.chooseLocationMap;
-
-
-					if (!chooseLocationMap) {
-
-						throw new Error("No 'chooseLocationMap' found in state.  Cannot load city's GeoJSON data.");
-					}
-
-					/*----------  Load GeoJSON  ----------*/
-
-					// Each borough is a feature
-					chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
-
-						window.console.log("featureCollection:", featureCollection);
-
-						_this5.setState({
-							locationData: _extends({}, _this5.state.locationData, { featureCollection: featureCollection })
-						});
-
-						resolve();
-					});
-
-					/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
-
-					chooseLocationMap.data.addListener('mouseover', function (event) {
-						var selectedBorough = _this5.state.selectedBorough;
-
-
-						if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-							chooseLocationMap.data.overrideStyle(event.feature, {
-								fillColor: "#A8FFFC"
-							});
-						}
-
-						_this5.updateHoveredBorough(event.feature);
-					});
-
-					chooseLocationMap.data.addListener('mouseout', function (event) {
-						var selectedBorough = _this5.state.selectedBorough;
-
-
-						if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-							chooseLocationMap.data.revertStyle(event.feature);
-						}
-
-						_this5.updateHoveredBorough('');
-					});
-
-					chooseLocationMap.data.addListener('click', function (event) {
-						var selectedBorough = _this5.state.selectedBorough;
-
-
-						if (selectedBorough !== event.feature.getProperty('boro_name')) {
-							var featureCollection = _this5.state.locationData.featureCollection;
-
-
-							var allOtherBoroughs = featureCollection.filter(function (feature) {
-								return feature.getProperty('boro_name') !== event.feature.getProperty('boro_name');
-							});
-
-							allOtherBoroughs.forEach(function (feature) {
-								return chooseLocationMap.data.revertStyle(feature);
-							});
-						}
-
-						chooseLocationMap.data.overrideStyle(event.feature, {
-							fillColor: "#FFFFFF"
-						});
-
-						_this5.updateSelectedBorough(event.feature);
-					});
-				});
+				this.setState(nextState);
 			}
 		}, {
 			key: 'nextTurn',
@@ -14056,7 +13992,7 @@
 				}).then(function () {
 
 					return _this6.setState({
-						promptText: 'Look closely...in which borough was this Street View taken?',
+						promptText: 'Look closely...which borough is this Street View from?',
 						view: 'panorama'
 					});
 				}).then(function () {
@@ -14135,20 +14071,26 @@
 		}, {
 			key: 'onTransitionToGameplay',
 			value: function onTransitionToGameplay() {
+				var _this8 = this;
 
-				this.nextTurn();
+				this.setRandomLocation().then(function () {
+
+					setTimeout(function () {
+						return _this8.nextTurn();
+					}, _constants.GAME_LOAD_DELAY); // Give Street View panorama time to load
+				});
 			}
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _this8 = this;
+				var _this9 = this;
 
 				this.addTurnToGameHistory();
 
 				if (!this.gameIsOver()) {
 
 					this.beforeNextTurn().then(function () {
-						return _this8.nextTurn();
+						return _this9.nextTurn();
 					});
 				} else {
 
@@ -14158,7 +14100,7 @@
 		}, {
 			key: 'setRandomLocation',
 			value: function setRandomLocation() {
-				var _this9 = this;
+				var _this10 = this;
 
 				var featureCollection = this.state.locationData.featureCollection;
 
@@ -14171,33 +14113,18 @@
 					window.console.log("randomLatLng.lat():", randomLatLng.lat());
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
-					return _this9.setState({
+					return _this10.setState({
 						panoramaBorough: boroughName,
 						panoramaLatLng: randomLatLng
 					});
 				}).then(function () {
-					return window.console.log("this.state:", _this9.state);
+					return window.console.log("this.state:", _this10.state);
 				}).catch(function () {
 					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 						args[_key] = arguments[_key];
 					}
 
 					return 'Caught error with args ' + args;
-				});
-			}
-		}, {
-			key: 'startGame',
-			value: function startGame() {
-				var _this10 = this;
-
-				return this.setRandomLocation().then(function () {
-
-					setTimeout(function () {
-
-						_this10.setState({
-							gameStage: 'gameplay'
-						});
-					}, _constants.GAME_LOAD_DELAY);
 				});
 			}
 		}, {
@@ -14301,18 +14228,36 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	var _events = __webpack_require__(382);
+	var _calculateDistanceFromMarkerToLocation = __webpack_require__(382);
 
-	var _util = __webpack_require__(383);
+	var _calculateDistanceFromMarkerToLocation2 = _interopRequireDefault(_calculateDistanceFromMarkerToLocation);
+
+	var _createGameComponents2 = __webpack_require__(385);
+
+	var _createGameComponents3 = _interopRequireDefault(_createGameComponents2);
+
+	var _events = __webpack_require__(388);
+
+	var _util = __webpack_require__(389);
 
 	var _constants = __webpack_require__(348);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 		this.validateArgs(mapCanvas, panoramaCanvas);
 
+		this.gameStage = 'pregame';
 		this.mapCanvas = mapCanvas;
 		this.panoramaCanvas = panoramaCanvas;
+
+		this.chooseLocationMap = null;
+		this.chooseLocationMarker = null;
+		this.locationData = null;
+		this.mapLatLng = null;
+		this.panorama = null;
+		this.spinner = null;
 	};
 
 	/*----------  Inherit from EventEmitter  ----------*/
@@ -14322,15 +14267,105 @@
 	/*----------  Define TwoBlocksGame Prototype  ----------*/
 
 	TwoBlocksGame.prototype = _extends(TwoBlocksGame.prototype, {
-		startGame: function startGame() {
+		addEventListeners: function addEventListeners() {
+			var _this = this;
 
-			this.emit('gamestage', 'pregame');
+			this.on('game_components', function (gameComponents) {
 
-			this.emit('location_data', _constants.nycCoordinates);
+				_this.addEventListenersToGameComponents(gameComponents);
 
-			var _nycCoordinates$CENTE = _constants.nycCoordinates.CENTER;
-			var lat = _nycCoordinates$CENTE.lat;
-			var lng = _nycCoordinates$CENTE.lng;
+				_this.loadCityGeoJSON().then(function () {
+
+					_this.gameStage = 'gameplay';
+
+					_this.emit('gamestage', _this.gameStage);
+				});
+			});
+		},
+		addEventListenersToGameComponents: function addEventListenersToGameComponents(gameComponents) {
+
+			/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
+
+			var chooseLocationMap = gameComponents.chooseLocationMap;
+			var chooseLocationMarker = gameComponents.chooseLocationMarker;
+			var panorama = gameComponents.panorama;
+
+
+			var eventToEntityMap = {
+				'dragend': chooseLocationMarker,
+				'click': chooseLocationMap
+			};
+
+			var logDistanceFromPanorama = function logDistanceFromPanorama() {
+
+				var distanceFromPanoramaInMiles = (0, _calculateDistanceFromMarkerToLocation2.default)(panorama, chooseLocationMarker);
+
+				window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
+			};
+
+			for (var event in eventToEntityMap) {
+
+				google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama);
+			}
+		},
+		createGameComponents: function createGameComponents() {
+
+			var gameComponents = (0, _createGameComponents3.default)({
+				locationData: this.locationData,
+				mapCanvas: this.mapCanvas,
+				mapLatLng: this.mapLatLng,
+				mapMarkerVisible: false,
+				panoramaCanvas: this.panoramaCanvas
+			});
+
+			for (var component in gameComponents) {
+
+				this[component] = gameComponents[component];
+			}
+
+			this.emit('game_components', gameComponents);
+		},
+		getLocationData: function getLocationData() {
+			var _this2 = this;
+
+			return Promise.resolve(_constants.nycCoordinates).then(function (locationData) {
+				return _this2.onPregameLocationDataReceived(locationData);
+			});
+		},
+		loadCityGeoJSON: function loadCityGeoJSON() {
+			var _this3 = this;
+
+			return new Promise(function (resolve) {
+				var chooseLocationMap = _this3.chooseLocationMap;
+
+
+				if (!chooseLocationMap) {
+
+					throw new Error("No 'chooseLocationMap' found in state.  Cannot load city's GeoJSON data.");
+				}
+
+				/*----------  Load GeoJSON  ----------*/
+
+				// Each borough is a feature
+				chooseLocationMap.data.loadGeoJson(_constants.NYC_BOUNDARIES_DATASET_URL, {}, function (featureCollection) {
+
+					window.console.log("featureCollection:", featureCollection);
+
+					_this3.locationData = _extends(_this3.locationData, { featureCollection: featureCollection });
+
+					_this3.emit('location_data', _extends({}, _this3.locationData));
+
+					resolve();
+				});
+			});
+		},
+		onPregameLocationDataReceived: function onPregameLocationDataReceived(locationData) {
+
+			this.emit('location_data', locationData);
+
+			var _locationData$CENTER = locationData.CENTER;
+			var lat = _locationData$CENTER.lat;
+			var lng = _locationData$CENTER.lng;
 
 
 			var mapLatLng = new google.maps.LatLng(lat, lng);
@@ -14339,6 +14374,19 @@
 				mapLatLng: mapLatLng,
 				view: 'map'
 			});
+
+			this.locationData = locationData;
+			this.mapLatLng = mapLatLng;
+
+			this.createGameComponents();
+		},
+		startGame: function startGame() {
+
+			this.emit('gamestage', this.gameStage);
+
+			this.getLocationData();
+
+			this.addEventListeners();
 		},
 		validateArgs: function validateArgs(mapCanvas, panoramaCanvas) {
 
@@ -14353,6 +14401,534 @@
 
 /***/ },
 /* 382 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _calculateDistanceBetweenLatLngs = __webpack_require__(383);
+
+	var _calculateDistanceBetweenLatLngs2 = _interopRequireDefault(_calculateDistanceBetweenLatLngs);
+
+	var _convertMetersToMiles = __webpack_require__(384);
+
+	var _convertMetersToMiles2 = _interopRequireDefault(_convertMetersToMiles);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var calculateDistanceFromMarkerToLocation = function calculateDistanceFromMarkerToLocation(panorama, marker) {
+		var units = arguments.length <= 2 || arguments[2] === undefined ? 'miles' : arguments[2];
+
+
+		var distanceFromPanoramaInMeters = (0, _calculateDistanceBetweenLatLngs2.default)(panorama.getPosition(), marker.getPosition());
+
+		if ('meters' === units) {
+
+			return distanceFromPanoramaInMeters;
+		}
+
+		var distanceFromPanoramaInMiles = (0, _convertMetersToMiles2.default)(distanceFromPanoramaInMeters).toFixed(3);
+
+		return distanceFromPanoramaInMiles;
+	};
+
+	exports.default = calculateDistanceFromMarkerToLocation;
+
+/***/ },
+/* 383 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/* global google */
+
+	var calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
+
+		return google.maps.geometry.spherical.computeDistanceBetween(first, second);
+	};
+
+	exports.default = calculateDistanceBetweenLatLngs;
+
+/***/ },
+/* 384 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _constants = __webpack_require__(348);
+
+	var convertMetersToMiles = function convertMetersToMiles(meters) {
+
+		var MILES_PER_METER = 0.000621371;
+
+		return meters * MILES_PER_METER;
+	};
+
+	exports.default = convertMetersToMiles;
+
+/***/ },
+/* 385 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createPanorama = __webpack_require__(386);
+
+	var _createPanorama2 = _interopRequireDefault(_createPanorama);
+
+	var _createSpinner = __webpack_require__(387);
+
+	var _createSpinner2 = _interopRequireDefault(_createSpinner);
+
+	var _createWebGlManager = __webpack_require__(392);
+
+	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
+
+	var _createChooseLocationMap = __webpack_require__(393);
+
+	var _createChooseLocationMap2 = _interopRequireDefault(_createChooseLocationMap);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/* global google */
+
+	var createGameComponents = function createGameComponents(gameState) {
+
+		if (!('google' in window) || !('maps' in window.google) || !('geometry' in window.google.maps)) {
+
+			throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page.");
+		}
+
+		// 'currentLat' and 'currentLng' are deprecated...
+		var locationData = gameState.locationData;
+		var mapCanvas = gameState.mapCanvas;
+		var mapLatLng = gameState.mapLatLng;
+		var mapMarkerVisible = gameState.mapMarkerVisible;
+		var panoramaCanvas = gameState.panoramaCanvas;
+
+
+		var webGlManager = (0, _createWebGlManager2.default)(panoramaCanvas);
+
+		var mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
+
+		/*----------  Set up panorama  ----------*/
+
+		var panorama = (0, _createPanorama2.default)(panoramaCanvas, {
+			mode: mode,
+			position: null,
+			visible: true
+		});
+
+		/*----------  Set up spinner  ----------*/
+
+		var spinner = (0, _createSpinner2.default)(panorama, {
+			punctuate: {
+				segments: 4,
+				delay: 2000
+			}
+		});
+
+		spinner.on('revolution', function () {
+			return window.console.log('revolution');
+		});
+
+		/*----------  Set up chooseLocationMap  ----------*/
+
+		var mapOptions = {
+			center: mapLatLng
+		};
+
+		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
+
+		/*----------  Set up marker  ----------*/
+
+		// Outside the polygon boundaries, in the Atlantic Ocean
+		var _locationData$MARKER_ = locationData.MARKER_PLACEMENT;
+		var markerLat = _locationData$MARKER_.lat;
+		var markerLng = _locationData$MARKER_.lng;
+
+
+		var markerOptions = {
+			animation: google.maps.Animation.BOUNCE,
+			draggable: true,
+			map: chooseLocationMap,
+			position: new google.maps.LatLng(markerLat, markerLng),
+			visible: mapMarkerVisible
+		};
+
+		var chooseLocationMarker = new google.maps.Marker(markerOptions);
+
+		// Stop bouncing
+		google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
+			return chooseLocationMarker.setAnimation(null);
+		});
+
+		google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
+			var latLng = e.latLng;
+
+
+			chooseLocationMarker.setPosition(latLng);
+			chooseLocationMarker.setAnimation(null);
+		});
+
+		/*----------  Set up WebGl  ----------*/
+
+		if (webGlManager.canUseWebGl()) {
+
+			setTimeout(function () {
+				return webGlManager.initGl();
+			}, 1000);
+		}
+
+		return {
+			chooseLocationMap: chooseLocationMap,
+			chooseLocationMarker: chooseLocationMarker,
+			panorama: panorama,
+			spinner: spinner
+		};
+	};
+
+	exports.default = createGameComponents;
+
+/***/ },
+/* 386 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	/* global google */
+
+	/*======================================
+	=            createPanorama()          =
+	======================================*/
+
+	var createPanorama = function createPanorama(canvas) {
+		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+
+		var defaultOptions = {
+			position: null,
+			// Address control shows a box with basic information about the
+			// location, as well as a link to see the map on Google Maps
+			addressControl: false,
+			addressControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+			// clickToGo shows a rectangular "highlight" under the cursor, and on
+			// click, the street view moves to the location clicked upon.  We will
+			// want to keep this disabled for the game.			
+			clickToGo: false,
+			disableDoubleClickZoom: true,
+			// Below, we add an event listener to 'closeclick', which fires when
+			// the close button is clicked.  In the original author's implementation,
+			// the application reveals the map on 'closeclick'.  			
+			enableCloseButton: false,
+			imageDateControl: false,
+			linksControl: false,
+			mode: "webgl",
+			// Pan Control shows a UI element that allows you to rotate the pano
+			panControl: false,
+			panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+			pano: null, // ID of panorama to use
+			pov: {
+				zoom: 1.1,
+				heading: 0,
+				pitch: 0
+			},
+			scrollwheel: false,
+			visible: true,
+			// Zoom control functionality is obvious
+			zoomControl: false,
+			zoomControlOptions: {
+				position: google.maps.ControlPosition.TOP_LEFT,
+				style: google.maps.ZoomControlStyle.DEFAULT
+			}
+		};
+
+		var panoramaOptions = _extends({}, defaultOptions, options);
+
+		// Documentation on streetViewPanorama class:
+		// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
+		return new google.maps.StreetViewPanorama(canvas, panoramaOptions);
+	};
+
+	/*=====  End of createPanorama()  ======*/
+
+	exports.default = createPanorama;
+
+/***/ },
+/* 387 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
+
+	var _events = __webpack_require__(388);
+
+	var _utils = __webpack_require__(336);
+
+	var _util = __webpack_require__(389);
+
+	/*=====================================
+	=            createSpinner()            =
+	=====================================*/
+
+	/**
+	 *
+	 * Add options object as last parameter.  Add option to 
+	 * not spin continuously, but rather, in a series of 
+	 * partial-spins.  Should be able to split the 360 degrees 
+	 * into "chunks", spin to one chunk, pause for a few 
+	 * seconds, and then continue to the next one.  
+	 *
+	 * Option will be called 'punctuate'.  Properties will be 
+	 * 'segments' and 'delay'.  Valid options for segments will be
+	 * even divisors of 360 -- 12 (30-degrees), 9 (40-degrees), 
+	 * 6 (60-degrees), 4 (90-degrees), 2 (180-degrees)
+	 * 
+	 */
+
+	var createSpinner = function createSpinner(panorma) {
+		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+
+		var DEGREES_IN_A_CIRCLE = 360;
+		var DELAY_DEFAULT = 1000; // Milliseconds 
+		var INCREMENT_DEFAULT = 1; // Degrees
+		var INTERVAL_DEFAULT = 25; // Milliseconds
+		var SEGMENTS_DEFAULT = 4;
+		var VALID_SEGMENTS = [2, 4, 6, 9, 12];
+
+		var _canSpin = false;
+		var _paused = false;
+		var _started = false;
+		var _startHeading = null;
+		var segments = null;
+		var delay = null;
+		var increment = void 0;
+		var interval = void 0;
+		var timer = void 0;
+
+		var spinner = null;
+
+		var handlePunctuationOption = function handlePunctuationOption(options) {
+
+			var punctuateSettings = null;
+
+			if ('punctuate' in options) {
+				var _options$punctuate = options.punctuate;
+				var _segments = _options$punctuate.segments;
+				var _delay = _options$punctuate.delay;
+
+
+				if (!(0, _utils.isOneOf)(VALID_SEGMENTS, _segments)) {
+
+					_segments = null;
+				}
+
+				if (!_segments) {
+					_segments = SEGMENTS_DEFAULT;
+				}
+
+				if (!_delay) {
+					_delay = DELAY_DEFAULT;
+				}
+
+				punctuateSettings = { segments: _segments, delay: _delay };
+			}
+
+			return punctuateSettings;
+		};
+
+		var incrementHeading = function incrementHeading(pov, increment) {
+
+			pov.heading += increment;
+
+			while (pov.heading > DEGREES_IN_A_CIRCLE) {
+				pov.heading -= DEGREES_IN_A_CIRCLE;
+			}
+
+			while (pov.heading < 0) {
+				pov.heading += DEGREES_IN_A_CIRCLE;
+			}
+
+			return pov;
+		};
+
+		// Initial implementation assumes that we are incrementing
+		// the spin by one degree each time we call spin(). 
+		// TODO: Make this more sophisticated and robust. 
+		var punctuate = function punctuate(pov, segments, delay) {
+
+			// Heading is the number of degrees from cardinal direction North
+			var heading = pov.heading;
+
+			// The valid values for 'segments' evenly divide 360 degrees. 
+			// If the heading is evenly divisible by the number of degrees
+			// in each segment, the spinning has completed one partial
+			// rotation, and it is time to pause the movement. 
+
+			if (heading % (DEGREES_IN_A_CIRCLE / segments) === 0) {
+
+				_paused = true;
+
+				// If we were to pause the spinning on mouseover as
+				// the original author chose to do, we wouldn't actually
+				// want to start spinning when this timeout expires. 
+				// So we would need to read the mouseover state somehow
+				// and start only when the timeout has expired AND the
+				// mouse has left the canvas <div>.  This is where something
+				// like Redux is going to shine. 
+
+				setTimeout(function () {
+
+					// If the stop() method has not been called
+					// by the outside world...
+					if (_canSpin) {
+
+						api.start();
+					}
+				}, delay);
+			}
+		};
+
+		/*----------  Set punctuation options  ----------*/
+
+		var punctuated = handlePunctuationOption(options);
+
+		if (punctuated) {
+
+			// Parentheses required when destructuring assigns
+			// to previously declared variables. 
+			segments = punctuated.segments;
+			delay = punctuated.delay;
+		}
+
+		/*----------  Set increment option  ----------*/
+
+		increment = options.increment;
+
+
+		if (!increment) {
+
+			increment = INCREMENT_DEFAULT; // Degrees
+		}
+
+		/*----------  Set interval option  ----------*/
+		interval = options.interval;
+
+
+		if (!interval) {
+
+			interval = INTERVAL_DEFAULT;
+		}
+
+		var api = {
+			spin: function spin() {
+
+				// window.console.log('spin()');
+
+				try {
+
+					var pov = incrementHeading(panorma.getPov(), increment);
+
+					panorma.setPov(pov);
+
+					if (pov.heading % DEGREES_IN_A_CIRCLE === _startHeading) {
+
+						spinner.emit('revolution');
+					}
+
+					if (punctuated) {
+
+						punctuate(pov, segments, delay);
+					}
+				} catch (e) {
+
+					window.console.error("e:", e);
+				}
+			},
+			start: function start() {
+				var _this = this;
+
+				_canSpin = true;
+
+				_paused = false;
+
+				// window.console.log('spinner start()');
+
+				if (!_started) {
+
+					_started = true;
+
+					_startHeading = panorma.getPov().heading;
+				}
+
+				if (!timer) {
+
+					timer = setInterval(function () {
+
+						if (_canSpin && !_paused) {
+
+							_this.spin();
+						}
+					}, interval);
+				}
+			},
+			started: function started() {
+
+				return _started;
+			},
+			stop: function stop() {
+
+				_canSpin = false;
+			}
+		};
+
+		/*----------  Create Spinner instance  ----------*/
+
+		// Create Spinner() constructor to inherit EventEmitter functionality
+		var Spinner = function Spinner() {};
+
+		(0, _util.inherits)(Spinner, _events.EventEmitter);
+
+		// Add API methods to prototype
+		_extends(Spinner.prototype, api);
+
+		spinner = new Spinner();
+
+		return spinner;
+	};
+
+	/*=====  End of createSpinner()  ======*/
+
+	exports.default = createSpinner;
+
+/***/ },
+/* 388 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -14656,7 +15232,7 @@
 
 
 /***/ },
-/* 383 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -15184,7 +15760,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(384);
+	exports.isBuffer = __webpack_require__(390);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -15228,7 +15804,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(385);
+	exports.inherits = __webpack_require__(391);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -15249,7 +15825,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(295)))
 
 /***/ },
-/* 384 */
+/* 390 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -15260,7 +15836,7 @@
 	}
 
 /***/ },
-/* 385 */
+/* 391 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -15289,7 +15865,128 @@
 
 
 /***/ },
-/* 386 */
+/* 392 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
+
+	var _events = __webpack_require__(388);
+
+	var _util = __webpack_require__(389);
+
+	/*==========================================
+	=            createWebGlManager            =
+	==========================================*/
+
+	var createWebGlManager = function createWebGlManager(canvas) {
+
+		var WebGlManager = function WebGlManager(canvas) {
+
+			this.canvas = canvas;
+		};
+
+		// Inherit from EventEmitter
+		(0, _util.inherits)(WebGlManager, _events.EventEmitter);
+
+		// Extend WebGlManager prototype with
+		// desired functionality.
+		_extends(WebGlManager.prototype, {
+			canUseWebGl: function canUseWebGl() {
+
+				if (!window.WebGLRenderingContext) return false;
+
+				var testCanvas = document.createElement('canvas');
+
+				var result = void 0;
+
+				if (testCanvas && 'getContext' in testCanvas) {
+
+					var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
+
+					// Reduce the array of webGlNames to a single boolean,
+					// which represents the result of canUseWebGl(). 
+					result = webGlNames.reduce(function (prev, curr) {
+
+						if (prev) return prev; // If 'prev' is truthy, we can use WebGL.
+
+						var context = testCanvas.getContext(curr);
+
+						if (context && context instanceof WebGLRenderingContext) return true;
+					}, false); // Start with false (default)
+				}
+
+				return result;
+			},
+			initGl: function initGl() {
+				var _this = this;
+
+				if (this.canvas) {
+
+					this.canvas.addEventListener('webglcontextrestored', function () {
+						return _this.emit('webglcontextrestored');
+					});
+				}
+			}
+		});
+
+		// Return class instance which has inherited
+		// our desired functionality
+		return new WebGlManager(canvas);
+	};
+
+	/*=====  End of createWebGlManager  ======*/
+
+	exports.default = createWebGlManager;
+
+/***/ },
+/* 393 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	/* global google */
+
+	var DEFAULT_LAT = 40.6291566;
+	var DEFAULT_LNG = -74.0287341;
+
+	var createChooseLocationMap = function createChooseLocationMap(canvas, options) {
+
+		if (!canvas) {
+
+			throw new Error("No canvas passed to createChooseLocationMap().");
+		}
+
+		var defaultOptions = {
+			center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),
+			mapTypeControl: false,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			streetViewControl: false,
+			zoom: 10
+		};
+
+		var mapOptions = _extends({}, defaultOptions, options);
+
+		var map = new google.maps.Map(canvas, mapOptions);
+
+		return map;
+	};
+
+	exports.default = createChooseLocationMap;
+
+/***/ },
+/* 394 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15304,11 +16001,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TwoBlocksMap = __webpack_require__(387);
+	var _TwoBlocksMap = __webpack_require__(395);
 
 	var _TwoBlocksMap2 = _interopRequireDefault(_TwoBlocksMap);
 
-	var _TwoBlocksPanorama = __webpack_require__(389);
+	var _TwoBlocksPanorama = __webpack_require__(397);
 
 	var _TwoBlocksPanorama2 = _interopRequireDefault(_TwoBlocksPanorama);
 
@@ -15376,7 +16073,7 @@
 	exports.default = TwoBlocksView;
 
 /***/ },
-/* 387 */
+/* 395 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15391,7 +16088,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _getViewLayerClassName = __webpack_require__(388);
+	var _getViewLayerClassName = __webpack_require__(396);
 
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 
@@ -15460,7 +16157,7 @@
 	exports.default = TwoBlocksMap;
 
 /***/ },
-/* 388 */
+/* 396 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -15478,7 +16175,7 @@
 	exports.default = getViewLayerClassName;
 
 /***/ },
-/* 389 */
+/* 397 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15493,7 +16190,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _getViewLayerClassName = __webpack_require__(388);
+	var _getViewLayerClassName = __webpack_require__(396);
 
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 
@@ -15563,7 +16260,7 @@
 	exports.default = TwoBlocksPanorama;
 
 /***/ },
-/* 390 */
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15578,7 +16275,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _stylizeBoroughName = __webpack_require__(391);
+	var _stylizeBoroughName = __webpack_require__(399);
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
@@ -15635,7 +16332,7 @@
 	exports.default = TwoBlocksPrompt;
 
 /***/ },
-/* 391 */
+/* 399 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -15653,7 +16350,7 @@
 	exports.default = stylizeBoroughName;
 
 /***/ },
-/* 392 */
+/* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15668,7 +16365,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _stylizeBoroughName = __webpack_require__(391);
+	var _stylizeBoroughName = __webpack_require__(399);
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
@@ -15753,655 +16450,6 @@
 	};
 
 	exports.default = TwoBlocksSubmitter;
-
-/***/ },
-/* 393 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _calculateDistanceBetweenLatLngs = __webpack_require__(394);
-
-	var _calculateDistanceBetweenLatLngs2 = _interopRequireDefault(_calculateDistanceBetweenLatLngs);
-
-	var _convertMetersToMiles = __webpack_require__(395);
-
-	var _convertMetersToMiles2 = _interopRequireDefault(_convertMetersToMiles);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var calculateDistanceFromMarkerToLocation = function calculateDistanceFromMarkerToLocation(panorama, marker) {
-		var units = arguments.length <= 2 || arguments[2] === undefined ? 'miles' : arguments[2];
-
-
-		var distanceFromPanoramaInMeters = (0, _calculateDistanceBetweenLatLngs2.default)(panorama.getPosition(), marker.getPosition());
-
-		if ('meters' === units) {
-
-			return distanceFromPanoramaInMeters;
-		}
-
-		var distanceFromPanoramaInMiles = (0, _convertMetersToMiles2.default)(distanceFromPanoramaInMeters).toFixed(3);
-
-		return distanceFromPanoramaInMiles;
-	};
-
-	exports.default = calculateDistanceFromMarkerToLocation;
-
-/***/ },
-/* 394 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	/* global google */
-
-	var calculateDistanceBetweenLatLngs = function calculateDistanceBetweenLatLngs(first, second) {
-
-		return google.maps.geometry.spherical.computeDistanceBetween(first, second);
-	};
-
-	exports.default = calculateDistanceBetweenLatLngs;
-
-/***/ },
-/* 395 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _constants = __webpack_require__(348);
-
-	var convertMetersToMiles = function convertMetersToMiles(meters) {
-
-		var MILES_PER_METER = 0.000621371;
-
-		return meters * MILES_PER_METER;
-	};
-
-	exports.default = convertMetersToMiles;
-
-/***/ },
-/* 396 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _createPanorama = __webpack_require__(397);
-
-	var _createPanorama2 = _interopRequireDefault(_createPanorama);
-
-	var _createSpinner = __webpack_require__(398);
-
-	var _createSpinner2 = _interopRequireDefault(_createSpinner);
-
-	var _createWebGlManager = __webpack_require__(399);
-
-	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
-
-	var _createChooseLocationMap = __webpack_require__(400);
-
-	var _createChooseLocationMap2 = _interopRequireDefault(_createChooseLocationMap);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	/* global google */
-
-	var createGameComponents = function createGameComponents(gameState) {
-
-		if (!('google' in window) || !('maps' in window.google) || !('geometry' in window.google.maps)) {
-
-			throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page.");
-		}
-
-		// 'currentLat' and 'currentLng' are deprecated...
-		var locationData = gameState.locationData;
-		var mapCanvas = gameState.mapCanvas;
-		var mapLatLng = gameState.mapLatLng;
-		var mapMarkerVisible = gameState.mapMarkerVisible;
-		var panoramaCanvas = gameState.panoramaCanvas;
-
-
-		var webGlManager = (0, _createWebGlManager2.default)(panoramaCanvas);
-
-		var mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
-
-		/*----------  Set up panorama  ----------*/
-
-		var panorama = (0, _createPanorama2.default)(panoramaCanvas, {
-			mode: mode,
-			position: null,
-			visible: true
-		});
-
-		/*----------  Set up spinner  ----------*/
-
-		var spinner = (0, _createSpinner2.default)(panorama, {
-			punctuate: {
-				segments: 4,
-				delay: 2000
-			}
-		});
-
-		spinner.on('revolution', function () {
-			return window.console.log('revolution');
-		});
-
-		/*----------  Set up chooseLocationMap  ----------*/
-
-		var mapOptions = {
-			center: mapLatLng
-		};
-
-		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
-
-		/*----------  Set up marker  ----------*/
-
-		// Outside the polygon boundaries, in the Atlantic Ocean
-		var _locationData$MARKER_ = locationData.MARKER_PLACEMENT;
-		var markerLat = _locationData$MARKER_.lat;
-		var markerLng = _locationData$MARKER_.lng;
-
-
-		var markerOptions = {
-			animation: google.maps.Animation.BOUNCE,
-			draggable: true,
-			map: chooseLocationMap,
-			position: new google.maps.LatLng(markerLat, markerLng),
-			visible: mapMarkerVisible
-		};
-
-		var chooseLocationMarker = new google.maps.Marker(markerOptions);
-
-		// Stop bouncing
-		google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
-			return chooseLocationMarker.setAnimation(null);
-		});
-
-		google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
-			var latLng = e.latLng;
-
-
-			chooseLocationMarker.setPosition(latLng);
-			chooseLocationMarker.setAnimation(null);
-		});
-
-		/*----------  Set up WebGl  ----------*/
-
-		if (webGlManager.canUseWebGl()) {
-
-			setTimeout(function () {
-				return webGlManager.initGl();
-			}, 1000);
-		}
-
-		return {
-			chooseLocationMap: chooseLocationMap,
-			chooseLocationMarker: chooseLocationMarker,
-			panorama: panorama,
-			spinner: spinner
-		};
-	};
-
-	exports.default = createGameComponents;
-
-/***/ },
-/* 397 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	/* global google */
-
-	/*======================================
-	=            createPanorama()          =
-	======================================*/
-
-	var createPanorama = function createPanorama(canvas) {
-		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-
-		var defaultOptions = {
-			position: null,
-			// Address control shows a box with basic information about the
-			// location, as well as a link to see the map on Google Maps
-			addressControl: false,
-			addressControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-			// clickToGo shows a rectangular "highlight" under the cursor, and on
-			// click, the street view moves to the location clicked upon.  We will
-			// want to keep this disabled for the game.			
-			clickToGo: false,
-			disableDoubleClickZoom: true,
-			// Below, we add an event listener to 'closeclick', which fires when
-			// the close button is clicked.  In the original author's implementation,
-			// the application reveals the map on 'closeclick'.  			
-			enableCloseButton: false,
-			imageDateControl: false,
-			linksControl: false,
-			mode: "webgl",
-			// Pan Control shows a UI element that allows you to rotate the pano
-			panControl: false,
-			panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-			pano: null, // ID of panorama to use
-			pov: {
-				zoom: 1.1,
-				heading: 0,
-				pitch: 0
-			},
-			scrollwheel: false,
-			visible: true,
-			// Zoom control functionality is obvious
-			zoomControl: false,
-			zoomControlOptions: {
-				position: google.maps.ControlPosition.TOP_LEFT,
-				style: google.maps.ZoomControlStyle.DEFAULT
-			}
-		};
-
-		var panoramaOptions = _extends({}, defaultOptions, options);
-
-		// Documentation on streetViewPanorama class:
-		// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
-		return new google.maps.StreetViewPanorama(canvas, panoramaOptions);
-	};
-
-	/*=====  End of createPanorama()  ======*/
-
-	exports.default = createPanorama;
-
-/***/ },
-/* 398 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
-
-	var _events = __webpack_require__(382);
-
-	var _utils = __webpack_require__(336);
-
-	var _util = __webpack_require__(383);
-
-	/*=====================================
-	=            createSpinner()            =
-	=====================================*/
-
-	/**
-	 *
-	 * Add options object as last parameter.  Add option to 
-	 * not spin continuously, but rather, in a series of 
-	 * partial-spins.  Should be able to split the 360 degrees 
-	 * into "chunks", spin to one chunk, pause for a few 
-	 * seconds, and then continue to the next one.  
-	 *
-	 * Option will be called 'punctuate'.  Properties will be 
-	 * 'segments' and 'delay'.  Valid options for segments will be
-	 * even divisors of 360 -- 12 (30-degrees), 9 (40-degrees), 
-	 * 6 (60-degrees), 4 (90-degrees), 2 (180-degrees)
-	 * 
-	 */
-
-	var createSpinner = function createSpinner(panorma) {
-		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-
-		var DEGREES_IN_A_CIRCLE = 360;
-		var DELAY_DEFAULT = 1000; // Milliseconds 
-		var INCREMENT_DEFAULT = 1; // Degrees
-		var INTERVAL_DEFAULT = 25; // Milliseconds
-		var SEGMENTS_DEFAULT = 4;
-		var VALID_SEGMENTS = [2, 4, 6, 9, 12];
-
-		var _canSpin = false;
-		var _paused = false;
-		var _started = false;
-		var _startHeading = null;
-		var segments = null;
-		var delay = null;
-		var increment = void 0;
-		var interval = void 0;
-		var timer = void 0;
-
-		var spinner = null;
-
-		var handlePunctuationOption = function handlePunctuationOption(options) {
-
-			var punctuateSettings = null;
-
-			if ('punctuate' in options) {
-				var _options$punctuate = options.punctuate;
-				var _segments = _options$punctuate.segments;
-				var _delay = _options$punctuate.delay;
-
-
-				if (!(0, _utils.isOneOf)(VALID_SEGMENTS, _segments)) {
-
-					_segments = null;
-				}
-
-				if (!_segments) {
-					_segments = SEGMENTS_DEFAULT;
-				}
-
-				if (!_delay) {
-					_delay = DELAY_DEFAULT;
-				}
-
-				punctuateSettings = { segments: _segments, delay: _delay };
-			}
-
-			return punctuateSettings;
-		};
-
-		var incrementHeading = function incrementHeading(pov, increment) {
-
-			pov.heading += increment;
-
-			while (pov.heading > DEGREES_IN_A_CIRCLE) {
-				pov.heading -= DEGREES_IN_A_CIRCLE;
-			}
-
-			while (pov.heading < 0) {
-				pov.heading += DEGREES_IN_A_CIRCLE;
-			}
-
-			return pov;
-		};
-
-		// Initial implementation assumes that we are incrementing
-		// the spin by one degree each time we call spin(). 
-		// TODO: Make this more sophisticated and robust. 
-		var punctuate = function punctuate(pov, segments, delay) {
-
-			// Heading is the number of degrees from cardinal direction North
-			var heading = pov.heading;
-
-			// The valid values for 'segments' evenly divide 360 degrees. 
-			// If the heading is evenly divisible by the number of degrees
-			// in each segment, the spinning has completed one partial
-			// rotation, and it is time to pause the movement. 
-
-			if (heading % (DEGREES_IN_A_CIRCLE / segments) === 0) {
-
-				_paused = true;
-
-				// If we were to pause the spinning on mouseover as
-				// the original author chose to do, we wouldn't actually
-				// want to start spinning when this timeout expires. 
-				// So we would need to read the mouseover state somehow
-				// and start only when the timeout has expired AND the
-				// mouse has left the canvas <div>.  This is where something
-				// like Redux is going to shine. 
-
-				setTimeout(function () {
-
-					// If the stop() method has not been called
-					// by the outside world...
-					if (_canSpin) {
-
-						api.start();
-					}
-				}, delay);
-			}
-		};
-
-		/*----------  Set punctuation options  ----------*/
-
-		var punctuated = handlePunctuationOption(options);
-
-		if (punctuated) {
-
-			// Parentheses required when destructuring assigns
-			// to previously declared variables. 
-			segments = punctuated.segments;
-			delay = punctuated.delay;
-		}
-
-		/*----------  Set increment option  ----------*/
-
-		increment = options.increment;
-
-
-		if (!increment) {
-
-			increment = INCREMENT_DEFAULT; // Degrees
-		}
-
-		/*----------  Set interval option  ----------*/
-		interval = options.interval;
-
-
-		if (!interval) {
-
-			interval = INTERVAL_DEFAULT;
-		}
-
-		var api = {
-			spin: function spin() {
-
-				// window.console.log('spin()');
-
-				try {
-
-					var pov = incrementHeading(panorma.getPov(), increment);
-
-					panorma.setPov(pov);
-
-					if (pov.heading % DEGREES_IN_A_CIRCLE === _startHeading) {
-
-						spinner.emit('revolution');
-					}
-
-					if (punctuated) {
-
-						punctuate(pov, segments, delay);
-					}
-				} catch (e) {
-
-					window.console.error("e:", e);
-				}
-			},
-			start: function start() {
-				var _this = this;
-
-				_canSpin = true;
-
-				_paused = false;
-
-				// window.console.log('spinner start()');
-
-				if (!_started) {
-
-					_started = true;
-
-					_startHeading = panorma.getPov().heading;
-				}
-
-				if (!timer) {
-
-					timer = setInterval(function () {
-
-						if (_canSpin && !_paused) {
-
-							_this.spin();
-						}
-					}, interval);
-				}
-			},
-			started: function started() {
-
-				return _started;
-			},
-			stop: function stop() {
-
-				_canSpin = false;
-			}
-		};
-
-		/*----------  Create Spinner instance  ----------*/
-
-		// Create Spinner() constructor to inherit EventEmitter functionality
-		var Spinner = function Spinner() {};
-
-		(0, _util.inherits)(Spinner, _events.EventEmitter);
-
-		// Add API methods to prototype
-		_extends(Spinner.prototype, api);
-
-		spinner = new Spinner();
-
-		return spinner;
-	};
-
-	/*=====  End of createSpinner()  ======*/
-
-	exports.default = createSpinner;
-
-/***/ },
-/* 399 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
-
-	var _events = __webpack_require__(382);
-
-	var _util = __webpack_require__(383);
-
-	/*==========================================
-	=            createWebGlManager            =
-	==========================================*/
-
-	var createWebGlManager = function createWebGlManager(canvas) {
-
-		var WebGlManager = function WebGlManager(canvas) {
-
-			this.canvas = canvas;
-		};
-
-		// Inherit from EventEmitter
-		(0, _util.inherits)(WebGlManager, _events.EventEmitter);
-
-		// Extend WebGlManager prototype with
-		// desired functionality.
-		_extends(WebGlManager.prototype, {
-			canUseWebGl: function canUseWebGl() {
-
-				if (!window.WebGLRenderingContext) return false;
-
-				var testCanvas = document.createElement('canvas');
-
-				var result = void 0;
-
-				if (testCanvas && 'getContext' in testCanvas) {
-
-					var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
-
-					// Reduce the array of webGlNames to a single boolean,
-					// which represents the result of canUseWebGl(). 
-					result = webGlNames.reduce(function (prev, curr) {
-
-						if (prev) return prev; // If 'prev' is truthy, we can use WebGL.
-
-						var context = testCanvas.getContext(curr);
-
-						if (context && context instanceof WebGLRenderingContext) return true;
-					}, false); // Start with false (default)
-				}
-
-				return result;
-			},
-			initGl: function initGl() {
-				var _this = this;
-
-				if (this.canvas) {
-
-					this.canvas.addEventListener('webglcontextrestored', function () {
-						return _this.emit('webglcontextrestored');
-					});
-				}
-			}
-		});
-
-		// Return class instance which has inherited
-		// our desired functionality
-		return new WebGlManager(canvas);
-	};
-
-	/*=====  End of createWebGlManager  ======*/
-
-	exports.default = createWebGlManager;
-
-/***/ },
-/* 400 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	/* global google */
-
-	var DEFAULT_LAT = 40.6291566;
-	var DEFAULT_LNG = -74.0287341;
-
-	var createChooseLocationMap = function createChooseLocationMap(canvas, options) {
-
-		if (!canvas) {
-
-			throw new Error("No canvas passed to createChooseLocationMap().");
-		}
-
-		var defaultOptions = {
-			center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),
-			mapTypeControl: false,
-			mapTypeId: google.maps.MapTypeId.ROADMAP,
-			streetViewControl: false,
-			zoom: 10
-		};
-
-		var mapOptions = _extends({}, defaultOptions, options);
-
-		var map = new google.maps.Map(canvas, mapOptions);
-
-		return map;
-	};
-
-	exports.default = createChooseLocationMap;
 
 /***/ },
 /* 401 */

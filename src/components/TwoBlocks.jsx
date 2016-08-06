@@ -1,16 +1,14 @@
-/* global document, google, window */
+/* global document, window */
 
 import React from 'react';
 import TwoBlocksGame from '../TwoBlocksGame'; 
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksPrompt from './TwoBlocksPrompt';
 import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
-import calculateDistanceFromMarkerToLocation from '../calculateDistanceFromMarkerToLocation'; 
-import createGameComponents from '../createGameComponents';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { DEFAULT_TOTAL_ROUNDS, GAME_LOAD_DELAY, NYC_BOUNDARIES_DATASET_URL } from '../constants/constants'; 
+import { DEFAULT_TOTAL_ROUNDS, GAME_LOAD_DELAY } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -73,30 +71,63 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	addEventListenersToGameComponents(gameComponents) {
+	addChooseLocationMapEventListeners() {
 
-		/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
-
-		const { chooseLocationMap, chooseLocationMarker, panorama } = gameComponents; 
+		/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
 		
-		const eventToEntityMap = {
-			'dragend': chooseLocationMarker, 
-			'click': chooseLocationMap
-		}; 
+		const { chooseLocationMap } = this.state; 
 
-		const logDistanceFromPanorama = () => {
+		chooseLocationMap.data.addListener('mouseover', event => {
+			
+			const { selectedBorough } = this.state; 
 
-			const distanceFromPanoramaInMiles = calculateDistanceFromMarkerToLocation(panorama, chooseLocationMarker); 
+			if (selectedBorough !== event.feature.getProperty('boro_name')) {
 
-			window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles); 
+				chooseLocationMap.data.overrideStyle(event.feature, {
+					fillColor: "#A8FFFC"
+				}); 
 
-		}; 
+			}
 
-		for (const event in eventToEntityMap) {
+			this.updateHoveredBorough(event.feature); 
+		
+		});
 
-			google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama); 
+		chooseLocationMap.data.addListener('mouseout', event => {
 
-		} 					
+			const { selectedBorough } = this.state; 
+
+			if (selectedBorough !== event.feature.getProperty('boro_name')) {
+
+				chooseLocationMap.data.revertStyle(event.feature); 
+
+			}
+
+			this.updateHoveredBorough('');
+
+		}); 	
+
+		chooseLocationMap.data.addListener('click', event => {
+
+			const { selectedBorough } = this.state; 
+
+			if (selectedBorough !== event.feature.getProperty('boro_name')) {
+
+				const { featureCollection } = this.state.locationData; 
+
+				const allOtherBoroughs = featureCollection.filter(feature => feature.getProperty('boro_name') !== event.feature.getProperty('boro_name')); 
+
+				allOtherBoroughs.forEach(feature => chooseLocationMap.data.revertStyle(feature)); 
+
+			}
+
+			chooseLocationMap.data.overrideStyle(event.feature, {
+				fillColor: "#FFFFFF"
+			}); 
+
+			this.updateSelectedBorough(event.feature); 
+
+		}); 
 
 	}
 
@@ -107,6 +138,16 @@ class TwoBlocks extends React.Component {
 		twoBlocks.on('location_data', locationData => this.setState({ locationData })); 
 
 		twoBlocks.on('view', viewState => this.setState(viewState)); 
+
+		twoBlocks.on('game_components', gameComponents => {
+
+			window.console.log("gameComponents:", gameComponents);
+
+			this.setState(gameComponents)
+
+				.then(() => this.addChooseLocationMapEventListeners()); 
+
+		}); 
 
 	}
 
@@ -212,109 +253,7 @@ class TwoBlocks extends React.Component {
 			gameInstance: twoBlocks
 		}; 
 
-		this.setState(nextState)
-
-			.then(() => {
-				
-				// gameComponents: chooseLocationMap, panorama, spinner 
-				const gameComponents = createGameComponents(this.state);
-
-				window.console.log("gameComponents:", gameComponents);		 
-
-				this.addEventListenersToGameComponents(gameComponents);  
-				
-				return this.setState(gameComponents); 
-
-			})
-
-			.then(() => this.loadCityGeoJSON())
-
-			.then(() => this.startGame()); 
-
-	}
-
-	loadCityGeoJSON() {
-
-		return new Promise(resolve => {
-
-			const { chooseLocationMap } = this.state; 
-
-			if (!(chooseLocationMap)) {
-
-				throw new Error("No 'chooseLocationMap' found in state.  Cannot load city's GeoJSON data."); 
-
-			}
-
-			/*----------  Load GeoJSON  ----------*/
-			
-			// Each borough is a feature 
-			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
-
-				window.console.log("featureCollection:", featureCollection); 
-
-				this.setState({
-					locationData: Object.assign({}, this.state.locationData, { featureCollection })
-				}); 
-
-				resolve();  
-
-			}); 
-
-			/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
-			
-			chooseLocationMap.data.addListener('mouseover', event => {
-				
-				const { selectedBorough } = this.state; 
-
-				if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-					chooseLocationMap.data.overrideStyle(event.feature, {
-						fillColor: "#A8FFFC"
-					}); 
-
-				}
-
-				this.updateHoveredBorough(event.feature); 
-			
-			});
-
-			chooseLocationMap.data.addListener('mouseout', event => {
-
-				const { selectedBorough } = this.state; 
-
-				if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-					chooseLocationMap.data.revertStyle(event.feature); 
-
-				}
-
-				this.updateHoveredBorough('');
-
-			}); 	
-
-			chooseLocationMap.data.addListener('click', event => {
-
-				const { selectedBorough } = this.state; 
-
-				if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-					const { featureCollection } = this.state.locationData; 
-
-					const allOtherBoroughs = featureCollection.filter(feature => feature.getProperty('boro_name') !== event.feature.getProperty('boro_name')); 
-
-					allOtherBoroughs.forEach(feature => chooseLocationMap.data.revertStyle(feature)); 
-
-				}
-
-				chooseLocationMap.data.overrideStyle(event.feature, {
-					fillColor: "#FFFFFF"
-				}); 
-
-				this.updateSelectedBorough(event.feature); 
-
-			}); 
-
-		}); 
+		this.setState(nextState); 
 
 	}
 
@@ -327,7 +266,7 @@ class TwoBlocks extends React.Component {
 		.then(() => {
 
 			return this.setState({
-				promptText: 'Look closely...in which borough was this Street View taken?',  
+				promptText: 'Look closely...which borough is this Street View from?',  
 				view: 'panorama'
 			}); 
 
@@ -412,7 +351,13 @@ class TwoBlocks extends React.Component {
 
 	onTransitionToGameplay() {
 
-		this.nextTurn(); 
+		this.setRandomLocation()
+
+			.then(() => {
+
+				setTimeout(() => this.nextTurn(), GAME_LOAD_DELAY);  // Give Street View panorama time to load 
+			
+			}); 
 
 	}
 
@@ -457,24 +402,6 @@ class TwoBlocks extends React.Component {
 			.then(() => window.console.log("this.state:", this.state))
 
 			.catch((...args) => `Caught error with args ${args}`); 				
-
-	}
-
-	startGame() {
-
-		return this.setRandomLocation()
-		
-			.then(() => {
-
-				setTimeout(() => {
-
-					this.setState({
-						gameStage: 'gameplay'
-					}); 
-				
-				}, GAME_LOAD_DELAY);
-
-			}); 
 
 	}
 

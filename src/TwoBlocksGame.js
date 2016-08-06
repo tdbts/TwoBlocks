@@ -1,13 +1,23 @@
+import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
+import createGameComponents from './createGameComponents'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { nycCoordinates } from './constants/constants';  
+import { nycCoordinates, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
 
 const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.validateArgs(mapCanvas, panoramaCanvas); 
 
+	this.gameStage = 'pregame'; 
 	this.mapCanvas = mapCanvas; 
 	this.panoramaCanvas = panoramaCanvas; 
+
+	this.chooseLocationMap = null; 
+	this.chooseLocationMarker = null; 
+	this.locationData = null; 
+	this.mapLatLng = null; 
+	this.panorama = null; 
+	this.spinner = null; 
 
 }; 
 
@@ -19,13 +29,117 @@ inherits(TwoBlocksGame, EventEmitter);
 
 TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
-	startGame() {
+	addEventListeners() {
 
-		this.emit('gamestage', 'pregame'); 
+		this.on('game_components', gameComponents => {
+		
+			this.addEventListenersToGameComponents(gameComponents);
 
-		this.emit('location_data', nycCoordinates); 
+			this.loadCityGeoJSON()
 
-		const { lat, lng } = nycCoordinates.CENTER; 
+				.then(() => {
+					
+					this.gameStage = 'gameplay'; 
+
+					this.emit('gamestage', this.gameStage); 
+
+				}); 
+		
+		}); 
+
+	},
+
+	addEventListenersToGameComponents(gameComponents) {
+
+		/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
+
+		const { chooseLocationMap, chooseLocationMarker, panorama } = gameComponents; 
+		
+		const eventToEntityMap = {
+			'dragend': chooseLocationMarker, 
+			'click': chooseLocationMap
+		}; 
+
+		const logDistanceFromPanorama = () => {
+
+			const distanceFromPanoramaInMiles = calculateDistanceFromMarkerToLocation(panorama, chooseLocationMarker); 
+
+			window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles); 
+
+		}; 
+
+		for (const event in eventToEntityMap) {
+
+			google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama); 
+
+		} 	
+
+	}, 
+
+	createGameComponents() {
+
+		const gameComponents = createGameComponents({
+			locationData: this.locationData, 
+			mapCanvas: this.mapCanvas, 
+			mapLatLng: this.mapLatLng, 
+			mapMarkerVisible: false, 
+			panoramaCanvas: this.panoramaCanvas	
+		}); 
+
+		for (const component in gameComponents) {
+
+			this[component] = gameComponents[component]; 
+
+		}
+
+		this.emit('game_components', gameComponents); 
+
+	}, 
+
+	getLocationData() {
+
+		return Promise.resolve(nycCoordinates)
+
+			.then(locationData => this.onPregameLocationDataReceived(locationData)); 
+
+	},
+
+	loadCityGeoJSON() {
+
+		return new Promise(resolve => {
+
+			const { chooseLocationMap } = this; 
+
+			if (!(chooseLocationMap)) {
+
+				throw new Error("No 'chooseLocationMap' found in state.  Cannot load city's GeoJSON data."); 
+
+			}
+
+			/*----------  Load GeoJSON  ----------*/
+			
+			// Each borough is a feature 
+			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
+
+				window.console.log("featureCollection:", featureCollection); 
+
+				this.locationData = Object.assign(this.locationData, { featureCollection }); 
+
+				this.emit('location_data', Object.assign({}, this.locationData)); 
+
+				resolve();  
+
+			}); 
+
+		}); 		
+
+	}, 
+
+	onPregameLocationDataReceived(locationData) {
+
+		this.emit('location_data', locationData); 
+
+		const { lat, lng } = locationData.CENTER; 
 
 		const mapLatLng = new google.maps.LatLng(lat, lng); 
 
@@ -33,6 +147,21 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			mapLatLng, 
 			view: 'map' 
 		}); 
+
+		this.locationData = locationData; 
+		this.mapLatLng = mapLatLng;
+
+		this.createGameComponents();  
+
+	}, 
+
+	startGame() {
+
+		this.emit('gamestage', this.gameStage); 
+
+		this.getLocationData(); 
+
+		this.addEventListeners(); 
 
 	}, 
 
