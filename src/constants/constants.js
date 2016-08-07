@@ -1,15 +1,15 @@
+import nycCoordinates from './nycCoordinates'; 
 import ALL_TYPES from './ALL_TYPES'; 
 import DEFAULT_TOTAL_ROUNDS from './DEFAULT_TOTAL_ROUNDS'; 
-import GAME_LOAD_DELAY from './GAME_LOAD_DELAY'; 
 import MILES_PER_METER from './MILES_PER_METER'; 
 import NYC_BOUNDARIES_DATASET_URL from './NYC_BOUNDARIES_DATASET_URL'; 
-import nycCoordinates from './nycCoordinates'; 
+import PANORAMA_LOAD_DELAY from './PANORAMA_LOAD_DELAY'; 
 
 export { 
+	nycCoordinates, 
 	ALL_TYPES,
 	DEFAULT_TOTAL_ROUNDS,
-	GAME_LOAD_DELAY, 
 	MILES_PER_METER,  
 	NYC_BOUNDARIES_DATASET_URL, 
-	nycCoordinates
+	PANORAMA_LOAD_DELAY 
 }; 

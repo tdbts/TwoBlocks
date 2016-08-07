@@ -8,7 +8,7 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { DEFAULT_TOTAL_ROUNDS, GAME_LOAD_DELAY } from '../constants/constants'; 
+import { DEFAULT_TOTAL_ROUNDS, PANORAMA_LOAD_DELAY } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -261,7 +261,7 @@ class TwoBlocks extends React.Component {
 		
 		this.setRandomLocation() 
 
-			.then(() => createPromiseTimeout(2000)) 
+			.then(() => createPromiseTimeout(PANORAMA_LOAD_DELAY)) 
 
 			.then(() => {
 
@@ -356,13 +356,7 @@ class TwoBlocks extends React.Component {
 
 	onTransitionToGameplay() {
 
-		this.setRandomLocation()
-
-			.then(() => {
-
-				setTimeout(() => this.nextTurn(), GAME_LOAD_DELAY);  // Give Street View panorama time to load 
-			
-			}); 
+		this.nextTurn(); 
 
 	}
 

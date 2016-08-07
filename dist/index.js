@@ -12781,19 +12781,19 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.nycCoordinates = exports.NYC_BOUNDARIES_DATASET_URL = exports.MILES_PER_METER = exports.GAME_LOAD_DELAY = exports.DEFAULT_TOTAL_ROUNDS = exports.ALL_TYPES = undefined;
+	exports.PANORAMA_LOAD_DELAY = exports.NYC_BOUNDARIES_DATASET_URL = exports.MILES_PER_METER = exports.DEFAULT_TOTAL_ROUNDS = exports.ALL_TYPES = exports.nycCoordinates = undefined;
 
-	var _ALL_TYPES = __webpack_require__(349);
+	var _nycCoordinates = __webpack_require__(349);
+
+	var _nycCoordinates2 = _interopRequireDefault(_nycCoordinates);
+
+	var _ALL_TYPES = __webpack_require__(350);
 
 	var _ALL_TYPES2 = _interopRequireDefault(_ALL_TYPES);
 
-	var _DEFAULT_TOTAL_ROUNDS = __webpack_require__(350);
+	var _DEFAULT_TOTAL_ROUNDS = __webpack_require__(351);
 
 	var _DEFAULT_TOTAL_ROUNDS2 = _interopRequireDefault(_DEFAULT_TOTAL_ROUNDS);
-
-	var _GAME_LOAD_DELAY = __webpack_require__(351);
-
-	var _GAME_LOAD_DELAY2 = _interopRequireDefault(_GAME_LOAD_DELAY);
 
 	var _MILES_PER_METER = __webpack_require__(352);
 
@@ -12803,37 +12803,53 @@
 
 	var _NYC_BOUNDARIES_DATASET_URL2 = _interopRequireDefault(_NYC_BOUNDARIES_DATASET_URL);
 
-	var _nycCoordinates = __webpack_require__(354);
+	var _PANORAMA_LOAD_DELAY = __webpack_require__(354);
 
-	var _nycCoordinates2 = _interopRequireDefault(_nycCoordinates);
+	var _PANORAMA_LOAD_DELAY2 = _interopRequireDefault(_PANORAMA_LOAD_DELAY);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	exports.nycCoordinates = _nycCoordinates2.default;
 	exports.ALL_TYPES = _ALL_TYPES2.default;
 	exports.DEFAULT_TOTAL_ROUNDS = _DEFAULT_TOTAL_ROUNDS2.default;
-	exports.GAME_LOAD_DELAY = _GAME_LOAD_DELAY2.default;
 	exports.MILES_PER_METER = _MILES_PER_METER2.default;
 	exports.NYC_BOUNDARIES_DATASET_URL = _NYC_BOUNDARIES_DATASET_URL2.default;
-	exports.nycCoordinates = _nycCoordinates2.default;
+	exports.PANORAMA_LOAD_DELAY = _PANORAMA_LOAD_DELAY2.default;
 
 /***/ },
 /* 349 */
 /***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 
-	module.exports = ['NaN', 'array', 'boolean', 'date', 'error', 'function', 'null', 'number', 'object', 'regex', 'string', 'undefined'];
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var nycCoordinates = {
+
+		CENTER: {
+			lat: 40.6291566,
+			lng: -74.0287341
+		},
+
+		MARKER_PLACEMENT: {
+			lat: 40.480993,
+			lng: -73.72798
+		},
+
+		featureCollection: null
+
+	};
+
+	exports.default = nycCoordinates;
 
 /***/ },
 /* 350 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = 5;
+	module.exports = ['NaN', 'array', 'boolean', 'date', 'error', 'function', 'null', 'number', 'object', 'regex', 'string', 'undefined'];
 
 /***/ },
 /* 351 */
@@ -12844,7 +12860,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.default = 5000;
+	exports.default = 5;
 
 /***/ },
 /* 352 */
@@ -12879,25 +12895,9 @@
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
-	var nycCoordinates = {
-
-		CENTER: {
-			lat: 40.6291566,
-			lng: -74.0287341
-		},
-
-		MARKER_PLACEMENT: {
-			lat: 40.480993,
-			lng: -73.72798
-		},
-
-		featureCollection: null
-
-	};
-
-	exports.default = nycCoordinates;
+	exports.default = 3000;
 
 /***/ },
 /* 355 */
@@ -13988,7 +13988,7 @@
 				var _this6 = this;
 
 				this.setRandomLocation().then(function () {
-					return (0, _createPromiseTimeout2.default)(2000);
+					return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY);
 				}).then(function () {
 
 					return _this6.setState({
@@ -14077,26 +14077,20 @@
 		}, {
 			key: 'onTransitionToGameplay',
 			value: function onTransitionToGameplay() {
-				var _this8 = this;
 
-				this.setRandomLocation().then(function () {
-
-					setTimeout(function () {
-						return _this8.nextTurn();
-					}, _constants.GAME_LOAD_DELAY); // Give Street View panorama time to load
-				});
+				this.nextTurn();
 			}
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _this9 = this;
+				var _this8 = this;
 
 				this.addTurnToGameHistory();
 
 				if (!this.gameIsOver()) {
 
 					this.beforeNextTurn().then(function () {
-						return _this9.nextTurn();
+						return _this8.nextTurn();
 					});
 				} else {
 
@@ -14106,7 +14100,7 @@
 		}, {
 			key: 'setRandomLocation',
 			value: function setRandomLocation() {
-				var _this10 = this;
+				var _this9 = this;
 
 				var featureCollection = this.state.locationData.featureCollection;
 
@@ -14119,12 +14113,12 @@
 					window.console.log("randomLatLng.lat():", randomLatLng.lat());
 					window.console.log("randomLatLng.lng():", randomLatLng.lng());
 
-					return _this10.setState({
+					return _this9.setState({
 						panoramaBorough: boroughName,
 						panoramaLatLng: randomLatLng
 					});
 				}).then(function () {
-					return window.console.log("this.state:", _this10.state);
+					return window.console.log("this.state:", _this9.state);
 				}).catch(function () {
 					for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
 						args[_key] = arguments[_key];
@@ -14170,7 +14164,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this11 = this;
+				var _this10 = this;
 
 				return _react2.default.createElement(
 					'div',
@@ -14194,7 +14188,7 @@
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
 						hoveredBorough: this.state.hoveredBorough,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this11.evaluateFinalAnswer();
+							return _this10.evaluateFinalAnswer();
 						},
 						selectedBorough: this.state.selectedBorough
 					})
