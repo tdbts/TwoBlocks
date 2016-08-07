@@ -1,5 +1,6 @@
 import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
 import createGameComponents from './createGameComponents'; 
+import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
 import { nycCoordinates, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
@@ -46,6 +47,18 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				}); 
 		
 		}); 
+
+		this.on('gamestage', gameStage => {
+
+			if ('gameplay' === gameStage) {
+
+				this.emit('next_turn'); 
+
+			}
+
+		}); 
+
+		this.on('next_turn', () => this.nextTurn()); 
 
 	},
 
@@ -135,6 +148,14 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	nextTurn() {
+
+		return this.setRandomLocation() 
+
+			.then(locationData => this.emit('random_location', locationData)); 
+
+	}, 
+
 	onPregameLocationDataReceived(locationData) {
 
 		this.emit('location_data', locationData); 
@@ -152,6 +173,27 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.mapLatLng = mapLatLng;
 
 		this.createGameComponents();  
+
+	}, 
+
+	setRandomLocation() {
+
+		const { featureCollection } = this.locationData;  
+		
+		return getRandomPanoramaLocation(featureCollection) 
+
+			.then(randomLocationDetails => {
+				
+				const { randomLatLng } = randomLocationDetails; 
+
+				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
+				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
+
+				return randomLocationDetails; 
+
+			})
+
+			.catch((...args) => `Caught error with args ${args}`); 						
 
 	}, 
 

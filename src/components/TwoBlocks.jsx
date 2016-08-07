@@ -5,7 +5,6 @@ import TwoBlocksGame from '../TwoBlocksGame';
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksPrompt from './TwoBlocksPrompt';
 import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
-import getRandomPanoramaLocation from '../getRandomPanoramaLocation';  
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
 import { DEFAULT_TOTAL_ROUNDS, PANORAMA_LOAD_DELAY } from '../constants/constants'; 
@@ -66,9 +65,6 @@ class TwoBlocks extends React.Component {
 		// respective DOM elements.  Once both elements 
 		// exist in state, initialize TwoBlocks.  
 		this.initializeTwoBlocks(); 
-
-		this.handleGameStageTransition(prevProps, prevState); 
-
 	}
 
 	addChooseLocationMapEventListeners() {
@@ -149,6 +145,42 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
+		twoBlocks.on('random_location', randomLocationDetails => {
+
+			const { boroughName, randomLatLng } = randomLocationDetails; 
+
+			return this.setState({ 
+				panoramaBorough: boroughName,  
+				panoramaLatLng: randomLatLng
+			})
+
+			.then(() => createPromiseTimeout(PANORAMA_LOAD_DELAY)) 
+
+			.then(() => {
+
+				return this.setState({
+					promptText: 'Look closely...which borough is this Street View from?',  
+					view: 'panorama'
+				}); 
+
+			})
+
+			.then(() => {
+
+				const { spinner } = this.state; 
+
+				spinner.start(); 
+
+				spinner.once('revolution', () => this.onSpinnerRevolution()); 
+
+				this.setState({
+					totalRounds: this.state.totalRounds + 1
+				});
+
+			}); 		
+
+		}); 
+
 	}
 
 	addTurnToGameHistory() {
@@ -211,19 +243,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	handleGameStageTransition(prevProps, prevState) {  // eslint-disable-line no-unused-vars
-
-		// If the game stage has not changed, exit 
-		if (prevState.gameStage === this.state.gameStage) return; 
-
-		if ('gameplay' === this.state.gameStage) {
-
-			this.onTransitionToGameplay();
-
-		}
-
-	}
-
 	initializeTwoBlocks() {
 
 		if (this.state.canvasesLoaded) return; 
@@ -254,37 +273,6 @@ class TwoBlocks extends React.Component {
 		}; 
 
 		this.setState(nextState); 
-
-	}
-
-	nextTurn() {
-		
-		this.setRandomLocation() 
-
-			.then(() => createPromiseTimeout(PANORAMA_LOAD_DELAY)) 
-
-			.then(() => {
-
-				return this.setState({
-					promptText: 'Look closely...which borough is this Street View from?',  
-					view: 'panorama'
-				}); 
-
-			})		
-
-			.then(() => {
-
-				const { spinner } = this.state; 
-
-				spinner.start(); 
-
-				spinner.once('revolution', () => this.onSpinnerRevolution()); 
-
-				this.setState({
-					totalRounds: this.state.totalRounds + 1
-				});
-
-			}); 
 
 	}
 
@@ -354,12 +342,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onTransitionToGameplay() {
-
-		this.nextTurn(); 
-
-	}
-
 	onTurnComplete() {
 
 		this.addTurnToGameHistory(); 
@@ -368,39 +350,13 @@ class TwoBlocks extends React.Component {
 
 			this.beforeNextTurn()
 
-				.then(() => this.nextTurn());  
+				.then(() => this.state.gameInstance.emit('next_turn'));  
 
 		} else {
 
 			this.onGameOver(); 
 
 		}		
-
-	}
-
-	setRandomLocation() {		
-
-		const { featureCollection } = this.state.locationData;  
-		
-		return getRandomPanoramaLocation(featureCollection) 
-
-			.then(randomLocationDetails => {
-				
-				const { boroughName, randomLatLng } = randomLocationDetails; 
-
-				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
-				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
-
-				return this.setState({ 
-					panoramaBorough: boroughName,  
-					panoramaLatLng: randomLatLng
-				});   
-
-			})
-
-			.then(() => window.console.log("this.state:", this.state))
-
-			.catch((...args) => `Caught error with args ${args}`); 				
 
 	}
 
