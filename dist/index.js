@@ -14341,7 +14341,7 @@
 
 				if (!chooseLocationMap) {
 
-					throw new Error("No 'chooseLocationMap' found in state.  Cannot load city's GeoJSON data.");
+					throw new Error("The 'chooseLocationMap' has not been loaded.  Cannot load city's GeoJSON data.");
 				}
 
 				/*----------  Load GeoJSON  ----------*/
