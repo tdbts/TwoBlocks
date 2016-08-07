@@ -13864,12 +13864,12 @@
 					return _this3.setState(viewState);
 				});
 
-				twoBlocks.on('game_components', function (gameComponents) {
+				twoBlocks.once('game_components', function (gameComponents) {
 
 					window.console.log("gameComponents:", gameComponents);
 
 					_this3.setState(gameComponents).then(function () {
-						return _this3.addChooseLocationMapEventListeners();
+						return _this3.onGameComponentsLoaded();
 					});
 				});
 			}
@@ -14017,6 +14017,12 @@
 				this.setState({
 					promptText: 'Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough) + '.'
 				});
+			}
+		}, {
+			key: 'onGameComponentsLoaded',
+			value: function onGameComponentsLoaded() {
+
+				this.addChooseLocationMapEventListeners();
 			}
 		}, {
 			key: 'onGameOver',
@@ -14248,7 +14254,7 @@
 
 		this.validateArgs(mapCanvas, panoramaCanvas);
 
-		this.gameStage = 'pregame';
+		this.gameStage = null;
 		this.mapCanvas = mapCanvas;
 		this.panoramaCanvas = panoramaCanvas;
 
@@ -14382,7 +14388,7 @@
 		},
 		startGame: function startGame() {
 
-			this.emit('gamestage', this.gameStage);
+			this.emit('gamestage', 'pregame');
 
 			this.getLocationData();
 

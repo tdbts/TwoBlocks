@@ -8,7 +8,7 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.validateArgs(mapCanvas, panoramaCanvas); 
 
-	this.gameStage = 'pregame'; 
+	this.gameStage = null; 
 	this.mapCanvas = mapCanvas; 
 	this.panoramaCanvas = panoramaCanvas; 
 
@@ -157,7 +157,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	startGame() {
 
-		this.emit('gamestage', this.gameStage); 
+		this.emit('gamestage', 'pregame'); 
 
 		this.getLocationData(); 
 

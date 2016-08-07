@@ -139,13 +139,13 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on('view', viewState => this.setState(viewState)); 
 
-		twoBlocks.on('game_components', gameComponents => {
+		twoBlocks.once('game_components', gameComponents => {
 
 			window.console.log("gameComponents:", gameComponents);
 
 			this.setState(gameComponents)
 
-				.then(() => this.addChooseLocationMapEventListeners()); 
+				.then(() => this.onGameComponentsLoaded()); 
 
 		}); 
 
@@ -261,31 +261,30 @@ class TwoBlocks extends React.Component {
 		
 		this.setRandomLocation() 
 
-		.then(() => createPromiseTimeout(2000)) 
+			.then(() => createPromiseTimeout(2000)) 
 
-		.then(() => {
+			.then(() => {
 
-			return this.setState({
-				promptText: 'Look closely...which borough is this Street View from?',  
-				view: 'panorama'
+				return this.setState({
+					promptText: 'Look closely...which borough is this Street View from?',  
+					view: 'panorama'
+				}); 
+
+			})		
+
+			.then(() => {
+
+				const { spinner } = this.state; 
+
+				spinner.start(); 
+
+				spinner.once('revolution', () => this.onSpinnerRevolution()); 
+
+				this.setState({
+					totalRounds: this.state.totalRounds + 1
+				});
+
 			}); 
-
-		})		
-
-		.then(() => {
-
-			const { spinner } = this.state; 
-
-			spinner.start(); 
-
-			spinner.once('revolution', () => this.onSpinnerRevolution()); 
-
-			this.setState({
-				totalRounds: this.state.totalRounds + 1
-			});
-
-		}); 
-
 
 	}
 
@@ -295,6 +294,12 @@ class TwoBlocks extends React.Component {
 			promptText: `Correct!  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}.`
 		}); 
 	
+	}
+
+	onGameComponentsLoaded() {
+
+		this.addChooseLocationMapEventListeners(); 
+
 	}
 
 	onGameOver() {
