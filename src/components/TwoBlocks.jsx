@@ -7,7 +7,7 @@ import TwoBlocksPrompt from './TwoBlocksPrompt';
 import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { DEFAULT_TOTAL_ROUNDS, PANORAMA_LOAD_DELAY } from '../constants/constants'; 
+import { events, DEFAULT_TOTAL_ROUNDS, PANORAMA_LOAD_DELAY } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -120,15 +120,15 @@ class TwoBlocks extends React.Component {
 
 	addGameEventListeners(twoBlocks) {
 
-		twoBlocks.on('gamestage', gameStage => this.setState({ gameStage })); 
+		twoBlocks.on(events.GAME_STAGE, gameStage => this.setState({ gameStage })); 
 
-		twoBlocks.on('location_data', locationData => this.setState({ locationData })); 
+		twoBlocks.on(events.HOST_LOCATION_DATA, locationData => this.setState({ locationData })); 
 
-		twoBlocks.on('view', viewState => this.setState(viewState)); 
+		twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState)); 
 
-		twoBlocks.once('game_components', gameComponents => this.setState(gameComponents)); 
+		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.setState(gameComponents)); 
 
-		twoBlocks.on('random_location', randomLocationDetails => {
+		twoBlocks.on(events.RANDOM_LOCATION, randomLocationDetails => {
 
 			const { boroughName, randomLatLng } = randomLocationDetails; 
 
@@ -297,7 +297,7 @@ class TwoBlocks extends React.Component {
 
 			this.beforeNextTurn()
 
-				.then(() => this.state.gameInstance.emit('next_turn'));  
+				.then(() => this.state.gameInstance.emit(events.NEXT_TURN));  
 
 		} else {
 

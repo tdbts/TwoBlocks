@@ -3,7 +3,7 @@ import createGameComponents from './createGameComponents';
 import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { nycCoordinates, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
+import { events, nycCoordinates, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
 
 const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
@@ -33,7 +33,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	addEventListeners() {
 
-		this.on('game_components', gameComponents => {
+		this.on(events.GAME_COMPONENTS, gameComponents => {
 		
 			this.addEventListenersToGameComponents(gameComponents);
 
@@ -43,23 +43,23 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 					
 					this.gameStage = 'gameplay'; 
 
-					this.emit('gamestage', this.gameStage); 
+					this.emit(events.GAME_STAGE, this.gameStage); 
 
 				}); 
 		
 		}); 
 
-		this.on('gamestage', gameStage => {
+		this.on(events.GAME_STAGE, gameStage => {
 
 			if ('gameplay' === gameStage) {
 
-				this.emit('next_turn'); 
+				this.emit(events.NEXT_TURN); 
 
 			}
 
 		}); 
 
-		this.on('next_turn', () => this.nextTurn()); 
+		this.on(events.NEXT_TURN, () => this.nextTurn()); 
 
 	},
 
@@ -106,7 +106,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-		this.emit('game_components', gameComponents); 
+		this.emit(events.GAME_COMPONENTS, gameComponents); 
 
 	}, 
 
@@ -145,7 +145,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 				this.locationData = Object.assign(this.locationData, { featureCollection }); 
 
-				this.emit('location_data', Object.assign({}, this.locationData)); 
+				this.emit(events.HOST_LOCATION_DATA, Object.assign({}, this.locationData)); 
 
 				resolve();  
 
@@ -159,7 +159,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return this.setRandomLocation() 
 
-			.then(locationData => this.emit('random_location', locationData))
+			.then(locationData => this.emit(events.RANDOM_LOCATION, locationData))
 
 			.then(this.totalRounds += 1); 
 
@@ -167,13 +167,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	onPregameLocationDataReceived(locationData) {
 
-		this.emit('location_data', locationData); 
+		this.emit(events.HOST_LOCATION_DATA, locationData); 
 
 		const { lat, lng } = locationData.CENTER; 
 
 		const mapLatLng = new google.maps.LatLng(lat, lng); 
 
-		this.emit('view', {
+		this.emit(events.VIEW_CHANGE, {
 			mapLatLng, 
 			view: 'map' 
 		}); 
@@ -222,7 +222,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	startGame() {
 
-		this.emit('gamestage', 'pregame'); 
+		this.emit(events.GAME_STAGE, 'pregame'); 
 
 		this.getLocationData(); 
 

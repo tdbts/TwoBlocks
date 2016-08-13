@@ -1,0 +1,12 @@
+const events = {
+
+	GAME_COMPONENTS 	: 'GAME_COMPONENTS', 
+	GAME_STAGE 			: 'GAME_STAGE', 
+	HOST_LOCATION_DATA 	: 'HOST_LOCATION_DATA', 
+	NEXT_TURN 			: 'NEXT_TURN',
+	RANDOM_LOCATION 	: 'RANDOM_LOCATION', 
+	VIEW_CHANGE 		: 'VIEW_CHANGE'
+
+}; 
+
+export default events; 

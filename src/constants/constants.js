@@ -1,3 +1,4 @@
+import events from './events'; 
 import nycCoordinates from './nycCoordinates'; 
 import ALL_TYPES from './ALL_TYPES'; 
 import DEFAULT_TOTAL_ROUNDS from './DEFAULT_TOTAL_ROUNDS';
@@ -8,6 +9,7 @@ import NYC_BOUNDARIES_DATASET_URL from './NYC_BOUNDARIES_DATASET_URL';
 import PANORAMA_LOAD_DELAY from './PANORAMA_LOAD_DELAY'; 
 
 export { 
+	events, 
 	nycCoordinates, 
 	ALL_TYPES,
 	DEFAULT_TOTAL_ROUNDS,
