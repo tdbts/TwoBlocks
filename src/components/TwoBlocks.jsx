@@ -67,6 +67,8 @@ class TwoBlocks extends React.Component {
 
 		this.addChooseLocationMapEventListeners(prevState); 
 
+		this.showRandomPanorama(prevState); 
+
 	}
 
 	styleNonHoveredBorough(borough) {
@@ -134,32 +136,7 @@ class TwoBlocks extends React.Component {
 			return this.setState({ 
 				panoramaBorough: boroughName,  
 				panoramaLatLng: randomLatLng
-			})
-
-			.then(() => createPromiseTimeout(PANORAMA_LOAD_DELAY)) 
-
-			.then(() => {
-
-				return this.setState({
-					promptText: 'Look closely...which borough is this Street View from?',  
-					view: 'panorama'
-				}); 
-
-			})
-
-			.then(() => {
-
-				const { spinner } = this.state; 
-
-				spinner.start(); 
-
-				spinner.once('revolution', () => this.onSpinnerRevolution()); 
-
-				this.setState({
-					totalRounds: this.state.totalRounds + 1
-				});
-
-			}); 		
+			});
 
 		}); 
 
@@ -332,6 +309,37 @@ class TwoBlocks extends React.Component {
 			this.onGameOver(); 
 
 		}		
+
+	}
+
+	showRandomPanorama(prevState) {
+
+		if (prevState.panoramaLatLng === this.state.panoramaLatLng) return;  // Don't show random panorama if the panoramaLatLng has not changed 
+
+		return createPromiseTimeout(PANORAMA_LOAD_DELAY) 
+
+			.then(() => {
+
+				return this.setState({
+					promptText: 'Look closely...which borough is this Street View from?',  
+					view: 'panorama'
+				}); 
+
+			})
+
+			.then(() => {
+
+				const { spinner } = this.state; 
+
+				spinner.start(); 
+
+				spinner.once('revolution', () => this.onSpinnerRevolution()); 
+
+				this.setState({
+					totalRounds: this.state.totalRounds + 1
+				});
+
+			}); 		
 
 	}
 

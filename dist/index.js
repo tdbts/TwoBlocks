@@ -13781,6 +13781,8 @@
 				this.initializeTwoBlocks();
 
 				this.addChooseLocationMapEventListeners(prevState);
+
+				this.showRandomPanorama(prevState);
 			}
 		}, {
 			key: 'styleNonHoveredBorough',
@@ -13856,27 +13858,6 @@
 					return _this3.setState({
 						panoramaBorough: boroughName,
 						panoramaLatLng: randomLatLng
-					}).then(function () {
-						return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY);
-					}).then(function () {
-
-						return _this3.setState({
-							promptText: 'Look closely...which borough is this Street View from?',
-							view: 'panorama'
-						});
-					}).then(function () {
-						var spinner = _this3.state.spinner;
-
-
-						spinner.start();
-
-						spinner.once('revolution', function () {
-							return _this3.onSpinnerRevolution();
-						});
-
-						_this3.setState({
-							totalRounds: _this3.state.totalRounds + 1
-						});
 					});
 				});
 			}
@@ -14051,6 +14032,34 @@
 				}
 			}
 		}, {
+			key: 'showRandomPanorama',
+			value: function showRandomPanorama(prevState) {
+				var _this8 = this;
+
+				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed
+
+				return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY).then(function () {
+
+					return _this8.setState({
+						promptText: 'Look closely...which borough is this Street View from?',
+						view: 'panorama'
+					});
+				}).then(function () {
+					var spinner = _this8.state.spinner;
+
+
+					spinner.start();
+
+					spinner.once('revolution', function () {
+						return _this8.onSpinnerRevolution();
+					});
+
+					_this8.setState({
+						totalRounds: _this8.state.totalRounds + 1
+					});
+				});
+			}
+		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
 				var _state2 = this.state;
@@ -14138,7 +14147,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this8 = this;
+				var _this9 = this;
 
 				return _react2.default.createElement(
 					'div',
@@ -14162,7 +14171,7 @@
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
 						hoveredBorough: this.state.hoveredBorough,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this8.evaluateFinalAnswer();
+							return _this9.evaluateFinalAnswer();
 						},
 						selectedBorough: this.state.selectedBorough
 					})
