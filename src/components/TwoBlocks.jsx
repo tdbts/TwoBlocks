@@ -34,7 +34,6 @@ class TwoBlocks extends React.Component {
 			promptText 				: 'loading...',
 			selectedBorough 		: null, 
 			spinner 				: null, 
-			totalRounds 			: 0,  
 			view 					: 'map' 
 		}; 
 
@@ -190,12 +189,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	gameIsOver() {
-
-		return this.state.totalRounds === DEFAULT_TOTAL_ROUNDS;  // Placeholder
-	
-	}
-
 	getTotalCorrectAnswers() {
 
 		return this.state.gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.panoramaBorough).length; 
@@ -296,9 +289,11 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
+		const { gameInstance } = this.state; 
+
 		this.addTurnToGameHistory(); 
 
-		if (!(this.gameIsOver())) {
+		if (!(gameInstance.gameOver())) {
 
 			this.beforeNextTurn()
 
@@ -334,10 +329,6 @@ class TwoBlocks extends React.Component {
 				spinner.start(); 
 
 				spinner.once('revolution', () => this.onSpinnerRevolution()); 
-
-				this.setState({
-					totalRounds: this.state.totalRounds + 1
-				});
 
 			}); 		
 

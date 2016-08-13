@@ -13779,7 +13779,6 @@
 				promptText: 'loading...',
 				selectedBorough: null,
 				spinner: null,
-				totalRounds: 0,
 				view: 'map'
 			};
 
@@ -13941,12 +13940,6 @@
 				});
 			}
 		}, {
-			key: 'gameIsOver',
-			value: function gameIsOver() {
-
-				return this.state.totalRounds === _constants.DEFAULT_TOTAL_ROUNDS; // Placeholder
-			}
-		}, {
 			key: 'getTotalCorrectAnswers',
 			value: function getTotalCorrectAnswers() {
 
@@ -14051,9 +14044,12 @@
 			value: function onTurnComplete() {
 				var _this7 = this;
 
+				var gameInstance = this.state.gameInstance;
+
+
 				this.addTurnToGameHistory();
 
-				if (!this.gameIsOver()) {
+				if (!gameInstance.gameOver()) {
 
 					this.beforeNextTurn().then(function () {
 						return _this7.state.gameInstance.emit('next_turn');
@@ -14084,10 +14080,6 @@
 
 					spinner.once('revolution', function () {
 						return _this8.onSpinnerRevolution();
-					});
-
-					_this8.setState({
-						totalRounds: _this8.state.totalRounds + 1
 					});
 				});
 			}
@@ -14267,13 +14259,14 @@
 
 		this.validateArgs(mapCanvas, panoramaCanvas);
 
-		this.gameStage = null;
 		this.mapCanvas = mapCanvas;
 		this.panoramaCanvas = panoramaCanvas;
+		this.totalRounds = 0;
 
 		this.chooseLocationMap = null;
 		this.chooseLocationMarker = null;
 		this.locationData = null;
+		this.gameStage = null;
 		this.mapLatLng = null;
 		this.panorama = null;
 		this.spinner = null;
@@ -14356,6 +14349,10 @@
 
 			this.emit('game_components', gameComponents);
 		},
+		gameOver: function gameOver() {
+
+			return this.totalRounds === _constants.DEFAULT_TOTAL_ROUNDS; // Placeholder
+		},
 		getLocationData: function getLocationData() {
 			var _this2 = this;
 
@@ -14395,7 +14392,7 @@
 
 			return this.setRandomLocation().then(function (locationData) {
 				return _this4.emit('random_location', locationData);
-			});
+			}).then(this.totalRounds += 1);
 		},
 		onPregameLocationDataReceived: function onPregameLocationDataReceived(locationData) {
 

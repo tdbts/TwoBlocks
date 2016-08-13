@@ -3,19 +3,20 @@ import createGameComponents from './createGameComponents';
 import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { nycCoordinates, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
+import { nycCoordinates, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
 
 const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.validateArgs(mapCanvas, panoramaCanvas); 
 
-	this.gameStage = null; 
 	this.mapCanvas = mapCanvas; 
 	this.panoramaCanvas = panoramaCanvas; 
+	this.totalRounds = 0; 
 
 	this.chooseLocationMap = null; 
 	this.chooseLocationMarker = null; 
 	this.locationData = null; 
+	this.gameStage = null; 
 	this.mapLatLng = null; 
 	this.panorama = null; 
 	this.spinner = null; 
@@ -109,6 +110,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	gameOver() {
+
+		return this.totalRounds === DEFAULT_TOTAL_ROUNDS;  // Placeholder
+	
+	},
+
 	getLocationData() {
 
 		return Promise.resolve(nycCoordinates)
@@ -152,7 +159,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return this.setRandomLocation() 
 
-			.then(locationData => this.emit('random_location', locationData)); 
+			.then(locationData => this.emit('random_location', locationData))
+
+			.then(this.totalRounds += 1); 
 
 	}, 
 
