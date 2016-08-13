@@ -16,27 +16,26 @@ class TwoBlocks extends React.Component {
 		super(props); 
 
 		// Define initial state 
-		this.state = {
-			canvasesLoaded: false, 
-			chooseLocationMap: null, 
-			chooseLocationMarker: null, 
-			gameHistory: [], 
-			gameInstance: null, 
-			gameStage: null, 
-			hoveredBorough: null, 
-			locationData: null, 
-			mapCanvas: null, 
-			mapLatLng: null,
-			mapMarkerVisible: false,  
-			panorama: null, 
-			panoramaBorough: null, 
-			panoramaCanvas: null, 
-			panoramaLatLng: null, 
-			promptText: 'loading...',
-			selectedBorough: null, 
-			spinner: null, 
-			totalRounds: 0,  
-			view: 'map' 
+		this.state = { 
+			chooseLocationMap 		: null, 
+			chooseLocationMarker 	: null, 
+			gameHistory 			: [], 
+			gameInstance 			: null, 
+			gameStage 				: null, 
+			hoveredBorough 			: null, 
+			locationData 			: null, 
+			mapCanvas 				: null, 
+			mapLatLng 				: null,
+			mapMarkerVisible 		: false,  
+			panorama 				: null, 
+			panoramaBorough 		: null, 
+			panoramaCanvas 			: null, 
+			panoramaLatLng 			: null, 
+			promptText 				: 'loading...',
+			selectedBorough 		: null, 
+			spinner 				: null, 
+			totalRounds 			: 0,  
+			view 					: 'map' 
 		}; 
 
 		/*----------  Save reference to original setState() method  ----------*/
@@ -65,6 +64,9 @@ class TwoBlocks extends React.Component {
 		// respective DOM elements.  Once both elements 
 		// exist in state, initialize TwoBlocks.  
 		this.initializeTwoBlocks(); 
+
+		this.addChooseLocationMapEventListeners(prevState); 
+
 	}
 
 	styleNonHoveredBorough(borough) {
@@ -81,11 +83,11 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	addChooseLocationMapEventListeners() {
+	addChooseLocationMapEventListeners(prevState) {
 
-		/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
-		
 		const { chooseLocationMap } = this.state; 
+
+		if (prevState.chooseLocationMap || !(chooseLocationMap)) return;
 	
 		chooseLocationMap.data.addListener('mouseover', event => {
 			
@@ -123,15 +125,7 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on('view', viewState => this.setState(viewState)); 
 
-		twoBlocks.once('game_components', gameComponents => {
-
-			window.console.log("gameComponents:", gameComponents);
-
-			this.setState(gameComponents)
-
-				.then(() => this.onGameComponentsLoaded()); 
-
-		}); 
+		twoBlocks.once('game_components', gameComponents => this.setState(gameComponents)); 
 
 		twoBlocks.on('random_location', randomLocationDetails => {
 
@@ -233,7 +227,7 @@ class TwoBlocks extends React.Component {
 
 	initializeTwoBlocks() {
 
-		if (this.state.canvasesLoaded) return; 
+		if (this.state.gameInstance) return; 
 
 		if (!(this.state.mapCanvas) || !(this.state.panoramaCanvas)) return; 
 
@@ -256,7 +250,6 @@ class TwoBlocks extends React.Component {
 		twoBlocks.startGame(); 
 
 		const nextState = {
-			canvasesLoaded: true, 
 			gameInstance: twoBlocks
 		}; 
 
@@ -270,12 +263,6 @@ class TwoBlocks extends React.Component {
 			promptText: `Correct!  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}.`
 		}); 
 	
-	}
-
-	onGameComponentsLoaded() {
-
-		this.addChooseLocationMapEventListeners(); 
-
 	}
 
 	onGameOver() {

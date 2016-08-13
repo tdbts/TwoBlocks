@@ -13730,7 +13730,6 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocks).call(this, props));
 
 			_this.state = {
-				canvasesLoaded: false,
 				chooseLocationMap: null,
 				chooseLocationMarker: null,
 				gameHistory: [],
@@ -13780,6 +13779,8 @@
 				// respective DOM elements.  Once both elements
 				// exist in state, initialize TwoBlocks. 
 				this.initializeTwoBlocks();
+
+				this.addChooseLocationMapEventListeners(prevState);
 			}
 		}, {
 			key: 'styleNonHoveredBorough',
@@ -13795,13 +13796,13 @@
 			}
 		}, {
 			key: 'addChooseLocationMapEventListeners',
-			value: function addChooseLocationMapEventListeners() {
+			value: function addChooseLocationMapEventListeners(prevState) {
 				var _this2 = this;
-
-				/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
 
 				var chooseLocationMap = this.state.chooseLocationMap;
 
+
+				if (prevState.chooseLocationMap || !chooseLocationMap) return;
 
 				chooseLocationMap.data.addListener('mouseover', function (event) {
 
@@ -13844,12 +13845,7 @@
 				});
 
 				twoBlocks.once('game_components', function (gameComponents) {
-
-					window.console.log("gameComponents:", gameComponents);
-
-					_this3.setState(gameComponents).then(function () {
-						return _this3.onGameComponentsLoaded();
-					});
+					return _this3.setState(gameComponents);
 				});
 
 				twoBlocks.on('random_location', function (randomLocationDetails) {
@@ -13950,7 +13946,7 @@
 			value: function initializeTwoBlocks() {
 				var _this5 = this;
 
-				if (this.state.canvasesLoaded) return;
+				if (this.state.gameInstance) return;
 
 				if (!this.state.mapCanvas || !this.state.panoramaCanvas) return;
 
@@ -13974,7 +13970,6 @@
 				twoBlocks.startGame();
 
 				var nextState = {
-					canvasesLoaded: true,
 					gameInstance: twoBlocks
 				};
 
@@ -13987,12 +13982,6 @@
 				this.setState({
 					promptText: 'Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough) + '.'
 				});
-			}
-		}, {
-			key: 'onGameComponentsLoaded',
-			value: function onGameComponentsLoaded() {
-
-				this.addChooseLocationMapEventListeners();
 			}
 		}, {
 			key: 'onGameOver',
