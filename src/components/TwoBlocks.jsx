@@ -139,6 +139,10 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
+		twoBlocks.on(events.CORRECT_BOROUGH, boroughName => this.onCorrectBorough(boroughName)); 
+
+		twoBlocks.on(events.INCORRECT_BOROUGH, selectionDetails => this.onIncorrectBorough(selectionDetails)); 
+
 	}
 
 	addTurnToGameHistory() {
@@ -171,17 +175,9 @@ class TwoBlocks extends React.Component {
 
 	evaluateFinalAnswer() {
 
-		window.console.log("Evaluating final answer!"); 
+		const { gameInstance, panoramaBorough, selectedBorough } = this.state; 
 
-		if (this.state.selectedBorough === this.state.panoramaBorough) {
-
-			this.onCorrectBorough(this.state.panoramaBorough); 
-		
-		} else {
-
-			this.onIncorrectBorough(this.state.selectedBorough, this.state.panoramaBorough); 
-
-		}
+		gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough); 
 
 		createPromiseTimeout(3000)
 
@@ -227,10 +223,10 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onCorrectBorough(panoramaBorough) {
+	onCorrectBorough(correctBoroughName) {
 
 		this.setState({
-			promptText: `Correct!  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}.`
+			promptText: `Correct!  The Street View shown was from ${stylizeBoroughName(correctBoroughName)}.`
 		}); 
 	
 	}
@@ -253,10 +249,12 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onIncorrectBorough(selectedBorough, panoramaBorough) {
+	onIncorrectBorough(selectionDetails) {
+
+		const { correctBorough, selectedBorough } = selectionDetails; 
 
 		this.setState({
-			promptText: `Sorry, ${stylizeBoroughName(selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(panoramaBorough)}.`
+			promptText: `Sorry, ${stylizeBoroughName(selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(correctBorough)}.`
 		}); 
 
 	}

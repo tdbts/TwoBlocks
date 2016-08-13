@@ -110,6 +110,22 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	evaluateFinalAnswer(correctBorough, selectedBorough) {
+
+		window.console.log("Evaluating final answer!"); 
+
+		if (selectedBorough === correctBorough) {
+
+			this.emit(events.CORRECT_BOROUGH, correctBorough);  
+		
+		} else {
+
+			this.emit(events.INCORRECT_BOROUGH, { correctBorough, selectedBorough });  
+
+		}
+
+	}, 
+
 	gameOver() {
 
 		return this.totalRounds === DEFAULT_TOTAL_ROUNDS;  // Placeholder

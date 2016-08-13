@@ -12842,9 +12842,11 @@
 	});
 	var events = {
 
+		CORRECT_BOROUGH: 'CORRECT_BOROUGH',
 		GAME_COMPONENTS: 'GAME_COMPONENTS',
 		GAME_STAGE: 'GAME_STAGE',
 		HOST_LOCATION_DATA: 'HOST_LOCATION_DATA',
+		INCORRECT_BOROUGH: 'INCORRECT_BOROUGH',
 		NEXT_TURN: 'NEXT_TURN',
 		RANDOM_LOCATION: 'RANDOM_LOCATION',
 		VIEW_CHANGE: 'VIEW_CHANGE'
@@ -13918,6 +13920,14 @@
 						panoramaLatLng: randomLatLng
 					});
 				});
+
+				twoBlocks.on(_constants.events.CORRECT_BOROUGH, function (boroughName) {
+					return _this3.onCorrectBorough(boroughName);
+				});
+
+				twoBlocks.on(_constants.events.INCORRECT_BOROUGH, function (selectionDetails) {
+					return _this3.onIncorrectBorough(selectionDetails);
+				});
 			}
 		}, {
 			key: 'addTurnToGameHistory',
@@ -13952,15 +13962,13 @@
 			value: function evaluateFinalAnswer() {
 				var _this4 = this;
 
-				window.console.log("Evaluating final answer!");
+				var _state = this.state;
+				var gameInstance = _state.gameInstance;
+				var panoramaBorough = _state.panoramaBorough;
+				var selectedBorough = _state.selectedBorough;
 
-				if (this.state.selectedBorough === this.state.panoramaBorough) {
 
-					this.onCorrectBorough(this.state.panoramaBorough);
-				} else {
-
-					this.onIncorrectBorough(this.state.selectedBorough, this.state.panoramaBorough);
-				}
+				gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough);
 
 				(0, _createPromiseTimeout2.default)(3000).then(function () {
 					return _this4.onTurnComplete();
@@ -13983,9 +13991,9 @@
 
 				if (!this.state.mapCanvas || !this.state.panoramaCanvas) return;
 
-				var _state = this.state;
-				var mapCanvas = _state.mapCanvas;
-				var panoramaCanvas = _state.panoramaCanvas;
+				var _state2 = this.state;
+				var mapCanvas = _state2.mapCanvas;
+				var panoramaCanvas = _state2.panoramaCanvas;
 
 
 				[mapCanvas, panoramaCanvas].forEach(function (canvas) {
@@ -14010,10 +14018,10 @@
 			}
 		}, {
 			key: 'onCorrectBorough',
-			value: function onCorrectBorough(panoramaBorough) {
+			value: function onCorrectBorough(correctBoroughName) {
 
 				this.setState({
-					promptText: 'Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough) + '.'
+					promptText: 'Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(correctBoroughName) + '.'
 				});
 			}
 		}, {
@@ -14034,10 +14042,13 @@
 			}
 		}, {
 			key: 'onIncorrectBorough',
-			value: function onIncorrectBorough(selectedBorough, panoramaBorough) {
+			value: function onIncorrectBorough(selectionDetails) {
+				var correctBorough = selectionDetails.correctBorough;
+				var selectedBorough = selectionDetails.selectedBorough;
+
 
 				this.setState({
-					promptText: 'Sorry, ' + (0, _stylizeBoroughName2.default)(selectedBorough) + ' is incorrect.  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(panoramaBorough) + '.'
+					promptText: 'Sorry, ' + (0, _stylizeBoroughName2.default)(selectedBorough) + ' is incorrect.  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(correctBorough) + '.'
 				});
 			}
 		}, {
@@ -14113,9 +14124,9 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state2 = this.state;
-				var chooseLocationMap = _state2.chooseLocationMap;
-				var selectedBorough = _state2.selectedBorough;
+				var _state3 = this.state;
+				var chooseLocationMap = _state3.chooseLocationMap;
+				var selectedBorough = _state3.selectedBorough;
 
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
@@ -14140,10 +14151,10 @@
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _state3 = this.state;
-				var chooseLocationMap = _state3.chooseLocationMap;
-				var locationData = _state3.locationData;
-				var selectedBorough = _state3.selectedBorough;
+				var _state4 = this.state;
+				var chooseLocationMap = _state4.chooseLocationMap;
+				var locationData = _state4.locationData;
+				var selectedBorough = _state4.selectedBorough;
 
 
 				var clickedBoroughName = borough.getProperty('boro_name');
@@ -14375,6 +14386,18 @@
 			}
 
 			this.emit(_constants.events.GAME_COMPONENTS, gameComponents);
+		},
+		evaluateFinalAnswer: function evaluateFinalAnswer(correctBorough, selectedBorough) {
+
+			window.console.log("Evaluating final answer!");
+
+			if (selectedBorough === correctBorough) {
+
+				this.emit(_constants.events.CORRECT_BOROUGH, correctBorough);
+			} else {
+
+				this.emit(_constants.events.INCORRECT_BOROUGH, { correctBorough: correctBorough, selectedBorough: selectedBorough });
+			}
 		},
 		gameOver: function gameOver() {
 
