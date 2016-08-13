@@ -1,5 +1,6 @@
 import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
-import createGameComponents from './createGameComponents'; 
+import createGameComponents from './createGameComponents';
+import createPromiseTimeout from './createPromiseTimeout';  
 import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
@@ -60,6 +61,14 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		}); 
 
 		this.on(events.NEXT_TURN, () => this.nextTurn()); 
+
+		this.on(events.ANSWER_EVALUATED, () => {
+
+			createPromiseTimeout(3000) 
+
+				.then(() => this.emit(events.TURN_COMPLETE)); 
+
+		}); 
 
 	},
 
@@ -123,6 +132,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			this.emit(events.INCORRECT_BOROUGH, { correctBorough, selectedBorough });  
 
 		}
+
+		this.emit(events.ANSWER_EVALUATED); 
 
 	}, 
 

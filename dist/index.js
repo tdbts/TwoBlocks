@@ -12842,6 +12842,7 @@
 	});
 	var events = {
 
+		ANSWER_EVALUATED: 'ANSWER_EVALUATED',
 		CORRECT_BOROUGH: 'CORRECT_BOROUGH',
 		GAME_COMPONENTS: 'GAME_COMPONENTS',
 		GAME_STAGE: 'GAME_STAGE',
@@ -12849,6 +12850,7 @@
 		INCORRECT_BOROUGH: 'INCORRECT_BOROUGH',
 		NEXT_TURN: 'NEXT_TURN',
 		RANDOM_LOCATION: 'RANDOM_LOCATION',
+		TURN_COMPLETE: 'TURN_COMPLETE',
 		VIEW_CHANGE: 'VIEW_CHANGE'
 
 	};
@@ -13750,23 +13752,23 @@
 
 	var _TwoBlocksGame2 = _interopRequireDefault(_TwoBlocksGame);
 
-	var _TwoBlocksView = __webpack_require__(410);
+	var _TwoBlocksView = __webpack_require__(411);
 
 	var _TwoBlocksView2 = _interopRequireDefault(_TwoBlocksView);
 
-	var _TwoBlocksPrompt = __webpack_require__(414);
+	var _TwoBlocksPrompt = __webpack_require__(415);
 
 	var _TwoBlocksPrompt2 = _interopRequireDefault(_TwoBlocksPrompt);
 
-	var _TwoBlocksSubmitter = __webpack_require__(416);
+	var _TwoBlocksSubmitter = __webpack_require__(417);
 
 	var _TwoBlocksSubmitter2 = _interopRequireDefault(_TwoBlocksSubmitter);
 
-	var _stylizeBoroughName = __webpack_require__(415);
+	var _stylizeBoroughName = __webpack_require__(416);
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
-	var _createPromiseTimeout = __webpack_require__(417);
+	var _createPromiseTimeout = __webpack_require__(397);
 
 	var _createPromiseTimeout2 = _interopRequireDefault(_createPromiseTimeout);
 
@@ -13928,6 +13930,10 @@
 				twoBlocks.on(_constants.events.INCORRECT_BOROUGH, function (selectionDetails) {
 					return _this3.onIncorrectBorough(selectionDetails);
 				});
+
+				twoBlocks.on(_constants.events.TURN_COMPLETE, function () {
+					return _this3.onTurnComplete();
+				});
 			}
 		}, {
 			key: 'addTurnToGameHistory',
@@ -13960,8 +13966,6 @@
 		}, {
 			key: 'evaluateFinalAnswer',
 			value: function evaluateFinalAnswer() {
-				var _this4 = this;
-
 				var _state = this.state;
 				var gameInstance = _state.gameInstance;
 				var panoramaBorough = _state.panoramaBorough;
@@ -13969,10 +13973,6 @@
 
 
 				gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough);
-
-				(0, _createPromiseTimeout2.default)(3000).then(function () {
-					return _this4.onTurnComplete();
-				});
 			}
 		}, {
 			key: 'getTotalCorrectAnswers',
@@ -13985,7 +13985,7 @@
 		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
-				var _this5 = this;
+				var _this4 = this;
 
 				if (this.state.gameInstance) return;
 
@@ -14000,7 +14000,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this5.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
+						throw new Error('No element with ID \'#' + _this4.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
 					}
 				});
 
@@ -14027,7 +14027,7 @@
 		}, {
 			key: 'onGameOver',
 			value: function onGameOver() {
-				var _this6 = this;
+				var _this5 = this;
 
 				window.console.log("GAME OVER.");
 
@@ -14035,7 +14035,7 @@
 
 				return this.beforeNextTurn().then(function () {
 
-					return _this6.setState({
+					return _this5.setState({
 						promptText: 'Game over.  You correctly guessed ' + totalCorrect.toString() + ' / ' + _constants.DEFAULT_TOTAL_ROUNDS.toString() + ' of the Street View locations.'
 					});
 				});
@@ -14080,7 +14080,7 @@
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _this7 = this;
+				var _this6 = this;
 
 				var gameInstance = this.state.gameInstance;
 
@@ -14090,7 +14090,7 @@
 				if (!gameInstance.gameOver()) {
 
 					this.beforeNextTurn().then(function () {
-						return _this7.state.gameInstance.emit(_constants.events.NEXT_TURN);
+						return _this6.state.gameInstance.emit(_constants.events.NEXT_TURN);
 					});
 				} else {
 
@@ -14100,24 +14100,24 @@
 		}, {
 			key: 'showRandomPanorama',
 			value: function showRandomPanorama(prevState) {
-				var _this8 = this;
+				var _this7 = this;
 
 				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed
 
 				return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY).then(function () {
 
-					return _this8.setState({
+					return _this7.setState({
 						promptText: 'Look closely...which borough is this Street View from?',
 						view: 'panorama'
 					});
 				}).then(function () {
-					var spinner = _this8.state.spinner;
+					var spinner = _this7.state.spinner;
 
 
 					spinner.start();
 
 					spinner.once('revolution', function () {
-						return _this8.onSpinnerRevolution();
+						return _this7.onSpinnerRevolution();
 					});
 				});
 			}
@@ -14209,7 +14209,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this9 = this;
+				var _this8 = this;
 
 				return _react2.default.createElement(
 					'div',
@@ -14233,7 +14233,7 @@
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
 						hoveredBorough: this.state.hoveredBorough,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this9.evaluateFinalAnswer();
+							return _this8.evaluateFinalAnswer();
 						},
 						selectedBorough: this.state.selectedBorough
 					})
@@ -14281,7 +14281,11 @@
 
 	var _createGameComponents3 = _interopRequireDefault(_createGameComponents2);
 
-	var _getRandomPanoramaLocation = __webpack_require__(397);
+	var _createPromiseTimeout = __webpack_require__(397);
+
+	var _createPromiseTimeout2 = _interopRequireDefault(_createPromiseTimeout);
+
+	var _getRandomPanoramaLocation = __webpack_require__(398);
 
 	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
 
@@ -14343,6 +14347,13 @@
 			this.on(_constants.events.NEXT_TURN, function () {
 				return _this.nextTurn();
 			});
+
+			this.on(_constants.events.ANSWER_EVALUATED, function () {
+
+				(0, _createPromiseTimeout2.default)(3000).then(function () {
+					return _this.emit(_constants.events.TURN_COMPLETE);
+				});
+			});
 		},
 		addEventListenersToGameComponents: function addEventListenersToGameComponents(gameComponents) {
 
@@ -14398,6 +14409,8 @@
 
 				this.emit(_constants.events.INCORRECT_BOROUGH, { correctBorough: correctBorough, selectedBorough: selectedBorough });
 			}
+
+			this.emit(_constants.events.ANSWER_EVALUATED);
 		},
 		gameOver: function gameOver() {
 
@@ -16103,6 +16116,25 @@
 
 /***/ },
 /* 397 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var createPromiseTimeout = function createPromiseTimeout(timeout) {
+
+		return new Promise(function (resolve) {
+
+			setTimeout(resolve, timeout);
+		});
+	};
+
+	exports.default = createPromiseTimeout;
+
+/***/ },
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16111,23 +16143,23 @@
 		value: true
 	});
 
-	var _getLatLngWithinBoundaries = __webpack_require__(398);
+	var _getLatLngWithinBoundaries = __webpack_require__(399);
 
 	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
 
-	var _requestNearestPanorama = __webpack_require__(401);
+	var _requestNearestPanorama = __webpack_require__(402);
 
 	var _requestNearestPanorama2 = _interopRequireDefault(_requestNearestPanorama);
 
-	var _getRandomFeature = __webpack_require__(402);
+	var _getRandomFeature = __webpack_require__(403);
 
 	var _getRandomFeature2 = _interopRequireDefault(_getRandomFeature);
 
-	var _selectRandomWeightedLinearRing = __webpack_require__(403);
+	var _selectRandomWeightedLinearRing = __webpack_require__(404);
 
 	var _selectRandomWeightedLinearRing2 = _interopRequireDefault(_selectRandomWeightedLinearRing);
 
-	var _getLatLngMaxMin = __webpack_require__(409);
+	var _getLatLngMaxMin = __webpack_require__(410);
 
 	var _getLatLngMaxMin2 = _interopRequireDefault(_getLatLngMaxMin);
 
@@ -16183,7 +16215,7 @@
 	exports.default = getRandomPanoramaLocation;
 
 /***/ },
-/* 398 */
+/* 399 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16192,7 +16224,7 @@
 		value: true
 	});
 
-	var _getRandomCoords = __webpack_require__(399);
+	var _getRandomCoords = __webpack_require__(400);
 
 	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
 
@@ -16224,7 +16256,7 @@
 	exports.default = getLatLngWithinBoundaries;
 
 /***/ },
-/* 399 */
+/* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16233,7 +16265,7 @@
 		value: true
 	});
 
-	var _selectRandomValueOfRange = __webpack_require__(400);
+	var _selectRandomValueOfRange = __webpack_require__(401);
 
 	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
 
@@ -16263,7 +16295,7 @@
 	exports.default = getRandomCoords;
 
 /***/ },
-/* 400 */
+/* 401 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16288,7 +16320,7 @@
 	exports.default = selectRandomValueOfRange;
 
 /***/ },
-/* 401 */
+/* 402 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16328,7 +16360,7 @@
 	exports.default = requestNearestPanorama;
 
 /***/ },
-/* 402 */
+/* 403 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16346,7 +16378,7 @@
 	exports.default = getRandomFeature;
 
 /***/ },
-/* 403 */
+/* 404 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16355,23 +16387,23 @@
 		value: true
 	});
 
-	var _getGeometricConstituents = __webpack_require__(404);
+	var _getGeometricConstituents = __webpack_require__(405);
 
 	var _getGeometricConstituents2 = _interopRequireDefault(_getGeometricConstituents);
 
-	var _sortLeastToGreatest = __webpack_require__(405);
+	var _sortLeastToGreatest = __webpack_require__(406);
 
 	var _sortLeastToGreatest2 = _interopRequireDefault(_sortLeastToGreatest);
 
-	var _playoff = __webpack_require__(406);
+	var _playoff = __webpack_require__(407);
 
 	var _playoff2 = _interopRequireDefault(_playoff);
 
-	var _headToHeadMatchups = __webpack_require__(407);
+	var _headToHeadMatchups = __webpack_require__(408);
 
 	var _headToHeadMatchups2 = _interopRequireDefault(_headToHeadMatchups);
 
-	var _weightedRandomSelection = __webpack_require__(408);
+	var _weightedRandomSelection = __webpack_require__(409);
 
 	var _weightedRandomSelection2 = _interopRequireDefault(_weightedRandomSelection);
 
@@ -16429,7 +16461,7 @@
 	exports.default = selectRandomWeightedLinearRing;
 
 /***/ },
-/* 404 */
+/* 405 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16463,7 +16495,7 @@
 	exports.default = getGeometricConstituents;
 
 /***/ },
-/* 405 */
+/* 406 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16486,7 +16518,7 @@
 	exports.default = sortLeastToGreatest;
 
 /***/ },
-/* 406 */
+/* 407 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -16526,7 +16558,7 @@
 	exports.default = playoff;
 
 /***/ },
-/* 407 */
+/* 408 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16557,7 +16589,7 @@
 	exports.default = headToHeadMatchups;
 
 /***/ },
-/* 408 */
+/* 409 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16603,7 +16635,7 @@
 	exports.default = weightedRandomSelection;
 
 /***/ },
-/* 409 */
+/* 410 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16660,7 +16692,7 @@
 	exports.default = getLatLngMaxMin;
 
 /***/ },
-/* 410 */
+/* 411 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16675,11 +16707,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TwoBlocksMap = __webpack_require__(411);
+	var _TwoBlocksMap = __webpack_require__(412);
 
 	var _TwoBlocksMap2 = _interopRequireDefault(_TwoBlocksMap);
 
-	var _TwoBlocksPanorama = __webpack_require__(413);
+	var _TwoBlocksPanorama = __webpack_require__(414);
 
 	var _TwoBlocksPanorama2 = _interopRequireDefault(_TwoBlocksPanorama);
 
@@ -16747,7 +16779,7 @@
 	exports.default = TwoBlocksView;
 
 /***/ },
-/* 411 */
+/* 412 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16762,7 +16794,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _getViewLayerClassName = __webpack_require__(412);
+	var _getViewLayerClassName = __webpack_require__(413);
 
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 
@@ -16831,7 +16863,7 @@
 	exports.default = TwoBlocksMap;
 
 /***/ },
-/* 412 */
+/* 413 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -16849,7 +16881,7 @@
 	exports.default = getViewLayerClassName;
 
 /***/ },
-/* 413 */
+/* 414 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16864,7 +16896,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _getViewLayerClassName = __webpack_require__(412);
+	var _getViewLayerClassName = __webpack_require__(413);
 
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 
@@ -16934,7 +16966,7 @@
 	exports.default = TwoBlocksPanorama;
 
 /***/ },
-/* 414 */
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16949,7 +16981,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _stylizeBoroughName = __webpack_require__(415);
+	var _stylizeBoroughName = __webpack_require__(416);
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
@@ -17006,7 +17038,7 @@
 	exports.default = TwoBlocksPrompt;
 
 /***/ },
-/* 415 */
+/* 416 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17024,7 +17056,7 @@
 	exports.default = stylizeBoroughName;
 
 /***/ },
-/* 416 */
+/* 417 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17039,7 +17071,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _stylizeBoroughName = __webpack_require__(415);
+	var _stylizeBoroughName = __webpack_require__(416);
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
@@ -17124,25 +17156,6 @@
 	};
 
 	exports.default = TwoBlocksSubmitter;
-
-/***/ },
-/* 417 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var createPromiseTimeout = function createPromiseTimeout(timeout) {
-
-		return new Promise(function (resolve) {
-
-			setTimeout(resolve, timeout);
-		});
-	};
-
-	exports.default = createPromiseTimeout;
 
 /***/ },
 /* 418 */

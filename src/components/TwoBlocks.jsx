@@ -143,6 +143,8 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on(events.INCORRECT_BOROUGH, selectionDetails => this.onIncorrectBorough(selectionDetails)); 
 
+		twoBlocks.on(events.TURN_COMPLETE, () => this.onTurnComplete()); 
+
 	}
 
 	addTurnToGameHistory() {
@@ -178,10 +180,6 @@ class TwoBlocks extends React.Component {
 		const { gameInstance, panoramaBorough, selectedBorough } = this.state; 
 
 		gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough); 
-
-		createPromiseTimeout(3000)
-
-			.then(() => this.onTurnComplete()); 
 
 	}
 
