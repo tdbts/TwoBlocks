@@ -67,61 +67,49 @@ class TwoBlocks extends React.Component {
 		this.initializeTwoBlocks(); 
 	}
 
+	styleNonHoveredBorough(borough) {
+
+		const { chooseLocationMap } = this.state;
+
+		const { selectedBorough } = this.state; 
+
+		if (selectedBorough !== borough.getProperty('boro_name')) {
+
+			chooseLocationMap.data.revertStyle(borough); 
+
+		}
+
+	}
+
 	addChooseLocationMapEventListeners() {
 
 		/*----------  Style / Add event listeners to chooseLocationMap  ----------*/
 		
 		const { chooseLocationMap } = this.state; 
-
+	
 		chooseLocationMap.data.addListener('mouseover', event => {
 			
-			const { selectedBorough } = this.state; 
-
-			if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-				chooseLocationMap.data.overrideStyle(event.feature, {
-					fillColor: "#A8FFFC"
-				}); 
-
-			}
-
 			this.updateHoveredBorough(event.feature); 
+			
+			this.styleHoveredBorough(event.feature); 
 		
 		});
 
 		chooseLocationMap.data.addListener('mouseout', event => {
 
-			const { selectedBorough } = this.state; 
-
-			if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-				chooseLocationMap.data.revertStyle(event.feature); 
-
-			}
-
 			this.updateHoveredBorough('');
+
+			this.styleNonHoveredBorough(event.feature); 
 
 		}); 	
 
 		chooseLocationMap.data.addListener('click', event => {
 
-			const { selectedBorough } = this.state; 
-
-			if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-				const { featureCollection } = this.state.locationData; 
-
-				const allOtherBoroughs = featureCollection.filter(feature => feature.getProperty('boro_name') !== event.feature.getProperty('boro_name')); 
-
-				allOtherBoroughs.forEach(feature => chooseLocationMap.data.revertStyle(feature)); 
-
-			}
-
-			chooseLocationMap.data.overrideStyle(event.feature, {
-				fillColor: "#FFFFFF"
-			}); 
-
 			this.updateSelectedBorough(event.feature); 
+
+			this.styleUnselectedBoroughs(event.feature); 
+
+			this.styleSelectedBorough(event.feature); 
 
 		}); 
 
@@ -357,6 +345,48 @@ class TwoBlocks extends React.Component {
 			this.onGameOver(); 
 
 		}		
+
+	}
+
+	styleHoveredBorough(borough) {
+		
+		const { chooseLocationMap, selectedBorough } = this.state; 
+
+		// On hover, change the fill color of the borough, unless the 
+		// borough is the selected borough. 
+		if (selectedBorough !== borough.getProperty('boro_name')) {
+
+			chooseLocationMap.data.overrideStyle(borough, {
+				fillColor: "#A8FFFC"
+			}); 
+
+		}
+	
+	}
+
+	styleSelectedBorough(borough) {
+
+		const { chooseLocationMap } = this.state; 
+
+		chooseLocationMap.data.overrideStyle(borough, {
+			fillColor: "#FFFFFF"
+		}); 	
+
+	}
+
+	styleUnselectedBoroughs(borough) {
+			
+		const { chooseLocationMap, locationData, selectedBorough } = this.state; 
+
+		const clickedBoroughName = borough.getProperty('boro_name'); 
+
+		if (selectedBorough === clickedBoroughName) return;  // Don't revert styles if the player clicks on the currently-selected borough  
+
+		const { featureCollection } = locationData; 
+
+		const unselectedBoroughs = featureCollection.filter(feature => feature.getProperty('boro_name') !== clickedBoroughName); 
+
+		unselectedBoroughs.forEach(feature => chooseLocationMap.data.revertStyle(feature)); 
 
 	}
 

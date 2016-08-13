@@ -13782,6 +13782,18 @@
 				this.initializeTwoBlocks();
 			}
 		}, {
+			key: 'styleNonHoveredBorough',
+			value: function styleNonHoveredBorough(borough) {
+				var chooseLocationMap = this.state.chooseLocationMap;
+				var selectedBorough = this.state.selectedBorough;
+
+
+				if (selectedBorough !== borough.getProperty('boro_name')) {
+
+					chooseLocationMap.data.revertStyle(borough);
+				}
+			}
+		}, {
 			key: 'addChooseLocationMapEventListeners',
 			value: function addChooseLocationMapEventListeners() {
 				var _this2 = this;
@@ -13792,53 +13804,26 @@
 
 
 				chooseLocationMap.data.addListener('mouseover', function (event) {
-					var selectedBorough = _this2.state.selectedBorough;
-
-
-					if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-						chooseLocationMap.data.overrideStyle(event.feature, {
-							fillColor: "#A8FFFC"
-						});
-					}
 
 					_this2.updateHoveredBorough(event.feature);
+
+					_this2.styleHoveredBorough(event.feature);
 				});
 
 				chooseLocationMap.data.addListener('mouseout', function (event) {
-					var selectedBorough = _this2.state.selectedBorough;
-
-
-					if (selectedBorough !== event.feature.getProperty('boro_name')) {
-
-						chooseLocationMap.data.revertStyle(event.feature);
-					}
 
 					_this2.updateHoveredBorough('');
+
+					_this2.styleNonHoveredBorough(event.feature);
 				});
 
 				chooseLocationMap.data.addListener('click', function (event) {
-					var selectedBorough = _this2.state.selectedBorough;
-
-
-					if (selectedBorough !== event.feature.getProperty('boro_name')) {
-						var featureCollection = _this2.state.locationData.featureCollection;
-
-
-						var allOtherBoroughs = featureCollection.filter(function (feature) {
-							return feature.getProperty('boro_name') !== event.feature.getProperty('boro_name');
-						});
-
-						allOtherBoroughs.forEach(function (feature) {
-							return chooseLocationMap.data.revertStyle(feature);
-						});
-					}
-
-					chooseLocationMap.data.overrideStyle(event.feature, {
-						fillColor: "#FFFFFF"
-					});
 
 					_this2.updateSelectedBorough(event.feature);
+
+					_this2.styleUnselectedBoroughs(event.feature);
+
+					_this2.styleSelectedBorough(event.feature);
 				});
 			}
 		}, {
@@ -14075,6 +14060,57 @@
 
 					this.onGameOver();
 				}
+			}
+		}, {
+			key: 'styleHoveredBorough',
+			value: function styleHoveredBorough(borough) {
+				var _state2 = this.state;
+				var chooseLocationMap = _state2.chooseLocationMap;
+				var selectedBorough = _state2.selectedBorough;
+
+				// On hover, change the fill color of the borough, unless the
+				// borough is the selected borough.
+
+				if (selectedBorough !== borough.getProperty('boro_name')) {
+
+					chooseLocationMap.data.overrideStyle(borough, {
+						fillColor: "#A8FFFC"
+					});
+				}
+			}
+		}, {
+			key: 'styleSelectedBorough',
+			value: function styleSelectedBorough(borough) {
+				var chooseLocationMap = this.state.chooseLocationMap;
+
+
+				chooseLocationMap.data.overrideStyle(borough, {
+					fillColor: "#FFFFFF"
+				});
+			}
+		}, {
+			key: 'styleUnselectedBoroughs',
+			value: function styleUnselectedBoroughs(borough) {
+				var _state3 = this.state;
+				var chooseLocationMap = _state3.chooseLocationMap;
+				var locationData = _state3.locationData;
+				var selectedBorough = _state3.selectedBorough;
+
+
+				var clickedBoroughName = borough.getProperty('boro_name');
+
+				if (selectedBorough === clickedBoroughName) return; // Don't revert styles if the player clicks on the currently-selected borough 
+
+				var featureCollection = locationData.featureCollection;
+
+
+				var unselectedBoroughs = featureCollection.filter(function (feature) {
+					return feature.getProperty('boro_name') !== clickedBoroughName;
+				});
+
+				unselectedBoroughs.forEach(function (feature) {
+					return chooseLocationMap.data.revertStyle(feature);
+				});
 			}
 		}, {
 			key: 'updateHoveredBorough',

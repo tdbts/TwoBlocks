@@ -21,7 +21,7 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 	this.spinner = null; 
 
 }; 
-
+	
 /*----------  Inherit from EventEmitter  ----------*/
 
 inherits(TwoBlocksGame, EventEmitter); 
@@ -37,7 +37,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			this.addEventListenersToGameComponents(gameComponents);
 
 			this.loadCityGeoJSON()
-
+				
 				.then(() => {
 					
 					this.gameStage = 'gameplay'; 
