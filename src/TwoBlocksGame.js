@@ -3,7 +3,7 @@ import createGameComponents from './createGameComponents';
 import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { nycCoordinates, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
+import { nycCoordinates, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
 
 const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
@@ -176,11 +176,27 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	setRandomLocation() {
+	setRandomLocation(attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS) {
+
+		if (attemptsLeft === 0) {
+
+			throw new Error("Attempts to request a random Google Street View failed too many times.  Check your internet connection."); 
+
+		}
+
+		attemptsLeft = attemptsLeft - 1; 
 
 		const { featureCollection } = this.locationData;  
 		
 		return getRandomPanoramaLocation(featureCollection) 
+
+			.catch(() => {
+
+				window.console.log(`Failure to request nearest panorama.  ${attemptsLeft} more attempts left.`); 
+
+				return this.setRandomLocation(attemptsLeft); 
+
+			}) 						
 
 			.then(randomLocationDetails => {
 				
@@ -191,9 +207,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 				return randomLocationDetails; 
 
-			})
-
-			.catch((...args) => `Caught error with args ${args}`); 						
+			}); 
 
 	}, 
 

@@ -17,9 +17,6 @@ const getRandomCoords = function getRandomCoords(latLngMaxMin) {
 	
 	const randomLng = selectRandomValueOfRange(lng.min, lng.max).toFixed(6); 
 
-	window.console.log("randomLat:", randomLat); 
-	window.console.log("randomLng:", randomLng); 
-
 	const randomCoords = { randomLat, randomLng }; 
 	
 	return randomCoords; 

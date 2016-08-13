@@ -5,7 +5,8 @@ import requestNearestPanorama from './requestNearestPanorama';
 import getRandomFeature from './getRandomFeature'; 
 import selectRandomWeightedLinearRing from './selectRandomWeightedLinearRing'; 
 import getLatLngMaxMin from './getLatLngMaxMin'; 
-import { tryAtMost } from './utils/utils'; 
+import { tryAtMost } from './utils/utils';
+import { MAXIMUM_PANORAMA_REQUESTS } from './constants/constants';  
 
 const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
  
@@ -26,7 +27,7 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 	
 	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
 
-	return tryAtMost(() => requestNearestPanorama(randomLatLng), 50, (panoRequestResults, requestAttemptsLeft) => {
+	return tryAtMost(() => requestNearestPanorama(randomLatLng), MAXIMUM_PANORAMA_REQUESTS, (panoRequestResults, requestAttemptsLeft) => {
 		
 		window.console.log('onCaught()'); 
 		
@@ -42,14 +43,8 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 
 	// N.B - Parentheses must be wrapped around an object literal 
 	// returned by an arrow function
-	.then(() => ( { boroughName, randomLatLng, selectedBorough } ))
+	.then(() => ( { boroughName, randomLatLng, selectedBorough } ));	
 
-	.catch(() => {
-
-		window.console.log("Failure to request nearest panorama.  Panorama request attempts exceeded maximum."); 
-
-	}); 
-	
 }; 
 
 export default getRandomPanoramaLocation; 
