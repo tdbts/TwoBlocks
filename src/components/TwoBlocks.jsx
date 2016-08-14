@@ -147,18 +147,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	beforeNextTurn() {
-
-		const { chooseLocationMap } = this.state; 
-
-		chooseLocationMap.data.revertStyle(); 
-
-		return this.setState({
-			selectedBorough: null
-		}); 
-
-	}
-
 	evaluateFinalAnswer() {
 
 		const { gameInstance, panoramaBorough, selectedBorough } = this.state; 
@@ -215,15 +203,9 @@ class TwoBlocks extends React.Component {
 
 		const totalCorrect = gameInstance.totalCorrectAnswers(); 
 
-		return this.beforeNextTurn()
-
-			.then(() => {
-
-				return this.setState({
-					promptText: `Game over.  You correctly guessed ${totalCorrect.toString()} / ${DEFAULT_TOTAL_ROUNDS.toString()} of the Street View locations.` 
-				}); 
-
-			}); 
+		return this.setState({
+			promptText: `Game over.  You correctly guessed ${totalCorrect.toString()} / ${DEFAULT_TOTAL_ROUNDS.toString()} of the Street View locations.` 
+		}); 
 
 	}
 
@@ -265,13 +247,19 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { gameInstance } = this.state; 
+		const { chooseLocationMap, gameInstance } = this.state; 
+
+		chooseLocationMap.data.revertStyle(); 
+
+		this.setState({
+
+			selectedBorough: null
+		
+		}); 
 
 		if (!(gameInstance.gameOver())) {
 
-			this.beforeNextTurn()
-
-				.then(() => this.state.gameInstance.emit(events.NEXT_TURN));  
+			this.state.gameInstance.emit(events.NEXT_TURN);  
 
 		} else {
 

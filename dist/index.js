@@ -13936,18 +13936,6 @@
 				});
 			}
 		}, {
-			key: 'beforeNextTurn',
-			value: function beforeNextTurn() {
-				var chooseLocationMap = this.state.chooseLocationMap;
-
-
-				chooseLocationMap.data.revertStyle();
-
-				return this.setState({
-					selectedBorough: null
-				});
-			}
-		}, {
 			key: 'evaluateFinalAnswer',
 			value: function evaluateFinalAnswer() {
 				var _state = this.state;
@@ -14003,7 +13991,6 @@
 		}, {
 			key: 'onGameOver',
 			value: function onGameOver() {
-				var _this5 = this;
 
 				window.console.log("GAME OVER.");
 
@@ -14012,11 +13999,8 @@
 
 				var totalCorrect = gameInstance.totalCorrectAnswers();
 
-				return this.beforeNextTurn().then(function () {
-
-					return _this5.setState({
-						promptText: 'Game over.  You correctly guessed ' + totalCorrect.toString() + ' / ' + _constants.DEFAULT_TOTAL_ROUNDS.toString() + ' of the Street View locations.'
-					});
+				return this.setState({
+					promptText: 'Game over.  You correctly guessed ' + totalCorrect.toString() + ' / ' + _constants.DEFAULT_TOTAL_ROUNDS.toString() + ' of the Street View locations.'
 				});
 			}
 		}, {
@@ -14059,16 +14043,22 @@
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _this6 = this;
+				var _state3 = this.state;
+				var chooseLocationMap = _state3.chooseLocationMap;
+				var gameInstance = _state3.gameInstance;
 
-				var gameInstance = this.state.gameInstance;
 
+				chooseLocationMap.data.revertStyle();
+
+				this.setState({
+
+					selectedBorough: null
+
+				});
 
 				if (!gameInstance.gameOver()) {
 
-					this.beforeNextTurn().then(function () {
-						return _this6.state.gameInstance.emit(_constants.events.NEXT_TURN);
-					});
+					this.state.gameInstance.emit(_constants.events.NEXT_TURN);
 				} else {
 
 					this.onGameOver();
@@ -14077,33 +14067,33 @@
 		}, {
 			key: 'showRandomPanorama',
 			value: function showRandomPanorama(prevState) {
-				var _this7 = this;
+				var _this5 = this;
 
 				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed
 
 				return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY).then(function () {
 
-					return _this7.setState({
+					return _this5.setState({
 						promptText: 'Look closely...which borough is this Street View from?',
 						view: 'panorama'
 					});
 				}).then(function () {
-					var spinner = _this7.state.spinner;
+					var spinner = _this5.state.spinner;
 
 
 					spinner.start();
 
 					spinner.once('revolution', function () {
-						return _this7.onSpinnerRevolution();
+						return _this5.onSpinnerRevolution();
 					});
 				});
 			}
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state3 = this.state;
-				var chooseLocationMap = _state3.chooseLocationMap;
-				var selectedBorough = _state3.selectedBorough;
+				var _state4 = this.state;
+				var chooseLocationMap = _state4.chooseLocationMap;
+				var selectedBorough = _state4.selectedBorough;
 
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
@@ -14128,10 +14118,10 @@
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _state4 = this.state;
-				var chooseLocationMap = _state4.chooseLocationMap;
-				var locationData = _state4.locationData;
-				var selectedBorough = _state4.selectedBorough;
+				var _state5 = this.state;
+				var chooseLocationMap = _state5.chooseLocationMap;
+				var locationData = _state5.locationData;
+				var selectedBorough = _state5.selectedBorough;
 
 
 				var clickedBoroughName = borough.getProperty('boro_name');
@@ -14186,7 +14176,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this8 = this;
+				var _this6 = this;
 
 				return _react2.default.createElement(
 					'div',
@@ -14210,7 +14200,7 @@
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
 						hoveredBorough: this.state.hoveredBorough,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this8.evaluateFinalAnswer();
+							return _this6.evaluateFinalAnswer();
 						},
 						selectedBorough: this.state.selectedBorough
 					})
