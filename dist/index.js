@@ -14639,7 +14639,11 @@
 
 	/* global google */
 
+	var gameComponents = null;
+
 	var createGameComponents = function createGameComponents(gameState) {
+
+		if (gameComponents) return gameComponents;
 
 		if (!('google' in window) || !('maps' in window.google) || !('geometry' in window.google.maps)) {
 
@@ -14727,12 +14731,16 @@
 			}, 1000);
 		}
 
-		return {
+		// Assign game components to variable so we can just return
+		// the already-created components if we start a new game
+		gameComponents = {
 			chooseLocationMap: chooseLocationMap,
 			chooseLocationMarker: chooseLocationMarker,
 			panorama: panorama,
 			spinner: spinner
 		};
+
+		return gameComponents;
 	};
 
 	exports.default = createGameComponents;

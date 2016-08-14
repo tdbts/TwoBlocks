@@ -5,7 +5,11 @@ import createSpinner from './createSpinner';
 import createWebGlManager from './createWebGlManager'; 
 import createChooseLocationMap from './createChooseLocationMap'; 
 
+let gameComponents = null; 
+
 const createGameComponents = function createGameComponents(gameState) {
+
+	if (gameComponents) return gameComponents; 
 
 	if (!('google' in window) || !('maps' in window.google) || !('geometry' in window.google.maps)) {
 
@@ -82,12 +86,16 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	}
 
-	return {
+	// Assign game components to variable so we can just return 
+	// the already-created components if we start a new game 
+	gameComponents = {
 		chooseLocationMap, 
 		chooseLocationMarker, 
 		panorama, 
 		spinner
 	}; 
+
+	return gameComponents; 
 
 }; 
 
