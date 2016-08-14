@@ -13,7 +13,7 @@ class TwoBlocksPrompt extends React.Component {
 
 		return (
 
-			<div id={ this.props.promptId }>
+			<div className={ this.props.promptClassName }>
 				<h3>{ [this.props.text, this.getTextAddition()].join(' ') }</h3>
 			</div>
 
@@ -26,7 +26,7 @@ class TwoBlocksPrompt extends React.Component {
 TwoBlocksPrompt.propTypes = {
 
 	hoveredBorough 	: React.PropTypes.string, 
-	promptId 		: React.PropTypes.string.isRequired, 
+	promptClassName : React.PropTypes.string.isRequired, 
 	text 			: React.PropTypes.string
 
 }; 

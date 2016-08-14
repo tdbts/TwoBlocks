@@ -17,7 +17,6 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	// 'currentLat' and 'currentLng' are deprecated...
 	const { locationData, mapCanvas, mapLatLng, mapMarkerVisible, panoramaCanvas } = gameState; 
 	
 	const webGlManager = createWebGlManager(panoramaCanvas); 

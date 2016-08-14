@@ -13969,7 +13969,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this4.props[mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId"] + '\' could be found on the page.');
+						throw new Error('No element with ID \'#' + _this4.props[mapCanvas === canvas ? "mapCanvasClassName" : "panoramaCanvasClassName"] + '\' could be found on the page.');
 					}
 				});
 
@@ -14175,9 +14175,9 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ id: this.props.gameId },
+					{ className: this.props.gameClassName },
 					_react2.default.createElement(_TwoBlocksView2.default, {
-						mapCanvasId: this.state.mapCanvasId,
+						mapCanvasClassName: this.state.mapCanvasClassName,
 						mapLatLng: this.state.mapLatLng,
 						mapMarker: this.state.chooseLocationMarker,
 						mapMarkerVisible: this.state.mapMarkerVisible,
@@ -14189,7 +14189,7 @@
 					}),
 					_react2.default.createElement(_TwoBlocksPrompt2.default, {
 						hoveredBorough: this.state.hoveredBorough,
-						promptId: this.props.promptId,
+						promptClassName: this.props.promptClassName,
 						text: this.state.promptText
 					}),
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
@@ -14207,18 +14207,18 @@
 	}(_react2.default.Component);
 
 	TwoBlocks.propTypes = {
-		gameId: _react2.default.PropTypes.string.isRequired,
-		mapCanvasId: _react2.default.PropTypes.string.isRequired,
-		panoramaCanvasId: _react2.default.PropTypes.string.isRequired,
-		promptId: _react2.default.PropTypes.string.isRequired
+		gameClassName: _react2.default.PropTypes.string.isRequired,
+		mapCanvasClassName: _react2.default.PropTypes.string.isRequired,
+		panoramaCanvasClassName: _react2.default.PropTypes.string.isRequired,
+		promptClassName: _react2.default.PropTypes.string.isRequired
 	};
 
 	// Assign default props to the constructor
 	TwoBlocks.defaultProps = {
-		gameId: "twoBlocks",
-		mapCanvasId: "twoBlocks-map",
-		panoramaCanvasId: "twoBlocks-panorama",
-		promptId: "twoBlocks-prompt"
+		gameClassName: "two-blocks",
+		mapCanvasClassName: "two-blocks-map",
+		panoramaCanvasClassName: "two-blocks-panorama",
+		promptClassName: "two-blocks-prompt"
 	};
 
 	exports.default = TwoBlocks;
@@ -14650,7 +14650,6 @@
 			throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page.");
 		}
 
-		// 'currentLat' and 'currentLng' are deprecated...
 		var locationData = gameState.locationData;
 		var mapCanvas = gameState.mapCanvas;
 		var mapLatLng = gameState.mapLatLng;
@@ -16729,6 +16728,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -16750,9 +16751,9 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ id: 'twoBlocks-view', className: 'inherit-dimensions' },
+					_defineProperty({ className: 'two-blocks-view' }, 'className', 'inherit-dimensions'),
 					_react2.default.createElement(_TwoBlocksMap2.default, {
-						id: this.props.mapCanvasId,
+						className: this.props.mapCanvasClassName,
 						latLng: this.props.mapLatLng,
 						onMapMounted: this.props.onMapMounted,
 						mapMarker: this.props.mapMarker,
@@ -16760,7 +16761,7 @@
 						visible: 'map' === this.props.view
 					}),
 					_react2.default.createElement(_TwoBlocksPanorama2.default, {
-						id: this.props.panoramaCanvasId,
+						className: this.props.panoramaCanvasClassName,
 						latLng: this.props.panoramaLatLng,
 						onPanoramaMounted: this.props.onPanoramaMounted,
 						panorama: this.props.panorama,
@@ -16775,14 +16776,14 @@
 
 	TwoBlocksView.propTypes = {
 
-		mapCanvasId: _react2.default.PropTypes.string,
+		mapCanvasClassName: _react2.default.PropTypes.string,
 		mapLatLng: _react2.default.PropTypes.object,
 		mapMarker: _react2.default.PropTypes.object,
 		mapMarkerVisible: _react2.default.PropTypes.bool,
 		onMapMounted: _react2.default.PropTypes.func.isRequired,
 		onPanoramaMounted: _react2.default.PropTypes.func.isRequired,
 		panorama: _react2.default.PropTypes.object,
-		panoramaCanvasId: _react2.default.PropTypes.string,
+		panoramaCanvasClassName: _react2.default.PropTypes.string,
 		panoramaLatLng: _react2.default.PropTypes.object,
 		view: _react2.default.PropTypes.string.isRequired
 
@@ -16811,6 +16812,8 @@
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -16848,15 +16851,14 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this2 = this;
+				var _this2 = this,
+				    _React$createElement;
 
-				return _react2.default.createElement('div', {
-					id: this.props.id,
-					className: _getViewLayerClassName2.default.call(this),
-					ref: function ref(mapCanvas) {
-						return _this2._mapCanvas = mapCanvas;
-					}
-				});
+				return _react2.default.createElement('div', (_React$createElement = {
+					className: this.props.id
+				}, _defineProperty(_React$createElement, 'className', _getViewLayerClassName2.default.call(this)), _defineProperty(_React$createElement, 'ref', function ref(mapCanvas) {
+					return _this2._mapCanvas = mapCanvas;
+				}), _React$createElement));
 			}
 		}]);
 
@@ -16914,6 +16916,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -16952,15 +16956,14 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this2 = this;
+				var _this2 = this,
+				    _React$createElement;
 
-				return _react2.default.createElement('div', {
-					id: 'twoBlocks-panorama',
-					className: _getViewLayerClassName2.default.call(this),
-					ref: function ref(panoramaCanvas) {
-						return _this2._panoramaCanvas = panoramaCanvas;
-					}
-				});
+				return _react2.default.createElement('div', (_React$createElement = {
+					className: 'two-blocks-panorama'
+				}, _defineProperty(_React$createElement, 'className', _getViewLayerClassName2.default.call(this)), _defineProperty(_React$createElement, 'ref', function ref(panoramaCanvas) {
+					return _this2._panoramaCanvas = panoramaCanvas;
+				}), _React$createElement));
 			}
 		}]);
 
@@ -17026,7 +17029,7 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ id: this.props.promptId },
+					{ className: this.props.promptClassName },
 					_react2.default.createElement(
 						'h3',
 						null,
@@ -17042,7 +17045,7 @@
 	TwoBlocksPrompt.propTypes = {
 
 		hoveredBorough: _react2.default.PropTypes.string,
-		promptId: _react2.default.PropTypes.string.isRequired,
+		promptClassName: _react2.default.PropTypes.string.isRequired,
 		text: _react2.default.PropTypes.string
 
 	};
@@ -17089,6 +17092,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -17125,7 +17130,8 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this2 = this;
+				var _this2 = this,
+				    _React$createElement;
 
 				var text = this.getText();
 				var borough = this.getBorough();
@@ -17133,24 +17139,24 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ id: 'twoBlocks-submitter' },
+					{ className: 'two-blocks-submitter' },
 					_react2.default.createElement(
 						'p',
-						{ id: 'twoBlocks-submitter-text' },
+						{ className: 'two-blocks-submitter-text' },
 						' ',
 						text,
 						' ',
 						_react2.default.createElement(
 							'span',
-							{ id: 'two-blocks-submitter-borough-name' },
+							{ className: 'two-blocks-submitter-borough-name' },
 							borough
 						)
 					),
 					_react2.default.createElement(
 						'button',
-						{ id: 'twoBlocks-submitter-button', className: this.props.selectedBorough ? '' : 'hidden', onClick: function onClick() {
-								return _this2.onSubmissionButtonClick();
-							} },
+						(_React$createElement = { className: 'two-blocks-submitter-button' }, _defineProperty(_React$createElement, 'className', this.props.selectedBorough ? '' : 'hidden'), _defineProperty(_React$createElement, 'onClick', function onClick() {
+							return _this2.onSubmissionButtonClick();
+						}), _React$createElement),
 						buttonLabel
 					)
 				);

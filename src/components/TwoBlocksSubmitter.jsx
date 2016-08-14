@@ -29,9 +29,9 @@ class TwoBlocksSubmitter extends React.Component {
 
 		return (
 
-			<div id="twoBlocks-submitter">
-				<p id="twoBlocks-submitter-text"> { text } <span id="two-blocks-submitter-borough-name">{ borough }</span></p>
-				<button id="twoBlocks-submitter-button" className={ this.props.selectedBorough ? '' : 'hidden' } onClick={ () => this.onSubmissionButtonClick() }>{ buttonLabel }</button>
+			<div className="two-blocks-submitter">
+				<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
+				<button className="two-blocks-submitter-button" className={ this.props.selectedBorough ? '' : 'hidden' } onClick={ () => this.onSubmissionButtonClick() }>{ buttonLabel }</button>
 			</div>
 
 		); 

@@ -8,9 +8,9 @@ class TwoBlocksView extends React.Component {
 
 		return (
 
-			<div id="twoBlocks-view" className="inherit-dimensions">
+			<div className="two-blocks-view" className="inherit-dimensions">
 				<TwoBlocksMap 
-					id={ this.props.mapCanvasId } 
+					className={ this.props.mapCanvasClassName } 
 					latLng={ this.props.mapLatLng } 
 					onMapMounted={ this.props.onMapMounted }
 					mapMarker={ this.props.mapMarker }
@@ -18,7 +18,7 @@ class TwoBlocksView extends React.Component {
 					visible={ 'map' === this.props.view } 
 				/>
 				<TwoBlocksPanorama 
-					id={ this.props.panoramaCanvasId } 
+					className={ this.props.panoramaCanvasClassName } 
 					latLng={ this.props.panoramaLatLng }
 					onPanoramaMounted={ this.props.onPanoramaMounted } 
 					panorama={ this.props.panorama } 
@@ -34,16 +34,16 @@ class TwoBlocksView extends React.Component {
 
 TwoBlocksView.propTypes = {
 	
-	mapCanvasId 		: React.PropTypes.string, 
-	mapLatLng 			: React.PropTypes.object, 
-	mapMarker 			: React.PropTypes.object, 
-	mapMarkerVisible 	: React.PropTypes.bool, 
-	onMapMounted 		: React.PropTypes.func.isRequired, 
-	onPanoramaMounted 	: React.PropTypes.func.isRequired, 
-	panorama 			: React.PropTypes.object, 
-	panoramaCanvasId 	: React.PropTypes.string, 
-	panoramaLatLng 		: React.PropTypes.object,	
-	view 				: React.PropTypes.string.isRequired
+	mapCanvasClassName 		: React.PropTypes.string, 
+	mapLatLng 				: React.PropTypes.object, 
+	mapMarker 				: React.PropTypes.object, 
+	mapMarkerVisible 		: React.PropTypes.bool, 
+	onMapMounted 			: React.PropTypes.func.isRequired, 
+	onPanoramaMounted 		: React.PropTypes.func.isRequired, 
+	panorama 				: React.PropTypes.object, 
+	panoramaCanvasClassName : React.PropTypes.string, 
+	panoramaLatLng 			: React.PropTypes.object,	
+	view 					: React.PropTypes.string.isRequired
 
 }; 
 

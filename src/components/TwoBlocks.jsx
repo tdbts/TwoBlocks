@@ -169,7 +169,7 @@ class TwoBlocks extends React.Component {
 
 			if (!(canvas)) {
 
-				throw new Error(`No element with ID '#${this.props[ mapCanvas === canvas ? "mapCanvasId" : "panoramaCanvasId" ]}' could be found on the page.`); 
+				throw new Error(`No element with ID '#${this.props[ mapCanvas === canvas ? "mapCanvasClassName" : "panoramaCanvasClassName" ]}' could be found on the page.`); 
 
 			}
 
@@ -368,9 +368,9 @@ class TwoBlocks extends React.Component {
 
 		return (
 	
-			<div id={ this.props.gameId }>
+			<div className={ this.props.gameClassName }>
 				<TwoBlocksView 
-					mapCanvasId={ this.state.mapCanvasId }
+					mapCanvasClassName={ this.state.mapCanvasClassName }
 					mapLatLng={ this.state.mapLatLng }
 					mapMarker={ this.state.chooseLocationMarker }
 					mapMarkerVisible={ this.state.mapMarkerVisible }
@@ -382,7 +382,7 @@ class TwoBlocks extends React.Component {
 				/>
 				<TwoBlocksPrompt
 					hoveredBorough={ this.state.hoveredBorough } 
-					promptId={ this.props.promptId } 
+					promptClassName={ this.props.promptClassName } 
 					text={ this.state.promptText } 
 				/>
 				<TwoBlocksSubmitter 
@@ -399,18 +399,18 @@ class TwoBlocks extends React.Component {
 }
 
 TwoBlocks.propTypes = {
-	gameId 				: React.PropTypes.string.isRequired, 	
-	mapCanvasId 		: React.PropTypes.string.isRequired, 
-	panoramaCanvasId 	: React.PropTypes.string.isRequired, 
-	promptId 			: React.PropTypes.string.isRequired
+	gameClassName 			: React.PropTypes.string.isRequired, 	
+	mapCanvasClassName 		: React.PropTypes.string.isRequired, 
+	panoramaCanvasClassName : React.PropTypes.string.isRequired, 
+	promptClassName 		: React.PropTypes.string.isRequired
 }; 
 
 // Assign default props to the constructor 
 TwoBlocks.defaultProps = { 
-	gameId 				: "twoBlocks", 
-	mapCanvasId 		: "twoBlocks-map", 
-	panoramaCanvasId 	: "twoBlocks-panorama", 
-	promptId 			: "twoBlocks-prompt"
+	gameClassName 			: "two-blocks", 
+	mapCanvasClassName 		: "two-blocks-map", 
+	panoramaCanvasClassName : "two-blocks-panorama", 
+	promptClassName 		: "two-blocks-prompt"
 }; 
 
 export default TwoBlocks; 
