@@ -13936,22 +13936,6 @@
 				});
 			}
 		}, {
-			key: 'addTurnToGameHistory',
-			value: function addTurnToGameHistory() {
-
-				var turnHistory = {
-					panoramaBorough: this.state.panoramaBorough,
-					panoramaLatLng: this.state.panoramaLatLng,
-					selectedBorough: this.state.selectedBorough
-				};
-
-				return this.setState({
-
-					gameHistory: this.state.gameHistory.concat(turnHistory)
-
-				});
-			}
-		}, {
 			key: 'beforeNextTurn',
 			value: function beforeNextTurn() {
 				var chooseLocationMap = this.state.chooseLocationMap;
@@ -13973,14 +13957,6 @@
 
 
 				gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough);
-			}
-		}, {
-			key: 'getTotalCorrectAnswers',
-			value: function getTotalCorrectAnswers() {
-
-				return this.state.gameHistory.filter(function (turnHistory) {
-					return turnHistory.selectedBorough === turnHistory.panoramaBorough;
-				}).length;
 			}
 		}, {
 			key: 'initializeTwoBlocks',
@@ -14031,7 +14007,10 @@
 
 				window.console.log("GAME OVER.");
 
-				var totalCorrect = this.getTotalCorrectAnswers();
+				var gameInstance = this.state.gameInstance;
+
+
+				var totalCorrect = gameInstance.totalCorrectAnswers();
 
 				return this.beforeNextTurn().then(function () {
 
@@ -14084,8 +14063,6 @@
 
 				var gameInstance = this.state.gameInstance;
 
-
-				this.addTurnToGameHistory();
 
 				if (!gameInstance.gameOver()) {
 
@@ -14307,8 +14284,10 @@
 
 		this.chooseLocationMap = null;
 		this.chooseLocationMarker = null;
-		this.locationData = null;
+		this.currentTurn = null;
 		this.gameStage = null;
+		this.gameHistory = null;
+		this.locationData = null;
 		this.mapLatLng = null;
 		this.panorama = null;
 		this.spinner = null;
@@ -14348,11 +14327,20 @@
 				return _this.nextTurn();
 			});
 
-			this.on(_constants.events.ANSWER_EVALUATED, function () {
+			this.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
+
+				_this.currentTurn.selectedBorough = answerDetails.selectedBorough;
 
 				(0, _createPromiseTimeout2.default)(3000).then(function () {
 					return _this.emit(_constants.events.TURN_COMPLETE);
 				});
+			});
+
+			this.on(_constants.events.TURN_COMPLETE, function () {
+
+				_this.addTurnToGameHistory();
+
+				_this.currentTurn = null;
 			});
 		},
 		addEventListenersToGameComponents: function addEventListenersToGameComponents(gameComponents) {
@@ -14380,6 +14368,15 @@
 
 				google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama);
 			}
+		},
+		addTurnToGameHistory: function addTurnToGameHistory() {
+
+			if (!this.gameHistory) {
+
+				this.gameHistory = [];
+			}
+
+			this.gameHistory = this.gameHistory.concat(this.currentTurn);
 		},
 		createGameComponents: function createGameComponents() {
 
@@ -14410,7 +14407,7 @@
 				this.emit(_constants.events.INCORRECT_BOROUGH, { correctBorough: correctBorough, selectedBorough: selectedBorough });
 			}
 
-			this.emit(_constants.events.ANSWER_EVALUATED);
+			this.emit(_constants.events.ANSWER_EVALUATED, { correctBorough: correctBorough, selectedBorough: selectedBorough });
 		},
 		gameOver: function gameOver() {
 
@@ -14422,6 +14419,12 @@
 			return Promise.resolve(_constants.nycCoordinates).then(function (locationData) {
 				return _this2.onPregameLocationDataReceived(locationData);
 			});
+		},
+		totalCorrectAnswers: function totalCorrectAnswers() {
+
+			return this.gameHistory.filter(function (turnHistory) {
+				return turnHistory.selectedBorough === turnHistory.boroughName;
+			}).length;
 		},
 		loadCityGeoJSON: function loadCityGeoJSON() {
 			var _this3 = this;
@@ -14454,6 +14457,14 @@
 			var _this4 = this;
 
 			return this.setRandomLocation().then(function (locationData) {
+				// boroughName, randomLatLng
+
+				_this4.currentTurn = _extends({}, locationData, {
+					selectedBorough: null
+				});
+
+				return locationData;
+			}).then(function (locationData) {
 				return _this4.emit(_constants.events.RANDOM_LOCATION, locationData);
 			}).then(this.totalRounds += 1);
 		},

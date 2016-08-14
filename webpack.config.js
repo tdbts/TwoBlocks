@@ -21,7 +21,12 @@ module.exports = {
 				loader: 'babel-loader',
 				exclude: /node_modules/,
 				query: {
-					plugins: ['transform-object-assign'], 
+					plugins: [
+						'syntax-object-rest-spread',
+						'transform-es2015-destructuring',
+						'transform-object-assign',
+						'transform-object-rest-spread'
+					], 
 					presets: ['es2015', 'react']
         		}
       		}

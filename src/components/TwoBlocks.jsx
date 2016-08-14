@@ -147,22 +147,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	addTurnToGameHistory() {
-
-		const turnHistory = {
-			panoramaBorough: this.state.panoramaBorough, 
-			panoramaLatLng: this.state.panoramaLatLng, 
-			selectedBorough: this.state.selectedBorough
-		}; 
-
-		return this.setState({
-
-			gameHistory: this.state.gameHistory.concat(turnHistory)
-
-		}); 
-
-	}
-
 	beforeNextTurn() {
 
 		const { chooseLocationMap } = this.state; 
@@ -180,12 +164,6 @@ class TwoBlocks extends React.Component {
 		const { gameInstance, panoramaBorough, selectedBorough } = this.state; 
 
 		gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough); 
-
-	}
-
-	getTotalCorrectAnswers() {
-
-		return this.state.gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.panoramaBorough).length; 
 
 	}
 
@@ -233,7 +211,9 @@ class TwoBlocks extends React.Component {
 
 		window.console.log("GAME OVER."); 
 
-		const totalCorrect = this.getTotalCorrectAnswers(); 
+		const { gameInstance } = this.state; 
+
+		const totalCorrect = gameInstance.totalCorrectAnswers(); 
 
 		return this.beforeNextTurn()
 
@@ -286,8 +266,6 @@ class TwoBlocks extends React.Component {
 	onTurnComplete() {
 
 		const { gameInstance } = this.state; 
-
-		this.addTurnToGameHistory(); 
 
 		if (!(gameInstance.gameOver())) {
 

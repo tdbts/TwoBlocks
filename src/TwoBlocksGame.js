@@ -16,8 +16,10 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.chooseLocationMap = null; 
 	this.chooseLocationMarker = null; 
-	this.locationData = null; 
+	this.currentTurn = null; 
 	this.gameStage = null; 
+	this.gameHistory = null; 
+	this.locationData = null; 
 	this.mapLatLng = null; 
 	this.panorama = null; 
 	this.spinner = null; 
@@ -62,11 +64,21 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(events.NEXT_TURN, () => this.nextTurn()); 
 
-		this.on(events.ANSWER_EVALUATED, () => {
+		this.on(events.ANSWER_EVALUATED, answerDetails => {
+
+			this.currentTurn.selectedBorough = answerDetails.selectedBorough;  
 
 			createPromiseTimeout(3000) 
 
-				.then(() => this.emit(events.TURN_COMPLETE)); 
+				.then(() => this.emit(events.TURN_COMPLETE));
+
+		}); 
+
+		this.on(events.TURN_COMPLETE, () => {
+		
+			this.addTurnToGameHistory();
+		
+			this.currentTurn = null; 
 
 		}); 
 
@@ -96,6 +108,18 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama); 
 
 		} 	
+
+	}, 
+
+	addTurnToGameHistory() {
+
+		if (!(this.gameHistory)) {
+
+			this.gameHistory = []; 
+
+		}
+
+		this.gameHistory = this.gameHistory.concat(this.currentTurn);  
 
 	}, 
 
@@ -133,7 +157,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-		this.emit(events.ANSWER_EVALUATED); 
+		this.emit(events.ANSWER_EVALUATED, { correctBorough, selectedBorough }); 
 
 	}, 
 
@@ -150,6 +174,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			.then(locationData => this.onPregameLocationDataReceived(locationData)); 
 
 	},
+
+	totalCorrectAnswers() {
+
+		return this.gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.boroughName).length; 
+
+	}, 
 
 	loadCityGeoJSON() {
 
@@ -185,6 +215,17 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	nextTurn() {
 
 		return this.setRandomLocation() 
+
+			.then(locationData => {  // boroughName, randomLatLng
+
+				this.currentTurn = {
+					...locationData, 
+					selectedBorough: null 
+				}; 
+
+				return locationData; 
+
+			})
 
 			.then(locationData => this.emit(events.RANDOM_LOCATION, locationData))
 
