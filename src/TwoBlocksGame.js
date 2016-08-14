@@ -80,6 +80,16 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		
 			this.currentTurn = null; 
 
+			if (this.gameOver()) {
+
+				this.emit(events.GAME_OVER); 
+
+			} else {
+
+				this.emit(events.NEXT_TURN); 
+				
+			}
+
 		}); 
 
 	},

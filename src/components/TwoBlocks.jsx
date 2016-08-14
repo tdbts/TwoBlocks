@@ -145,6 +145,8 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on(events.TURN_COMPLETE, () => this.onTurnComplete()); 
 
+		twoBlocks.on(events.GAME_OVER, () => this.onGameOver()); 
+
 	}
 
 	evaluateFinalAnswer() {
@@ -247,7 +249,7 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { chooseLocationMap, gameInstance } = this.state; 
+		const { chooseLocationMap } = this.state; 
 
 		chooseLocationMap.data.revertStyle(); 
 
@@ -256,16 +258,6 @@ class TwoBlocks extends React.Component {
 			selectedBorough: null
 		
 		}); 
-
-		if (!(gameInstance.gameOver())) {
-
-			this.state.gameInstance.emit(events.NEXT_TURN);  
-
-		} else {
-
-			this.onGameOver(); 
-
-		}		
 
 	}
 
