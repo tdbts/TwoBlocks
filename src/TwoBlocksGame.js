@@ -10,6 +10,7 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.validateArgs(mapCanvas, panoramaCanvas); 
 
+	this.gameIsOver = false; 
 	this.mapCanvas = mapCanvas; 
 	this.panoramaCanvas = panoramaCanvas; 
 	this.totalRounds = 0; 
@@ -80,16 +81,28 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		
 			this.currentTurn = null; 
 
-			if (this.gameOver()) {
+			if (this.maximumRoundsPlayed()) {
 
 				this.emit(events.GAME_OVER); 
 
 			} else {
 
 				this.emit(events.NEXT_TURN); 
-				
+
 			}
 
+			this.totalRounds += 1; 
+
+		}); 
+
+		this.on(events.GAME_OVER, () => {
+		
+			this.gameIsOver = true; 
+
+			this.gameStage = 'postgame'; 			
+
+			this.emit(events.GAME_STAGE, this.gameStage); 
+		
 		}); 
 
 	},
@@ -173,7 +186,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	gameOver() {
 
-		return this.totalRounds === DEFAULT_TOTAL_ROUNDS;  // Placeholder
+		return this.gameIsOver; 
 	
 	},
 
@@ -222,6 +235,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	maximumRoundsPlayed() {
+
+		return this.totalRounds === DEFAULT_TOTAL_ROUNDS; 
+
+	}, 
+
 	nextTurn() {
 
 		return this.setRandomLocation() 
@@ -237,9 +256,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			})
 
-			.then(locationData => this.emit(events.RANDOM_LOCATION, locationData))
-
-			.then(this.totalRounds += 1); 
+			.then(locationData => this.emit(events.RANDOM_LOCATION, locationData)); 
 
 	}, 
 

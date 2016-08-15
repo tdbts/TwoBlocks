@@ -5,6 +5,7 @@ import TwoBlocksGame from '../TwoBlocksGame';
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksPrompt from './TwoBlocksPrompt';
 import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
+import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
 import { events, DEFAULT_TOTAL_ROUNDS, PANORAMA_LOAD_DELAY } from '../constants/constants'; 
@@ -261,6 +262,17 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	restart() {
+
+		return this.setState({
+			gameInstance: null, 
+			promptText: "Starting new game..."
+		})
+
+		.then(() => this.initializeTwoBlocks()); 
+
+	}
+
 	showRandomPanorama(prevState) {
 
 		if (prevState.panoramaLatLng === this.state.panoramaLatLng) return;  // Don't show random panorama if the panoramaLatLng has not changed 
@@ -389,6 +401,10 @@ class TwoBlocks extends React.Component {
 					hoveredBorough={ this.state.hoveredBorough }
 					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
 					selectedBorough={ this.state.selectedBorough }
+				/>
+				<TwoBlocksReplayButton 
+					hidden={ this.state.gameStage !== 'postgame' }
+					restart={ () => this.restart() }
 				/>
 			</div>
 	
