@@ -1,6 +1,7 @@
 import events from './events'; 
 import nycCoordinates from './nycCoordinates'; 
 import ALL_TYPES from './ALL_TYPES'; 
+import DEFAULT_MAP_ZOOM from './DEFAULT_MAP_ZOOM'; 
 import DEFAULT_TOTAL_ROUNDS from './DEFAULT_TOTAL_ROUNDS';
 import MAXIMUM_PANORAMA_REQUESTS from './MAXIMUM_PANORAMA_REQUESTS'; 
 import MAXIMUM_RANDOM_PANORAMA_ATTEMPTS from './MAXIMUM_RANDOM_PANORAMA_ATTEMPTS';  
@@ -12,6 +13,7 @@ export {
 	events, 
 	nycCoordinates, 
 	ALL_TYPES,
+	DEFAULT_MAP_ZOOM, 
 	DEFAULT_TOTAL_ROUNDS,
 	MAXIMUM_PANORAMA_REQUESTS, 
 	MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, 

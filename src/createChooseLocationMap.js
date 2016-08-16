@@ -1,5 +1,7 @@
 /* global google */
 
+import { DEFAULT_MAP_ZOOM } from './constants/constants'; 
+
 const DEFAULT_LAT = 40.6291566; 
 const DEFAULT_LNG = -74.0287341; 
 
@@ -15,8 +17,9 @@ const createChooseLocationMap = function createChooseLocationMap(canvas, options
 		center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG), 
 		mapTypeControl: false, 
 		mapTypeId: google.maps.MapTypeId.ROADMAP, 
+		scrollwheel: false, 
 		streetViewControl: false, 
-		zoom: 10
+		zoom: DEFAULT_MAP_ZOOM
 	}; 
 
 	const mapOptions = Object.assign({}, defaultOptions, options); 
