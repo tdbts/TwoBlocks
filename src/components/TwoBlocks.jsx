@@ -404,7 +404,7 @@ class TwoBlocks extends React.Component {
 				/>
 				<TwoBlocksReplayButton 
 					hidden={ this.state.gameStage !== 'postgame' }
-					restart={ () => this.restart() }
+					restart={ this.restart.bind(this) }
 				/>
 			</div>
 	

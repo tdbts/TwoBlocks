@@ -6,6 +6,8 @@ import { EventEmitter } from 'events';
 import { inherits } from 'util';
 import { events, nycCoordinates, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
 
+let geoJSONLoaded = false; 
+
 const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.validateArgs(mapCanvas, panoramaCanvas); 
@@ -53,6 +55,15 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		
 		}); 
 
+		this.on(events.GEO_JSON_LOADED, () => {
+
+			// Set 'geoJSONLoaded' flag to true so we don't produce 
+			// the side effect of repeatedly loading the same GeoJSON 
+			// over the map on every new game instance.   
+			geoJSONLoaded = true; 
+
+		}); 
+
 		this.on(events.GAME_STAGE, gameStage => {
 
 			if ('gameplay' === gameStage) {
@@ -77,6 +88,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(events.TURN_COMPLETE, () => {
 		
+			this.totalRounds += 1;
+
 			this.addTurnToGameHistory();
 		
 			this.currentTurn = null; 
@@ -90,8 +103,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				this.emit(events.NEXT_TURN); 
 
 			}
-
-			this.totalRounds += 1; 
 
 		}); 
 
@@ -208,6 +219,14 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return new Promise(resolve => {
 
+			if (geoJSONLoaded) {
+
+				resolve(); 
+
+				return; 
+
+			} 
+
 			const { chooseLocationMap } = this; 
 
 			if (!(chooseLocationMap)) {
@@ -226,6 +245,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				this.locationData = Object.assign(this.locationData, { featureCollection }); 
 
 				this.emit(events.HOST_LOCATION_DATA, Object.assign({}, this.locationData)); 
+
+				this.emit(events.GEO_JSON_LOADED); 
 
 				resolve();  
 

@@ -12847,6 +12847,7 @@
 		GAME_COMPONENTS: 'GAME_COMPONENTS',
 		GAME_OVER: 'GAME_OVER',
 		GAME_STAGE: 'GAME_STAGE',
+		GEO_JSON_LOADED: 'GEO_JSON_LOADED',
 		HOST_LOCATION_DATA: 'HOST_LOCATION_DATA',
 		INCORRECT_BOROUGH: 'INCORRECT_BOROUGH',
 		NEXT_TURN: 'NEXT_TURN',
@@ -14218,9 +14219,7 @@
 					}),
 					_react2.default.createElement(_TwoBlocksReplayButton2.default, {
 						hidden: this.state.gameStage !== 'postgame',
-						restart: function restart() {
-							return _this7.restart();
-						}
+						restart: this.restart.bind(this)
 					})
 				);
 			}
@@ -14282,6 +14281,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var geoJSONLoaded = false;
+
 	var TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 		this.validateArgs(mapCanvas, panoramaCanvas);
@@ -14324,6 +14325,14 @@
 				});
 			});
 
+			this.on(_constants.events.GEO_JSON_LOADED, function () {
+
+				// Set 'geoJSONLoaded' flag to true so we don't produce
+				// the side effect of repeatedly loading the same GeoJSON
+				// over the map on every new game instance.  
+				geoJSONLoaded = true;
+			});
+
 			this.on(_constants.events.GAME_STAGE, function (gameStage) {
 
 				if ('gameplay' === gameStage) {
@@ -14347,6 +14356,8 @@
 
 			this.on(_constants.events.TURN_COMPLETE, function () {
 
+				_this.totalRounds += 1;
+
 				_this.addTurnToGameHistory();
 
 				_this.currentTurn = null;
@@ -14358,8 +14369,6 @@
 
 					_this.emit(_constants.events.NEXT_TURN);
 				}
-
-				_this.totalRounds += 1;
 			});
 
 			this.on(_constants.events.GAME_OVER, function () {
@@ -14458,6 +14467,14 @@
 			var _this3 = this;
 
 			return new Promise(function (resolve) {
+
+				if (geoJSONLoaded) {
+
+					resolve();
+
+					return;
+				}
+
 				var chooseLocationMap = _this3.chooseLocationMap;
 
 
@@ -14476,6 +14493,8 @@
 					_this3.locationData = _extends(_this3.locationData, { featureCollection: featureCollection });
 
 					_this3.emit(_constants.events.HOST_LOCATION_DATA, _extends({}, _this3.locationData));
+
+					_this3.emit(_constants.events.GEO_JSON_LOADED);
 
 					resolve();
 				});
