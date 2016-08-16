@@ -19,7 +19,8 @@ const createChooseLocationMap = function createChooseLocationMap(canvas, options
 		mapTypeId: google.maps.MapTypeId.ROADMAP, 
 		scrollwheel: false, 
 		streetViewControl: false, 
-		zoom: DEFAULT_MAP_ZOOM
+		zoom: DEFAULT_MAP_ZOOM, 
+		zoomControl: false
 	}; 
 
 	const mapOptions = Object.assign({}, defaultOptions, options); 

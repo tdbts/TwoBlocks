@@ -16237,7 +16237,8 @@
 			mapTypeId: google.maps.MapTypeId.ROADMAP,
 			scrollwheel: false,
 			streetViewControl: false,
-			zoom: _constants.DEFAULT_MAP_ZOOM
+			zoom: _constants.DEFAULT_MAP_ZOOM,
+			zoomControl: false
 		};
 
 		var mapOptions = _extends({}, defaultOptions, options);
