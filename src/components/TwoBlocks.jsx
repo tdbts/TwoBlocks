@@ -380,7 +380,7 @@ class TwoBlocks extends React.Component {
 
 		return (
 	
-			<div className={ this.props.gameClassName }>
+			<div className={ this.props.gameTwoBlocksClass }>
 				<TwoBlocksView 
 					mapTwoBlocksClass={ this.props.mapTwoBlocksClass }
 					mapLatLng={ this.state.mapLatLng }
@@ -391,21 +391,24 @@ class TwoBlocks extends React.Component {
 					panorama={ this.state.panorama } 
 					panoramaLatLng={ this.state.panoramaLatLng } 
 					panoramaTwoBlocksClass={ this.props.panoramaTwoBlocksClass }
+					twoBlocksClass={ this.props.viewTwoBlocksClass }
 					view={ this.state.view } 
 				/>
 				<TwoBlocksPrompt
 					hoveredBorough={ this.state.hoveredBorough } 
-					promptClassName={ this.props.promptClassName } 
+					twoBlocksClass={ this.props.promptTwoBlocksClass } 
 					text={ this.state.promptText } 
 				/>
 				<TwoBlocksSubmitter 
 					hoveredBorough={ this.state.hoveredBorough }
 					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
 					selectedBorough={ this.state.selectedBorough }
+					twoBlocksClass={ this.props.submitterTwoBlocksClass }
 				/>
 				<TwoBlocksReplayButton 
-					hidden={ this.state.gameStage !== 'postgame' }
+					hidden={ 'postgame' !== this.state.gameStage }
 					restart={ this.restart.bind(this) }
+					twoBlocksClass={ this.props.replayButtonTwoBlocksClass }
 				/>
 			</div>
 	
@@ -416,18 +419,24 @@ class TwoBlocks extends React.Component {
 }
 
 TwoBlocks.propTypes = {
-	gameClassName 			: React.PropTypes.string.isRequired, 	
-	mapTwoBlocksClass 		: React.PropTypes.string.isRequired, 
-	panoramaTwoBlocksClass 	: React.PropTypes.string.isRequired, 
-	promptClassName 		: React.PropTypes.string.isRequired
+	gameTwoBlocksClass 			: React.PropTypes.string.isRequired, 	
+	mapTwoBlocksClass 			: React.PropTypes.string.isRequired, 
+	panoramaTwoBlocksClass 		: React.PropTypes.string.isRequired, 
+	promptTwoBlocksClass 		: React.PropTypes.string.isRequired,
+	replayButtonTwoBlocksClass 	: React.PropTypes.string.isRequired,
+	submitterTwoBlocksClass 	: React.PropTypes.string.isRequired,
+	viewTwoBlocksClass 			: React.PropTypes.string.isRequired
 }; 
 
 // Assign default props to the constructor 
 TwoBlocks.defaultProps = { 
-	gameClassName 			: "two-blocks", 
-	mapTwoBlocksClass 		: "two-blocks-map", 
-	panoramaTwoBlocksClass 	: "two-blocks-panorama", 
-	promptClassName 		: "two-blocks-prompt"
+	gameTwoBlocksClass 			: "two-blocks", 
+	mapTwoBlocksClass 			: "two-blocks-map", 
+	panoramaTwoBlocksClass 		: "two-blocks-panorama", 
+	promptTwoBlocksClass 		: "two-blocks-prompt", 
+	replayButtonTwoBlocksClass 	: "two-blocks-replay-button", 
+	submitterTwoBlocksClass 	: "two-blocks-submitter", 
+	viewTwoBlocksClass 			: "two-blocks-view"
 }; 
 
 export default TwoBlocks; 

@@ -4,7 +4,7 @@ class TwoBlocksReplayButton extends React.Component {
 
 	getClassName() {
 
-		return ["two-blocks-replay-button", this.props.hidden ? "hidden" : ""].join(" ").trim();
+		return [this.props.twoBlocksClass, this.props.hidden ? "hidden" : ""].join(" ").trim();
 
 	}
 
@@ -25,8 +25,10 @@ class TwoBlocksReplayButton extends React.Component {
 }
 
 TwoBlocksReplayButton.propTypes = {
-
-	restart: React.PropTypes.func.isRequired
+	
+	hidden: React.PropTypes.bool.isRequired, 
+	restart: React.PropTypes.func.isRequired, 
+	twoBlocksClass: React.PropTypes.string.isRequired
 
 }; 
 

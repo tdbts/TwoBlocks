@@ -14209,7 +14209,7 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ className: this.props.gameClassName },
+					{ className: this.props.gameTwoBlocksClass },
 					_react2.default.createElement(_TwoBlocksView2.default, {
 						mapTwoBlocksClass: this.props.mapTwoBlocksClass,
 						mapLatLng: this.state.mapLatLng,
@@ -14220,11 +14220,12 @@
 						panorama: this.state.panorama,
 						panoramaLatLng: this.state.panoramaLatLng,
 						panoramaTwoBlocksClass: this.props.panoramaTwoBlocksClass,
+						twoBlocksClass: this.props.viewTwoBlocksClass,
 						view: this.state.view
 					}),
 					_react2.default.createElement(_TwoBlocksPrompt2.default, {
 						hoveredBorough: this.state.hoveredBorough,
-						promptClassName: this.props.promptClassName,
+						twoBlocksClass: this.props.promptTwoBlocksClass,
 						text: this.state.promptText
 					}),
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
@@ -14232,11 +14233,13 @@
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
 							return _this7.evaluateFinalAnswer();
 						},
-						selectedBorough: this.state.selectedBorough
+						selectedBorough: this.state.selectedBorough,
+						twoBlocksClass: this.props.submitterTwoBlocksClass
 					}),
 					_react2.default.createElement(_TwoBlocksReplayButton2.default, {
-						hidden: this.state.gameStage !== 'postgame',
-						restart: this.restart.bind(this)
+						hidden: 'postgame' !== this.state.gameStage,
+						restart: this.restart.bind(this),
+						twoBlocksClass: this.props.replayButtonTwoBlocksClass
 					})
 				);
 			}
@@ -14246,18 +14249,24 @@
 	}(_react2.default.Component);
 
 	TwoBlocks.propTypes = {
-		gameClassName: _react2.default.PropTypes.string.isRequired,
+		gameTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		mapTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		panoramaTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
-		promptClassName: _react2.default.PropTypes.string.isRequired
+		promptTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
+		replayButtonTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
+		submitterTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
+		viewTwoBlocksClass: _react2.default.PropTypes.string.isRequired
 	};
 
 	// Assign default props to the constructor
 	TwoBlocks.defaultProps = {
-		gameClassName: "two-blocks",
+		gameTwoBlocksClass: "two-blocks",
 		mapTwoBlocksClass: "two-blocks-map",
 		panoramaTwoBlocksClass: "two-blocks-panorama",
-		promptClassName: "two-blocks-prompt"
+		promptTwoBlocksClass: "two-blocks-prompt",
+		replayButtonTwoBlocksClass: "two-blocks-replay-button",
+		submitterTwoBlocksClass: "two-blocks-submitter",
+		viewTwoBlocksClass: "two-blocks-view"
 	};
 
 	exports.default = TwoBlocks;
@@ -16811,8 +16820,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -16829,12 +16836,18 @@
 		}
 
 		_createClass(TwoBlocksView, [{
+			key: 'getClassName',
+			value: function getClassName() {
+
+				return [this.props.twoBlocksClass, "inherit-dimensions"].join(" ");
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 
 				return _react2.default.createElement(
 					'div',
-					_defineProperty({ className: 'two-blocks-view' }, 'className', 'inherit-dimensions'),
+					{ className: this.getClassName() },
 					_react2.default.createElement(_TwoBlocksMap2.default, {
 						latLng: this.props.mapLatLng,
 						onMapMounted: this.props.onMapMounted,
@@ -16844,7 +16857,6 @@
 						visible: 'map' === this.props.view
 					}),
 					_react2.default.createElement(_TwoBlocksPanorama2.default, {
-						className: this.props.panoramaCanvasClassName,
 						latLng: this.props.panoramaLatLng,
 						onPanoramaMounted: this.props.onPanoramaMounted,
 						panorama: this.props.panorama,
@@ -16864,11 +16876,13 @@
 		mapLatLng: _react2.default.PropTypes.object,
 		mapMarker: _react2.default.PropTypes.object,
 		mapMarkerVisible: _react2.default.PropTypes.bool,
+		mapTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		onMapMounted: _react2.default.PropTypes.func.isRequired,
 		onPanoramaMounted: _react2.default.PropTypes.func.isRequired,
 		panorama: _react2.default.PropTypes.object,
-		panoramaCanvasClassName: _react2.default.PropTypes.string,
+		panoramaTwoBlocksClass: _react2.default.PropTypes.string,
 		panoramaLatLng: _react2.default.PropTypes.object,
+		twoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		view: _react2.default.PropTypes.string.isRequired
 
 	};
@@ -17098,6 +17112,12 @@
 		}
 
 		_createClass(TwoBlocksPrompt, [{
+			key: 'getHeaderText',
+			value: function getHeaderText() {
+
+				return [this.props.text, this.getTextAddition()].join(' ');
+			}
+		}, {
 			key: 'getTextAddition',
 			value: function getTextAddition() {
 
@@ -17109,11 +17129,11 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ className: this.props.promptClassName },
+					{ className: this.props.twoBlocksClass },
 					_react2.default.createElement(
 						'h3',
 						null,
-						[this.props.text, this.getTextAddition()].join(' ')
+						this.getHeaderText()
 					)
 				);
 			}
@@ -17125,7 +17145,7 @@
 	TwoBlocksPrompt.propTypes = {
 
 		hoveredBorough: _react2.default.PropTypes.string,
-		promptClassName: _react2.default.PropTypes.string.isRequired,
+		twoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		text: _react2.default.PropTypes.string
 
 	};
@@ -17172,8 +17192,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -17196,6 +17214,12 @@
 				return this.props.selectedBorough ? (0, _stylizeBoroughName2.default)(this.props.selectedBorough) : '';
 			}
 		}, {
+			key: 'getClassName',
+			value: function getClassName() {
+
+				return ["two-blocks-submitter-button", this.props.selectedBorough ? "" : "hidden"].join(" ").trim();
+			}
+		}, {
 			key: 'getText',
 			value: function getText() {
 
@@ -17210,8 +17234,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this2 = this,
-				    _React$createElement;
+				var _this2 = this;
 
 				var text = this.getText();
 				var borough = this.getBorough();
@@ -17219,7 +17242,7 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ className: 'two-blocks-submitter' },
+					{ className: this.props.twoBlocksClass },
 					_react2.default.createElement(
 						'p',
 						{ className: 'two-blocks-submitter-text' },
@@ -17234,9 +17257,9 @@
 					),
 					_react2.default.createElement(
 						'button',
-						(_React$createElement = { className: 'two-blocks-submitter-button' }, _defineProperty(_React$createElement, 'className', this.props.selectedBorough ? '' : 'hidden'), _defineProperty(_React$createElement, 'onClick', function onClick() {
-							return _this2.onSubmissionButtonClick();
-						}), _React$createElement),
+						{ className: this.getClassName(), onClick: function onClick() {
+								return _this2.onSubmissionButtonClick();
+							} },
 						buttonLabel
 					)
 				);
@@ -17249,7 +17272,8 @@
 	TwoBlocksSubmitter.propTypes = {
 
 		evaluateFinalAnswer: _react2.default.PropTypes.func.isRequired,
-		selectedBorough: _react2.default.PropTypes.string
+		selectedBorough: _react2.default.PropTypes.string,
+		twoBlocksClass: _react2.default.PropTypes.string.isRequired
 
 	};
 
@@ -17292,7 +17316,7 @@
 			key: "getClassName",
 			value: function getClassName() {
 
-				return ["two-blocks-replay-button", this.props.hidden ? "hidden" : ""].join(" ").trim();
+				return [this.props.twoBlocksClass, this.props.hidden ? "hidden" : ""].join(" ").trim();
 			}
 		}, {
 			key: "onReplayButtonClick",
@@ -17320,7 +17344,9 @@
 
 	TwoBlocksReplayButton.propTypes = {
 
-		restart: _react2.default.PropTypes.func.isRequired
+		hidden: _react2.default.PropTypes.bool.isRequired,
+		restart: _react2.default.PropTypes.func.isRequired,
+		twoBlocksClass: _react2.default.PropTypes.string.isRequired
 
 	};
 

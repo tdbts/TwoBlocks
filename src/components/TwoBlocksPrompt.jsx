@@ -3,6 +3,12 @@ import stylizeBoroughName from '../stylizeBoroughName';
 
 class TwoBlocksPrompt extends React.Component {
 
+	getHeaderText() {
+
+		return [this.props.text, this.getTextAddition()].join(' '); 		
+
+	}
+
 	getTextAddition() {
 
 		return this.props.hoveredBorough ? stylizeBoroughName(this.props.hoveredBorough) + "?" :  ''; 
@@ -13,8 +19,8 @@ class TwoBlocksPrompt extends React.Component {
 
 		return (
 
-			<div className={ this.props.promptClassName }>
-				<h3>{ [this.props.text, this.getTextAddition()].join(' ') }</h3>
+			<div className={ this.props.twoBlocksClass }>
+				<h3>{ this.getHeaderText() }</h3>
 			</div>
 
 		); 
@@ -26,7 +32,7 @@ class TwoBlocksPrompt extends React.Component {
 TwoBlocksPrompt.propTypes = {
 
 	hoveredBorough 	: React.PropTypes.string, 
-	promptClassName : React.PropTypes.string.isRequired, 
+	twoBlocksClass 	: React.PropTypes.string.isRequired, 
 	text 			: React.PropTypes.string
 
 }; 

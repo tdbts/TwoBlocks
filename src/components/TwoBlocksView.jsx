@@ -4,11 +4,17 @@ import TwoBlocksPanorama from './TwoBlocksPanorama';
 
 class TwoBlocksView extends React.Component {
 
+	getClassName() {
+
+		return [this.props.twoBlocksClass, "inherit-dimensions"].join(" "); 
+
+	}
+
 	render() {
 
 		return (
 
-			<div className="two-blocks-view" className="inherit-dimensions">
+			<div className={ this.getClassName() }>
 				<TwoBlocksMap 
 					latLng={ this.props.mapLatLng } 
 					onMapMounted={ this.props.onMapMounted }
@@ -18,7 +24,6 @@ class TwoBlocksView extends React.Component {
 					visible={ 'map' === this.props.view } 
 				/>
 				<TwoBlocksPanorama 
-					className={ this.props.panoramaCanvasClassName } 
 					latLng={ this.props.panoramaLatLng }
 					onPanoramaMounted={ this.props.onPanoramaMounted } 
 					panorama={ this.props.panorama }
@@ -39,11 +44,13 @@ TwoBlocksView.propTypes = {
 	mapLatLng 				: React.PropTypes.object, 
 	mapMarker 				: React.PropTypes.object, 
 	mapMarkerVisible 		: React.PropTypes.bool, 
+	mapTwoBlocksClass 		: React.PropTypes.string.isRequired, 
 	onMapMounted 			: React.PropTypes.func.isRequired, 
 	onPanoramaMounted 		: React.PropTypes.func.isRequired, 
 	panorama 				: React.PropTypes.object, 
-	panoramaCanvasClassName : React.PropTypes.string, 
+	panoramaTwoBlocksClass 	: React.PropTypes.string, 
 	panoramaLatLng 			: React.PropTypes.object,	
+	twoBlocksClass 			: React.PropTypes.string.isRequired, 
 	view 					: React.PropTypes.string.isRequired
 
 }; 

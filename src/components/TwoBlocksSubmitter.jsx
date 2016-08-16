@@ -9,6 +9,12 @@ class TwoBlocksSubmitter extends React.Component {
 
 	}
 
+	getClassName() {
+
+		return ["two-blocks-submitter-button", this.props.selectedBorough ? "" : "hidden"].join(" ").trim();
+
+	}
+
 	getText() {
 
 		return this.props.selectedBorough ? "You chose: " : ""; 
@@ -29,9 +35,9 @@ class TwoBlocksSubmitter extends React.Component {
 
 		return (
 
-			<div className="two-blocks-submitter">
+			<div className={ this.props.twoBlocksClass }>
 				<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
-				<button className="two-blocks-submitter-button" className={ this.props.selectedBorough ? '' : 'hidden' } onClick={ () => this.onSubmissionButtonClick() }>{ buttonLabel }</button>
+				<button className={ this.getClassName() } onClick={ () => this.onSubmissionButtonClick() }>{ buttonLabel }</button>
 			</div>
 
 		); 
@@ -43,7 +49,8 @@ class TwoBlocksSubmitter extends React.Component {
 TwoBlocksSubmitter.propTypes = {
 
 	evaluateFinalAnswer 	: React.PropTypes.func.isRequired, 
-	selectedBorough 		: React.PropTypes.string
+	selectedBorough 		: React.PropTypes.string, 
+	twoBlocksClass 			: React.PropTypes.string.isRequired
 
 }; 
 
