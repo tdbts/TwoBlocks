@@ -8,7 +8,7 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { events, DEFAULT_TOTAL_ROUNDS, PANORAMA_LOAD_DELAY } from '../constants/constants'; 
+import { events, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -309,7 +309,7 @@ class TwoBlocks extends React.Component {
 		if (selectedBorough !== borough.getProperty('boro_name')) {
 
 			chooseLocationMap.data.overrideStyle(borough, {
-				fillColor: "#A8FFFC"
+				fillColor: HOVERED_BOROUGH_FILL_COLOR
 			}); 
 
 		}
@@ -321,7 +321,7 @@ class TwoBlocks extends React.Component {
 		const { chooseLocationMap } = this.state; 
 
 		chooseLocationMap.data.overrideStyle(borough, {
-			fillColor: "#FFFFFF"
+			fillColor: SELECTED_BOROUGH_FILL_COLOR
 		}); 	
 
 	}
