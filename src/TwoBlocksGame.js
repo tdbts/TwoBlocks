@@ -12,6 +12,7 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.validateArgs(mapCanvas, panoramaCanvas); 
 
+	this.canEvaluateAnswer = true; 
 	this.gameIsOver = false; 
 	this.mapCanvas = mapCanvas; 
 	this.panoramaCanvas = panoramaCanvas; 
@@ -179,7 +180,11 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	evaluateFinalAnswer(correctBorough, selectedBorough) {
 
+		if (!(this.canEvaluateAnswer)) return; 
+
 		window.console.log("Evaluating final answer!"); 
+
+		this.canEvaluateAnswer = false;  // Don't allow answer evaluation until the next turn 
 
 		if (selectedBorough === correctBorough) {
 
@@ -263,6 +268,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	}, 
 
 	nextTurn() {
+
+		this.canEvaluateAnswer = true; 
 
 		return this.setRandomLocation() 
 

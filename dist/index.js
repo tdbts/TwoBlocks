@@ -14287,6 +14287,7 @@
 
 		this.validateArgs(mapCanvas, panoramaCanvas);
 
+		this.canEvaluateAnswer = true;
 		this.gameIsOver = false;
 		this.mapCanvas = mapCanvas;
 		this.panoramaCanvas = panoramaCanvas;
@@ -14434,7 +14435,11 @@
 		},
 		evaluateFinalAnswer: function evaluateFinalAnswer(correctBorough, selectedBorough) {
 
+			if (!this.canEvaluateAnswer) return;
+
 			window.console.log("Evaluating final answer!");
+
+			this.canEvaluateAnswer = false; // Don't allow answer evaluation until the next turn
 
 			if (selectedBorough === correctBorough) {
 
@@ -14506,6 +14511,8 @@
 		},
 		nextTurn: function nextTurn() {
 			var _this4 = this;
+
+			this.canEvaluateAnswer = true;
 
 			return this.setRandomLocation().then(function (locationData) {
 				// boroughName, randomLatLng
