@@ -24,8 +24,7 @@ class TwoBlocksMap extends React.Component {
 		return (
 
 			<div 
-				className={ this.props.id } 
-				className={getViewLayerClassName.call(this)} 
+				className={ getViewLayerClassName.call(this) } 
 				ref={ mapCanvas => (this._mapCanvas = mapCanvas) }
 			>
 			</div>		

@@ -13991,7 +13991,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with ID \'#' + _this4.props[mapCanvas === canvas ? "mapCanvasClassName" : "panoramaCanvasClassName"] + '\' could be found on the page.');
+						throw new Error('No element with selector \'.' + _this4.props[mapCanvas === canvas ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass"] + '\' could be found on the page.');
 					}
 				});
 
@@ -14211,7 +14211,7 @@
 					'div',
 					{ className: this.props.gameClassName },
 					_react2.default.createElement(_TwoBlocksView2.default, {
-						mapCanvasClassName: this.state.mapCanvasClassName,
+						mapTwoBlocksClass: this.props.mapTwoBlocksClass,
 						mapLatLng: this.state.mapLatLng,
 						mapMarker: this.state.chooseLocationMarker,
 						mapMarkerVisible: this.state.mapMarkerVisible,
@@ -14219,6 +14219,7 @@
 						onPanoramaMounted: this.onPanoramaMounted.bind(this),
 						panorama: this.state.panorama,
 						panoramaLatLng: this.state.panoramaLatLng,
+						panoramaTwoBlocksClass: this.props.panoramaTwoBlocksClass,
 						view: this.state.view
 					}),
 					_react2.default.createElement(_TwoBlocksPrompt2.default, {
@@ -14246,16 +14247,16 @@
 
 	TwoBlocks.propTypes = {
 		gameClassName: _react2.default.PropTypes.string.isRequired,
-		mapCanvasClassName: _react2.default.PropTypes.string.isRequired,
-		panoramaCanvasClassName: _react2.default.PropTypes.string.isRequired,
+		mapTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
+		panoramaTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		promptClassName: _react2.default.PropTypes.string.isRequired
 	};
 
 	// Assign default props to the constructor
 	TwoBlocks.defaultProps = {
 		gameClassName: "two-blocks",
-		mapCanvasClassName: "two-blocks-map",
-		panoramaCanvasClassName: "two-blocks-panorama",
+		mapTwoBlocksClass: "two-blocks-map",
+		panoramaTwoBlocksClass: "two-blocks-panorama",
 		promptClassName: "two-blocks-prompt"
 	};
 
@@ -16835,11 +16836,11 @@
 					'div',
 					_defineProperty({ className: 'two-blocks-view' }, 'className', 'inherit-dimensions'),
 					_react2.default.createElement(_TwoBlocksMap2.default, {
-						className: this.props.mapCanvasClassName,
 						latLng: this.props.mapLatLng,
 						onMapMounted: this.props.onMapMounted,
 						mapMarker: this.props.mapMarker,
 						mapMarkerVisible: this.props.mapMarkerVisible,
+						twoBlocksClass: this.props.mapTwoBlocksClass,
 						visible: 'map' === this.props.view
 					}),
 					_react2.default.createElement(_TwoBlocksPanorama2.default, {
@@ -16847,6 +16848,7 @@
 						latLng: this.props.panoramaLatLng,
 						onPanoramaMounted: this.props.onPanoramaMounted,
 						panorama: this.props.panorama,
+						twoBlocksClass: this.props.panoramaTwoBlocksClass,
 						visible: 'panorama' === this.props.view
 					})
 				);
@@ -16895,8 +16897,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -16933,14 +16933,14 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this2 = this,
-				    _React$createElement;
+				var _this2 = this;
 
-				return _react2.default.createElement('div', (_React$createElement = {
-					className: this.props.id
-				}, _defineProperty(_React$createElement, 'className', _getViewLayerClassName2.default.call(this)), _defineProperty(_React$createElement, 'ref', function ref(mapCanvas) {
-					return _this2._mapCanvas = mapCanvas;
-				}), _React$createElement));
+				return _react2.default.createElement('div', {
+					className: _getViewLayerClassName2.default.call(this),
+					ref: function ref(mapCanvas) {
+						return _this2._mapCanvas = mapCanvas;
+					}
+				});
 			}
 		}]);
 
@@ -16971,7 +16971,7 @@
 
 		var visiblilityClass = this.props.visible ? 'visible' : 'hidden';
 
-		return ['inherit-dimensions', 'layered', visiblilityClass].join(' ').trim();
+		return [this.props.twoBlocksClass, 'inherit-dimensions', 'layered', visiblilityClass].join(' ').trim();
 	};
 
 	exports.default = getViewLayerClassName;
@@ -16997,8 +16997,6 @@
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -17038,14 +17036,14 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this2 = this,
-				    _React$createElement;
+				var _this2 = this;
 
-				return _react2.default.createElement('div', (_React$createElement = {
-					className: 'two-blocks-panorama'
-				}, _defineProperty(_React$createElement, 'className', _getViewLayerClassName2.default.call(this)), _defineProperty(_React$createElement, 'ref', function ref(panoramaCanvas) {
-					return _this2._panoramaCanvas = panoramaCanvas;
-				}), _React$createElement));
+				return _react2.default.createElement('div', {
+					className: _getViewLayerClassName2.default.call(this),
+					ref: function ref(panoramaCanvas) {
+						return _this2._panoramaCanvas = panoramaCanvas;
+					}
+				});
 			}
 		}]);
 

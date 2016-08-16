@@ -170,7 +170,7 @@ class TwoBlocks extends React.Component {
 
 			if (!(canvas)) {
 
-				throw new Error(`No element with ID '#${this.props[ mapCanvas === canvas ? "mapCanvasClassName" : "panoramaCanvasClassName" ]}' could be found on the page.`); 
+				throw new Error(`No element with selector '.${this.props[ mapCanvas === canvas ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass" ]}' could be found on the page.`); 
 
 			}
 
@@ -382,7 +382,7 @@ class TwoBlocks extends React.Component {
 	
 			<div className={ this.props.gameClassName }>
 				<TwoBlocksView 
-					mapCanvasClassName={ this.state.mapCanvasClassName }
+					mapTwoBlocksClass={ this.props.mapTwoBlocksClass }
 					mapLatLng={ this.state.mapLatLng }
 					mapMarker={ this.state.chooseLocationMarker }
 					mapMarkerVisible={ this.state.mapMarkerVisible }
@@ -390,6 +390,7 @@ class TwoBlocks extends React.Component {
 					onPanoramaMounted={ this.onPanoramaMounted.bind(this) } 
 					panorama={ this.state.panorama } 
 					panoramaLatLng={ this.state.panoramaLatLng } 
+					panoramaTwoBlocksClass={ this.props.panoramaTwoBlocksClass }
 					view={ this.state.view } 
 				/>
 				<TwoBlocksPrompt
@@ -416,16 +417,16 @@ class TwoBlocks extends React.Component {
 
 TwoBlocks.propTypes = {
 	gameClassName 			: React.PropTypes.string.isRequired, 	
-	mapCanvasClassName 		: React.PropTypes.string.isRequired, 
-	panoramaCanvasClassName : React.PropTypes.string.isRequired, 
+	mapTwoBlocksClass 		: React.PropTypes.string.isRequired, 
+	panoramaTwoBlocksClass 	: React.PropTypes.string.isRequired, 
 	promptClassName 		: React.PropTypes.string.isRequired
 }; 
 
 // Assign default props to the constructor 
 TwoBlocks.defaultProps = { 
 	gameClassName 			: "two-blocks", 
-	mapCanvasClassName 		: "two-blocks-map", 
-	panoramaCanvasClassName : "two-blocks-panorama", 
+	mapTwoBlocksClass 		: "two-blocks-map", 
+	panoramaTwoBlocksClass 	: "two-blocks-panorama", 
 	promptClassName 		: "two-blocks-prompt"
 }; 
 

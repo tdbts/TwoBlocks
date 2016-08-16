@@ -10,18 +10,19 @@ class TwoBlocksView extends React.Component {
 
 			<div className="two-blocks-view" className="inherit-dimensions">
 				<TwoBlocksMap 
-					className={ this.props.mapCanvasClassName } 
 					latLng={ this.props.mapLatLng } 
 					onMapMounted={ this.props.onMapMounted }
 					mapMarker={ this.props.mapMarker }
 					mapMarkerVisible={ this.props.mapMarkerVisible }
+					twoBlocksClass={ this.props.mapTwoBlocksClass } 
 					visible={ 'map' === this.props.view } 
 				/>
 				<TwoBlocksPanorama 
 					className={ this.props.panoramaCanvasClassName } 
 					latLng={ this.props.panoramaLatLng }
 					onPanoramaMounted={ this.props.onPanoramaMounted } 
-					panorama={ this.props.panorama } 
+					panorama={ this.props.panorama }
+					twoBlocksClass={ this.props.panoramaTwoBlocksClass } 
 					visible={ 'panorama' === this.props.view } 
 				/>
 			</div>
