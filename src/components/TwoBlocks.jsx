@@ -20,7 +20,6 @@ class TwoBlocks extends React.Component {
 		this.state = { 
 			chooseLocationMap 		: null, 
 			chooseLocationMarker 	: null, 
-			gameHistory 			: [], 
 			gameInstance 			: null, 
 			gameStage 				: null, 
 			hoveredBorough 			: null, 
