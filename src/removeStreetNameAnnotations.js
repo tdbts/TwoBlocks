@@ -71,7 +71,12 @@ const overrideCallback = function overrideCallback(overriddenMethods, panorama) 
 
 const removeStreetNameAnnotations = function removeStreetNameAnnotations(panorama) {
 
-	poll(() => overrideCallback(overriddenMethods, panorama), 50, 3000); 
+	poll(() => overrideCallback(overriddenMethods, panorama), 50, 3000)
+
+		// Sometimes multiple 'pano_changed' events fire in succession, causing the code to find 
+		// and replace a callback on the first event, but not the second, causing the poll's 
+		// timeout to expire.  Catch and ignore the timeout expiration error in this case. 
+		.catch(e => e);   
 
 }; 
 

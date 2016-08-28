@@ -16990,7 +16990,14 @@
 
 		(0, _utils.poll)(function () {
 			return overrideCallback(overriddenMethods, panorama);
-		}, 50, 3000);
+		}, 50, 3000)
+
+		// Sometimes multiple 'pano_changed' events fire in succession, causing the code to find
+		// and replace a callback on the first event, but not the second, causing the poll's
+		// timeout to expire.  Catch and ignore the timeout expiration error in this case.
+		.catch(function (e) {
+			return e;
+		});
 	};
 
 	exports.default = removeStreetNameAnnotations;
