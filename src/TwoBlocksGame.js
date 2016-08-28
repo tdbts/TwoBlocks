@@ -2,6 +2,7 @@ import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarker
 import createGameComponents from './createGameComponents';
 import createPromiseTimeout from './createPromiseTimeout';  
 import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
+import removeStreetNameAnnotations from './removeStreetNameAnnotations'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
 import { events, nycCoordinates, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
@@ -143,6 +144,10 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama); 
 
 		} 	
+
+		/*----------  Add listeners to panorama  ----------*/
+		
+		google.maps.event.addListener(panorama, 'pano_changed', () => removeStreetNameAnnotations(panorama)); 
 
 	}, 
 

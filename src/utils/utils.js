@@ -13,7 +13,8 @@ import getType from './getType';
 import halt from './halt';  
 import invoke from './invoke'; 
 import isEmpty from './isEmpty';  
-import isNothing from './isNothing'; 
+import isNothing from './isNothing';
+import isNumeric from './isNumeric';  
 import isOneOf from './isOneOf';  
 import isSomething from './isSomething';  
 import isType from './isType';
@@ -34,6 +35,7 @@ import throwErrorIfTrue from './throwErrorIfTrue';
 import truthyness from './truthyness'; 
 import tryAtMost from './tryAtMost'; 
 import typeIsValid from './typeIsValid';   
+import walkArray from './walkArray'; 
 
 export {
 	applyToAllOwnProps, 
@@ -51,7 +53,8 @@ export {
 	halt, 
 	invoke, 
 	isEmpty, 
-	isNothing, 
+	isNothing,
+	isNumeric,  
 	isOneOf, 
 	isSomething, 
 	isType, 
@@ -71,5 +74,6 @@ export {
 	throwErrorIfTrue, 
 	truthyness,
 	tryAtMost, 
-	typeIsValid 
+	typeIsValid, 
+	walkArray 
 };
