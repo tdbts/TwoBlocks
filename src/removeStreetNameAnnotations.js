@@ -1,6 +1,6 @@
 /* global window */
 
-import { isNumeric, isType, poll, walkArray } from './utils/utils'; 
+import { isType, poll, walkArray } from './utils/utils'; 
 
 const overriddenMethods = []; 
 
