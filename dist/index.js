@@ -16939,6 +16939,11 @@
 				args[_key] = arguments[_key];
 			}
 
+			// Recursively walk through the large array of metadata passed to the Google callback. 
+			// Some of the entities appear to be data images, so if the entity is a string with a
+			// short length, then check the panorama's 'shortDescription' property, which is the
+			// same as the label that appears on the map.  If the entity matches the
+			// 'shortDescription' value, then replace the entity with an empty string. 
 			(0, _utils.walkArray)(args, function (el, i, arr, path) {
 				// eslint-disable-line no-unused-vars
 
@@ -16972,7 +16977,7 @@
 
 		googCallbacks.forEach(function (callback) {
 
-			if (overriddenMethods.indexOf(callback) > -1) return;
+			if (overriddenMethods.indexOf(callback) > -1) return; // If method has already been overridden, exit
 
 			overriddenMethods.push(callback);
 
@@ -16980,7 +16985,7 @@
 
 			window[callback] = overridingCallback(originalCallback, panorama);
 
-			callbackOverridden = true;
+			callbackOverridden = true; // Returning true stops the polling
 		});
 
 		return callbackOverridden;
