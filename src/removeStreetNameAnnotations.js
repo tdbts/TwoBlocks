@@ -6,6 +6,10 @@ const overriddenMethods = [];
 
 const MAXIMUM_ANNOTATION_LENGTH = 2000; 
 
+const POLL_INTERVAL = 50; 
+
+const POLL_TIMEOUT = 3000; 
+
 const getGoogleCallbacks = function getGoogleCallbacks() {
 
 	const windowProps = Object.keys(window);
@@ -76,7 +80,7 @@ const overrideCallback = function overrideCallback(overriddenMethods, panorama) 
 
 const removeStreetNameAnnotations = function removeStreetNameAnnotations(panorama) {
 
-	poll(() => overrideCallback(overriddenMethods, panorama), 50, 3000)
+	poll(() => overrideCallback(overriddenMethods, panorama), POLL_INTERVAL, POLL_TIMEOUT) 
 
 		// Sometimes multiple 'pano_changed' events fire in succession, causing the code to find 
 		// and replace a callback on the first event, but not the second, causing the poll's 

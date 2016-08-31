@@ -16921,6 +16921,10 @@
 
 	var MAXIMUM_ANNOTATION_LENGTH = 2000;
 
+	var POLL_INTERVAL = 50;
+
+	var POLL_TIMEOUT = 3000;
+
 	var getGoogleCallbacks = function getGoogleCallbacks() {
 
 		var windowProps = Object.keys(window);
@@ -16995,7 +16999,7 @@
 
 		(0, _utils.poll)(function () {
 			return overrideCallback(overriddenMethods, panorama);
-		}, 50, 3000)
+		}, POLL_INTERVAL, POLL_TIMEOUT)
 
 		// Sometimes multiple 'pano_changed' events fire in succession, causing the code to find
 		// and replace a callback on the first event, but not the second, causing the poll's
