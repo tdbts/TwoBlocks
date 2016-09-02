@@ -5,7 +5,7 @@ import getRandomPanoramaLocation from './getRandomPanoramaLocation';
 import removeStreetNameAnnotations from './removeStreetNameAnnotations'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { events, nycCoordinates, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
+import { events, nycCoordinates, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
 
 let geoJSONLoaded = false; 
 
@@ -79,8 +79,27 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.on(events.NEXT_TURN, () => this.nextTurn()); 
 
 		this.on(events.ANSWER_EVALUATED, answerDetails => {
-
+			window.console.log("answerDetails:", answerDetails); 
+			window.console.log("this.currentTurn:", this.currentTurn); 
 			this.currentTurn.selectedBorough = answerDetails.selectedBorough;  
+
+			const panToLatLngLiteral = {
+				lat: answerDetails.randomLatLng.lat(), 
+				lng: answerDetails.randomLatLng.lng()
+			}; 
+
+			this.chooseLocationMap.panTo(panToLatLngLiteral); 
+			this.chooseLocationMap.setZoom(12); 
+
+			const randomLocationMarkerOptions = {
+				animation: google.maps.Animation.BOUNCE, 
+				// draggable: false, 
+				map: this.chooseLocationMap, 
+				position: new google.maps.LatLng(panToLatLngLiteral), 
+				visible: true				
+			}; 
+
+			this.chooseLocationMarker = new google.maps.Marker(randomLocationMarkerOptions); 			
 
 			createPromiseTimeout(3000) 
 
@@ -106,13 +125,22 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			}
 
+			this.chooseLocationMap.panTo(this.locationData.CENTER); 
+			this.chooseLocationMap.setZoom(DEFAULT_MAP_ZOOM); 
+
 		}); 
 
 		this.on(events.GAME_OVER, () => {
 		
 			this.gameIsOver = true; 
 
-			this.gameStage = 'postgame'; 			
+			this.gameStage = 'postgame'; 	
+
+			if (this.chooseLocationMarker) {
+
+				this.chooseLocationMarker.setMap(null); 
+				
+			}		
 
 			this.emit(events.GAME_STAGE, this.gameStage); 
 		
@@ -201,7 +229,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-		this.emit(events.ANSWER_EVALUATED, { correctBorough, selectedBorough }); 
+		const { randomLatLng } = this.currentTurn; 
+
+		this.emit(events.ANSWER_EVALUATED, { correctBorough, randomLatLng, selectedBorough }); 
 
 	}, 
 
@@ -276,6 +306,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.canEvaluateAnswer = true; 
 
+		if (this.chooseLocationMarker) {
+
+			this.chooseLocationMarker.setMap(null); 
+
+		}
+
 		return this.setRandomLocation() 
 
 			.then(locationData => {  // boroughName, randomLatLng
@@ -294,6 +330,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	}, 
 
 	onPregameLocationDataReceived(locationData) {
+
+		// window.console.log("locationData:", locationData); 
 
 		this.emit(events.HOST_LOCATION_DATA, locationData); 
 

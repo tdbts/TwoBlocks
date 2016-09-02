@@ -48,7 +48,9 @@ const createGameComponents = function createGameComponents(gameState) {
 		center: mapLatLng
 	}; 
 
-	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);			
+	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);	
+
+	// window.console.log("chooseLocationMap:", chooseLocationMap); 		
 
 	/*----------  Set up marker  ----------*/
 

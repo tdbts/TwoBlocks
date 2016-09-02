@@ -265,6 +265,7 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({
 			gameInstance: null, 
+			selectedBorough: null, 
 			promptText: "Starting new game..."
 		})
 

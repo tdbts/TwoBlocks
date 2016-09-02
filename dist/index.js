@@ -12906,6 +12906,35 @@
 			lng: -73.72798
 		},
 
+		boroughCenters: {
+
+			bronx: {
+				lat: 40.85329,
+				lng: -73.86932
+			},
+
+			brooklyn: {
+				lat: 40.64418,
+				lng: -73.95309
+			},
+
+			manhattan: {
+				lat: 40.78054,
+				lng: -73.96820
+			},
+
+			queens: {
+				lat: 40.71604,
+				lng: -73.81302
+			},
+
+			staten_island: {
+				lat: 40.58058,
+				lng: -74.15222
+			}
+
+		},
+
 		featureCollection: null
 
 	};
@@ -14188,6 +14217,7 @@
 
 				return this.setState({
 					gameInstance: null,
+					selectedBorough: null,
 					promptText: "Starting new game..."
 				}).then(function () {
 					return _this5.initializeTwoBlocks();
@@ -14477,8 +14507,27 @@
 			});
 
 			this.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
-
+				window.console.log("answerDetails:", answerDetails);
+				window.console.log("this.currentTurn:", _this.currentTurn);
 				_this.currentTurn.selectedBorough = answerDetails.selectedBorough;
+
+				var panToLatLngLiteral = {
+					lat: answerDetails.randomLatLng.lat(),
+					lng: answerDetails.randomLatLng.lng()
+				};
+
+				_this.chooseLocationMap.panTo(panToLatLngLiteral);
+				_this.chooseLocationMap.setZoom(12);
+
+				var randomLocationMarkerOptions = {
+					animation: google.maps.Animation.BOUNCE,
+					// draggable: false,
+					map: _this.chooseLocationMap,
+					position: new google.maps.LatLng(panToLatLngLiteral),
+					visible: true
+				};
+
+				_this.chooseLocationMarker = new google.maps.Marker(randomLocationMarkerOptions);
 
 				(0, _createPromiseTimeout2.default)(3000).then(function () {
 					return _this.emit(_constants.events.TURN_COMPLETE);
@@ -14500,6 +14549,9 @@
 
 					_this.emit(_constants.events.NEXT_TURN);
 				}
+
+				_this.chooseLocationMap.panTo(_this.locationData.CENTER);
+				_this.chooseLocationMap.setZoom(_constants.DEFAULT_MAP_ZOOM);
 			});
 
 			this.on(_constants.events.GAME_OVER, function () {
@@ -14507,6 +14559,11 @@
 				_this.gameIsOver = true;
 
 				_this.gameStage = 'postgame';
+
+				if (_this.chooseLocationMarker) {
+
+					_this.chooseLocationMarker.setMap(null);
+				}
 
 				_this.emit(_constants.events.GAME_STAGE, _this.gameStage);
 			});
@@ -14585,7 +14642,10 @@
 				this.emit(_constants.events.INCORRECT_BOROUGH, { correctBorough: correctBorough, selectedBorough: selectedBorough });
 			}
 
-			this.emit(_constants.events.ANSWER_EVALUATED, { correctBorough: correctBorough, selectedBorough: selectedBorough });
+			var randomLatLng = this.currentTurn.randomLatLng;
+
+
+			this.emit(_constants.events.ANSWER_EVALUATED, { correctBorough: correctBorough, randomLatLng: randomLatLng, selectedBorough: selectedBorough });
 		},
 		gameOver: function gameOver() {
 
@@ -14650,6 +14710,11 @@
 
 			this.canEvaluateAnswer = true;
 
+			if (this.chooseLocationMarker) {
+
+				this.chooseLocationMarker.setMap(null);
+			}
+
 			return this.setRandomLocation().then(function (locationData) {
 				// boroughName, randomLatLng
 
@@ -14663,6 +14728,8 @@
 			});
 		},
 		onPregameLocationDataReceived: function onPregameLocationDataReceived(locationData) {
+
+			// window.console.log("locationData:", locationData);
 
 			this.emit(_constants.events.HOST_LOCATION_DATA, locationData);
 
@@ -14890,6 +14957,8 @@
 		};
 
 		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
+
+		// window.console.log("chooseLocationMap:", chooseLocationMap); 		
 
 		/*----------  Set up marker  ----------*/
 
@@ -16960,9 +17029,9 @@
 				var shortDescription = _panorama$getLocation.shortDescription;
 
 
-				if (el.toLowerCase() !== shortDescription.toLowerCase()) return;
+				if (shortDescription.toLowerCase().indexOf(el.toLowerCase()) === -1) return;
 
-				arr[i] = "";
+				arr[i] = ""; // Erase label
 			});
 
 			return originalCallback.apply(undefined, args);

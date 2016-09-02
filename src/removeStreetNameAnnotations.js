@@ -31,15 +31,16 @@ const overridingCallback = function overridingCallback(originalCallback, panoram
 		// 'shortDescription' value, then replace the entity with an empty string.  
 		walkArray(args, function (el, i, arr, path) {  // eslint-disable-line no-unused-vars 
 			
+
 			if (!(isType('string', el))) return; 
 
 			if (el.length > MAXIMUM_ANNOTATION_LENGTH) return; 
 
 			const { shortDescription } = panorama.getLocation(); 
 
-			if (el.toLowerCase() !== shortDescription.toLowerCase()) return; 
+			if (shortDescription.toLowerCase().indexOf(el.toLowerCase()) === -1) return; 
 			
-			arr[i] = ""; 			
+			arr[i] = "";  // Erase label 
 
 		}); 
 
