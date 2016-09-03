@@ -79,27 +79,27 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.on(events.NEXT_TURN, () => this.nextTurn()); 
 
 		this.on(events.ANSWER_EVALUATED, answerDetails => {
+
 			window.console.log("answerDetails:", answerDetails); 
-			window.console.log("this.currentTurn:", this.currentTurn); 
+ 
 			this.currentTurn.selectedBorough = answerDetails.selectedBorough;  
 
-			const panToLatLngLiteral = {
-				lat: answerDetails.randomLatLng.lat(), 
-				lng: answerDetails.randomLatLng.lng()
-			}; 
+			// const panToLatLngLiteral = {
+			// 	lat: answerDetails.randomLatLng.lat(), 
+			// 	lng: answerDetails.randomLatLng.lng()
+			// }; 
 
-			this.chooseLocationMap.panTo(panToLatLngLiteral); 
-			this.chooseLocationMap.setZoom(12); 
+			// this.chooseLocationMap.panTo(panToLatLngLiteral); 
+			// this.chooseLocationMap.setZoom(12); 
 
-			const randomLocationMarkerOptions = {
-				animation: google.maps.Animation.BOUNCE, 
-				// draggable: false, 
-				map: this.chooseLocationMap, 
-				position: new google.maps.LatLng(panToLatLngLiteral), 
-				visible: true				
-			}; 
+			// const randomLocationMarkerOptions = {
+			// 	animation: google.maps.Animation.BOUNCE, 
+			// 	map: this.chooseLocationMap, 
+			// 	position: new google.maps.LatLng(panToLatLngLiteral), 
+			// 	visible: true				
+			// }; 
 
-			this.chooseLocationMarker = new google.maps.Marker(randomLocationMarkerOptions); 			
+			// this.chooseLocationMarker = new google.maps.Marker(randomLocationMarkerOptions); 			
 
 			createPromiseTimeout(3000) 
 
@@ -135,12 +135,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			this.gameIsOver = true; 
 
 			this.gameStage = 'postgame'; 	
-
-			if (this.chooseLocationMarker) {
-
-				this.chooseLocationMarker.setMap(null); 
-				
-			}		
 
 			this.emit(events.GAME_STAGE, this.gameStage); 
 		

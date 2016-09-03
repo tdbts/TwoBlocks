@@ -50,7 +50,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);	
 
-	// window.console.log("chooseLocationMap:", chooseLocationMap); 		
+	window.console.log("chooseLocationMap:", chooseLocationMap); 		
 
 	/*----------  Set up marker  ----------*/
 

@@ -13933,7 +13933,7 @@
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global document, window */
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global document, google, window */
 
 	var TwoBlocks = function (_React$Component) {
 		_inherits(TwoBlocks, _React$Component);
@@ -13961,6 +13961,7 @@
 				panoramaLatLng: null,
 				promptText: 'loading...',
 				selectedBorough: null,
+				showLocationMarker: null,
 				spinner: null,
 				view: 'map'
 			};
@@ -14064,15 +14065,16 @@
 					return _this3.setState(gameComponents);
 				});
 
+				twoBlocks.on(_constants.events.NEXT_TURN, function () {
+					return _this3.onNextTurn();
+				});
+
 				twoBlocks.on(_constants.events.RANDOM_LOCATION, function (randomLocationDetails) {
-					var boroughName = randomLocationDetails.boroughName;
-					var randomLatLng = randomLocationDetails.randomLatLng;
+					return _this3.onRandomLocation(randomLocationDetails);
+				});
 
-
-					return _this3.setState({
-						panoramaBorough: boroughName,
-						panoramaLatLng: randomLatLng
-					});
+				twoBlocks.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
+					return _this3.onAnswerEvaluated(answerDetails);
 				});
 
 				twoBlocks.on(_constants.events.CORRECT_BOROUGH, function (boroughName) {
@@ -14137,6 +14139,31 @@
 				this.setState(nextState);
 			}
 		}, {
+			key: 'onAnswerEvaluated',
+			value: function onAnswerEvaluated(answerDetails) {
+
+				var actualLocationLatLng = {
+					lat: answerDetails.randomLatLng.lat(),
+					lng: answerDetails.randomLatLng.lng()
+				};
+
+				this.state.chooseLocationMap.panTo(actualLocationLatLng);
+				this.state.chooseLocationMap.setZoom(12);
+
+				var randomLocationMarkerOptions = {
+					animation: google.maps.Animation.BOUNCE,
+					map: this.state.chooseLocationMap,
+					position: new google.maps.LatLng(actualLocationLatLng),
+					visible: true
+				};
+
+				return this.setState({
+
+					showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
+
+				});
+			}
+		}, {
 			key: 'onCorrectBorough',
 			value: function onCorrectBorough(correctBoroughName) {
 
@@ -14154,6 +14181,11 @@
 
 
 				var totalCorrect = gameInstance.totalCorrectAnswers();
+
+				if (this.state.showLocationMarker) {
+
+					this.state.showLocationMarker.setMap(null);
+				}
 
 				return this.setState({
 					promptText: 'Game over.  You correctly guessed ' + totalCorrect.toString() + ' / ' + _constants.DEFAULT_TOTAL_ROUNDS.toString() + ' of the Street View locations.'
@@ -14177,10 +14209,31 @@
 				this.setState({ mapCanvas: mapCanvas });
 			}
 		}, {
+			key: 'onNextTurn',
+			value: function onNextTurn() {
+
+				if (this.state.showLocationMarker) {
+
+					this.state.showLocationMarker.setMap(null);
+				}
+			}
+		}, {
 			key: 'onPanoramaMounted',
 			value: function onPanoramaMounted(panoramaCanvas) {
 
 				this.setState({ panoramaCanvas: panoramaCanvas });
+			}
+		}, {
+			key: 'onRandomLocation',
+			value: function onRandomLocation(randomLocationDetails) {
+				var boroughName = randomLocationDetails.boroughName;
+				var randomLatLng = randomLocationDetails.randomLatLng;
+
+
+				return this.setState({
+					panoramaBorough: boroughName,
+					panoramaLatLng: randomLatLng
+				});
 			}
 		}, {
 			key: 'onSpinnerRevolution',
@@ -14507,27 +14560,27 @@
 			});
 
 			this.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
+
 				window.console.log("answerDetails:", answerDetails);
-				window.console.log("this.currentTurn:", _this.currentTurn);
+
 				_this.currentTurn.selectedBorough = answerDetails.selectedBorough;
 
-				var panToLatLngLiteral = {
-					lat: answerDetails.randomLatLng.lat(),
-					lng: answerDetails.randomLatLng.lng()
-				};
+				// const panToLatLngLiteral = {
+				// 	lat: answerDetails.randomLatLng.lat(),
+				// 	lng: answerDetails.randomLatLng.lng()
+				// };
 
-				_this.chooseLocationMap.panTo(panToLatLngLiteral);
-				_this.chooseLocationMap.setZoom(12);
+				// this.chooseLocationMap.panTo(panToLatLngLiteral);
+				// this.chooseLocationMap.setZoom(12);
 
-				var randomLocationMarkerOptions = {
-					animation: google.maps.Animation.BOUNCE,
-					// draggable: false,
-					map: _this.chooseLocationMap,
-					position: new google.maps.LatLng(panToLatLngLiteral),
-					visible: true
-				};
+				// const randomLocationMarkerOptions = {
+				// 	animation: google.maps.Animation.BOUNCE,
+				// 	map: this.chooseLocationMap,
+				// 	position: new google.maps.LatLng(panToLatLngLiteral),
+				// 	visible: true				
+				// };
 
-				_this.chooseLocationMarker = new google.maps.Marker(randomLocationMarkerOptions);
+				// this.chooseLocationMarker = new google.maps.Marker(randomLocationMarkerOptions); 			
 
 				(0, _createPromiseTimeout2.default)(3000).then(function () {
 					return _this.emit(_constants.events.TURN_COMPLETE);
@@ -14559,11 +14612,6 @@
 				_this.gameIsOver = true;
 
 				_this.gameStage = 'postgame';
-
-				if (_this.chooseLocationMarker) {
-
-					_this.chooseLocationMarker.setMap(null);
-				}
 
 				_this.emit(_constants.events.GAME_STAGE, _this.gameStage);
 			});
@@ -14958,7 +15006,7 @@
 
 		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
 
-		// window.console.log("chooseLocationMap:", chooseLocationMap); 		
+		window.console.log("chooseLocationMap:", chooseLocationMap);
 
 		/*----------  Set up marker  ----------*/
 

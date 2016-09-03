@@ -1,4 +1,4 @@
-/* global document, window */
+/* global document, google, window */
 
 import React from 'react';
 import TwoBlocksGame from '../TwoBlocksGame'; 
@@ -33,6 +33,7 @@ class TwoBlocks extends React.Component {
 			panoramaLatLng 			: null, 
 			promptText 				: 'loading...',
 			selectedBorough 		: null, 
+			showLocationMarker 		: null, 
 			spinner 				: null, 
 			view 					: 'map' 
 		}; 
@@ -128,16 +129,11 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.setState(gameComponents)); 
 
-		twoBlocks.on(events.RANDOM_LOCATION, randomLocationDetails => {
+		twoBlocks.on(events.NEXT_TURN, () => this.onNextTurn()); 
 
-			const { boroughName, randomLatLng } = randomLocationDetails; 
+		twoBlocks.on(events.RANDOM_LOCATION, randomLocationDetails => this.onRandomLocation(randomLocationDetails)); 
 
-			return this.setState({ 
-				panoramaBorough: boroughName,  
-				panoramaLatLng: randomLatLng
-			});
-
-		}); 
+		twoBlocks.on(events.ANSWER_EVALUATED, answerDetails => this.onAnswerEvaluated(answerDetails)); 
 
 		twoBlocks.on(events.CORRECT_BOROUGH, boroughName => this.onCorrectBorough(boroughName)); 
 
@@ -189,6 +185,31 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	onAnswerEvaluated(answerDetails) {
+
+		const actualLocationLatLng = {
+			lat: answerDetails.randomLatLng.lat(), 
+			lng: answerDetails.randomLatLng.lng()
+		}; 
+
+		this.state.chooseLocationMap.panTo(actualLocationLatLng); 
+		this.state.chooseLocationMap.setZoom(12); 
+
+		const randomLocationMarkerOptions = {
+			animation: google.maps.Animation.BOUNCE, 
+			map: this.state.chooseLocationMap, 
+			position: new google.maps.LatLng(actualLocationLatLng), 
+			visible: true				
+		}; 
+
+		return this.setState({
+
+			showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions) 
+		
+		});  		
+
+	}
+
 	onCorrectBorough(correctBoroughName) {
 
 		this.setState({
@@ -204,6 +225,12 @@ class TwoBlocks extends React.Component {
 		const { gameInstance } = this.state; 
 
 		const totalCorrect = gameInstance.totalCorrectAnswers(); 
+
+		if (this.state.showLocationMarker) {
+
+			this.state.showLocationMarker.setMap(null); 
+
+		}
 
 		return this.setState({
 			promptText: `Game over.  You correctly guessed ${totalCorrect.toString()} / ${DEFAULT_TOTAL_ROUNDS.toString()} of the Street View locations.` 
@@ -227,9 +254,30 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	onNextTurn() {
+
+		if (this.state.showLocationMarker) {
+
+			this.state.showLocationMarker.setMap(null); 
+			
+		}
+
+	}
+
 	onPanoramaMounted(panoramaCanvas) {
 
 		this.setState({ panoramaCanvas }); 
+
+	}
+
+	onRandomLocation(randomLocationDetails) {
+
+		const { boroughName, randomLatLng } = randomLocationDetails; 
+
+		return this.setState({ 
+			panoramaBorough: boroughName,  
+			panoramaLatLng: randomLatLng
+		});
 
 	}
 
