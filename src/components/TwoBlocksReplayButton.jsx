@@ -4,7 +4,7 @@ class TwoBlocksReplayButton extends React.Component {
 
 	getClassName() {
 
-		return [this.props.twoBlocksClass, this.props.hidden ? "hidden" : ""].join(" ").trim();
+		return [this.props.twoBlocksClass, this.props.hidden ? "not-displayed" : ""].join(" ").trim();
 
 	}
 

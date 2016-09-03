@@ -17602,7 +17602,7 @@
 			key: "getClassName",
 			value: function getClassName() {
 
-				return [this.props.twoBlocksClass, this.props.hidden ? "hidden" : ""].join(" ").trim();
+				return [this.props.twoBlocksClass, this.props.hidden ? "not-displayed" : ""].join(" ").trim();
 			}
 		}, {
 			key: "onReplayButtonClick",

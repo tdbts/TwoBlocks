@@ -29,10 +29,14 @@
 				z-index: -1; 
 			}
 
+			/* Elements with '.visible' class are on top of the 
+				stack of maps / panoramas */
 			.visible {
-				opacity: 1; 
-				visibility: visible; 
 				z-index: 100; 
+			}
+
+			.not-displayed {
+				display: none;
 			}
 
 			.layered {
