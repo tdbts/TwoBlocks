@@ -8,7 +8,7 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { events, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants'; 
+import { events, ANSWER_EVALUATION_DELAY, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants'; 
 
 class TwoBlocks extends React.Component {
 
@@ -194,6 +194,10 @@ class TwoBlocks extends React.Component {
 
 		this.state.chooseLocationMap.panTo(actualLocationLatLng); 
 		this.state.chooseLocationMap.setZoom(12); 
+ 
+		createPromiseTimeout(ANSWER_EVALUATION_DELAY / 2)
+
+			.then(() => this.state.chooseLocationMap.setZoom(16)); 
 
 		const randomLocationMarkerOptions = {
 			animation: google.maps.Animation.BOUNCE, 

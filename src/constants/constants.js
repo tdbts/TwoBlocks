@@ -1,6 +1,7 @@
 import events from './events'; 
 import nycCoordinates from './nycCoordinates'; 
 import ALL_TYPES from './ALL_TYPES'; 
+import ANSWER_EVALUATION_DELAY from './ANSWER_EVALUATION_DELAY'; 
 import DEFAULT_MAP_ZOOM from './DEFAULT_MAP_ZOOM'; 
 import DEFAULT_TOTAL_ROUNDS from './DEFAULT_TOTAL_ROUNDS';
 import HOVERED_BOROUGH_FILL_COLOR from './HOVERED_BOROUGH_FILL_COLOR'; 
@@ -15,6 +16,7 @@ export {
 	events, 
 	nycCoordinates, 
 	ALL_TYPES,
+	ANSWER_EVALUATION_DELAY, 
 	DEFAULT_MAP_ZOOM, 
 	DEFAULT_TOTAL_ROUNDS,
 	HOVERED_BOROUGH_FILL_COLOR, 
