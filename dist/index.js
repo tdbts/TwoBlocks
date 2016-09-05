@@ -13832,7 +13832,7 @@
 				panoramaBorough: null,
 				panoramaCanvas: null,
 				panoramaLatLng: null,
-				promptText: 'loading...',
+				promptText: 'Loading new TwoBlocks game...',
 				selectedBorough: null,
 				showLocationMarker: null,
 				spinner: null,
