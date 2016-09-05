@@ -14273,13 +14273,18 @@
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var chooseLocationMap = this.state.chooseLocationMap;
+				var _state3 = this.state;
+				var chooseLocationMap = _state3.chooseLocationMap;
+				var gameInstance = _state3.gameInstance;
 
+
+				var promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
 
 				chooseLocationMap.data.revertStyle();
 
 				this.setState({
 
+					promptText: promptText,
 					selectedBorough: null
 
 				});
@@ -14324,9 +14329,9 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state3 = this.state;
-				var chooseLocationMap = _state3.chooseLocationMap;
-				var selectedBorough = _state3.selectedBorough;
+				var _state4 = this.state;
+				var chooseLocationMap = _state4.chooseLocationMap;
+				var selectedBorough = _state4.selectedBorough;
 
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
@@ -14351,10 +14356,10 @@
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _state4 = this.state;
-				var chooseLocationMap = _state4.chooseLocationMap;
-				var locationData = _state4.locationData;
-				var selectedBorough = _state4.selectedBorough;
+				var _state5 = this.state;
+				var chooseLocationMap = _state5.chooseLocationMap;
+				var locationData = _state5.locationData;
+				var selectedBorough = _state5.selectedBorough;
 
 
 				var clickedBoroughName = borough.getProperty('boro_name');

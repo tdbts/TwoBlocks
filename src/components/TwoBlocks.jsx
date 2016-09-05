@@ -301,12 +301,15 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { chooseLocationMap } = this.state; 
+		const { chooseLocationMap, gameInstance } = this.state; 
+
+		const promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
 
 		chooseLocationMap.data.revertStyle(); 
 
 		this.setState({
-
+			
+			promptText, 
 			selectedBorough: null
 		
 		}); 
