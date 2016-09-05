@@ -1,4 +1,6 @@
 import events from './events'; 
+import heardKeys from './heardKeys'; 
+import keyEventMaps from './keyEventMaps'; 
 import nycCoordinates from './nycCoordinates'; 
 import ALL_TYPES from './ALL_TYPES'; 
 
@@ -15,6 +17,8 @@ const SELECTED_BOROUGH_FILL_COLOR 		= "#FFFFFF";
 
 export { 
 	events, 
+	heardKeys, 
+	keyEventMaps, 
 	nycCoordinates, 
 	ALL_TYPES,
 	ANSWER_EVALUATION_DELAY, 

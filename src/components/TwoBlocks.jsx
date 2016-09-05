@@ -8,7 +8,8 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { events, ANSWER_EVALUATION_DELAY, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants'; 
+import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants'; 
+import { isOneOf, isType } from '../utils/utils'; 
 
 class TwoBlocks extends React.Component {
 
@@ -31,7 +32,7 @@ class TwoBlocks extends React.Component {
 			panoramaBorough 		: null, 
 			panoramaCanvas 			: null, 
 			panoramaLatLng 			: null, 
-			promptText 				: 'Loading new TwoBlocks game...',
+			promptText 				: "Loading new TwoBlocks game...",
 			selectedBorough 		: null, 
 			showLocationMarker 		: null, 
 			spinner 				: null, 
@@ -90,14 +91,8 @@ class TwoBlocks extends React.Component {
 		const { chooseLocationMap } = this.state; 
 
 		if (prevState.chooseLocationMap || !(chooseLocationMap)) return;
-	
-		chooseLocationMap.data.addListener('mouseover', event => {
-			
-			this.updateHoveredBorough(event.feature); 
-			
-			this.styleHoveredBorough(event.feature); 
-		
-		});
+
+		chooseLocationMap.data.addListener('mouseover', event => this.onHoveredBorough(event.feature));
 
 		chooseLocationMap.data.addListener('mouseout', event => {
 
@@ -113,13 +108,11 @@ class TwoBlocks extends React.Component {
 
 			if (gameInstance.gameOver()) return; 
 
-			this.updateSelectedBorough(event.feature); 
-
-			this.styleUnselectedBoroughs(event.feature); 
-
-			this.styleSelectedBorough(event.feature); 
+			this.onSelectedBorough(event.feature);  
 
 		}); 
+
+		window.addEventListener('keydown', e => this.onKeypress(e)); 
 
 	}
 
@@ -154,6 +147,18 @@ class TwoBlocks extends React.Component {
 		const { gameInstance, panoramaBorough, selectedBorough } = this.state; 
 
 		gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough); 
+
+	}
+
+	getFeatureByBoroughName(boroughName) {
+
+		if (!(boroughName) || !(isType('string', boroughName))) return; 
+
+		const { featureCollection } = this.state.locationData; 
+
+		const feature = featureCollection.filter(feature => boroughName === feature.getProperty('boro_name')).pop(); 
+
+		return feature; 
 
 	}
 
@@ -246,6 +251,14 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	onHoveredBorough(feature) {
+			
+		this.updateHoveredBorough(feature); 
+		
+		this.styleHoveredBorough(feature); 
+	
+	}
+
 	onIncorrectBorough(selectionDetails) {
 
 		const { correctBorough, selectedBorough } = selectionDetails; 
@@ -253,6 +266,73 @@ class TwoBlocks extends React.Component {
 		this.setState({
 			promptText: `Sorry, ${stylizeBoroughName(selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(correctBorough)}.`
 		}); 
+
+	}
+
+	onKeypress(e) {
+		
+		e.preventDefault(); 
+
+		const { gameInstance, hoveredBorough, selectedBorough, view } = this.state;
+
+		const { arrowKeyHoverMap, firstArrowKeyPressBoroughMap } = keyEventMaps; 
+
+		if (!(isOneOf(heardKeys, e.key))) return;  
+
+		if ('map' !== view) return; 
+
+		if (!(hoveredBorough)) {
+
+			if (('Enter' === e.key) && selectedBorough) {
+
+				return this.evaluateFinalAnswer(); 
+
+			}
+
+			const boroughList = firstArrowKeyPressBoroughMap[e.key]; 
+
+			if (!(boroughList)) return; 
+
+			const randomIndex = Math.floor(Math.random() * boroughList.length);  
+			const boroughName = boroughList[randomIndex]; 
+
+			const feature = this.getFeatureByBoroughName(boroughName); 
+
+			this.onHoveredBorough(feature); 
+
+		} else {
+
+			if (('Enter' === e.key) && !(gameInstance.gameOver())) { 
+
+				const selectedFeature = this.getFeatureByBoroughName(hoveredBorough); 
+
+				return this.onSelectedBorough(selectedFeature); 
+
+			}
+
+			const hoveredBoroughArrowMap = arrowKeyHoverMap[hoveredBorough]; 
+
+			const boroughList = hoveredBoroughArrowMap[e.key]; 
+
+			if (!(boroughList)) return; 
+
+			const randomIndex = Math.floor(Math.random() * boroughList.length); 
+
+			const newHoveredBorough = boroughList[randomIndex]; 
+
+			if (newHoveredBorough === hoveredBorough) return; 
+
+			const featureToUnhover = this.getFeatureByBoroughName(hoveredBorough); 
+			
+			const featureToHover = this.getFeatureByBoroughName(newHoveredBorough); 
+
+			this.styleNonHoveredBorough(featureToUnhover); 
+
+			this.updateHoveredBorough(featureToHover); 
+
+			this.styleHoveredBorough(featureToHover); 
+
+		}
 
 	}
 
@@ -286,6 +366,16 @@ class TwoBlocks extends React.Component {
 			panoramaBorough: boroughName,  
 			panoramaLatLng: randomLatLng
 		});
+
+	}
+
+	onSelectedBorough(feature) {
+
+		this.styleUnselectedBoroughs(feature); 
+		
+		this.styleSelectedBorough(feature);
+		
+		this.updateSelectedBorough(feature);
 
 	}
 
@@ -390,13 +480,14 @@ class TwoBlocks extends React.Component {
 		const { chooseLocationMap, locationData, selectedBorough } = this.state; 
 
 		const clickedBoroughName = borough.getProperty('boro_name'); 
-
+		window.console.log("selectedBorough:", selectedBorough); 
+		window.console.log("clickedBoroughName:", clickedBoroughName); 
 		if (selectedBorough === clickedBoroughName) return;  // Don't revert styles if the player clicks on the currently-selected borough  
 
 		const { featureCollection } = locationData; 
 
 		const unselectedBoroughs = featureCollection.filter(feature => feature.getProperty('boro_name') !== clickedBoroughName); 
-
+		window.console.log("unselectedBoroughs:", unselectedBoroughs); 
 		unselectedBoroughs.forEach(feature => chooseLocationMap.data.revertStyle(feature)); 
 
 	}
@@ -427,7 +518,8 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.selectedBorough === boroughName) return; 
 
-		this.setState({
+		return this.setState({
+			hoveredBorough: '', 
 			selectedBorough: boroughName
 		}); 
 
