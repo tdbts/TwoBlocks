@@ -109,6 +109,10 @@ class TwoBlocks extends React.Component {
 
 		chooseLocationMap.data.addListener('click', event => {
 
+			const { gameInstance } = this.state; 
+
+			if (gameInstance.gameOver()) return; 
+
 			this.updateSelectedBorough(event.feature); 
 
 			this.styleUnselectedBoroughs(event.feature); 
@@ -450,6 +454,7 @@ class TwoBlocks extends React.Component {
 					view={ this.state.view } 
 				/>
 				<TwoBlocksPrompt
+					gameOver={ this.state.gameInstance && this.state.gameInstance.gameOver() }
 					hoveredBorough={ this.state.hoveredBorough } 
 					twoBlocksClass={ this.props.promptTwoBlocksClass } 
 					text={ this.state.promptText } 

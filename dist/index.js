@@ -13909,6 +13909,10 @@
 				});
 
 				chooseLocationMap.data.addListener('click', function (event) {
+					var gameInstance = _this2.state.gameInstance;
+
+
+					if (gameInstance.gameOver()) return;
 
 					_this2.updateSelectedBorough(event.feature);
 
@@ -14290,6 +14294,7 @@
 						view: this.state.view
 					}),
 					_react2.default.createElement(_TwoBlocksPrompt2.default, {
+						gameOver: this.state.gameInstance && this.state.gameInstance.gameOver(),
 						hoveredBorough: this.state.hoveredBorough,
 						twoBlocksClass: this.props.promptTwoBlocksClass,
 						text: this.state.promptText
@@ -17321,7 +17326,7 @@
 			key: 'getTextAddition',
 			value: function getTextAddition() {
 
-				return this.props.hoveredBorough ? (0, _stylizeBoroughName2.default)(this.props.hoveredBorough) + "?" : '';
+				return !this.props.gameOver && this.props.hoveredBorough ? (0, _stylizeBoroughName2.default)(this.props.hoveredBorough) + "?" : '';
 			}
 		}, {
 			key: 'render',
@@ -17344,6 +17349,7 @@
 
 	TwoBlocksPrompt.propTypes = {
 
+		gameOver: _react2.default.PropTypes.bool,
 		hoveredBorough: _react2.default.PropTypes.string,
 		twoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		text: _react2.default.PropTypes.string

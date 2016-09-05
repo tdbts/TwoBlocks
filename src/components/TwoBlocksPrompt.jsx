@@ -11,7 +11,7 @@ class TwoBlocksPrompt extends React.Component {
 
 	getTextAddition() {
 
-		return this.props.hoveredBorough ? stylizeBoroughName(this.props.hoveredBorough) + "?" :  ''; 
+		return !(this.props.gameOver) && this.props.hoveredBorough ? stylizeBoroughName(this.props.hoveredBorough) + "?" :  ''; 
 
 	}
 
@@ -30,7 +30,8 @@ class TwoBlocksPrompt extends React.Component {
 }
 
 TwoBlocksPrompt.propTypes = {
-
+	
+	gameOver 		: React.PropTypes.bool, 
 	hoveredBorough 	: React.PropTypes.string, 
 	twoBlocksClass 	: React.PropTypes.string.isRequired, 
 	text 			: React.PropTypes.string
