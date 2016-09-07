@@ -108,9 +108,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			}
 
-			this.chooseLocationMap.panTo(this.locationData.CENTER); 
-			this.chooseLocationMap.setZoom(DEFAULT_MAP_ZOOM); 
-
 		}); 
 
 		this.on(events.GAME_OVER, () => {

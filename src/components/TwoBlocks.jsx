@@ -8,7 +8,7 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants'; 
+import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants'; 
 import { isOneOf, isType } from '../utils/utils'; 
 
 class TwoBlocks extends React.Component {
@@ -19,6 +19,10 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = { 
+			blockLevelMap 			: null, 
+			boroughLevelMap 		: null, 
+			blockLevelMapCanvas 	: null, 
+			boroughLevelMapCanvas 	: null, 
 			chooseLocationMap 		: null, 
 			chooseLocationMarker 	: null, 
 			gameInstance 			: null, 
@@ -27,7 +31,8 @@ class TwoBlocks extends React.Component {
 			locationData 			: null, 
 			mapCanvas 				: null, 
 			mapLatLng 				: null,
-			mapMarkerVisible 		: false,  
+			mapMarkerVisible 		: false,
+			mapType 				: 'city-level',   
 			panorama 				: null, 
 			panoramaBorough 		: null, 
 			panoramaCanvas 			: null, 
@@ -164,11 +169,11 @@ class TwoBlocks extends React.Component {
 
 	initializeTwoBlocks() {
 
-		if (this.state.gameInstance) return; 
+		if (this.state.gameInstance) return;
 
-		if (!(this.state.mapCanvas) || !(this.state.panoramaCanvas)) return; 
+		const { blockLevelMapCanvas, boroughLevelMapCanvas, mapCanvas, panoramaCanvas } = this.state;  
 
-		const { mapCanvas, panoramaCanvas } = this.state; 
+		if (!(blockLevelMapCanvas) || !(boroughLevelMapCanvas) || !(mapCanvas) || !(panoramaCanvas)) return; 
 
 		[ mapCanvas, panoramaCanvas ].forEach(canvas => {
 
@@ -182,11 +187,32 @@ class TwoBlocks extends React.Component {
 
 		const twoBlocks = new TwoBlocksGame(mapCanvas, panoramaCanvas); 
 
+		/*----------  Create block-level map  ----------*/
+		
+		const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 
+			mapTypeId: google.maps.MapTypeId.ROADMAP, 
+			zoom: 16 
+		}); 
+
+		const blockLevelMap = new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions); 
+
+		/*----------  Create borough-level map  ----------*/
+		
+		const boroughLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
+			mapTypeId: google.maps.MapTypeId.ROADMAP, 
+			zoom: 12
+		}); 
+
+		const boroughLevelMap = new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 
+
+
 		this.addGameEventListeners(twoBlocks); 
 
 		twoBlocks.startGame(); 
 
 		const nextState = {
+			blockLevelMap, 
+			boroughLevelMap, 
 			gameInstance: twoBlocks
 		}; 
 
@@ -201,25 +227,38 @@ class TwoBlocks extends React.Component {
 			lng: answerDetails.randomLatLng.lng()
 		}; 
 
-		this.state.chooseLocationMap.panTo(actualLocationLatLng); 
-		this.state.chooseLocationMap.setZoom(12); 
- 
-		createPromiseTimeout(ANSWER_EVALUATION_DELAY / 2)
-
-			.then(() => this.state.chooseLocationMap.setZoom(16)); 
+		const { boroughLevelMap, blockLevelMap } = this.state; 
 
 		const randomLocationMarkerOptions = {
 			animation: google.maps.Animation.BOUNCE, 
-			map: this.state.chooseLocationMap, 
+			map: boroughLevelMap, 
 			position: new google.maps.LatLng(actualLocationLatLng), 
 			visible: true				
 		}; 
 
 		return this.setState({
 
+			mapType: 'borough-level', 
 			showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions) 
-		
-		});  		
+
+		}) 
+
+		.then(() => createPromiseTimeout(ANSWER_EVALUATION_DELAY / 2))
+ 
+		.then(() => {
+			
+			this.state.showLocationMarker.setMap(null); 
+
+			randomLocationMarkerOptions.map = blockLevelMap; 
+
+		})
+
+		.then(() => this.setState({ 
+
+			mapType: 'block-level', 
+			showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
+
+		})); 
 
 	}
 
@@ -246,6 +285,7 @@ class TwoBlocks extends React.Component {
 		}
 
 		return this.setState({
+			mapType: 'city-level', 
 			promptText: `Game over.  You correctly guessed ${totalCorrect.toString()} / ${DEFAULT_TOTAL_ROUNDS.toString()} of the Street View locations.` 
 		}); 
 
@@ -271,7 +311,7 @@ class TwoBlocks extends React.Component {
 
 	onKeypress(e) {
 		
-		e.preventDefault(); 
+		e.preventDefault();  // Prevent arrows from scrolling page 
 
 		const { gameInstance, hoveredBorough, selectedBorough, view } = this.state;
 
@@ -336,9 +376,20 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onMapMounted(mapCanvas) {
+	onMapMounted(mapType, mapCanvas) {
 
-		this.setState({ mapCanvas }); 
+		const mapTypeToStatePropMap = {
+			'block-level': 'blockLevelMapCanvas', 
+			'borough-level': 'boroughLevelMapCanvas', 
+			'city-level': 'mapCanvas'
+		}; 
+
+		const newState = {}; 
+		const prop = mapTypeToStatePropMap[mapType]; 
+
+		newState[prop] = mapCanvas; 
+
+		this.setState(newState); 
 
 	}
 
@@ -349,6 +400,10 @@ class TwoBlocks extends React.Component {
 			this.state.showLocationMarker.setMap(null); 
 			
 		}
+
+		this.setState({
+			mapType: 'city-level'
+		}); 
 
 	}
 
@@ -361,6 +416,11 @@ class TwoBlocks extends React.Component {
 	onRandomLocation(randomLocationDetails) {
 
 		const { boroughName, randomLatLng } = randomLocationDetails; 
+
+		const { blockLevelMap, boroughLevelMap } = this.state; 
+
+		blockLevelMap.panTo(randomLatLng); 
+		boroughLevelMap.panTo(randomLatLng); 
 
 		return this.setState({ 
 			panoramaBorough: boroughName,  
@@ -395,11 +455,13 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { chooseLocationMap, gameInstance } = this.state; 
+		const { chooseLocationMap, gameInstance, locationData } = this.state; 
 
 		const promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
 
 		chooseLocationMap.data.revertStyle(); 
+		chooseLocationMap.panTo(locationData.CENTER); 
+		chooseLocationMap.setZoom(DEFAULT_MAP_ZOOM); 		
 
 		this.setState({
 			
@@ -537,6 +599,7 @@ class TwoBlocks extends React.Component {
 					mapLatLng={ this.state.mapLatLng }
 					mapMarker={ this.state.chooseLocationMarker }
 					mapMarkerVisible={ this.state.mapMarkerVisible }
+					mapType={ this.state.mapType }
 					onMapMounted={ this.onMapMounted.bind(this) }
 					onPanoramaMounted={ this.onPanoramaMounted.bind(this) } 
 					panorama={ this.state.panorama } 

@@ -3,6 +3,7 @@ import heardKeys from './heardKeys';
 import keyEventMaps from './keyEventMaps'; 
 import nycCoordinates from './nycCoordinates'; 
 import ALL_TYPES from './ALL_TYPES'; 
+import DEFAULT_MAP_OPTIONS from './DEFAULT_MAP_OPTIONS'; 
 
 const ANSWER_EVALUATION_DELAY 			= 6000;  // milliseconds 
 const DEFAULT_MAP_ZOOM 					= 10; 
@@ -22,6 +23,7 @@ export {
 	nycCoordinates, 
 	ALL_TYPES,
 	ANSWER_EVALUATION_DELAY, 
+	DEFAULT_MAP_OPTIONS, 
 	DEFAULT_MAP_ZOOM, 
 	DEFAULT_TOTAL_ROUNDS,
 	HOVERED_BOROUGH_FILL_COLOR, 

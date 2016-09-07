@@ -5,7 +5,7 @@ class TwoBlocksMap extends React.Component {
 
 	componentDidMount() {
 
-		this.props.onMapMounted(this._mapCanvas); 
+		this.props.onMapMounted(this.props.mapType, this._mapCanvas); 
 
 	}
 
@@ -40,7 +40,8 @@ TwoBlocksMap.propTypes = {
 	id 					: React.PropTypes.string, 
 	mapMarker 			: React.PropTypes.object, 
 	mapMarkerVisible 	: React.PropTypes.bool, 
-	onMapMounted 		: React.PropTypes.func.isRequired
+	mapType 			: React.PropTypes.string.isRequired, 
+	onMapMounted 		: React.PropTypes.func
 
 }; 
 

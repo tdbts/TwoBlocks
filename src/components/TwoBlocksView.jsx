@@ -20,9 +20,24 @@ class TwoBlocksView extends React.Component {
 					onMapMounted={ this.props.onMapMounted }
 					mapMarker={ this.props.mapMarker }
 					mapMarkerVisible={ this.props.mapMarkerVisible }
+					mapType={ 'city-level' }
 					twoBlocksClass={ this.props.mapTwoBlocksClass } 
-					visible={ 'map' === this.props.view } 
+					visible={ ('map' === this.props.view) && ('city-level' === this.props.mapType) } 
 				/>
+				<TwoBlocksMap 
+					latLng={ this.props.mapLatLng } 
+					mapType={ 'borough-level' }
+					onMapMounted={ this.props.onMapMounted }
+					twoBlocksClass={ "two-blocks-borough-level-map" }
+					visible={ ('map' === this.props.view) && ('borough-level' === this.props.mapType) }
+				/>
+				<TwoBlocksMap 
+					latLng={ this.props.mapLatLng } 
+					mapType={ 'block-level' }
+					onMapMounted={ this.props.onMapMounted }
+					twoBlocksClass={ "two-blocks-block-level-map" }
+					visible={ ('map' === this.props.view) && ('block-level' === this.props.mapType) }
+				/>				
 				<TwoBlocksPanorama 
 					latLng={ this.props.panoramaLatLng }
 					onPanoramaMounted={ this.props.onPanoramaMounted } 
@@ -45,6 +60,7 @@ TwoBlocksView.propTypes = {
 	mapMarker 				: React.PropTypes.object, 
 	mapMarkerVisible 		: React.PropTypes.bool, 
 	mapTwoBlocksClass 		: React.PropTypes.string.isRequired, 
+	mapType 				: React.PropTypes.string, 
 	onMapMounted 			: React.PropTypes.func.isRequired, 
 	onPanoramaMounted 		: React.PropTypes.func.isRequired, 
 	panorama 				: React.PropTypes.object, 

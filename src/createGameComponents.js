@@ -17,7 +17,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { locationData, mapCanvas, mapLatLng, mapMarkerVisible, panoramaCanvas } = gameState; 
+	const { locationData, mapCanvas, mapMarkerVisible, panoramaCanvas } = gameState; 
 	
 	const webGlManager = createWebGlManager(panoramaCanvas); 
 	
@@ -44,8 +44,12 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	/*----------  Set up chooseLocationMap  ----------*/
 
+	const DEFAULT_LAT = 40.6291566; 
+	const DEFAULT_LNG = -74.0287341; 
+
 	const mapOptions = {
-		center: mapLatLng
+		center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),  
+		mapTypeId: google.maps.MapTypeId.ROADMAP
 	}; 
 
 	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);	
