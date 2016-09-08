@@ -145,6 +145,8 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on(events.GAME_OVER, () => this.onGameOver()); 
 
+		twoBlocks.on(events.RESTART_GAME, () => this.restart()); 
+
 	}
 
 	evaluateFinalAnswer() {
@@ -320,6 +322,12 @@ class TwoBlocks extends React.Component {
 		if (!(isOneOf(heardKeys, e.key))) return;  
 
 		if ('map' !== view) return; 
+
+		if (gameInstance.gameOver() && ('Enter' === e.key)) {
+
+			gameInstance.emit(events.RESTART_GAME); 
+
+		}
 
 		if (!(hoveredBorough)) {
 

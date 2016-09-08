@@ -14071,6 +14071,10 @@
 				twoBlocks.on(_constants.events.GAME_OVER, function () {
 					return _this3.onGameOver();
 				});
+
+				twoBlocks.on(_constants.events.RESTART_GAME, function () {
+					return _this3.restart();
+				});
 			}
 		}, {
 			key: 'evaluateFinalAnswer',
@@ -14263,6 +14267,11 @@
 				if (!(0, _utils.isOneOf)(_constants.heardKeys, e.key)) return;
 
 				if ('map' !== view) return;
+
+				if (gameInstance.gameOver() && 'Enter' === e.key) {
+
+					gameInstance.emit(_constants.events.RESTART_GAME);
+				}
 
 				if (!hoveredBorough) {
 
