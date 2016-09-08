@@ -315,7 +315,9 @@ class TwoBlocks extends React.Component {
 		
 		e.preventDefault();  // Prevent arrows from scrolling page 
 
-		const { gameInstance, hoveredBorough, selectedBorough, view } = this.state;
+		if ('pregame' === gameStage) return; 
+
+		const { gameInstance, gameStage, hoveredBorough, selectedBorough, view } = this.state;
 
 		const { arrowKeyHoverMap, firstArrowKeyPressBoroughMap } = keyEventMaps; 
 
@@ -457,7 +459,9 @@ class TwoBlocks extends React.Component {
 			mapMarkerVisible: false,  // Set to true for location guessing  
 			promptText: "In which borough was the last panorama located?", 
 			view: 'map'
-		}); 
+		})
+
+		.then(() => this.state.mapCanvas.blur()); 
 
 	}
 

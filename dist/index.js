@@ -14255,8 +14255,11 @@
 
 				e.preventDefault(); // Prevent arrows from scrolling page
 
+				if ('pregame' === gameStage) return;
+
 				var _state4 = this.state;
 				var gameInstance = _state4.gameInstance;
+				var gameStage = _state4.gameStage;
 				var hoveredBorough = _state4.hoveredBorough;
 				var selectedBorough = _state4.selectedBorough;
 				var view = _state4.view;
@@ -14389,6 +14392,8 @@
 		}, {
 			key: 'onSpinnerRevolution',
 			value: function onSpinnerRevolution() {
+				var _this6 = this;
+
 				var spinner = this.state.spinner;
 
 
@@ -14398,6 +14403,8 @@
 					mapMarkerVisible: false, // Set to true for location guessing 
 					promptText: "In which borough was the last panorama located?",
 					view: 'map'
+				}).then(function () {
+					return _this6.state.mapCanvas.blur();
 				});
 			}
 		}, {
@@ -14425,37 +14432,37 @@
 		}, {
 			key: 'restart',
 			value: function restart() {
-				var _this6 = this;
+				var _this7 = this;
 
 				return this.setState({
 					gameInstance: null,
 					selectedBorough: null,
 					promptText: "Starting new game..."
 				}).then(function () {
-					return _this6.initializeTwoBlocks();
+					return _this7.initializeTwoBlocks();
 				});
 			}
 		}, {
 			key: 'showRandomPanorama',
 			value: function showRandomPanorama(prevState) {
-				var _this7 = this;
+				var _this8 = this;
 
 				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed
 
 				return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY).then(function () {
 
-					return _this7.setState({
+					return _this8.setState({
 						promptText: 'Look closely...which borough is this Street View from?',
 						view: 'panorama'
 					});
 				}).then(function () {
-					var spinner = _this7.state.spinner;
+					var spinner = _this8.state.spinner;
 
 
 					spinner.start();
 
 					spinner.once('revolution', function () {
-						return _this7.onSpinnerRevolution();
+						return _this8.onSpinnerRevolution();
 					});
 				});
 			}
@@ -14549,7 +14556,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this8 = this;
+				var _this9 = this;
 
 				return _react2.default.createElement(
 					'div',
@@ -14577,7 +14584,7 @@
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
 						hoveredBorough: this.state.hoveredBorough,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this8.evaluateFinalAnswer();
+							return _this9.evaluateFinalAnswer();
 						},
 						selectedBorough: this.state.selectedBorough,
 						twoBlocksClass: this.props.submitterTwoBlocksClass
