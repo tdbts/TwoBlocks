@@ -12859,6 +12859,7 @@
 	var events = {
 
 		ANSWER_EVALUATED: 'ANSWER_EVALUATED',
+		CHOOSING_LOCATION: 'CHOOSING_LOCATION',
 		CORRECT_BOROUGH: 'CORRECT_BOROUGH',
 		GAME_COMPONENTS: 'GAME_COMPONENTS',
 		GAME_OVER: 'GAME_OVER',
@@ -13925,6 +13926,7 @@
 				boroughLevelMapCanvas: null,
 				chooseLocationMap: null,
 				chooseLocationMarker: null,
+				choosingLocation: false,
 				gameInstance: null,
 				gameStage: null,
 				hoveredBorough: null,
@@ -14050,6 +14052,10 @@
 
 				twoBlocks.on(_constants.events.RANDOM_LOCATION, function (randomLocationDetails) {
 					return _this3.onRandomLocation(randomLocationDetails);
+				});
+
+				twoBlocks.on(_constants.events.CHOOSING_LOCATION, function () {
+					return _this3.onChoosingLocation();
 				});
 
 				twoBlocks.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
@@ -14199,6 +14205,20 @@
 						showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
 
 					});
+				});
+			}
+		}, {
+			key: 'onChoosingLocation',
+			value: function onChoosingLocation() {
+				var _this6 = this;
+
+				this.setState({
+					choosingLocation: true,
+					mapMarkerVisible: false, // Set to true for location guessing 
+					promptText: "In which borough was the last panorama located?",
+					view: 'map'
+				}).then(function () {
+					return _this6.state.mapCanvas.blur();
 				});
 			}
 		}, {
@@ -14352,6 +14372,7 @@
 				}
 
 				this.setState({
+					choosingLocation: false,
 					mapType: 'city-level'
 				});
 			}
@@ -14392,28 +14413,22 @@
 		}, {
 			key: 'onSpinnerRevolution',
 			value: function onSpinnerRevolution() {
-				var _this6 = this;
-
-				var spinner = this.state.spinner;
+				var _state6 = this.state;
+				var gameInstance = _state6.gameInstance;
+				var spinner = _state6.spinner;
 
 
 				spinner.stop();
 
-				this.setState({
-					mapMarkerVisible: false, // Set to true for location guessing 
-					promptText: "In which borough was the last panorama located?",
-					view: 'map'
-				}).then(function () {
-					return _this6.state.mapCanvas.blur();
-				});
+				gameInstance.emit(_constants.events.CHOOSING_LOCATION);
 			}
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _state6 = this.state;
-				var chooseLocationMap = _state6.chooseLocationMap;
-				var gameInstance = _state6.gameInstance;
-				var locationData = _state6.locationData;
+				var _state7 = this.state;
+				var chooseLocationMap = _state7.chooseLocationMap;
+				var gameInstance = _state7.gameInstance;
+				var locationData = _state7.locationData;
 
 
 				var promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
@@ -14469,9 +14484,9 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state7 = this.state;
-				var chooseLocationMap = _state7.chooseLocationMap;
-				var selectedBorough = _state7.selectedBorough;
+				var _state8 = this.state;
+				var chooseLocationMap = _state8.chooseLocationMap;
+				var selectedBorough = _state8.selectedBorough;
 
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
@@ -14496,10 +14511,10 @@
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _state8 = this.state;
-				var chooseLocationMap = _state8.chooseLocationMap;
-				var locationData = _state8.locationData;
-				var selectedBorough = _state8.selectedBorough;
+				var _state9 = this.state;
+				var chooseLocationMap = _state9.chooseLocationMap;
+				var locationData = _state9.locationData;
+				var selectedBorough = _state9.selectedBorough;
 
 
 				var clickedBoroughName = borough.getProperty('boro_name');
@@ -14576,6 +14591,7 @@
 						view: this.state.view
 					}),
 					_react2.default.createElement(_TwoBlocksPrompt2.default, {
+						choosingLocation: this.state.choosingLocation,
 						gameOver: this.state.gameInstance && this.state.gameInstance.gameOver(),
 						hoveredBorough: this.state.hoveredBorough,
 						twoBlocksClass: this.props.promptTwoBlocksClass,
@@ -17312,7 +17328,7 @@
 			key: 'getClassName',
 			value: function getClassName() {
 
-				return [this.props.twoBlocksClass, "inherit-dimensions"].join(" ");
+				return [this.props.twoBlocksClass, "full-dimensions"].join(" ");
 			}
 		}, {
 			key: 'render',
@@ -17611,7 +17627,7 @@
 			key: 'getTextAddition',
 			value: function getTextAddition() {
 
-				return !this.props.gameOver && this.props.hoveredBorough ? (0, _stylizeBoroughName2.default)(this.props.hoveredBorough) + "?" : '';
+				return !this.props.gameOver && this.props.choosingLocation && this.props.hoveredBorough ? (0, _stylizeBoroughName2.default)(this.props.hoveredBorough) + "?" : '';
 			}
 		}, {
 			key: 'render',

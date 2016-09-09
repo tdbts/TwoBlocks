@@ -25,6 +25,7 @@ class TwoBlocks extends React.Component {
 			boroughLevelMapCanvas 	: null, 
 			chooseLocationMap 		: null, 
 			chooseLocationMarker 	: null, 
+			choosingLocation 		: false, 
 			gameInstance 			: null, 
 			gameStage 				: null, 
 			hoveredBorough 			: null, 
@@ -134,6 +135,8 @@ class TwoBlocks extends React.Component {
 		twoBlocks.on(events.NEXT_TURN, () => this.onNextTurn()); 
 
 		twoBlocks.on(events.RANDOM_LOCATION, randomLocationDetails => this.onRandomLocation(randomLocationDetails)); 
+
+		twoBlocks.on(events.CHOOSING_LOCATION, () => this.onChoosingLocation()); 
 
 		twoBlocks.on(events.ANSWER_EVALUATED, answerDetails => this.onAnswerEvaluated(answerDetails)); 
 
@@ -261,6 +264,19 @@ class TwoBlocks extends React.Component {
 			showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
 
 		})); 
+
+	}
+
+	onChoosingLocation() {
+
+		this.setState({
+			choosingLocation: true, 
+			mapMarkerVisible: false,  // Set to true for location guessing  
+			promptText: "In which borough was the last panorama located?", 
+			view: 'map'
+		})
+
+		.then(() => this.state.mapCanvas.blur()); 
 
 	}
 
@@ -412,6 +428,7 @@ class TwoBlocks extends React.Component {
 		}
 
 		this.setState({
+			choosingLocation: false, 
 			mapType: 'city-level'
 		}); 
 
@@ -451,17 +468,11 @@ class TwoBlocks extends React.Component {
 
 	onSpinnerRevolution() {
 
-		const { spinner } = this.state; 
+		const { gameInstance, spinner } = this.state; 
 
 		spinner.stop(); 
 
-		this.setState({
-			mapMarkerVisible: false,  // Set to true for location guessing  
-			promptText: "In which borough was the last panorama located?", 
-			view: 'map'
-		})
-
-		.then(() => this.state.mapCanvas.blur()); 
+		gameInstance.emit(events.CHOOSING_LOCATION); 
 
 	}
 
@@ -621,6 +632,7 @@ class TwoBlocks extends React.Component {
 					view={ this.state.view } 
 				/>
 				<TwoBlocksPrompt
+					choosingLocation={ this.state.choosingLocation }
 					gameOver={ this.state.gameInstance && this.state.gameInstance.gameOver() }
 					hoveredBorough={ this.state.hoveredBorough } 
 					twoBlocksClass={ this.props.promptTwoBlocksClass } 

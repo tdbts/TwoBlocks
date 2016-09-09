@@ -6,7 +6,7 @@ class TwoBlocksView extends React.Component {
 
 	getClassName() {
 
-		return [this.props.twoBlocksClass, "inherit-dimensions"].join(" "); 
+		return [this.props.twoBlocksClass, "full-dimensions"].join(" "); 
 
 	}
 

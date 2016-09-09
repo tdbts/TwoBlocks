@@ -9,11 +9,6 @@
 				padding: 0;
 			} 
 
-			.two-blocks {
-				height: 600px; 
-				width: 1000px; 
-			}
-
 			.full-dimensions {
 				height: 100%; 
 				width: 100%; 
@@ -41,6 +36,21 @@
 
 			.layered {
 				position: absolute; 
+			}
+
+			/* ------ Components ------ */
+
+			.two-blocks {
+				/*height: 600px; */
+				/*width: 1000px; */
+				width: 100%; 
+				/*height: 100%;*/
+				height: calc(100% - 150px);
+			}
+
+			.two-blocks-view, 
+			.two-blocks-prompt {
+				position: relative;
 			}
 
 			.two-blocks-submitter-borough-name {
