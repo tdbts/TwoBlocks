@@ -14526,14 +14526,19 @@
 				var gameInstance = this.state.gameInstance;
 
 
+				var view = 'panorama';
+
 				gameInstance.emit(_constants.events.SHOWING_PANORAMA);
 
 				return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY).then(function () {
-
 					return _this8.setState({
-						promptText: 'Look closely...which borough is this Street View from?',
-						view: 'panorama'
+
+						view: view,
+						promptText: 'Look closely...which borough is this Street View from?'
+
 					});
+				}).then(function () {
+					return gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
 				}).then(function () {
 					var spinner = _this8.state.spinner;
 

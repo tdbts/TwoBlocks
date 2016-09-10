@@ -564,18 +564,20 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance } = this.state; 
 
+		const view = 'panorama'; 
+
 		gameInstance.emit(events.SHOWING_PANORAMA); 
 
 		return createPromiseTimeout(PANORAMA_LOAD_DELAY) 
 
-			.then(() => {
+			.then(() => this.setState({
+			
+				view,
+				promptText: 'Look closely...which borough is this Street View from?' 
+			
+			}))
 
-				return this.setState({
-					promptText: 'Look closely...which borough is this Street View from?',  
-					view: 'panorama'
-				}); 
-
-			})
+			.then(() => gameInstance.emit(events.VIEW_CHANGE, { view }))
 
 			.then(() => {
 
