@@ -13993,6 +13993,9 @@
 		}, {
 			key: 'styleNonHoveredBorough',
 			value: function styleNonHoveredBorough(borough) {
+
+				if (!borough) return;
+
 				var chooseLocationMap = this.state.chooseLocationMap;
 				var selectedBorough = this.state.selectedBorough;
 
@@ -14279,6 +14282,12 @@
 		}, {
 			key: 'onHoveredBorough',
 			value: function onHoveredBorough(feature) {
+				var hoveredBorough = this.state.hoveredBorough;
+
+
+				var featureToUnhover = this.getFeatureByBoroughName(hoveredBorough);
+
+				this.styleNonHoveredBorough(featureToUnhover);
 
 				this.updateHoveredBorough(feature);
 
@@ -14582,7 +14591,7 @@
 				var unselectedBoroughs = featureCollection.filter(function (feature) {
 					return feature.getProperty('boro_name') !== clickedBoroughName;
 				});
-				window.console.log("unselectedBoroughs:", unselectedBoroughs);
+
 				unselectedBoroughs.forEach(function (feature) {
 					return chooseLocationMap.data.revertStyle(feature);
 				});

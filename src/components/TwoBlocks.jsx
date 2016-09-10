@@ -86,6 +86,8 @@ class TwoBlocks extends React.Component {
 
 	styleNonHoveredBorough(borough) {
 
+		if (!(borough)) return; 
+
 		const { chooseLocationMap } = this.state;
 
 		const { selectedBorough } = this.state; 
@@ -331,6 +333,12 @@ class TwoBlocks extends React.Component {
 	}
 
 	onHoveredBorough(feature) {
+
+		const { hoveredBorough } = this.state; 
+
+		const featureToUnhover = this.getFeatureByBoroughName(hoveredBorough); 
+		
+		this.styleNonHoveredBorough(featureToUnhover);
 			
 		this.updateHoveredBorough(feature); 
 		
@@ -618,7 +626,7 @@ class TwoBlocks extends React.Component {
 		const { featureCollection } = locationData; 
 
 		const unselectedBoroughs = featureCollection.filter(feature => feature.getProperty('boro_name') !== clickedBoroughName); 
-		window.console.log("unselectedBoroughs:", unselectedBoroughs); 
+ 
 		unselectedBoroughs.forEach(feature => chooseLocationMap.data.revertStyle(feature)); 
 
 	}
