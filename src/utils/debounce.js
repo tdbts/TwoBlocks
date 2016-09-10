@@ -5,11 +5,11 @@
 // N milliseconds. If `immediate` is passed, trigger the function on the
 // leading edge, instead of the trailing.
 const debounce = function debounce(func, wait, immediate) {
-	window.console.log('debounce()'); 
+
 	let timeout;
 	
 	return function debouncer() {
-		window.console.log('debouncer'); 
+
 		const context = this;
 
 		const args = arguments;

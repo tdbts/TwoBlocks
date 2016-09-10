@@ -8,8 +8,8 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants'; 
-import { isOneOf, isType } from '../utils/utils'; 
+import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { debounce, isOneOf, isType } from '../utils/utils'; 
 
 class TwoBlocks extends React.Component {
 
@@ -72,6 +72,8 @@ class TwoBlocks extends React.Component {
 		// exist in state, initialize TwoBlocks.  
 		this.initializeTwoBlocks(); 
 
+		this.addDOMEventListeners(); 
+
 		this.addChooseLocationMapEventListeners(prevState); 
 
 		this.showRandomPanorama(prevState); 
@@ -117,6 +119,26 @@ class TwoBlocks extends React.Component {
 			this.onSelectedBorough(event.feature);  
 
 		}); 
+
+	}
+
+	onWindowResize() {
+
+		const { chooseLocationMap, locationData } = this.state;
+
+		const { CENTER } =locationData; 
+
+		const centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng); 		
+
+		chooseLocationMap.setCenter(centerLatLng); 
+
+	}
+
+	addDOMEventListeners() {
+
+		const onWindowResize = debounce(this.onWindowResize.bind(this), WINDOW_RESIZE_DEBOUNCE_TIMEOUT); 
+
+		window.addEventListener('resize', onWindowResize); 
 
 		window.addEventListener('keydown', e => this.onKeypress(e)); 
 
