@@ -44,11 +44,10 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	/*----------  Set up chooseLocationMap  ----------*/
 
-	const DEFAULT_LAT = 40.6291566; 
-	const DEFAULT_LNG = -74.0287341; 
+	const { CENTER } = locationData; 
 
 	const mapOptions = {
-		center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),  
+		center: new google.maps.LatLng(CENTER.lat, CENTER.lng),  
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	}; 
 

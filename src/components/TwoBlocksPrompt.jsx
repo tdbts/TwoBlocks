@@ -31,10 +31,11 @@ class TwoBlocksPrompt extends React.Component {
 
 TwoBlocksPrompt.propTypes = {
 	
-	gameOver 		: React.PropTypes.bool, 
-	hoveredBorough 	: React.PropTypes.string, 
-	twoBlocksClass 	: React.PropTypes.string.isRequired, 
-	text 			: React.PropTypes.string
+	choosingLocation 	: React.PropTypes.bool.isRequired, 
+	gameOver 			: React.PropTypes.bool, 
+	hoveredBorough 		: React.PropTypes.string, 
+	twoBlocksClass 		: React.PropTypes.string.isRequired, 
+	text 				: React.PropTypes.string
 
 }; 
 

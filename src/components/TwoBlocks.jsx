@@ -565,8 +565,7 @@ class TwoBlocks extends React.Component {
 		const { chooseLocationMap, locationData, selectedBorough } = this.state; 
 
 		const clickedBoroughName = borough.getProperty('boro_name'); 
-		window.console.log("selectedBorough:", selectedBorough); 
-		window.console.log("clickedBoroughName:", clickedBoroughName); 
+
 		if (selectedBorough === clickedBoroughName) return;  // Don't revert styles if the player clicks on the currently-selected borough  
 
 		const { featureCollection } = locationData; 

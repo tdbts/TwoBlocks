@@ -14518,8 +14518,7 @@
 
 
 				var clickedBoroughName = borough.getProperty('boro_name');
-				window.console.log("selectedBorough:", selectedBorough);
-				window.console.log("clickedBoroughName:", clickedBoroughName);
+
 				if (selectedBorough === clickedBoroughName) return; // Don't revert styles if the player clicks on the currently-selected borough 
 
 				var featureCollection = locationData.featureCollection;
@@ -15165,11 +15164,11 @@
 
 		/*----------  Set up chooseLocationMap  ----------*/
 
-		var DEFAULT_LAT = 40.6291566;
-		var DEFAULT_LNG = -74.0287341;
+		var CENTER = locationData.CENTER;
+
 
 		var mapOptions = {
-			center: new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LNG),
+			center: new google.maps.LatLng(CENTER.lat, CENTER.lng),
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 
@@ -17650,6 +17649,7 @@
 
 	TwoBlocksPrompt.propTypes = {
 
+		choosingLocation: _react2.default.PropTypes.bool.isRequired,
 		gameOver: _react2.default.PropTypes.bool,
 		hoveredBorough: _react2.default.PropTypes.string,
 		twoBlocksClass: _react2.default.PropTypes.string.isRequired,
