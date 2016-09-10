@@ -12791,7 +12791,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.NYC_BOUNDARIES_DATASET_URL = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_TOTAL_ROUNDS = exports.DEFAULT_MAP_ZOOM = exports.DEFAULT_MAP_OPTIONS = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.nycCoordinates = exports.keyEventMaps = exports.heardKeys = exports.events = undefined;
+	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.NYC_BOUNDARIES_DATASET_URL = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_TOTAL_ROUNDS = exports.DEFAULT_MAP_ZOOM = exports.DEFAULT_MAP_OPTIONS = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.nycCoordinates = exports.keyEventMaps = exports.heardKeys = exports.events = undefined;
 
 	var _events = __webpack_require__(349);
 
@@ -12823,6 +12823,7 @@
 	var DEFAULT_MAP_ZOOM = 10;
 	var DEFAULT_TOTAL_ROUNDS = 5;
 	var HOVERED_BOROUGH_FILL_COLOR = "#A8FFFC";
+	var KEY_PRESS_DEBOUNCE_TIMEOUT = 100;
 	var MAXIMUM_PANORAMA_REQUESTS = 25;
 	var MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = 3;
 	var MILES_PER_METER = 0.000621371;
@@ -12841,6 +12842,7 @@
 	exports.DEFAULT_MAP_ZOOM = DEFAULT_MAP_ZOOM;
 	exports.DEFAULT_TOTAL_ROUNDS = DEFAULT_TOTAL_ROUNDS;
 	exports.HOVERED_BOROUGH_FILL_COLOR = HOVERED_BOROUGH_FILL_COLOR;
+	exports.KEY_PRESS_DEBOUNCE_TIMEOUT = KEY_PRESS_DEBOUNCE_TIMEOUT;
 	exports.MAXIMUM_PANORAMA_REQUESTS = MAXIMUM_PANORAMA_REQUESTS;
 	exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS;
 	exports.MILES_PER_METER = MILES_PER_METER;
@@ -12872,6 +12874,7 @@
 		NEXT_TURN: 'NEXT_TURN',
 		RANDOM_LOCATION: 'RANDOM_LOCATION',
 		RESTART_GAME: 'RESTART_GAME',
+		SHOWING_PANORAMA: 'SHOWING_PANORAMA',
 		TURN_COMPLETE: 'TURN_COMPLETE',
 		VIEW_CHANGE: 'VIEW_CHANGE'
 
@@ -13966,6 +13969,12 @@
 		}
 
 		_createClass(TwoBlocks, [{
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+
+				this.addDOMEventListeners();
+			}
+		}, {
 			key: 'componentDidUpdate',
 			value: function componentDidUpdate(prevProps, prevState) {
 				// eslint-disable-line no-unused-vars
@@ -13976,8 +13985,6 @@
 				// respective DOM elements.  Once both elements
 				// exist in state, initialize TwoBlocks. 
 				this.initializeTwoBlocks();
-
-				this.addDOMEventListeners();
 
 				this.addChooseLocationMapEventListeners(prevState);
 
@@ -14002,6 +14009,8 @@
 
 				var chooseLocationMap = this.state.chooseLocationMap;
 
+				// If we have already added listeners to the choose location map,
+				// or the choose location map does not yet exist, exit.
 
 				if (prevState.chooseLocationMap || !chooseLocationMap) return;
 
@@ -14026,95 +14035,85 @@
 				});
 			}
 		}, {
-			key: 'onWindowResize',
-			value: function onWindowResize() {
-				var _state = this.state;
-				var chooseLocationMap = _state.chooseLocationMap;
-				var locationData = _state.locationData;
-				var CENTER = locationData.CENTER;
-
-
-				var centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng);
-
-				chooseLocationMap.setCenter(centerLatLng);
-			}
-		}, {
 			key: 'addDOMEventListeners',
 			value: function addDOMEventListeners() {
-				var _this3 = this;
 
 				var onWindowResize = (0, _utils.debounce)(this.onWindowResize.bind(this), _constants.WINDOW_RESIZE_DEBOUNCE_TIMEOUT);
 
+				var onKeyPress = (0, _utils.debounce)(this.onKeypress.bind(this), _constants.KEY_PRESS_DEBOUNCE_TIMEOUT);
+
 				window.addEventListener('resize', onWindowResize);
 
-				window.addEventListener('keydown', function (e) {
-					return _this3.onKeypress(e);
-				});
+				window.addEventListener('keydown', onKeyPress);
 			}
 		}, {
 			key: 'addGameEventListeners',
 			value: function addGameEventListeners(twoBlocks) {
-				var _this4 = this;
+				var _this3 = this;
 
 				twoBlocks.on(_constants.events.GAME_STAGE, function (gameStage) {
-					return _this4.setState({ gameStage: gameStage });
+					return _this3.setState({ gameStage: gameStage });
 				});
 
 				twoBlocks.on(_constants.events.HOST_LOCATION_DATA, function (locationData) {
-					return _this4.setState({ locationData: locationData });
+					return _this3.setState({ locationData: locationData });
 				});
 
 				twoBlocks.on(_constants.events.VIEW_CHANGE, function (viewState) {
-					return _this4.setState(viewState);
+					return _this3.setState(viewState);
 				});
 
 				twoBlocks.once(_constants.events.GAME_COMPONENTS, function (gameComponents) {
-					return _this4.setState(gameComponents);
+					return _this3.setState(gameComponents);
 				});
 
 				twoBlocks.on(_constants.events.NEXT_TURN, function () {
-					return _this4.onNextTurn();
+					return _this3.onNextTurn();
 				});
 
 				twoBlocks.on(_constants.events.RANDOM_LOCATION, function (randomLocationDetails) {
-					return _this4.onRandomLocation(randomLocationDetails);
+					return _this3.onRandomLocation(randomLocationDetails);
+				});
+
+				twoBlocks.on(_constants.events.SHOWING_PANORAMA, function () {
+					return _this3.onShowingPanorama();
 				});
 
 				twoBlocks.on(_constants.events.CHOOSING_LOCATION, function () {
-					return _this4.onChoosingLocation();
+					return _this3.onChoosingLocation();
 				});
 
 				twoBlocks.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
-					return _this4.onAnswerEvaluated(answerDetails);
+					return _this3.onAnswerEvaluated(answerDetails);
 				});
 
 				twoBlocks.on(_constants.events.CORRECT_BOROUGH, function (boroughName) {
-					return _this4.onCorrectBorough(boroughName);
+					return _this3.onCorrectBorough(boroughName);
 				});
 
 				twoBlocks.on(_constants.events.INCORRECT_BOROUGH, function (selectionDetails) {
-					return _this4.onIncorrectBorough(selectionDetails);
+					return _this3.onIncorrectBorough(selectionDetails);
 				});
 
 				twoBlocks.on(_constants.events.TURN_COMPLETE, function () {
-					return _this4.onTurnComplete();
+					return _this3.onTurnComplete();
 				});
 
 				twoBlocks.on(_constants.events.GAME_OVER, function () {
-					return _this4.onGameOver();
+					return _this3.onGameOver();
 				});
 
 				twoBlocks.on(_constants.events.RESTART_GAME, function () {
-					return _this4.restart();
+					return _this3.restart();
 				});
 			}
 		}, {
 			key: 'evaluateFinalAnswer',
 			value: function evaluateFinalAnswer() {
-				var _state2 = this.state;
-				var gameInstance = _state2.gameInstance;
-				var panoramaBorough = _state2.panoramaBorough;
-				var selectedBorough = _state2.selectedBorough;
+				var _state = this.state;
+				var gameInstance = _state.gameInstance;
+				var panoramaBorough = _state.panoramaBorough;
+				var selectedBorough = _state.selectedBorough;
 
 
 				gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough);
@@ -14137,15 +14136,15 @@
 		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
-				var _this5 = this;
+				var _this4 = this;
 
 				if (this.state.gameInstance) return;
 
-				var _state3 = this.state;
-				var blockLevelMapCanvas = _state3.blockLevelMapCanvas;
-				var boroughLevelMapCanvas = _state3.boroughLevelMapCanvas;
-				var mapCanvas = _state3.mapCanvas;
-				var panoramaCanvas = _state3.panoramaCanvas;
+				var _state2 = this.state;
+				var blockLevelMapCanvas = _state2.blockLevelMapCanvas;
+				var boroughLevelMapCanvas = _state2.boroughLevelMapCanvas;
+				var mapCanvas = _state2.mapCanvas;
+				var panoramaCanvas = _state2.panoramaCanvas;
 
 
 				if (!blockLevelMapCanvas || !boroughLevelMapCanvas || !mapCanvas || !panoramaCanvas) return;
@@ -14154,7 +14153,7 @@
 
 					if (!canvas) {
 
-						throw new Error('No element with selector \'.' + _this5.props[mapCanvas === canvas ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass"] + '\' could be found on the page.');
+						throw new Error('No element with selector \'.' + _this4.props[mapCanvas === canvas ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass"] + '\' could be found on the page.');
 					}
 				});
 
@@ -14193,16 +14192,16 @@
 		}, {
 			key: 'onAnswerEvaluated',
 			value: function onAnswerEvaluated(answerDetails) {
-				var _this6 = this;
+				var _this5 = this;
 
 				var actualLocationLatLng = {
 					lat: answerDetails.randomLatLng.lat(),
 					lng: answerDetails.randomLatLng.lng()
 				};
 
-				var _state4 = this.state;
-				var boroughLevelMap = _state4.boroughLevelMap;
-				var blockLevelMap = _state4.blockLevelMap;
+				var _state3 = this.state;
+				var boroughLevelMap = _state3.boroughLevelMap;
+				var blockLevelMap = _state3.blockLevelMap;
 
 
 				var randomLocationMarkerOptions = {
@@ -14221,11 +14220,11 @@
 					return (0, _createPromiseTimeout2.default)(_constants.ANSWER_EVALUATION_DELAY / 2);
 				}).then(function () {
 
-					_this6.state.showLocationMarker.setMap(null);
+					_this5.state.showLocationMarker.setMap(null);
 
 					randomLocationMarkerOptions.map = blockLevelMap;
 				}).then(function () {
-					return _this6.setState({
+					return _this5.setState({
 
 						mapType: 'block-level',
 						showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
@@ -14236,15 +14235,16 @@
 		}, {
 			key: 'onChoosingLocation',
 			value: function onChoosingLocation() {
-				var _this7 = this;
+				var _this6 = this;
 
 				this.setState({
 					choosingLocation: true,
+					hoveredBorough: '',
 					mapMarkerVisible: false, // Set to true for location guessing 
 					promptText: "In which borough was the last panorama located?",
 					view: 'map'
 				}).then(function () {
-					return _this7.state.mapCanvas.blur();
+					return _this6.state.mapCanvas.blur();
 				});
 			}
 		}, {
@@ -14303,12 +14303,12 @@
 
 				if ('pregame' === gameStage) return;
 
-				var _state5 = this.state;
-				var gameInstance = _state5.gameInstance;
-				var gameStage = _state5.gameStage;
-				var hoveredBorough = _state5.hoveredBorough;
-				var selectedBorough = _state5.selectedBorough;
-				var view = _state5.view;
+				var _state4 = this.state;
+				var gameInstance = _state4.gameInstance;
+				var gameStage = _state4.gameStage;
+				var hoveredBorough = _state4.hoveredBorough;
+				var selectedBorough = _state4.selectedBorough;
+				var view = _state4.view;
 				var arrowKeyHoverMap = _constants.keyEventMaps.arrowKeyHoverMap;
 				var firstArrowKeyPressBoroughMap = _constants.keyEventMaps.firstArrowKeyPressBoroughMap;
 
@@ -14413,9 +14413,9 @@
 			value: function onRandomLocation(randomLocationDetails) {
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
-				var _state6 = this.state;
-				var blockLevelMap = _state6.blockLevelMap;
-				var boroughLevelMap = _state6.boroughLevelMap;
+				var _state5 = this.state;
+				var blockLevelMap = _state5.blockLevelMap;
+				var boroughLevelMap = _state5.boroughLevelMap;
 
 
 				blockLevelMap.panTo(randomLatLng);
@@ -14437,24 +14437,35 @@
 				this.updateSelectedBorough(feature);
 			}
 		}, {
+			key: 'onShowingPanorama',
+			value: function onShowingPanorama() {
+				var chooseLocationMap = this.state.chooseLocationMap;
+
+
+				chooseLocationMap.data.revertStyle();
+			}
+		}, {
 			key: 'onSpinnerRevolution',
 			value: function onSpinnerRevolution() {
-				var _state7 = this.state;
-				var gameInstance = _state7.gameInstance;
-				var spinner = _state7.spinner;
+				var _state6 = this.state;
+				var chooseLocationMap = _state6.chooseLocationMap;
+				var gameInstance = _state6.gameInstance;
+				var spinner = _state6.spinner;
 
 
 				spinner.stop();
+
+				chooseLocationMap.data.revertStyle();
 
 				gameInstance.emit(_constants.events.CHOOSING_LOCATION);
 			}
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _state8 = this.state;
-				var chooseLocationMap = _state8.chooseLocationMap;
-				var gameInstance = _state8.gameInstance;
-				var locationData = _state8.locationData;
+				var _state7 = this.state;
+				var chooseLocationMap = _state7.chooseLocationMap;
+				var gameInstance = _state7.gameInstance;
+				var locationData = _state7.locationData;
 
 
 				var promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
@@ -14471,39 +14482,57 @@
 				});
 			}
 		}, {
+			key: 'onWindowResize',
+			value: function onWindowResize() {
+				var _state8 = this.state;
+				var chooseLocationMap = _state8.chooseLocationMap;
+				var locationData = _state8.locationData;
+				var CENTER = locationData.CENTER;
+
+
+				var centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng);
+
+				chooseLocationMap.setCenter(centerLatLng);
+			}
+		}, {
 			key: 'restart',
 			value: function restart() {
-				var _this8 = this;
+				var _this7 = this;
 
 				return this.setState({
 					gameInstance: null,
 					selectedBorough: null,
 					promptText: "Starting new game..."
 				}).then(function () {
-					return _this8.initializeTwoBlocks();
+					return _this7.initializeTwoBlocks();
 				});
 			}
 		}, {
 			key: 'showRandomPanorama',
 			value: function showRandomPanorama(prevState) {
-				var _this9 = this;
+				var _this8 = this;
 
 				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed
 
+				var gameInstance = this.state.gameInstance;
+
+
+				gameInstance.emit(_constants.events.SHOWING_PANORAMA);
+
 				return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY).then(function () {
 
-					return _this9.setState({
+					return _this8.setState({
 						promptText: 'Look closely...which borough is this Street View from?',
 						view: 'panorama'
 					});
 				}).then(function () {
-					var spinner = _this9.state.spinner;
+					var spinner = _this8.state.spinner;
 
 
 					spinner.start();
 
 					spinner.once('revolution', function () {
-						return _this9.onSpinnerRevolution();
+						return _this8.onSpinnerRevolution();
 					});
 				});
 			}
@@ -14596,7 +14625,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this10 = this;
+				var _this9 = this;
 
 				return _react2.default.createElement(
 					'div',
@@ -14625,7 +14654,7 @@
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
 						hoveredBorough: this.state.hoveredBorough,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this10.evaluateFinalAnswer();
+							return _this9.evaluateFinalAnswer();
 						},
 						selectedBorough: this.state.selectedBorough,
 						twoBlocksClass: this.props.submitterTwoBlocksClass
