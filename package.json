@@ -52,6 +52,7 @@
     "webpack": "^1.0.0"
   },
   "dependencies": {
+    "bootstrap": "^3.3.7",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "redux": "^3.5.2"

@@ -13019,6 +13019,7 @@
 	});
 	exports.default = {
 		center: null,
+		keyboardShortcuts: false,
 		mapTypeControl: false,
 		mapTypeId: null,
 		scrollwheel: false,
@@ -14113,6 +14114,9 @@
 		}, {
 			key: 'evaluateFinalAnswer',
 			value: function evaluateFinalAnswer() {
+
+				if (!this.state.choosingLocation) return;
+
 				var _state = this.state;
 				var gameInstance = _state.gameInstance;
 				var panoramaBorough = _state.panoramaBorough;
@@ -14216,6 +14220,7 @@
 
 				return this.setState({
 
+					choosingLocation: false,
 					mapType: 'borough-level',
 					showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
 
@@ -14407,7 +14412,6 @@
 				}
 
 				this.setState({
-					choosingLocation: false,
 					mapType: 'city-level'
 				});
 			}
@@ -14438,6 +14442,10 @@
 		}, {
 			key: 'onSelectedBorough',
 			value: function onSelectedBorough(feature) {
+				var choosingLocation = this.state.choosingLocation;
+
+
+				if (!choosingLocation) return;
 
 				this.styleUnselectedBoroughs(feature);
 
@@ -14592,6 +14600,8 @@
 
 				var featureCollection = locationData.featureCollection;
 
+
+				if (!featureCollection) return;
 
 				var unselectedBoroughs = featureCollection.filter(function (feature) {
 					return feature.getProperty('boro_name') !== clickedBoroughName;

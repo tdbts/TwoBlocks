@@ -175,6 +175,8 @@ class TwoBlocks extends React.Component {
 	}
 
 	evaluateFinalAnswer() {
+ 
+		if (!(this.state.choosingLocation)) return; 
 
 		const { gameInstance, panoramaBorough, selectedBorough } = this.state; 
 
@@ -265,6 +267,7 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({
 
+			choosingLocation: false, 
 			mapType: 'borough-level', 
 			showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions) 
 
@@ -457,7 +460,6 @@ class TwoBlocks extends React.Component {
 		}
 
 		this.setState({
-			choosingLocation: false, 
 			mapType: 'city-level'
 		});
 
@@ -486,6 +488,10 @@ class TwoBlocks extends React.Component {
 	}
 
 	onSelectedBorough(feature) {
+
+		const { choosingLocation } = this.state; 
+
+		if (!(choosingLocation)) return; 
 
 		this.styleUnselectedBoroughs(feature); 
 		
@@ -626,6 +632,8 @@ class TwoBlocks extends React.Component {
 		if (selectedBorough === clickedBoroughName) return;  // Don't revert styles if the player clicks on the currently-selected borough  
 
 		const { featureCollection } = locationData; 
+
+		if (!(featureCollection)) return; 
 
 		const unselectedBoroughs = featureCollection.filter(feature => feature.getProperty('boro_name') !== clickedBoroughName); 
  

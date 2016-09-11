@@ -1,5 +1,6 @@
 export default {
 	center: null, 
+	keyboardShortcuts: false, 
 	mapTypeControl: false, 
 	mapTypeId: null, 
 	scrollwheel: false, 
