@@ -1,5 +1,6 @@
 import React from 'react'; 
 import stylizeBoroughName from '../stylizeBoroughName'; 
+import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
 
 class TwoBlocksSubmitter extends React.Component {
 
@@ -11,7 +12,13 @@ class TwoBlocksSubmitter extends React.Component {
 
 	getClassName() {
 
-		return ["two-blocks-submitter-button", this.props.selectedBorough ? "" : "hidden"].join(" ").trim();
+		return [
+		
+			"two-blocks-submitter-button", 
+			TWO_BLOCKS_BUTTON_CLASS, 
+			this.props.selectedBorough ? "" : "hidden"
+
+		].join(" ").trim();
 
 	}
 

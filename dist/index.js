@@ -12791,7 +12791,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.NYC_BOUNDARIES_DATASET_URL = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_TOTAL_ROUNDS = exports.DEFAULT_MAP_ZOOM = exports.DEFAULT_MAP_OPTIONS = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.nycCoordinates = exports.keyEventMaps = exports.heardKeys = exports.events = undefined;
+	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.TWO_BLOCKS_BUTTON_CLASS = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.NYC_BOUNDARIES_DATASET_URL = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_TOTAL_ROUNDS = exports.DEFAULT_MAP_ZOOM = exports.DEFAULT_MAP_OPTIONS = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.nycCoordinates = exports.keyEventMaps = exports.heardKeys = exports.events = undefined;
 
 	var _events = __webpack_require__(349);
 
@@ -12820,6 +12820,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var ANSWER_EVALUATION_DELAY = 6000; // milliseconds
+	var TWO_BLOCKS_BUTTON_CLASS = "two-blocks-button";
 	var DEFAULT_MAP_ZOOM = 10;
 	var DEFAULT_TOTAL_ROUNDS = 5;
 	var HOVERED_BOROUGH_FILL_COLOR = "#A8FFFC";
@@ -12849,6 +12850,7 @@
 	exports.NYC_BOUNDARIES_DATASET_URL = NYC_BOUNDARIES_DATASET_URL;
 	exports.PANORAMA_LOAD_DELAY = PANORAMA_LOAD_DELAY;
 	exports.SELECTED_BOROUGH_FILL_COLOR = SELECTED_BOROUGH_FILL_COLOR;
+	exports.TWO_BLOCKS_BUTTON_CLASS = TWO_BLOCKS_BUTTON_CLASS;
 	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = WINDOW_RESIZE_DEBOUNCE_TIMEOUT;
 
 /***/ },
@@ -17776,6 +17778,8 @@
 
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 
+	var _constants = __webpack_require__(348);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -17803,7 +17807,7 @@
 			key: 'getClassName',
 			value: function getClassName() {
 
-				return ["two-blocks-submitter-button", this.props.selectedBorough ? "" : "hidden"].join(" ").trim();
+				return ["two-blocks-submitter-button", _constants.TWO_BLOCKS_BUTTON_CLASS, this.props.selectedBorough ? "" : "hidden"].join(" ").trim();
 			}
 		}, {
 			key: 'getText',
@@ -17869,7 +17873,7 @@
 /* 418 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -17880,6 +17884,8 @@
 	var _react = __webpack_require__(299);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _constants = __webpack_require__(348);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17899,28 +17905,28 @@
 		}
 
 		_createClass(TwoBlocksReplayButton, [{
-			key: "getClassName",
+			key: 'getClassName',
 			value: function getClassName() {
 
-				return [this.props.twoBlocksClass, this.props.hidden ? "not-displayed" : ""].join(" ").trim();
+				return [this.props.twoBlocksClass, _constants.TWO_BLOCKS_BUTTON_CLASS, this.props.hidden ? "not-displayed" : ""].join(" ").trim();
 			}
 		}, {
-			key: "onReplayButtonClick",
+			key: 'onReplayButtonClick',
 			value: function onReplayButtonClick() {
 
 				this.props.restart();
 			}
 		}, {
-			key: "render",
+			key: 'render',
 			value: function render() {
 				var _this2 = this;
 
 				return _react2.default.createElement(
-					"button",
+					'button',
 					{ className: this.getClassName(), onClick: function onClick() {
 							return _this2.onReplayButtonClick();
 						} },
-					"Play again?"
+					'Play again?'
 				);
 			}
 		}]);

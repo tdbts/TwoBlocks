@@ -1,10 +1,17 @@
 import React from 'react'; 
+import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
 
 class TwoBlocksReplayButton extends React.Component {
 
 	getClassName() {
 
-		return [this.props.twoBlocksClass, this.props.hidden ? "not-displayed" : ""].join(" ").trim();
+		return [
+
+			this.props.twoBlocksClass, 
+			TWO_BLOCKS_BUTTON_CLASS, 
+			this.props.hidden ? "not-displayed" : ""
+
+		].join(" ").trim();
 
 	}
 
