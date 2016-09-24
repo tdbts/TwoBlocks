@@ -15430,6 +15430,7 @@
 		var VALID_SEGMENTS = [2, 4, 6, 9, 12];
 
 		var _canSpin = false;
+		var _lastRepaint = null;
 		var _paused = false;
 		var _started = false;
 		var _startHeading = null;
@@ -15545,6 +15546,7 @@
 		}
 
 		/*----------  Set interval option  ----------*/
+
 		interval = options.interval;
 
 
@@ -15552,6 +15554,31 @@
 
 			interval = INTERVAL_DEFAULT;
 		}
+
+		var onAnimationFrame = function onAnimationFrame(timestamp) {
+
+			if (!_lastRepaint) {
+
+				_lastRepaint = timestamp;
+			}
+
+			var timeSinceLastRepaint = timestamp - _lastRepaint;
+
+			if (timeSinceLastRepaint >= interval) {
+
+				if (_canSpin && !_paused) {
+
+					this.spin();
+				}
+
+				window.requestAnimationFrame(onAnimationFrame.bind(this));
+			} else {
+
+				window.requestAnimationFrame(onAnimationFrame.bind(this));
+			}
+		};
+
+		/*----------  Public  ----------*/
 
 		var api = {
 			spin: function spin() {
@@ -15579,7 +15606,6 @@
 				}
 			},
 			start: function start() {
-				var _this = this;
 
 				_canSpin = true;
 
@@ -15596,13 +15622,7 @@
 
 				if (!timer) {
 
-					timer = setInterval(function () {
-
-						if (_canSpin && !_paused) {
-
-							_this.spin();
-						}
-					}, interval);
+					timer = window.requestAnimationFrame(onAnimationFrame.bind(this));
 				}
 			},
 			started: function started() {

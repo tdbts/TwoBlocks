@@ -32,7 +32,8 @@ const createSpinner = (panorma, options = {}) => {
 	const SEGMENTS_DEFAULT  	= 4; 
 	const VALID_SEGMENTS 		= [2, 4, 6, 9, 12]; 
 
-	let _canSpin = false; 
+	let _canSpin = false;
+	let _lastRepaint = null;  
 	let _paused = false; 
 	let _started = false; 
 	let _startHeading = null; 
@@ -153,6 +154,7 @@ const createSpinner = (panorma, options = {}) => {
 	}
 
 	/*----------  Set interval option  ----------*/
+	
 	( { interval } = options ); 
 
 	if (!(interval)) {
@@ -160,6 +162,36 @@ const createSpinner = (panorma, options = {}) => {
 		interval = INTERVAL_DEFAULT; 
 
 	}
+
+	const onAnimationFrame = function onAnimationFrame(timestamp) {
+
+		if (!(_lastRepaint)) {
+
+			_lastRepaint = timestamp; 
+
+		}
+
+		const timeSinceLastRepaint = timestamp - _lastRepaint; 
+
+		if (timeSinceLastRepaint >= interval) {
+
+			if (_canSpin && !(_paused)) {
+
+				this.spin(); 
+
+			}
+
+			window.requestAnimationFrame(onAnimationFrame.bind(this)); 
+
+		} else {
+
+			window.requestAnimationFrame(onAnimationFrame.bind(this)); 
+
+		}
+
+	}; 
+
+	/*----------  Public  ----------*/
 
 	const api = {
 
@@ -211,15 +243,7 @@ const createSpinner = (panorma, options = {}) => {
  
 			if (!(timer)) {
 
-				timer = setInterval(() => {
-					
-					if (_canSpin && !(_paused)) {
-
-						this.spin(); 
-
-					}
-
-				}, interval); 
+				timer = window.requestAnimationFrame(onAnimationFrame.bind(this)); 
 
 			}
  
