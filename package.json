@@ -6,10 +6,10 @@
   "scripts": {
     "test": "find . -name test -type d ! -path './node_modules/*' -exec mocha {} --compilers js:babel-core/register --recursive ';'",
     "build": "npm run lint && npm test && npm run pack",
-    "pack": "sudo webpack",
+    "pack": "webpack",
     "lint": "eslint src/**/* build/",
     "postlint": "echo 'Linting complete with no errors.'",
-    "start": "sudo browser-sync start --no-open --server --index './build/index.html' --files './dist/*.js, ./build/*.html, ./build/*.js' --tunnel",
+    "start": "browser-sync start --no-open --server --index './build/index.html' --files './dist/*.js, ./build/*.html, ./build/*.js' --tunnel",
     "watch": "watch 'npm run lint && npm run pack' ./src/ ./build/"
   },
   "repository": {
@@ -46,7 +46,8 @@
     "mocha": "^2.4.5",
     "sinon": "^1.17.4",
     "watch": "^0.18.0",
-    "webpack": "^1.13.0"
+    "webpack": "^1.13.0",
+    "worker-loader": "^0.7.1"
   },
   "peerDependencies": {
     "webpack": "^1.0.0"
