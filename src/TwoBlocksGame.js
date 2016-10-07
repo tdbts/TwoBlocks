@@ -1,3 +1,5 @@
+/* global window */
+
 import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
 import createGameComponents from './createGameComponents';
 import createPromiseTimeout from './createPromiseTimeout';  
@@ -5,7 +7,7 @@ import getRandomPanoramaLocation from './getRandomPanoramaLocation';
 import removeStreetNameAnnotations from './removeStreetNameAnnotations'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
+import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
 
 let geoJSONLoaded = false; 
 
@@ -168,6 +170,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	createGameComponents() {
 
 		const gameComponents = createGameComponents({
+			gameInstance: this, 
 			locationData: this.locationData, 
 			mapCanvas: this.mapCanvas, 
 			mapLatLng: this.mapLatLng, 
@@ -357,6 +360,34 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				return randomLocationDetails; 
 
 			}); 
+
+	}, 
+
+	shouldShowSpinner() {
+
+		const conditions = [
+
+			window.screen.width >= MINIMUM_SPINNER_SCREEN_WIDTH
+
+		]; 
+
+		return conditions.every(condition => condition === true); 
+
+	}, 
+
+	shouldUseDeviceOrientation() {
+
+		const conditions = [
+
+			!!(window.DeviceOrientationEvent) || !!(window.DeviceMotionEvent), 
+			window.screen.width < MINIMUM_SPINNER_SCREEN_WIDTH
+
+		]; 
+
+		return conditions.every(condition => {
+ 
+			return !!condition;
+		}); 
 
 	}, 
 

@@ -8,7 +8,8 @@ import TwoBlocksSubmitter from './TwoBlocksSubmitter';
 import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
-import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import Countdown from '../Countdown'; 
+import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { debounce, isOneOf, isType } from '../utils/utils'; 
 
 class TwoBlocks extends React.Component {
@@ -294,7 +295,11 @@ class TwoBlocks extends React.Component {
 
 	onChoosingLocation() {
 
-		this.setState({
+		const { chooseLocationMap } = this.state; 
+
+		chooseLocationMap.data.revertStyle(); 
+
+		return this.setState({
 			choosingLocation: true, 
 			hoveredBorough: '', 
 			mapMarkerVisible: false,  // Set to true for location guessing  
@@ -511,13 +516,9 @@ class TwoBlocks extends React.Component {
 
 	onSpinnerRevolution() {
 
-		const { chooseLocationMap, gameInstance, spinner } = this.state; 
+		const { spinner } = this.state; 
 
 		spinner.stop(); 
-
-		chooseLocationMap.data.revertStyle(); 
-
-		gameInstance.emit(events.CHOOSING_LOCATION); 
 
 	}
 
@@ -587,13 +588,51 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				const { spinner } = this.state; 
+				if (gameInstance.shouldShowSpinner()) {
 
-				spinner.start(); 
+					this.showSpinner();
+					
+				} else if (gameInstance.shouldUseDeviceOrientation()) {
 
-				spinner.once('revolution', () => this.onSpinnerRevolution()); 
+					this.startStreetviewCountdown();  					
+
+				}
 
 			}); 		
+
+	}
+
+	showSpinner() {
+
+		const { gameInstance, spinner } = this.state; 
+
+		spinner.start(); 
+
+		spinner.once('revolution', () => {
+
+			this.onSpinnerRevolution(); 
+		
+			gameInstance.emit(events.CHOOSING_LOCATION); 
+
+		}); 
+
+	}
+
+	startStreetviewCountdown() {
+
+		const { gameInstance } = this.state; 
+
+		const countdown = new Countdown(STREETVIEW_COUNTDOWN_LENGTH); 
+
+		countdown.on('tick', timeLeft => window.console.log("timeLeft:", timeLeft)); 
+
+		countdown.on('end', () => {
+			gameInstance.emit(events.CHOOSING_LOCATION); 
+		}); 
+
+		countdown.on('start', () => window.console.log("countdown start.")); 
+
+		countdown.start(); 		
 
 	}
 

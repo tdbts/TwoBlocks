@@ -17,7 +17,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { locationData, mapCanvas, mapMarkerVisible, panoramaCanvas } = gameState; 
+	const { gameInstance, locationData, mapCanvas, mapMarkerVisible, panoramaCanvas } = gameState; 
 	
 	const webGlManager = createWebGlManager(panoramaCanvas); 
 	
@@ -28,7 +28,8 @@ const createGameComponents = function createGameComponents(gameState) {
 	const panorama = createPanorama(panoramaCanvas, { 
 		mode, 
 		position: null, 
-		visible: true
+		visible: true, 
+		zoomControl: gameInstance.shouldUseDeviceOrientation()
 	}); 
 
 	/*----------  Set up spinner  ----------*/

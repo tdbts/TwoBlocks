@@ -1,5 +1,7 @@
 export default {
-	center: null, 
+	center: null,
+	disableDoubleClickZoom: false,  
+	draggable: false, 
 	keyboardShortcuts: false, 
 	mapTypeControl: false, 
 	mapTypeId: null, 
