@@ -45,23 +45,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(events.GAME_COMPONENTS, gameComponents => {
 		
-			if (window.Worker) {
-
-				const TwoBlocksWorker = require("./workers/twoBlocks.worker.js"); 
-
-				const worker = new TwoBlocksWorker();
-				// worker = new Worker("./dist/twoBlocks.worker.js"); 
-				// const worker = new Worker("./dist/twoBlocks.worker.js");  
-				// const worker = new Worker("worker?inline!./workers/twoBlocks.worker.js"); 
-				// const worker = new Worker('../src/workers/test.js'); 
-				worker.onmessage = e => window.console.log("Heard dis:", e); 
-				worker.onerror = e => window.console.log("That sucks:", e);  
-				window.console.log("worker:", worker); 
-				worker.addEventListener('error', e => window.console.log("Fucking error:", e)); 
-				worker.postMessage("Whaddap homie."); 
-			
-			}
-
 			this.addEventListenersToGameComponents(gameComponents);
 
 			this.loadCityGeoJSON()
