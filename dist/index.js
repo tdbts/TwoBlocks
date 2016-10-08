@@ -17858,8 +17858,6 @@
 		value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(299);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -17872,82 +17870,69 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	/*----------  Component  ----------*/
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	var TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
+		var evaluateFinalAnswer = props.evaluateFinalAnswer;
+		var selectedBorough = props.selectedBorough;
+		var twoBlocksClass = props.twoBlocksClass;
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+		var calculatedClassName = getClassName(selectedBorough);
 
-	var TwoBlocksSubmitter = function (_React$Component) {
-		_inherits(TwoBlocksSubmitter, _React$Component);
+		var text = getText(selectedBorough);
 
-		function TwoBlocksSubmitter() {
-			_classCallCheck(this, TwoBlocksSubmitter);
+		var borough = getBorough(selectedBorough);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocksSubmitter).apply(this, arguments));
-		}
+		var buttonLabel = "Final answer?";
 
-		_createClass(TwoBlocksSubmitter, [{
-			key: 'getBorough',
-			value: function getBorough() {
+		return _react2.default.createElement(
+			'div',
+			{ className: twoBlocksClass },
+			_react2.default.createElement(
+				'p',
+				{ className: 'two-blocks-submitter-text' },
+				' ',
+				text,
+				' ',
+				_react2.default.createElement(
+					'span',
+					{ className: 'two-blocks-submitter-borough-name' },
+					borough
+				)
+			),
+			_react2.default.createElement(
+				'button',
+				{ className: calculatedClassName, onClick: function onClick() {
+						return onSubmissionButtonClick(evaluateFinalAnswer);
+					} },
+				buttonLabel
+			)
+		);
+	};
 
-				return this.props.selectedBorough ? (0, _stylizeBoroughName2.default)(this.props.selectedBorough) : '';
-			}
-		}, {
-			key: 'getClassName',
-			value: function getClassName() {
+	/*----------  Helper Functions  ----------*/
 
-				return ["two-blocks-submitter-button", _constants.TWO_BLOCKS_BUTTON_CLASS, this.props.selectedBorough ? "" : "hidden"].join(" ").trim();
-			}
-		}, {
-			key: 'getText',
-			value: function getText() {
+	var getBorough = function getBorough(selectedBorough) {
 
-				return this.props.selectedBorough ? "You chose: " : "";
-			}
-		}, {
-			key: 'onSubmissionButtonClick',
-			value: function onSubmissionButtonClick() {
+		return selectedBorough ? (0, _stylizeBoroughName2.default)(selectedBorough) : "";
+	};
 
-				this.props.evaluateFinalAnswer();
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				var _this2 = this;
+	var getClassName = function getClassName(selectedBorough) {
 
-				var text = this.getText();
-				var borough = this.getBorough();
-				var buttonLabel = "Final answer?";
+		return ["two-blocks-submitter-button", _constants.TWO_BLOCKS_BUTTON_CLASS, selectedBorough ? "" : "hidden"].join(" ").trim();
+	};
 
-				return _react2.default.createElement(
-					'div',
-					{ className: this.props.twoBlocksClass },
-					_react2.default.createElement(
-						'p',
-						{ className: 'two-blocks-submitter-text' },
-						' ',
-						text,
-						' ',
-						_react2.default.createElement(
-							'span',
-							{ className: 'two-blocks-submitter-borough-name' },
-							borough
-						)
-					),
-					_react2.default.createElement(
-						'button',
-						{ className: this.getClassName(), onClick: function onClick() {
-								return _this2.onSubmissionButtonClick();
-							} },
-						buttonLabel
-					)
-				);
-			}
-		}]);
+	var getText = function getText(selectedBorough) {
 
-		return TwoBlocksSubmitter;
-	}(_react2.default.Component);
+		return selectedBorough ? "You chose: " : "";
+	};
+
+	var onSubmissionButtonClick = function onSubmissionButtonClick(evaluateFinalAnswer) {
+
+		return evaluateFinalAnswer();
+	};
+
+	/*----------  Define PropTypes  ----------*/
 
 	TwoBlocksSubmitter.propTypes = {
 
@@ -17956,6 +17941,8 @@
 		twoBlocksClass: _react2.default.PropTypes.string.isRequired
 
 	};
+
+	/*----------  Export  ----------*/
 
 	exports.default = TwoBlocksSubmitter;
 

@@ -2,56 +2,63 @@ import React from 'react';
 import stylizeBoroughName from '../stylizeBoroughName'; 
 import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
 
-class TwoBlocksSubmitter extends React.Component {
+/*----------  Component  ----------*/
 
-	getBorough() {
+const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
-		return this.props.selectedBorough ? stylizeBoroughName(this.props.selectedBorough) : ''; 
+	const { evaluateFinalAnswer, selectedBorough, twoBlocksClass } = props; 	
+	const calculatedClassName = getClassName(selectedBorough); 
 
-	}
+	const text = getText(selectedBorough); 
 
-	getClassName() {
+	const borough = getBorough(selectedBorough); 
 
-		return [
-		
-			"two-blocks-submitter-button", 
-			TWO_BLOCKS_BUTTON_CLASS, 
-			this.props.selectedBorough ? "" : "hidden"
+	const buttonLabel = "Final answer?"; 
 
-		].join(" ").trim();
+	return (
 
-	}
+		<div className={ twoBlocksClass }>
+			<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
+			<button className={ calculatedClassName } onClick={ () => onSubmissionButtonClick(evaluateFinalAnswer) }>{ buttonLabel }</button>
+		</div>
 
-	getText() {
+	); 
 
-		return this.props.selectedBorough ? "You chose: " : ""; 
+}; 
 
-	}
+/*----------  Helper Functions  ----------*/
 
-	onSubmissionButtonClick() {
+const getBorough = function getBorough(selectedBorough) {
 
-		this.props.evaluateFinalAnswer(); 
+	return selectedBorough ? stylizeBoroughName(selectedBorough) : "";
 
-	}
+}; 
 
-	render() {
+const getClassName = function getClassName(selectedBorough) {
 
-		const text = this.getText(); 
-		const borough = this.getBorough(); 
-		const buttonLabel = "Final answer?"; 
+	return [
+	
+		"two-blocks-submitter-button", 
+		TWO_BLOCKS_BUTTON_CLASS, 
+		selectedBorough ? "" : "hidden"
 
-		return (
+	].join(" ").trim(); 
 
-			<div className={ this.props.twoBlocksClass }>
-				<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
-				<button className={ this.getClassName() } onClick={ () => this.onSubmissionButtonClick() }>{ buttonLabel }</button>
-			</div>
+}; 
 
-		); 
+const getText = function getText(selectedBorough) {
 
-	}
+	return selectedBorough ? "You chose: " : ""; 
 
-}
+}; 
+
+const onSubmissionButtonClick = function onSubmissionButtonClick(evaluateFinalAnswer) {
+
+	return evaluateFinalAnswer(); 
+
+}; 
+
+/*----------  Define PropTypes  ----------*/
 
 TwoBlocksSubmitter.propTypes = {
 
@@ -60,5 +67,7 @@ TwoBlocksSubmitter.propTypes = {
 	twoBlocksClass 			: React.PropTypes.string.isRequired
 
 }; 
+
+/*----------  Export  ----------*/
 
 export default TwoBlocksSubmitter; 
