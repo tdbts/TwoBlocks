@@ -1,6 +1,6 @@
 const getViewLayerClassName = function getViewLayerClassName() {
 
-	const visiblilityClass = this.props.visible ? 'visible' : 'hidden'; 
+	const visiblilityClass = this.props.visible ? 'visible' : 'offscreen'; 
 
 	return [
 		

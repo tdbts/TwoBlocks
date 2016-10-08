@@ -1,35 +1,41 @@
 import React from 'react'; 
 import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
 
-class TwoBlocksReplayButton extends React.Component {
+/*----------  Component  ----------*/
 
-	getClassName() {
+const TwoBlocksReplayButton = function TwoBlocksReplayButton(props) {
 
-		return [
+	const { hidden, restart, twoBlocksClass } = props; 
 
-			this.props.twoBlocksClass, 
-			TWO_BLOCKS_BUTTON_CLASS, 
-			this.props.hidden ? "not-displayed" : ""
+	const calculatedClassName = getClassName(twoBlocksClass, hidden); 
 
-		].join(" ").trim();
+	return (
+		<button className={ calculatedClassName } onClick={ () =>  onReplayButtonClick(restart) }>Play again?</button>
+	);
+	
+}; 
 
-	}
+/*----------  Helper Functions  ----------*/
 
-	onReplayButtonClick() {
+const getClassName = function getClassName(twoBlocksClass, hidden) {
 
-		this.props.restart(); 
+	return [
 
-	}
+		twoBlocksClass, 
+		TWO_BLOCKS_BUTTON_CLASS, 
+		hidden ? "hidden" : ""
 
-	render() {
+	].join(" ").trim(); 
 
-		return (
-			<button className={ this.getClassName() } onClick={ () => this.onReplayButtonClick() }>Play again?</button>
-		); 
+}; 
 
-	}
+const onReplayButtonClick = function onReplayButtonClick(restart) {
 
-}
+	return restart(); 
+
+}; 
+
+/*----------  Define PropTypes  ----------*/
 
 TwoBlocksReplayButton.propTypes = {
 	
@@ -38,5 +44,7 @@ TwoBlocksReplayButton.propTypes = {
 	twoBlocksClass: React.PropTypes.string.isRequired
 
 }; 
+
+/*----------  Export  ----------*/
 
 export default TwoBlocksReplayButton; 

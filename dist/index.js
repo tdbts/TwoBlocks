@@ -17659,7 +17659,7 @@
 	});
 	var getViewLayerClassName = function getViewLayerClassName() {
 
-		var visiblilityClass = this.props.visible ? 'visible' : 'hidden';
+		var visiblilityClass = this.props.visible ? 'visible' : 'offscreen';
 
 		return [this.props.twoBlocksClass, 'inherit-dimensions', 'layered', visiblilityClass].join(' ').trim();
 	};
@@ -17969,8 +17969,6 @@
 		value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(299);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -17979,50 +17977,38 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	/*----------  Component  ----------*/
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	var TwoBlocksReplayButton = function TwoBlocksReplayButton(props) {
+		var hidden = props.hidden;
+		var restart = props.restart;
+		var twoBlocksClass = props.twoBlocksClass;
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var TwoBlocksReplayButton = function (_React$Component) {
-		_inherits(TwoBlocksReplayButton, _React$Component);
+		var calculatedClassName = getClassName(twoBlocksClass, hidden);
 
-		function TwoBlocksReplayButton() {
-			_classCallCheck(this, TwoBlocksReplayButton);
+		return _react2.default.createElement(
+			'button',
+			{ className: calculatedClassName, onClick: function onClick() {
+					return onReplayButtonClick(restart);
+				} },
+			'Play again?'
+		);
+	};
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocksReplayButton).apply(this, arguments));
-		}
+	/*----------  Helper Functions  ----------*/
 
-		_createClass(TwoBlocksReplayButton, [{
-			key: 'getClassName',
-			value: function getClassName() {
+	var getClassName = function getClassName(twoBlocksClass, hidden) {
 
-				return [this.props.twoBlocksClass, _constants.TWO_BLOCKS_BUTTON_CLASS, this.props.hidden ? "not-displayed" : ""].join(" ").trim();
-			}
-		}, {
-			key: 'onReplayButtonClick',
-			value: function onReplayButtonClick() {
+		return [twoBlocksClass, _constants.TWO_BLOCKS_BUTTON_CLASS, hidden ? "hidden" : ""].join(" ").trim();
+	};
 
-				this.props.restart();
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-				var _this2 = this;
+	var onReplayButtonClick = function onReplayButtonClick(restart) {
 
-				return _react2.default.createElement(
-					'button',
-					{ className: this.getClassName(), onClick: function onClick() {
-							return _this2.onReplayButtonClick();
-						} },
-					'Play again?'
-				);
-			}
-		}]);
+		return restart();
+	};
 
-		return TwoBlocksReplayButton;
-	}(_react2.default.Component);
+	/*----------  Define PropTypes  ----------*/
 
 	TwoBlocksReplayButton.propTypes = {
 
@@ -18031,6 +18017,8 @@
 		twoBlocksClass: _react2.default.PropTypes.string.isRequired
 
 	};
+
+	/*----------  Export  ----------*/
 
 	exports.default = TwoBlocksReplayButton;
 
