@@ -1,33 +1,48 @@
 import React from 'react'; 
 import stylizeBoroughName from '../stylizeBoroughName'; 
 
-class TwoBlocksPrompt extends React.Component {
+/*----------  Component  ----------*/
 
-	getHeaderText() {
+const TwoBlocksPrompt = function TwoBlocksPrompt(props) {
 
-		return [this.props.text, this.getTextAddition()].join(' '); 		
+	const { gameOver, hoveredBorough, choosingLocation, text, twoBlocksClass } = props; 
 
-	}
+	const showTextAddition = shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough); 
 
-	getTextAddition() {
+	const textAddition = getTextAddition(showTextAddition, hoveredBorough);
 
-		return !(this.props.gameOver) && this.props.choosingLocation && this.props.hoveredBorough ? stylizeBoroughName(this.props.hoveredBorough) + "?" :  ''; 
+	const headerText = getHeaderText(text, textAddition); 
 
-	}
+	return (
 
-	render() {
+		<div className={ twoBlocksClass }>
+			<h3>{ headerText }</h3>
+		</div>
+	); 
 
-		return (
+}; 
 
-			<div className={ this.props.twoBlocksClass }>
-				<h3>{ this.getHeaderText() }</h3>
-			</div>
+/*----------  Helper Functions  ----------*/
 
-		); 
+const getHeaderText = function getHeaderText(text, textAddition) {
 
-	}
+	return [text, textAddition].join(' '); 
 
-}
+}; 
+
+const getTextAddition = function getTextAddition(showTextAddition, hoveredBorough) {
+
+	return showTextAddition ? stylizeBoroughName(hoveredBorough) + "?" : ""; 
+
+}; 
+
+const shouldShowTextAddition = function shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough) {
+
+	return !(gameOver) && choosingLocation && hoveredBorough; 
+
+}; 
+
+/*----------  Define Proptypes  ----------*/
 
 TwoBlocksPrompt.propTypes = {
 	
@@ -38,5 +53,7 @@ TwoBlocksPrompt.propTypes = {
 	text 				: React.PropTypes.string
 
 }; 
+
+/*----------  Export  ----------*/
 
 export default TwoBlocksPrompt; 
