@@ -1,5 +1,3 @@
-/* global window */
-
 import React from 'react'; 
 import getViewLayerClassName from './component-utils/getViewLayerClassName'; 
 

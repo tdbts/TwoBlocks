@@ -14795,9 +14795,9 @@
 
 	var _createPromiseTimeout2 = _interopRequireDefault(_createPromiseTimeout);
 
-	var _getRandomPanoramaLocation = __webpack_require__(397);
+	var _getRandomPanoramaLocation2 = __webpack_require__(397);
 
-	var _getRandomPanoramaLocation2 = _interopRequireDefault(_getRandomPanoramaLocation);
+	var _getRandomPanoramaLocation3 = _interopRequireDefault(_getRandomPanoramaLocation2);
 
 	var _removeStreetNameAnnotations = __webpack_require__(410);
 
@@ -15004,6 +15004,32 @@
 				return _this2.onPregameLocationDataReceived(locationData);
 			});
 		},
+		getRandomPanoramaLocation: function getRandomPanoramaLocation(featureCollection) {
+			var attemptsLeft = arguments.length <= 1 || arguments[1] === undefined ? _constants.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS : arguments[1];
+
+
+			return (0, _getRandomPanoramaLocation3.default)(featureCollection, attemptsLeft).catch(function () {
+
+				if (attemptsLeft === 0) {
+
+					throw new Error("Attempts to request a random Google Street View failed too many times.  Check your internet connection.");
+				}
+
+				attemptsLeft = attemptsLeft - 1;
+
+				window.console.log('Failure to request nearest panorama.  ' + attemptsLeft + ' more attempts left.');
+
+				return (0, _getRandomPanoramaLocation3.default)(featureCollection, attemptsLeft);
+			}).then(function (randomLocationDetails) {
+				var randomLatLng = randomLocationDetails.randomLatLng;
+
+
+				window.console.log("randomLatLng.lat():", randomLatLng.lat());
+				window.console.log("randomLatLng.lng():", randomLatLng.lng());
+
+				return randomLocationDetails;
+			});
+		},
 		totalCorrectAnswers: function totalCorrectAnswers() {
 
 			return this.gameHistory.filter(function (turnHistory) {
@@ -15054,6 +15080,9 @@
 		nextTurn: function nextTurn() {
 			var _this4 = this;
 
+			var featureCollection = this.locationData.featureCollection;
+
+
 			this.canEvaluateAnswer = true;
 
 			if (this.chooseLocationMarker) {
@@ -15061,7 +15090,7 @@
 				this.chooseLocationMarker.setMap(null);
 			}
 
-			return this.setRandomLocation().then(function (locationData) {
+			return this.getRandomPanoramaLocation(featureCollection).then(function (locationData) {
 				// boroughName, randomLatLng
 
 				_this4.currentTurn = _extends({}, locationData, {
@@ -15095,37 +15124,6 @@
 			this.mapLatLng = mapLatLng;
 
 			this.createGameComponents();
-		},
-		setRandomLocation: function setRandomLocation() {
-			var _this5 = this;
-
-			var attemptsLeft = arguments.length <= 0 || arguments[0] === undefined ? _constants.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS : arguments[0];
-
-
-			if (attemptsLeft === 0) {
-
-				throw new Error("Attempts to request a random Google Street View failed too many times.  Check your internet connection.");
-			}
-
-			attemptsLeft = attemptsLeft - 1;
-
-			var featureCollection = this.locationData.featureCollection;
-
-
-			return (0, _getRandomPanoramaLocation2.default)(featureCollection).catch(function () {
-
-				window.console.log('Failure to request nearest panorama.  ' + attemptsLeft + ' more attempts left.');
-
-				return _this5.setRandomLocation(attemptsLeft);
-			}).then(function (randomLocationDetails) {
-				var randomLatLng = randomLocationDetails.randomLatLng;
-
-
-				window.console.log("randomLatLng.lat():", randomLatLng.lat());
-				window.console.log("randomLatLng.lng():", randomLatLng.lng());
-
-				return randomLocationDetails;
-			});
 		},
 		shouldShowSpinner: function shouldShowSpinner() {
 
@@ -16825,7 +16823,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
+	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection, attemptsLeft) {
 
 		var selectedBorough = (0, _getRandomFeature2.default)(featureCollection);
 
@@ -17692,7 +17690,7 @@
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global window */
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var TwoBlocksPanorama = function (_React$Component) {
 		_inherits(TwoBlocksPanorama, _React$Component);

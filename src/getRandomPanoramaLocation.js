@@ -8,7 +8,7 @@ import getLatLngMaxMin from './getLatLngMaxMin';
 import { tryAtMost } from './utils/utils';
 import { MAXIMUM_PANORAMA_REQUESTS } from './constants/constants';  
 
-const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
+const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection, attemptsLeft) {
  
 	const selectedBorough = getRandomFeature(featureCollection); 
 

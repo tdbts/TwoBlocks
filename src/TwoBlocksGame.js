@@ -226,6 +226,39 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	},
 
+	getRandomPanoramaLocation(featureCollection, attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS) {
+		
+		return getRandomPanoramaLocation(featureCollection, attemptsLeft) 
+
+			.catch(() => {
+
+				if (attemptsLeft === 0) {
+
+					throw new Error("Attempts to request a random Google Street View failed too many times.  Check your internet connection."); 
+
+				}
+
+				attemptsLeft = attemptsLeft - 1; 
+
+				window.console.log(`Failure to request nearest panorama.  ${attemptsLeft} more attempts left.`); 
+
+				return getRandomPanoramaLocation(featureCollection, attemptsLeft); 
+
+			}) 						
+
+			.then(randomLocationDetails => {
+				
+				const { randomLatLng } = randomLocationDetails; 
+
+				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
+				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
+
+				return randomLocationDetails; 
+
+			}); 
+
+	}, 
+
 	totalCorrectAnswers() {
 
 		return this.gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.boroughName).length; 
@@ -281,6 +314,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	nextTurn() {
 
+		const { featureCollection } = this.locationData;  
+
 		this.canEvaluateAnswer = true; 
 
 		if (this.chooseLocationMarker) {
@@ -289,7 +324,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-		return this.setRandomLocation() 
+		return this.getRandomPanoramaLocation(featureCollection) 
 
 			.then(locationData => {  // boroughName, randomLatLng
 
@@ -325,41 +360,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.mapLatLng = mapLatLng;
 
 		this.createGameComponents();  
-
-	}, 
-
-	setRandomLocation(attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS) {
-
-		if (attemptsLeft === 0) {
-
-			throw new Error("Attempts to request a random Google Street View failed too many times.  Check your internet connection."); 
-
-		}
-
-		attemptsLeft = attemptsLeft - 1; 
-
-		const { featureCollection } = this.locationData;  
-		
-		return getRandomPanoramaLocation(featureCollection) 
-
-			.catch(() => {
-
-				window.console.log(`Failure to request nearest panorama.  ${attemptsLeft} more attempts left.`); 
-
-				return this.setRandomLocation(attemptsLeft); 
-
-			}) 						
-
-			.then(randomLocationDetails => {
-				
-				const { randomLatLng } = randomLocationDetails; 
-
-				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
-				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
-
-				return randomLocationDetails; 
-
-			}); 
 
 	}, 
 
