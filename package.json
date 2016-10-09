@@ -6,7 +6,7 @@
   "scripts": {
     "test": "find . -name test -type d ! -path './node_modules/*' -exec mocha {} --compilers js:babel-core/register --recursive ';'",
     "build": "npm run lint && npm test && npm run pack",
-    "pack": "webpack",
+    "pack": "NODE_ENV=production webpack",
     "lint": "eslint src/**/* build/",
     "postlint": "echo 'Linting complete with no errors.'",
     "start-bs": "browser-sync start --no-open --server --index './build/index.html' --files './dist/*.js, ./build/*.html, ./build/*.js'",
