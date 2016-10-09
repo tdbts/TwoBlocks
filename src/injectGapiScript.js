@@ -6,7 +6,7 @@ const injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
 
 		const script = document.createElement("script");
 		
-		let source = "https://maps.googleapis.com/maps/api/js?libraries=geometry"; 
+		let source = `https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_STREET_VIEW_KEY || ''}libraries=geometry`; 
 		
 		script.type = "text/javascript";
 		

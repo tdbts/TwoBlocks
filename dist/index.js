@@ -12176,9 +12176,9 @@
 
 /***/ },
 /* 335 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -12191,13 +12191,13 @@
 
 			var script = document.createElement("script");
 
-			var source = "https://maps.googleapis.com/maps/api/js?libraries=geometry";
+			var source = 'https://maps.googleapis.com/maps/api/js?key=' + (process.env.GOOGLE_STREET_VIEW_KEY || '') + 'libraries=geometry';
 
 			script.type = "text/javascript";
 
 			if (MAPS_API_KEY) {
 
-				source += "&key=" + MAPS_API_KEY;
+				source += '&key=' + MAPS_API_KEY;
 			}
 
 			script.src = source;
@@ -12208,6 +12208,7 @@
 	};
 
 	exports.default = injectGapiScript;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(295)))
 
 /***/ },
 /* 336 */
