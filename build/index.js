@@ -7,7 +7,7 @@ import { poll } from '../src/utils/utils';
 import TwoBlocks from '../src/components/TwoBlocks'; 
 import { render } from 'react-dom'; 
 
-injectGapiScript() 
+injectGapiScript(process.env.GOOGLE_STREET_VIEW_KEY) 
 
 	/*----------  Poll for 'geometry' library in google.maps object  ----------*/
 
