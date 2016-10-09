@@ -56,7 +56,7 @@
 
 	var app = (0, _express2.default)();
 
-	var SERVER_PORT_NUMBER = 8086;
+	var SERVER_PORT_NUMBER = process.env.PORT || 8086;
 
 	app.use(_express2.default.static(process.cwd() + '/dist'));
 	app.use(_express2.default.static(process.cwd() + '/build'));

@@ -3,7 +3,7 @@ import { join } from 'path';
 
 const app = express(); 
 
-const SERVER_PORT_NUMBER = 8086; 
+const SERVER_PORT_NUMBER = process.env.PORT || 8086; 
 
 app.use(express.static(process.cwd() + '/dist'));
 app.use(express.static(process.cwd() + '/build'));
