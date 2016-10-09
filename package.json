@@ -10,8 +10,8 @@
     "lint": "eslint src/**/* build/",
     "postlint": "echo 'Linting complete with no errors.'",
     "start-bs": "browser-sync start --no-open --server --index './build/index.html' --files './dist/*.js, ./build/*.html, ./build/*.js'",
-    "start": "node dist/server.js",
-    "start-tunnel": "npm start --tunnel",
+    "start": "nodemon --watch dist dist/server.js",
+    "start-tunnel": "npm run start-bs --tunnel",
     "watch": "watch 'npm run lint && npm run pack' ./src/ ./build/"
   },
   "repository": {
@@ -61,6 +61,7 @@
     "bootstrap": "^3.3.7",
     "connect": "^3.5.0",
     "express": "^4.14.0",
+    "nodemon": "^1.11.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
