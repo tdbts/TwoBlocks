@@ -68,6 +68,7 @@
 
 	/* global document, google, window */
 
+	window.console.log("process.env.GOOGLE_STREET_VIEW_KEY:", process.env.GOOGLE_STREET_VIEW_KEY);
 	(0, _injectGapiScript2.default)(process.env.GOOGLE_STREET_VIEW_KEY)
 
 	/*----------  Poll for 'geometry' library in google.maps object  ----------*/

@@ -6,7 +6,7 @@ import injectGapiScript from '../src/injectGapiScript';
 import { poll } from '../src/utils/utils'; 
 import TwoBlocks from '../src/components/TwoBlocks'; 
 import { render } from 'react-dom'; 
-
+window.console.log("process.env.GOOGLE_STREET_VIEW_KEY:", process.env.GOOGLE_STREET_VIEW_KEY); 
 injectGapiScript(process.env.GOOGLE_STREET_VIEW_KEY) 
 
 	/*----------  Poll for 'geometry' library in google.maps object  ----------*/
