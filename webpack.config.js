@@ -1,6 +1,22 @@
-var path = require('path'), 
+var fs = require('fs'), 
+	path = require('path'), 
     webpack = require('webpack');
  
+// Need to add dependencies from 'node_modules' directory 
+// to 'externals' array so that Webpack can be used for 
+// server-side Node.js code as well. 
+var nodeModules = {}; 
+ 
+fs.readdirSync('node_modules')
+	
+	.filter(function (x) {
+		return ['.bin'].indexOf(x) === -1; 
+	})
+	
+	.forEach(function (mod) {
+		nodeModules[mod] = 'commonjs ' + mod; 
+	}); 
+
 module.exports = [
 
 	/*----------  Client (DOM)  ----------*/
@@ -51,5 +67,45 @@ module.exports = [
 	  			chunkFileName: "twoBlocks.worker.js"
 	  		}
 	  	}
-	}
+	}, 
+
+	/*----------  Server  ----------*/
+	
+	{
+		entry: {
+			server: './src/server/server.js'
+		}, 
+		output: {
+			path: path.join(__dirname, 'dist'), 
+			filename: '[name].js'
+		}, 
+		target: 'node',
+		externals: nodeModules,  
+		module: {
+				preloaders: [
+					{
+						test: /\.jsx?$/, 
+						loader: 'eslint', 
+						include: path.join(__dirname, 'src'), 
+					}
+				], 
+				loaders: [
+					{
+						test: /\.jsx?$/,
+						loader: 'babel-loader',
+						exclude: /node_modules/,
+						query: {
+							plugins: [
+								'syntax-object-rest-spread',
+								'transform-es2015-destructuring',
+								'transform-object-assign',
+								'transform-object-rest-spread'
+							], 
+							presets: ['es2015', 'react']
+		        		}
+		      		}
+		    	]
+		 },		
+	} 
+
 ];
