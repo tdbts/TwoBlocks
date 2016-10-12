@@ -17,25 +17,6 @@ fs.readdirSync('node_modules')
 		nodeModules[mod] = 'commonjs ' + mod; 
 	}); 
 
-var PRODUCTION = ('production' === process.env.NODE_ENV); 
-
-var plugins = [
-	
-	PRODUCTION ? new webpack.DefinePlugin({
-	  "process.env": { 
-	     NODE_ENV: JSON.stringify("production") 
-	   }
-	}) : '', 
-
-	PRODUCTION ? new webpack.optimize.UglifyJsPlugin({
-		compress: { 
-			screw_ie8: true, 
-			warnings: false 
-		}
-	}) : '', 
-
-]; 
-
 module.exports = [
 
 	/*----------  Client (DOM)  ----------*/
@@ -47,9 +28,8 @@ module.exports = [
 		devtool: 'source-map', 
 		output: { 
 			path: path.join(__dirname, 'dist'), 
-			filename: PRODUCTION ? '[name].min.js' : '[name].js' 
-		},
-		plugins: plugins, 
+			filename: '[name].js' 
+		}, 
 		resolve: {
 			extensions: ['', '.js', '.jsx']
 		},

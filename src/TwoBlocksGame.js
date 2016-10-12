@@ -8,6 +8,8 @@ import removeStreetNameAnnotations from './removeStreetNameAnnotations';
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
 import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
+import store from './store'; 
+import actions from './actions/actions'; 
 
 let geoJSONLoaded = false; 
 
@@ -24,10 +26,8 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 	this.chooseLocationMap = null; 
 	this.chooseLocationMarker = null; 
 	this.currentTurn = null; 
-	this.gameStage = null; 
 	this.gameHistory = null; 
 	this.locationData = null; 
-	this.mapLatLng = null; 
 	this.panorama = null; 
 	this.spinner = null; 
 
@@ -51,9 +51,14 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				
 				.then(() => {
 					
-					this.gameStage = 'gameplay'; 
+					const stage = 'gameplay';
+					
+					store.dispatch({
+						stage,
+						type: actions.SET_GAME_STAGE 
+					}); 
 
-					this.emit(events.GAME_STAGE, this.gameStage); 
+					this.emit(events.GAME_STAGE, stage); 
 
 				}); 
 		
@@ -114,11 +119,16 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(events.GAME_OVER, () => {
 		
+			const stage = 'postgame'; 
+
 			this.gameIsOver = true; 
 
-			this.gameStage = 'postgame'; 	
+			store.dispatch({
+				stage, 
+				type: actions.SET_GAME_STAGE
+			})	
 
-			this.emit(events.GAME_STAGE, this.gameStage); 
+			this.emit(events.GAME_STAGE, stage); 
 		
 		}); 
 
@@ -169,11 +179,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	createGameComponents() {
 
+		const { mapLatLng } = store.getState(); 
+
 		const gameComponents = createGameComponents({
+			mapLatLng, 
 			gameInstance: this, 
 			locationData: this.locationData, 
 			mapCanvas: this.mapCanvas, 
-			mapLatLng: this.mapLatLng, 
 			mapMarkerVisible: false, 
 			panoramaCanvas: this.panoramaCanvas	
 		}); 
@@ -349,15 +361,18 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		const { lat, lng } = locationData.CENTER; 
 
-		const mapLatLng = new google.maps.LatLng(lat, lng); 
+		const latLng = new google.maps.LatLng(lat, lng); 
 
-		this.emit(events.VIEW_CHANGE, {
-			mapLatLng, 
+		store.dispatch({
+			latLng, 
+			type: actions.SET_MAP_LAT_LNG
+		}); 
+
+		this.emit(events.VIEW_CHANGE, { 
 			view: 'map' 
 		}); 
 
 		this.locationData = locationData; 
-		this.mapLatLng = mapLatLng;
 
 		this.createGameComponents();  
 

@@ -11,6 +11,8 @@ import createPromiseTimeout from '../createPromiseTimeout';
 import Countdown from '../Countdown'; 
 import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { debounce, isOneOf, isType } from '../utils/utils'; 
+import store from '../store'; 
+// import actions from '../actions/actions'; 
 
 class TwoBlocks extends React.Component {
 
@@ -27,12 +29,10 @@ class TwoBlocks extends React.Component {
 			chooseLocationMap 		: null, 
 			chooseLocationMarker 	: null, 
 			choosingLocation 		: false, 
-			gameInstance 			: null, 
-			gameStage 				: null, 
+			gameInstance 			: null,  
 			hoveredBorough 			: null, 
 			locationData 			: null, 
 			mapCanvas 				: null, 
-			mapLatLng 				: null,
 			mapMarkerVisible 		: false,
 			mapType 				: 'city-level',   
 			panorama 				: null, 
@@ -43,7 +43,7 @@ class TwoBlocks extends React.Component {
 			selectedBorough 		: null, 
 			showLocationMarker 		: null, 
 			spinner 				: null, 
-			view 					: 'map' 
+			view 					: 'map'
 		}; 
 
 		/*----------  Save reference to original setState() method  ----------*/
@@ -65,7 +65,7 @@ class TwoBlocks extends React.Component {
 	}
 
 	componentDidMount() {
-
+		window.console.log("this.context:", this.context); 
 		this.addDOMEventListeners(); 
 
 	}
@@ -145,11 +145,12 @@ class TwoBlocks extends React.Component {
 
 	addGameEventListeners(twoBlocks) {
 
-		twoBlocks.on(events.GAME_STAGE, gameStage => this.setState({ gameStage })); 
+		// twoBlocks.on(events.GAME_STAGE, gameStage => this.setState({ gameStage })); 
+		// twoBlocks.on(events.GAME_STAGE, stage => this.onGameStage(stage)); 
 
 		twoBlocks.on(events.HOST_LOCATION_DATA, locationData => this.setState({ locationData })); 
 
-		twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState)); 
+		twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState));
 
 		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.setState(gameComponents)); 
 
@@ -340,6 +341,15 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	// onGameStage(stage) {
+		
+	// 	store.dispatch({
+	// 		stage, 
+	// 		type: actions.SET_GAME_STAGE
+	// 	}); 		
+	
+	// }
+
 	onHoveredBorough(feature) {
 
 		const { hoveredBorough } = this.state; 
@@ -368,9 +378,11 @@ class TwoBlocks extends React.Component {
 
 		e.preventDefault();  // Prevent arrows from scrolling page 
 
-		if ('pregame' === gameStage) return; 
+		const { gameInstance, hoveredBorough, selectedBorough, view } = this.state;
 
-		const { gameInstance, gameStage, hoveredBorough, selectedBorough, view } = this.state;
+		const { gameStage } = store.getState(); 
+
+		if ('pregame' === gameStage) return; 
 
 		const { arrowKeyHoverMap, firstArrowKeyPressBoroughMap } = keyEventMaps; 
 
@@ -722,7 +734,7 @@ class TwoBlocks extends React.Component {
 			<div className={ this.props.gameTwoBlocksClass }>
 				<TwoBlocksView 
 					mapTwoBlocksClass={ this.props.mapTwoBlocksClass }
-					mapLatLng={ this.state.mapLatLng }
+					mapLatLng={ store.getState().mapLatLng }
 					mapMarker={ this.state.chooseLocationMarker }
 					mapMarkerVisible={ this.state.mapMarkerVisible }
 					mapType={ this.state.mapType }
@@ -748,7 +760,7 @@ class TwoBlocks extends React.Component {
 					twoBlocksClass={ this.props.submitterTwoBlocksClass }
 				/>
 				<TwoBlocksReplayButton 
-					hidden={ 'postgame' !== this.state.gameStage }
+					hidden={ 'postgame' !== store.getState().gameStage }
 					restart={ this.restart.bind(this) }
 					twoBlocksClass={ this.props.replayButtonTwoBlocksClass }
 				/>
