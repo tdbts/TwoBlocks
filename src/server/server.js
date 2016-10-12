@@ -7,6 +7,7 @@ const SERVER_PORT_NUMBER = process.env.PORT || 8086;
 
 app.use(express.static(process.cwd() + '/dist'));
 app.use(express.static(process.cwd() + '/build'));
+app.use(express.static(process.cwd() + '/public'));
 
 app.get('/', (req, res) => {  // eslint-disable-line no-unused-vars 
 

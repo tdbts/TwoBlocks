@@ -60,6 +60,7 @@
 
 	app.use(_express2.default.static(process.cwd() + '/dist'));
 	app.use(_express2.default.static(process.cwd() + '/build'));
+	app.use(_express2.default.static(process.cwd() + '/public'));
 
 	app.get('/', function (req, res) {
 		// eslint-disable-line no-unused-vars

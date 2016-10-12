@@ -1,0 +1,64 @@
+html, body {
+	height: 100%; 
+	margin: 0; 
+	padding: 0;
+} 
+
+.full-dimensions {
+	height: 100%; 
+	width: 100%; 
+}
+
+.inherit-dimensions {
+	height: inherit; 
+	width: inherit; 
+}
+
+.hidden {
+	display: none; 
+}
+
+.offscreen {
+	left: -10000px;
+}
+
+/* Elements with '.visible' class are on top of the 
+	stack of maps / panoramas */
+.visible {
+	z-index: 100; 
+}
+
+.layered {
+	position: absolute; 
+}
+
+/* ------ Components ------ */
+
+.two-blocks {
+	width: 100%; 
+	height: calc(100% - 150px);
+	font-family: "Lucida Console", Monaco, monospace; 
+}
+
+.two-blocks-view {
+	box-shadow: 2px 2px 10px #000;
+}
+
+.two-blocks-view, 
+.two-blocks-prompt {
+	position: relative;
+}
+
+.two-blocks-submitter-borough-name {
+	color: #D9285B;
+}
+
+.two-blocks-button {
+	background: rgb(200, 200, 200);
+	background-image : -webkit-linear-gradient(rgb(224,224,224), rgb(160,160,160));
+	background-image : -o-linear-gradient(rgb(224,224,224), rgb(160,160,160));
+	background-image : linear-gradient(rgb(224,224,224), rgb(160,160,160));
+	border-radius: 10px;
+	height: 2em;
+	letter-spacing: 1px; 
+}

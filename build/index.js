@@ -9,6 +9,8 @@ import { poll } from '../src/utils/utils';
 import { render } from 'react-dom';
 // import { Provider } from 'react-redux'; 
 
+require('../public/css/two-blocks.css');  // Use Webpack loaders to add CSS 
+
 injectGapiScript("AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE") 
 
 	/*----------  Poll for 'geometry' library in google.maps object  ----------*/
