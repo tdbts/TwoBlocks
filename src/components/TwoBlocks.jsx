@@ -600,14 +600,14 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				if (gameInstance.shouldShowSpinner()) {
-
-					this.showSpinner();
-					
-				} else if (gameInstance.shouldUseDeviceOrientation()) {
+				if (gameInstance.shouldUseDeviceOrientation()) {
 
 					this.startStreetviewCountdown();  					
 
+				} else {
+
+					this.showSpinner(); 
+					
 				}
 
 			}); 		

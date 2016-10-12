@@ -24,8 +24,7 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 	this.totalRounds = 0; 
 
 	this.chooseLocationMap = null; 
-	this.chooseLocationMarker = null; 
-	this.currentTurn = null; 
+	this.chooseLocationMarker = null;  
 	this.gameHistory = null; 
 	this.locationData = null; 
 	this.panorama = null; 
@@ -89,7 +88,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			window.console.log("answerDetails:", answerDetails); 
  
-			this.currentTurn.selectedBorough = answerDetails.selectedBorough;  	
+			const { selectedBorough } = answerDetails; 
+
+			store.dispatch({
+				selectedBorough, 
+				type: actions.BOROUGH_SELECTED
+			}); 
 
 			createPromiseTimeout(ANSWER_EVALUATION_DELAY) 
 
@@ -102,8 +106,10 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			this.totalRounds += 1;
 
 			this.addTurnToGameHistory();
-		
-			this.currentTurn = null; 
+		 
+			store.dispatch({
+				type: actions.CLEAR_CURRENT_TURN
+			}); 
 
 			if (this.maximumRoundsPlayed()) {
 
@@ -173,7 +179,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-		this.gameHistory = this.gameHistory.concat(this.currentTurn);  
+		const { currentTurn } = store.getState(); 
+
+		this.gameHistory = this.gameHistory.concat(currentTurn);  
 
 	}, 
 
@@ -218,7 +226,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-		const { randomLatLng } = this.currentTurn; 
+		const { randomLatLng } = store.getState().currentTurn;  
 
 		this.emit(events.ANSWER_EVALUATED, { correctBorough, randomLatLng, selectedBorough }); 
 
@@ -340,10 +348,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			.then(locationData => {  // boroughName, randomLatLng
 
-				this.currentTurn = {
-					...locationData, 
-					selectedBorough: null 
-				}; 
+				store.dispatch({
+					type: actions.NEW_CURRENT_TURN, 
+					turn: {
+						...locationData, 
+						selectedBorough: null
+					}
+				}); 
 
 				return locationData; 
 
@@ -375,18 +386,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.locationData = locationData; 
 
 		this.createGameComponents();  
-
-	}, 
-
-	shouldShowSpinner() {
-
-		const conditions = [
-
-			window.screen.width >= MINIMUM_SPINNER_SCREEN_WIDTH
-
-		]; 
-
-		return conditions.every(condition => condition === true); 
 
 	}, 
 
