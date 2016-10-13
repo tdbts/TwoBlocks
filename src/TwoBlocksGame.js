@@ -8,7 +8,8 @@ import removeStreetNameAnnotations from './removeStreetNameAnnotations';
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
 import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
-import store from './store'; 
+import { createStore } from 'redux'; 
+import twoBlocks from './reducers/twoBlocks'; 
 import actions from './actions/actions'; 
 
 let geoJSONLoaded = false; 
@@ -16,6 +17,8 @@ let geoJSONLoaded = false;
 const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.validateArgs(mapCanvas, panoramaCanvas); 
+
+	this.store = createStore(twoBlocks);  // Create new store on every new game  
 
 	this.canEvaluateAnswer = true; 
 	this.gameIsOver = false; 
@@ -52,7 +55,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 					
 					const stage = 'gameplay';
 					
-					store.dispatch({
+					this.store.dispatch({
 						stage,
 						type: actions.SET_GAME_STAGE 
 					}); 
@@ -90,7 +93,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
  
 			const { selectedBorough } = answerDetails; 
 
-			store.dispatch({
+			this.store.dispatch({
 				selectedBorough, 
 				type: actions.BOROUGH_SELECTED
 			}); 
@@ -107,7 +110,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			this.addTurnToGameHistory();
 		 
-			store.dispatch({
+			this.store.dispatch({
 				type: actions.CLEAR_CURRENT_TURN
 			}); 
 
@@ -129,7 +132,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			this.gameIsOver = true; 
 
-			store.dispatch({
+			this.store.dispatch({
 				stage, 
 				type: actions.SET_GAME_STAGE
 			})	
@@ -179,7 +182,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-		const { currentTurn } = store.getState(); 
+		const { currentTurn } = this.store.getState(); 
 
 		this.gameHistory = this.gameHistory.concat(currentTurn);  
 
@@ -187,7 +190,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	createGameComponents() {
 
-		const { mapLatLng } = store.getState(); 
+		const { mapLatLng } = this.store.getState(); 
 
 		const gameComponents = createGameComponents({
 			mapLatLng, 
@@ -226,7 +229,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-		const { randomLatLng } = store.getState().currentTurn;  
+		const { randomLatLng } = this.store.getState().currentTurn;  
 
 		this.emit(events.ANSWER_EVALUATED, { correctBorough, randomLatLng, selectedBorough }); 
 
@@ -348,7 +351,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			.then(locationData => {  // boroughName, randomLatLng
 
-				store.dispatch({
+				this.store.dispatch({
 					type: actions.NEW_CURRENT_TURN, 
 					turn: {
 						...locationData, 
@@ -374,7 +377,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		const latLng = new google.maps.LatLng(lat, lng); 
 
-		store.dispatch({
+		this.store.dispatch({
 			latLng, 
 			type: actions.SET_MAP_LAT_LNG
 		}); 

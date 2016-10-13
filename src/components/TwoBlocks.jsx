@@ -11,7 +11,7 @@ import createPromiseTimeout from '../createPromiseTimeout';
 import Countdown from '../Countdown'; 
 import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { debounce, isOneOf, isType } from '../utils/utils'; 
-import store from '../store'; 
+// import store from '../store'; 
 // import actions from '../actions/actions'; 
 
 class TwoBlocks extends React.Component {
@@ -42,7 +42,8 @@ class TwoBlocks extends React.Component {
 			promptText 				: "Loading new TwoBlocks game...",
 			selectedBorough 		: null, 
 			showLocationMarker 		: null, 
-			spinner 				: null, 
+			spinner 				: null,
+			store 					: null,  
 			view 					: 'map'
 		}; 
 
@@ -244,7 +245,8 @@ class TwoBlocks extends React.Component {
 		const nextState = {
 			blockLevelMap, 
 			boroughLevelMap, 
-			gameInstance: twoBlocks
+			gameInstance: twoBlocks, 
+			store: twoBlocks.store
 		}; 
 
 		this.setState(nextState); 
@@ -378,7 +380,7 @@ class TwoBlocks extends React.Component {
 
 		e.preventDefault();  // Prevent arrows from scrolling page 
 
-		const { gameInstance, hoveredBorough, selectedBorough, view } = this.state;
+		const { gameInstance, hoveredBorough, selectedBorough, store, view } = this.state;
 
 		const { gameStage } = store.getState(); 
 
@@ -570,6 +572,7 @@ class TwoBlocks extends React.Component {
 		return this.setState({
 			gameInstance: null, 
 			selectedBorough: null, 
+			store: null, 
 			promptText: "Starting new game..."
 		})
 
@@ -607,7 +610,7 @@ class TwoBlocks extends React.Component {
 				} else {
 
 					this.showSpinner(); 
-					
+
 				}
 
 			}); 		
@@ -729,40 +732,44 @@ class TwoBlocks extends React.Component {
 	
 	render() {
 
+		const { props } = this;
+		const { state } = this;  
+		const { store } = state; 
+
 		return (
 	
-			<div className={ this.props.gameTwoBlocksClass }>
+			<div className={ props.gameTwoBlocksClass }>
 				<TwoBlocksView 
-					mapTwoBlocksClass={ this.props.mapTwoBlocksClass }
-					mapLatLng={ store.getState().mapLatLng }
-					mapMarker={ this.state.chooseLocationMarker }
-					mapMarkerVisible={ this.state.mapMarkerVisible }
-					mapType={ this.state.mapType }
+					mapTwoBlocksClass={ props.mapTwoBlocksClass }
+					mapLatLng={ store ? store.getState().mapLatLng : null }
+					mapMarker={ state.chooseLocationMarker }
+					mapMarkerVisible={ state.mapMarkerVisible }
+					mapType={ state.mapType }
 					onMapMounted={ this.onMapMounted.bind(this) }
 					onPanoramaMounted={ this.onPanoramaMounted.bind(this) } 
-					panorama={ this.state.panorama } 
-					panoramaLatLng={ this.state.panoramaLatLng } 
-					panoramaTwoBlocksClass={ this.props.panoramaTwoBlocksClass }
-					twoBlocksClass={ this.props.viewTwoBlocksClass }
-					view={ this.state.view } 
+					panorama={ state.panorama } 
+					panoramaLatLng={ state.panoramaLatLng } 
+					panoramaTwoBlocksClass={ props.panoramaTwoBlocksClass }
+					twoBlocksClass={ props.viewTwoBlocksClass }
+					view={ state.view } 
 				/>
 				<TwoBlocksPrompt
-					choosingLocation={ this.state.choosingLocation }
-					gameOver={ this.state.gameInstance && this.state.gameInstance.gameOver() }
-					hoveredBorough={ this.state.hoveredBorough } 
-					twoBlocksClass={ this.props.promptTwoBlocksClass } 
-					text={ this.state.promptText } 
+					choosingLocation={ state.choosingLocation }
+					gameOver={ state.gameInstance && state.gameInstance.gameOver() }
+					hoveredBorough={ state.hoveredBorough } 
+					twoBlocksClass={ props.promptTwoBlocksClass } 
+					text={ state.promptText } 
 				/>
 				<TwoBlocksSubmitter 
-					hoveredBorough={ this.state.hoveredBorough }
+					hoveredBorough={ state.hoveredBorough }
 					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
-					selectedBorough={ this.state.selectedBorough }
-					twoBlocksClass={ this.props.submitterTwoBlocksClass }
+					selectedBorough={ state.selectedBorough }
+					twoBlocksClass={ props.submitterTwoBlocksClass }
 				/>
 				<TwoBlocksReplayButton 
-					hidden={ 'postgame' !== store.getState().gameStage }
+					hidden={ !(store) || ('postgame' !== store.getState().gameStage) }
 					restart={ this.restart.bind(this) }
-					twoBlocksClass={ this.props.replayButtonTwoBlocksClass }
+					twoBlocksClass={ props.replayButtonTwoBlocksClass }
 				/>
 			</div>
 	
