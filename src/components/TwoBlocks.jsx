@@ -10,9 +10,8 @@ import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
 import Countdown from '../Countdown'; 
 import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
-import { debounce, isOneOf, isType } from '../utils/utils'; 
-// import store from '../store'; 
-// import actions from '../actions/actions'; 
+import { debounce, isOneOf, isType } from '../utils/utils';  
+import actions from '../actions/actions'; 
 
 class TwoBlocks extends React.Component {
 
@@ -43,8 +42,7 @@ class TwoBlocks extends React.Component {
 			selectedBorough 		: null, 
 			showLocationMarker 		: null, 
 			spinner 				: null,
-			store 					: null,  
-			view 					: 'map'
+			store 					: null
 		}; 
 
 		/*----------  Save reference to original setState() method  ----------*/
@@ -151,7 +149,7 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on(events.HOST_LOCATION_DATA, locationData => this.setState({ locationData })); 
 
-		twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState));
+		// twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState));
 
 		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.setState(gameComponents)); 
 
@@ -298,16 +296,20 @@ class TwoBlocks extends React.Component {
 
 	onChoosingLocation() {
 
-		const { chooseLocationMap } = this.state; 
+		const { chooseLocationMap, store } = this.state; 
 
 		chooseLocationMap.data.revertStyle(); 
+
+		store.dispatch({
+			type: actions.CHANGE_VIEW, 
+			viewState: 'map'
+		}); 
 
 		return this.setState({
 			choosingLocation: true, 
 			hoveredBorough: '', 
 			mapMarkerVisible: false,  // Set to true for location guessing  
-			promptText: "In which borough was the last panorama located?", 
-			view: 'map'
+			promptText: "In which borough was the last panorama located?"
 		})
 
 		.then(() => this.state.mapCanvas.blur()); 
@@ -380,7 +382,9 @@ class TwoBlocks extends React.Component {
 
 		e.preventDefault();  // Prevent arrows from scrolling page 
 
-		const { gameInstance, hoveredBorough, selectedBorough, store, view } = this.state;
+		const { gameInstance, hoveredBorough, selectedBorough, store } = this.state;
+
+		const { view } = store.getState(); 
 
 		const { gameStage } = store.getState(); 
 
@@ -584,9 +588,14 @@ class TwoBlocks extends React.Component {
 
 		if (prevState.panoramaLatLng === this.state.panoramaLatLng) return;  // Don't show random panorama if the panoramaLatLng has not changed 
 
-		const { gameInstance } = this.state; 
+		const { gameInstance, store } = this.state; 
 
 		const view = 'panorama'; 
+
+		store.dispatch({
+			viewState: view, 
+			type: actions.CHANGE_VIEW
+		}); 
 
 		gameInstance.emit(events.SHOWING_PANORAMA); 
 
@@ -594,7 +603,6 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.setState({
 			
-				view,
 				promptText: 'Look closely...which borough is this Street View from?' 
 			
 			}))
@@ -751,7 +759,7 @@ class TwoBlocks extends React.Component {
 					panoramaLatLng={ state.panoramaLatLng } 
 					panoramaTwoBlocksClass={ props.panoramaTwoBlocksClass }
 					twoBlocksClass={ props.viewTwoBlocksClass }
-					view={ state.view } 
+					view={ store ? store.getState().view : 'map' } 
 				/>
 				<TwoBlocksPrompt
 					choosingLocation={ state.choosingLocation }

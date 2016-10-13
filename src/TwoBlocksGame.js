@@ -382,8 +382,15 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			type: actions.SET_MAP_LAT_LNG
 		}); 
 
+		const view = 'map'; 
+
+		this.store.dispatch({
+			viewState: view, 
+			type: actions.CHANGE_VIEW
+		})
+
 		this.emit(events.VIEW_CHANGE, { 
-			view: 'map' 
+			view 
 		}); 
 
 		this.locationData = locationData; 
