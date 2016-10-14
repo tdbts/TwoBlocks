@@ -67,8 +67,12 @@ class TwoBlocks extends React.Component {
 
 	componentWillMount() {
 
+		const store = createStore(twoBlocks); 
+
+		window.console.log("store:", store); 
+
 		this.setState({
-			store: createStore(twoBlocks)
+			store
 		}); 
 
 	}
@@ -226,6 +230,8 @@ class TwoBlocks extends React.Component {
 		}); 
 
 		const twoBlocks = new TwoBlocksGame(mapCanvas, panoramaCanvas, this.state.store); 
+
+		window.console.log("twoBlocks:", twoBlocks); 
 
 		/*----------  Create block-level map  ----------*/
 		
@@ -784,7 +790,7 @@ class TwoBlocks extends React.Component {
 					twoBlocksClass={ props.submitterTwoBlocksClass }
 				/>
 				<TwoBlocksReplayButton 
-					hidden={ !(store) || ('postgame' !== store.getState().gameStage) }
+					hidden={ !(store) || !(store.getState().gameOver) }
 					restart={ this.restart.bind(this) }
 					twoBlocksClass={ props.replayButtonTwoBlocksClass }
 				/>

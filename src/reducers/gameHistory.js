@@ -1,6 +1,8 @@
 import actions from '../actions/actions'; 
 
-const gameHistory = function gameHistory(state = [], action) {
+const DEFAULT_STATE = []; 
+
+const gameHistory = function gameHistory(state = DEFAULT_STATE, action) {
 
 	let nextState = state; 
 
@@ -9,6 +11,10 @@ const gameHistory = function gameHistory(state = [], action) {
 	if (actions.SAVE_TURN === type) {
 
 		nextState = nextState.concat(turn); 
+
+	} else if (actions.RESTART_GAME === type) {
+
+		nextState = DEFAULT_STATE; 
 
 	}
 

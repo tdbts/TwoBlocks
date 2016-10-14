@@ -113,6 +113,10 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			if (this.maximumRoundsPlayed()) {
 
+				this.store.dispatch({
+					type: actions.GAME_OVER
+				}); 
+
 				this.emit(events.GAME_OVER); 
 
 			} else {

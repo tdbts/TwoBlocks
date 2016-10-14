@@ -1,7 +1,9 @@
 import actions from '../actions/actions'; 
 import { isType } from '../utils/utils'; 
 
-const currentTurn = function currentTurn(state = null, action) {
+const DEFAULT_STATE = null; 
+
+const currentTurn = function currentTurn(state = DEFAULT_STATE, action) {
 
 	let nextState = state; 
 
@@ -23,6 +25,10 @@ const currentTurn = function currentTurn(state = null, action) {
 
 		} 
 
+	} else if (actions.RESTART_GAME === type) {
+
+		nextState = DEFAULT_STATE; 
+		
 	}
 
 	return nextState; 
