@@ -11,6 +11,8 @@ import createPromiseTimeout from '../createPromiseTimeout';
 import Countdown from '../Countdown'; 
 import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { debounce, isOneOf, isType } from '../utils/utils';  
+import { createStore } from 'redux'; 
+import twoBlocks from '../reducers/twoBlocks';
 import actions from '../actions/actions'; 
 
 class TwoBlocks extends React.Component {
@@ -63,8 +65,16 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	componentWillMount() {
+
+		this.setState({
+			store: createStore(twoBlocks)
+		}); 
+
+	}
+
 	componentDidMount() {
-		window.console.log("this.context:", this.context); 
+
 		this.addDOMEventListeners(); 
 
 	}
@@ -215,7 +225,7 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
-		const twoBlocks = new TwoBlocksGame(mapCanvas, panoramaCanvas); 
+		const twoBlocks = new TwoBlocksGame(mapCanvas, panoramaCanvas, this.state.store); 
 
 		/*----------  Create block-level map  ----------*/
 		
@@ -243,11 +253,10 @@ class TwoBlocks extends React.Component {
 		const nextState = {
 			blockLevelMap, 
 			boroughLevelMap, 
-			gameInstance: twoBlocks, 
-			store: twoBlocks.store
+			gameInstance: twoBlocks
 		}; 
 
-		this.setState(nextState); 
+		this.setState(nextState);
 
 	}
 
@@ -576,7 +585,7 @@ class TwoBlocks extends React.Component {
 		return this.setState({
 			gameInstance: null, 
 			selectedBorough: null, 
-			store: null, 
+			store: createStore(twoBlocks), 
 			promptText: "Starting new game..."
 		})
 

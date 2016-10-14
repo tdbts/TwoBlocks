@@ -7,18 +7,16 @@ import getRandomPanoramaLocation from './getRandomPanoramaLocation';
 import removeStreetNameAnnotations from './removeStreetNameAnnotations'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';  
-import { createStore } from 'redux'; 
-import twoBlocks from './reducers/twoBlocks'; 
+import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';   
 import actions from './actions/actions'; 
 
 let geoJSONLoaded = false; 
 
-const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
+const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas, store) {
 
 	this.validateArgs(mapCanvas, panoramaCanvas); 
 
-	this.store = createStore(twoBlocks);  // Create new store on every new game  
+	this.store = store;   
 
 	this.canEvaluateAnswer = true; 
 	this.gameIsOver = false; 
@@ -28,7 +26,6 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.chooseLocationMap = null; 
 	this.chooseLocationMarker = null;  
-	// this.gameHistory = null; 
 	this.locationData = null; 
 	this.panorama = null; 
 	this.spinner = null; 
@@ -176,15 +173,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	addTurnToGameHistory() {
 
-		// if (!(this.gameHistory)) {
-
-		// 	this.gameHistory = []; 
-
-		// }
-
 		const { currentTurn } = this.store.getState(); 
-
-		// this.gameHistory = this.gameHistory.concat(currentTurn);  
 
 		this.store.dispatch({
 			turn: currentTurn, 
