@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux'; 
-import currentTurn from './currentTurn'; 
+import currentTurn from './currentTurn';
+import gameHistory from './gameHistory';  
 import gameStage from './gameStage';  
 import mapLatLng from './mapLatLng'; 
 import view from './view'; 
 
 const twoBlocks = combineReducers({
-	currentTurn, 
+	currentTurn,
+	gameHistory,  
 	gameStage, 
 	mapLatLng, 
 	view

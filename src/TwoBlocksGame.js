@@ -28,7 +28,7 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas) {
 
 	this.chooseLocationMap = null; 
 	this.chooseLocationMarker = null;  
-	this.gameHistory = null; 
+	// this.gameHistory = null; 
 	this.locationData = null; 
 	this.panorama = null; 
 	this.spinner = null; 
@@ -176,15 +176,20 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	addTurnToGameHistory() {
 
-		if (!(this.gameHistory)) {
+		// if (!(this.gameHistory)) {
 
-			this.gameHistory = []; 
+		// 	this.gameHistory = []; 
 
-		}
+		// }
 
 		const { currentTurn } = this.store.getState(); 
 
-		this.gameHistory = this.gameHistory.concat(currentTurn);  
+		// this.gameHistory = this.gameHistory.concat(currentTurn);  
+
+		this.store.dispatch({
+			turn: currentTurn, 
+			type: actions.SAVE_TURN
+		}); 
 
 	}, 
 
@@ -284,7 +289,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	totalCorrectAnswers() {
 
-		return this.gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.boroughName).length; 
+		const { gameHistory } = this.store.getState(); 
+
+		return gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.boroughName).length; 
 
 	}, 
 
