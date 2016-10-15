@@ -273,38 +273,35 @@ class TwoBlocks extends React.Component {
 			lng: answerDetails.randomLatLng.lng()
 		}; 
 
-		const { boroughLevelMap, blockLevelMap } = this.state; 
+		const { boroughLevelMap, blockLevelMap, showLocationMarker } = this.state; 
 
-		const randomLocationMarkerOptions = {
-			animation: google.maps.Animation.BOUNCE, 
-			map: boroughLevelMap, 
-			position: new google.maps.LatLng(actualLocationLatLng), 
-			visible: true				
-		}; 
+		const showLocationMarkerPosition = new google.maps.LatLng(actualLocationLatLng); 
+
+		showLocationMarker.setVisible(true); 
+		showLocationMarker.setAnimation(google.maps.Animation.BOUNCE); 
+		showLocationMarker.setMap(boroughLevelMap); 
+		showLocationMarker.setPosition(showLocationMarkerPosition); 
 
 		return this.setState({
 
 			choosingLocation: false, 
-			mapType: 'borough-level', 
-			showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions) 
+			mapType: 'borough-level'
 
 		}) 
 
 		.then(() => createPromiseTimeout(ANSWER_EVALUATION_DELAY / 2))
  
 		.then(() => {
-			
-			this.state.showLocationMarker.setMap(null); 
 
-			randomLocationMarkerOptions.map = blockLevelMap; 
+			showLocationMarker.setMap(blockLevelMap);
+			showLocationMarker.setAnimation(google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
 
 		})
 
-		.then(() => this.setState({ 
-
-			mapType: 'block-level', 
-			showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
-
+		.then(() => this.setState( { 
+		
+			mapType: 'block-level' 
+		
 		})); 
 
 	}

@@ -12558,33 +12558,31 @@
 				var _state3 = this.state;
 				var boroughLevelMap = _state3.boroughLevelMap;
 				var blockLevelMap = _state3.blockLevelMap;
+				var showLocationMarker = _state3.showLocationMarker;
 	
 	
-				var randomLocationMarkerOptions = {
-					animation: google.maps.Animation.BOUNCE,
-					map: boroughLevelMap,
-					position: new google.maps.LatLng(actualLocationLatLng),
-					visible: true
-				};
+				var showLocationMarkerPosition = new google.maps.LatLng(actualLocationLatLng);
+	
+				showLocationMarker.setVisible(true);
+				showLocationMarker.setAnimation(google.maps.Animation.BOUNCE);
+				showLocationMarker.setMap(boroughLevelMap);
+				showLocationMarker.setPosition(showLocationMarkerPosition);
 	
 				return this.setState({
 	
 					choosingLocation: false,
-					mapType: 'borough-level',
-					showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
+					mapType: 'borough-level'
 	
 				}).then(function () {
 					return (0, _createPromiseTimeout2.default)(_constants.ANSWER_EVALUATION_DELAY / 2);
 				}).then(function () {
 	
-					_this5.state.showLocationMarker.setMap(null);
-	
-					randomLocationMarkerOptions.map = blockLevelMap;
+					showLocationMarker.setMap(blockLevelMap);
+					showLocationMarker.setAnimation(google.maps.Animation.BOUNCE); // Need to reset animation animation if map changes
 				}).then(function () {
 					return _this5.setState({
 	
-						mapType: 'block-level',
-						showLocationMarker: new google.maps.Marker(randomLocationMarkerOptions)
+						mapType: 'block-level'
 	
 					});
 				});
