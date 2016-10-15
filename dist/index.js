@@ -19195,8 +19195,10 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var DEFAULT_STATE = false;
+	
 	var gameOver = function gameOver() {
-		var state = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+		var state = arguments.length <= 0 || arguments[0] === undefined ? DEFAULT_STATE : arguments[0];
 		var action = arguments[1];
 	
 	
@@ -19208,6 +19210,9 @@
 		if (_actions2.default.GAME_OVER === type) {
 	
 			nextState = true;
+		} else if (_actions2.default.RESTART_GAME === type) {
+	
+			nextState = DEFAULT_STATE;
 		}
 	
 		return nextState;
