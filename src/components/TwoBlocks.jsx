@@ -34,6 +34,7 @@ class TwoBlocks extends React.Component {
 			hoveredBorough 			: null, 
 			locationData 			: null, 
 			mapCanvas 				: null, 
+			mapConfig 				: null, 
 			mapMarkerVisible 		: false,
 			mapType 				: 'city-level',   
 			panorama 				: null, 
@@ -251,6 +252,13 @@ class TwoBlocks extends React.Component {
 
 		const boroughLevelMap = new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 
 
+		/*----------  Create map config object  ----------*/
+		
+		// const mapConfig = {
+		// 	blockLevelMap: blockLevelMapOptions, 
+		// 	boroughLevelMap: boroughLevelMapOptions, 
+		// 	cityLevelMap: null
+		// }; 
 
 		this.addGameEventListeners(twoBlocks); 
 
@@ -259,6 +267,7 @@ class TwoBlocks extends React.Component {
 		const nextState = {
 			blockLevelMap, 
 			boroughLevelMap, 
+			// mapConfig, 
 			gameInstance: twoBlocks
 		}; 
 
@@ -769,6 +778,11 @@ class TwoBlocks extends React.Component {
 	
 			<div className={ props.gameTwoBlocksClass }>
 				<TwoBlocksView 
+					blockLevelMap={ state.blockLevelMap }
+					boroughLevelMap={ state.boroughLevelMap }
+					cityLevelMap={ state.chooseLocationMap }
+					mapConfig={ state.mapConfig }
+
 					mapTwoBlocksClass={ props.mapTwoBlocksClass }
 					mapLatLng={ store ? store.getState().mapLatLng : null }
 					mapMarker={ state.chooseLocationMarker }

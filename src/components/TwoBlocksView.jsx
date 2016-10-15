@@ -6,38 +6,32 @@ class TwoBlocksView extends React.Component {
 
 	getClassName() {
 
-		return [this.props.twoBlocksClass, "full-dimensions"].join(" "); 
+		return [
+		
+			this.props.twoBlocksClass, 
+			"full-dimensions"
+
+		].join(" "); 
 
 	}
 
 	render() {
 
+		const { blockLevelMap, boroughLevelMap, cityLevelMap, onMapMounted, mapConfig, mapTwoBlocksClass, mapType, view } = this.props;		
+
 		return (
 
 			<div className={ this.getClassName() }>
 				<TwoBlocksMap 
-					latLng={ this.props.mapLatLng } 
-					onMapMounted={ this.props.onMapMounted }
-					mapMarker={ this.props.mapMarker }
-					mapMarkerVisible={ this.props.mapMarkerVisible }
-					mapType={ 'city-level' }
-					twoBlocksClass={ this.props.mapTwoBlocksClass } 
-					visible={ ('map' === this.props.view) && ('city-level' === this.props.mapType) } 
-				/>
-				<TwoBlocksMap 
-					latLng={ this.props.mapLatLng } 
-					mapType={ 'borough-level' }
-					onMapMounted={ this.props.onMapMounted }
-					twoBlocksClass={ "two-blocks-borough-level-map" }
-					visible={ ('map' === this.props.view) && ('borough-level' === this.props.mapType) }
-				/>
-				<TwoBlocksMap 
-					latLng={ this.props.mapLatLng } 
-					mapType={ 'block-level' }
-					onMapMounted={ this.props.onMapMounted }
-					twoBlocksClass={ "two-blocks-block-level-map" }
-					visible={ ('map' === this.props.view) && ('block-level' === this.props.mapType) }
-				/>				
+					blockLevelMap={ blockLevelMap }
+					boroughLevelMap={ boroughLevelMap }
+					cityLevelMap={ cityLevelMap }
+					config={ mapConfig }
+					onMapMounted={ onMapMounted }
+					mapType={ mapType }
+					twoBlocksClass={ mapTwoBlocksClass }
+					view={ view }
+				/>			
 				<TwoBlocksPanorama 
 					latLng={ this.props.panoramaLatLng }
 					onPanoramaMounted={ this.props.onPanoramaMounted } 
@@ -55,7 +49,11 @@ class TwoBlocksView extends React.Component {
 
 TwoBlocksView.propTypes = {
 	
+	blockLevelMap 			: React.PropTypes.object, 
+	boroughLevelMap 		: React.PropTypes.object, 
+	cityLevelMap 			: React.PropTypes.object, 
 	mapCanvasClassName 		: React.PropTypes.string, 
+	mapConfig 				: React.PropTypes.object, 
 	mapLatLng 				: React.PropTypes.object, 
 	mapMarker 				: React.PropTypes.object, 
 	mapMarkerVisible 		: React.PropTypes.bool, 

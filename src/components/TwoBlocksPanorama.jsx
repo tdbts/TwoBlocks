@@ -41,7 +41,9 @@ TwoBlocksPanorama.propTypes = {
 	
 	latLng 				: React.PropTypes.object,
 	onPanoramaMounted 	: React.PropTypes.func.isRequired, 
-	panorama 			: React.PropTypes.object
+	panorama 			: React.PropTypes.object, 
+	twoBlocksClass 		: React.PropTypes.string.isRequired, 
+	visible 			: React.PropTypes.bool
 
 }; 
 

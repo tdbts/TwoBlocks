@@ -49,6 +49,10 @@ html, body {
 	position: relative;
 }
 
+.two-blocks-map {
+	position: absolute; 
+}
+
 .two-blocks-submitter-borough-name {
 	color: #D9285B;
 }

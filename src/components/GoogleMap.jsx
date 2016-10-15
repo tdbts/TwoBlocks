@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'; 
 
 const updateConfig = function updateConfig(mapInstance, config) {
@@ -34,8 +35,8 @@ GoogleMap.propTypes = {
 
 	className: React.PropTypes.string.isRequired, 
 	config: React.PropTypes.object, 
-	mapInstance: React.PropTypes.element, 
-	mapType: React.PropTypes.mapType, 
+	mapInstance: React.PropTypes.object, 
+	mapType: React.PropTypes.string, 
 	onRef: React.PropTypes.func.isRequired
 
 }; 
