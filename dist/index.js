@@ -12415,7 +12415,7 @@
 				// twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState));
 	
 				twoBlocks.once(_constants.events.GAME_COMPONENTS, function (gameComponents) {
-					return _this3.setState(gameComponents);
+					return _this3.onGameComponents(gameComponents);
 				});
 	
 				twoBlocks.on(_constants.events.NEXT_TURN, function () {
@@ -12622,6 +12622,14 @@
 				this.setState({
 					promptText: 'Correct!  The Street View shown was from ' + (0, _stylizeBoroughName2.default)(correctBoroughName) + '.'
 				});
+			}
+		}, {
+			key: 'onGameComponents',
+			value: function onGameComponents(gameComponents) {
+	
+				return this.setState(_extends({}, gameComponents, {
+					showLocationMarker: gameComponents.chooseLocationMarker
+				}));
 			}
 		}, {
 			key: 'onGameOver',
@@ -19247,11 +19255,15 @@
 		var stage = action.stage;
 	
 	
-		if (_actions2.default.SET_GAME_STAGE !== type) return nextState; // Wrong action
+		if (_actions2.default.SET_GAME_STAGE === type) {
 	
-		if (nextState === stage) return nextState; // No change 
+			if (nextState === stage) return nextState; // No change 
 	
-		nextState = stage; // Set new game stage
+			nextState = stage; // Set new game stage
+		} else if (_actions2.default.RESTART_GAME === type) {
+	
+				nextState = 'pregame';
+			}
 	
 		return nextState;
 	};
@@ -19311,8 +19323,10 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var DEFAULT_STATE = null;
+	
 	var mapLatLng = function mapLatLng() {
-		var state = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+		var state = arguments.length <= 0 || arguments[0] === undefined ? DEFAULT_STATE : arguments[0];
 		var action = arguments[1];
 	
 	
@@ -19322,11 +19336,15 @@
 		var latLng = action.latLng;
 	
 	
-		if (_actions2.default.SET_MAP_LAT_LNG !== type) return nextState; // Wrong action
+		if (_actions2.default.SET_MAP_LAT_LNG === type) {
 	
-		if (nextState === latLng) return nextState; // No change 
+			if (nextState === latLng) return nextState; // No change 
 	
-		nextState = latLng; // Set new game latLng
+			nextState = latLng; // Set new game latLng
+		} else if (_actions2.default.RESTART_GAME === type) {
+	
+				nextState = DEFAULT_STATE;
+			}
 	
 		return nextState;
 	};

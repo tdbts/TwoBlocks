@@ -14,8 +14,8 @@ const gameStage = function gameStage(state = 'pregame', action) {
 
 	} else if (actions.RESTART_GAME === type) {
 
-		gameStage = 'pregame'; 
-		
+		nextState = 'pregame'; 
+
 	}
 
 	return nextState; 

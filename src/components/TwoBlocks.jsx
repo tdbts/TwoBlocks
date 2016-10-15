@@ -165,7 +165,7 @@ class TwoBlocks extends React.Component {
 
 		// twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState));
 
-		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.setState(gameComponents)); 
+		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.onGameComponents(gameComponents)); 
 
 		twoBlocks.on(events.NEXT_TURN, () => this.onNextTurn()); 
 
@@ -337,6 +337,15 @@ class TwoBlocks extends React.Component {
 			promptText: `Correct!  The Street View shown was from ${stylizeBoroughName(correctBoroughName)}.`
 		}); 
 	
+	}
+
+	onGameComponents(gameComponents) {
+
+		return this.setState({
+			...gameComponents, 
+			showLocationMarker: gameComponents.chooseLocationMarker
+		}); 
+
 	}
 
 	onGameOver() {
