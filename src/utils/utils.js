@@ -1,5 +1,6 @@
 import applyToAllOwnProps from './applyToAllOwnProps';   
 import applyToOwnProp from './applyToOwnProp';  
+import capitalize from './capitalize'; 
 import clone from './clone';  
 import debounce from './debounce'; 
 import emptyFunction from './emptyFunction'; 
@@ -40,6 +41,7 @@ import walkArray from './walkArray';
 export {
 	applyToAllOwnProps, 
 	applyToOwnProp, 
+	capitalize, 
 	clone, 
 	debounce, 
 	emptyFunction, 

@@ -1,10 +1,10 @@
-const getViewLayerClassName = function getViewLayerClassName() {
+const getViewLayerClassName = function getViewLayerClassName(twoBlocksClass, visible) {
 
-	const visiblilityClass = this.props.visible ? 'visible' : 'offscreen'; 
+	const visiblilityClass = visible ? 'visible' : 'offscreen'; 
 
 	return [
 		
-			this.props.twoBlocksClass, 
+			twoBlocksClass, 
 			'inherit-dimensions', 
 			'layered', 
 			visiblilityClass

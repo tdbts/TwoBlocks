@@ -26,7 +26,7 @@ class TwoBlocksPanorama extends React.Component {
 		return (
 			
 			<div 
-				className={ getViewLayerClassName.call(this) } 
+				className={ getViewLayerClassName(this.props.twoBlocksClass, this.props.visible) } 
 				ref={ panoramaCanvas => (this._panoramaCanvas = panoramaCanvas) }
 			>
 			</div>
