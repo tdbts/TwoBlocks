@@ -4,16 +4,16 @@ const view = function view(state = 'map', action) {
 
 	let nextState = state; 
 
-	const { type, viewState } = action; 
+	const { type } = action; 
 
-	if (actions.CHANGE_VIEW === type) {
+	if (actions.SHOW_PANORAMA === type) {
 
-		if (viewState !== nextState) {
+		nextState = 'panorama'; 
 
-			nextState = viewState; 
+	} else if (actions.SHOW_MAP === type) {
 
-		}
-
+		nextState = 'map'; 
+		
 	}
 
 	return nextState; 

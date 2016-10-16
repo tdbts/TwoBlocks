@@ -337,8 +337,7 @@ class TwoBlocks extends React.Component {
 		chooseLocationMap.data.revertStyle(); 
 
 		store.dispatch({
-			type: actions.CHANGE_VIEW, 
-			viewState: 'map'
+			type: actions.SHOW_MAP
 		}); 
 
 		return this.setState({
@@ -679,9 +678,8 @@ class TwoBlocks extends React.Component {
 
 		const view = 'panorama'; 
 
-		store.dispatch({
-			viewState: view, 
-			type: actions.CHANGE_VIEW
+		store.dispatch({ 
+			type: actions.SHOW_PANORAMA
 		}); 
 
 		gameInstance.emit(events.SHOWING_PANORAMA); 

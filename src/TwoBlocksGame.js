@@ -253,18 +253,11 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		const view = 'map'; 
 
-		this.store.dispatch({
-			viewState: view, 
-			type: actions.CHANGE_VIEW
-		})
+		this.store.dispatch({ type: actions.SHOW_MAP })
 
-		this.emit(events.VIEW_CHANGE, { 
-			view 
-		}); 
+		this.emit(events.VIEW_CHANGE, { view }); 
 
 		this.locationData = locationData; 
-
-		// this.createGameComponents();  
 
 	}, 
 

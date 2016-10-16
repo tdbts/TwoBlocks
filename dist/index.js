@@ -12628,8 +12628,7 @@
 				chooseLocationMap.data.revertStyle();
 	
 				store.dispatch({
-					type: _actions2.default.CHANGE_VIEW,
-					viewState: 'map'
+					type: _actions2.default.SHOW_MAP
 				});
 	
 				return this.setState({
@@ -12988,8 +12987,7 @@
 				var view = 'panorama';
 	
 				store.dispatch({
-					viewState: view,
-					type: _actions2.default.CHANGE_VIEW
+					type: _actions2.default.SHOW_PANORAMA
 				});
 	
 				gameInstance.emit(_constants.events.SHOWING_PANORAMA);
@@ -13480,18 +13478,11 @@
 	
 			var view = 'map';
 	
-			this.store.dispatch({
-				viewState: view,
-				type: _actions2.default.CHANGE_VIEW
-			});
+			this.store.dispatch({ type: _actions2.default.SHOW_MAP });
 	
-			this.emit(_constants.events.VIEW_CHANGE, {
-				view: view
-			});
+			this.emit(_constants.events.VIEW_CHANGE, { view: view });
 	
 			this.locationData = locationData;
-	
-			// this.createGameComponents();
 		},
 		shouldUseDeviceOrientation: function shouldUseDeviceOrientation() {
 	
@@ -16828,7 +16819,6 @@
 		BOROUGH_SELECTED: 'BOROUGH_SELECTED',
 		CAN_EVALUATE_ANSWER: 'CAN_EVALUATE_ANSWER',
 		CANNOT_EVALUATE_ANSWER: 'CANNOT_EVAULATE_ANSWER',
-		CHANGE_VIEW: 'CHANGE_VIEW',
 		CLEAR_CURRENT_TURN: 'CLEAR_CURRENT_TURN',
 		GAME_OVER: 'GAME_OVER',
 		INCREMENT_TOTAL_ROUNDS: 'INCREMENT_TOTAL_ROUNDS',
@@ -16836,7 +16826,9 @@
 		RESTART_GAME: 'RESTART_GAME',
 		SAVE_TURN: 'SAVE_TURN',
 		SET_GAME_STAGE: 'SET_GAME_STAGE',
-		SET_LOAD_STATE: 'SET_LOAD_STATE'
+		SET_LOAD_STATE: 'SET_LOAD_STATE',
+		SHOW_MAP: 'SHOW_MAP',
+		SHOW_PANORAMA: 'SHOW_PANORAMA'
 	
 	};
 
@@ -19625,15 +19617,14 @@
 		var nextState = state;
 	
 		var type = action.type;
-		var viewState = action.viewState;
 	
 	
-		if (_actions2.default.CHANGE_VIEW === type) {
+		if (_actions2.default.SHOW_PANORAMA === type) {
 	
-			if (viewState !== nextState) {
+			nextState = 'panorama';
+		} else if (_actions2.default.SHOW_MAP === type) {
 	
-				nextState = viewState;
-			}
+			nextState = 'map';
 		}
 	
 		return nextState;
