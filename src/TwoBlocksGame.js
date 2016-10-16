@@ -185,10 +185,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	createGameComponents() {
 
-		const { mapLatLng } = this.store.getState(); 
-
 		const gameComponents = createGameComponents({
-			mapLatLng, 
 			gameInstance: this, 
 			locationData: this.locationData, 
 			mapCanvas: this.mapCanvas, 

@@ -13359,13 +13359,8 @@
 			});
 		},
 		createGameComponents: function createGameComponents() {
-			var _store$getState2 = this.store.getState();
-	
-			var mapLatLng = _store$getState2.mapLatLng;
-	
 	
 			var gameComponents = (0, _createGameComponents3.default)({
-				mapLatLng: mapLatLng,
 				gameInstance: this,
 				locationData: this.locationData,
 				mapCanvas: this.mapCanvas,
@@ -13381,9 +13376,9 @@
 			this.emit(_constants.events.GAME_COMPONENTS, gameComponents);
 		},
 		evaluateFinalAnswer: function evaluateFinalAnswer(correctBorough, selectedBorough) {
-			var _store$getState3 = this.store.getState();
+			var _store$getState2 = this.store.getState();
 	
-			var canEvaluateAnswer = _store$getState3.canEvaluateAnswer;
+			var canEvaluateAnswer = _store$getState2.canEvaluateAnswer;
 	
 	
 			if (!canEvaluateAnswer) return;
@@ -13445,9 +13440,9 @@
 			});
 		},
 		totalCorrectAnswers: function totalCorrectAnswers() {
-			var _store$getState4 = this.store.getState();
+			var _store$getState3 = this.store.getState();
 	
-			var gameHistory = _store$getState4.gameHistory;
+			var gameHistory = _store$getState3.gameHistory;
 	
 	
 			return gameHistory.filter(function (turnHistory) {
@@ -13492,9 +13487,9 @@
 			});
 		},
 		maximumRoundsPlayed: function maximumRoundsPlayed() {
-			var _store$getState5 = this.store.getState();
+			var _store$getState4 = this.store.getState();
 	
-			var totalRounds = _store$getState5.totalRounds;
+			var totalRounds = _store$getState4.totalRounds;
 	
 	
 			return totalRounds === _constants.DEFAULT_MAXIMUM_ROUNDS;
