@@ -13,7 +13,7 @@ const view = function view(state = 'map', action) {
 	} else if (actions.SHOW_MAP === type) {
 
 		nextState = 'map'; 
-		
+
 	}
 
 	return nextState; 

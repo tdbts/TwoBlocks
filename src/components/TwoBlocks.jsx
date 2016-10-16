@@ -678,21 +678,25 @@ class TwoBlocks extends React.Component {
 
 		const view = 'panorama'; 
 
-		store.dispatch({ 
-			type: actions.SHOW_PANORAMA
-		}); 
-
-		gameInstance.emit(events.SHOWING_PANORAMA); 
-
 		return createPromiseTimeout(PANORAMA_LOAD_DELAY) 
+
+			.then(() => {
+
+				store.dispatch({ 
+					type: actions.SHOW_PANORAMA
+				}); 
+
+				gameInstance.emit(events.SHOWING_PANORAMA); 
+
+			})
+
+			.then(() => gameInstance.emit(events.VIEW_CHANGE, { view }))
 
 			.then(() => this.setState({
 			
 				promptText: 'Look closely...which borough is this Street View from?' 
 			
 			}))
-
-			.then(() => gameInstance.emit(events.VIEW_CHANGE, { view }))
 
 			.then(() => {
 
@@ -828,7 +832,7 @@ class TwoBlocks extends React.Component {
 		const { props } = this;
 		const { state } = this;  
 		const { store } = state; 
-
+ 
 		return (
 	
 			<div className={ props.gameTwoBlocksClass }>

@@ -12986,20 +12986,21 @@
 	
 				var view = 'panorama';
 	
-				store.dispatch({
-					type: _actions2.default.SHOW_PANORAMA
-				});
-	
-				gameInstance.emit(_constants.events.SHOWING_PANORAMA);
-	
 				return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY).then(function () {
+	
+					store.dispatch({
+						type: _actions2.default.SHOW_PANORAMA
+					});
+	
+					gameInstance.emit(_constants.events.SHOWING_PANORAMA);
+				}).then(function () {
+					return gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
+				}).then(function () {
 					return _this9.setState({
 	
 						promptText: 'Look closely...which borough is this Street View from?'
 	
 					});
-				}).then(function () {
-					return gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
 				}).then(function () {
 	
 					if (gameInstance.shouldUseDeviceOrientation()) {
