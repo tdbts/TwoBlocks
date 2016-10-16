@@ -17,8 +17,7 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas, store) {
 	this.validateArgs(mapCanvas, panoramaCanvas); 
 
 	this.store = store;   
-
-	this.canEvaluateAnswer = true; 
+ 
 	this.gameIsOver = false; 
 	this.mapCanvas = mapCanvas; 
 	this.panoramaCanvas = panoramaCanvas; 
@@ -211,11 +210,15 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	evaluateFinalAnswer(correctBorough, selectedBorough) {
 
-		if (!(this.canEvaluateAnswer)) return; 
+		const { canEvaluateAnswer } = this.store.getState(); 
+
+		if (!(canEvaluateAnswer)) return; 
 
 		window.console.log("Evaluating final answer!"); 
 
-		this.canEvaluateAnswer = false;  // Don't allow answer evaluation until the next turn 
+		this.store.dispatch({
+			type: actions.CANNOT_EVALUATE_ANSWER  // Don't allow answer evaluation until the next turn
+		}); 
 
 		if (selectedBorough === correctBorough) {
 
@@ -339,7 +342,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		const { featureCollection } = this.locationData;  
 
-		this.canEvaluateAnswer = true; 
+		this.store.dispatch({
+			type: actions.CAN_EVALUATE_ANSWER
+		}); 
 
 		if (this.chooseLocationMarker) {
 

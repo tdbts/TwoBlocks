@@ -69,6 +69,7 @@
     "react-dom": "^15.1.0",
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
+    "redux-devtools-extension": "^1.0.0",
     "serve-static": "^1.11.1"
   }
 }
