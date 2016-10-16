@@ -400,7 +400,7 @@ class TwoBlocks extends React.Component {
 
 	onHostLocationData(locationData) {
 
-		const { gameInstance, mapCanvas, panoramaCanvas } = this.state; 
+		const { gameInstance, mapCanvas, panoramaCanvas, store } = this.state; 
 
 		const gameComponents = createGameComponents({
 			gameInstance, 
@@ -409,6 +409,12 @@ class TwoBlocks extends React.Component {
 			panoramaCanvas,	
 			mapMarkerVisible: false 
 		}); 		
+
+		const view = 'map'; 
+
+		store.dispatch({ type: actions.SHOW_MAP });
+
+		gameInstance.emit(events.VIEW_CHANGE, { view }); 		
 
 		return this.setState({ ...gameComponents, locationData })
 

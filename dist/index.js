@@ -12696,6 +12696,7 @@
 				var gameInstance = _state5.gameInstance;
 				var mapCanvas = _state5.mapCanvas;
 				var panoramaCanvas = _state5.panoramaCanvas;
+				var store = _state5.store;
 	
 	
 				var gameComponents = (0, _createGameComponents2.default)({
@@ -12705,6 +12706,12 @@
 					panoramaCanvas: panoramaCanvas,
 					mapMarkerVisible: false
 				});
+	
+				var view = 'map';
+	
+				store.dispatch({ type: _actions2.default.SHOW_MAP });
+	
+				gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
 	
 				return this.setState(_extends({}, gameComponents, { locationData: locationData })).then(function () {
 					return gameInstance.emit(_constants.events.GAME_COMPONENTS, gameComponents);
@@ -13476,12 +13483,6 @@
 			window.console.log("locationData:", locationData);
 	
 			this.emit(_constants.events.HOST_LOCATION_DATA, locationData);
-	
-			var view = 'map';
-	
-			this.store.dispatch({ type: _actions2.default.SHOW_MAP });
-	
-			this.emit(_constants.events.VIEW_CHANGE, { view: view });
 	
 			this.locationData = locationData;
 		},

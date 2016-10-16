@@ -251,12 +251,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.emit(events.HOST_LOCATION_DATA, locationData); 
 
-		const view = 'map'; 
-
-		this.store.dispatch({ type: actions.SHOW_MAP })
-
-		this.emit(events.VIEW_CHANGE, { view }); 
-
 		this.locationData = locationData; 
 
 	}, 
