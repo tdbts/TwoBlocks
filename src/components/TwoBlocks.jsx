@@ -428,6 +428,8 @@ class TwoBlocks extends React.Component {
 
 				this.addGameComponentEventListeners(); 
 
+				if (gameInstance.geoJSONLoaded()) return; 
+
 				// Each borough is a feature 
 				chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, featureCollection => {
 
@@ -664,7 +666,7 @@ class TwoBlocks extends React.Component {
 	}
 
 	restart() {
-
+		window.console.log("restart()"); 
 		return this.setState({
 			gameInstance: null, 
 			selectedBorough: null, 

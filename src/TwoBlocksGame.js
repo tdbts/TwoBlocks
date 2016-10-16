@@ -147,6 +147,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	
 	},
 
+	geoJSONLoaded() {
+
+		return geoJSONLoaded; 
+
+	}, 
+
 	getLocationData() {
 
 		return Promise.resolve(nycCoordinates)
@@ -275,6 +281,10 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.getLocationData(); 
 
 		this.addEventListeners(); 
+
+		this.store.dispatch({
+			type: actions.START_GAME
+		}); 
 
 	}, 
 

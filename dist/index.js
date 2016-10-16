@@ -12722,6 +12722,8 @@
 	
 					_this7.addGameComponentEventListeners();
 	
+					if (gameInstance.geoJSONLoaded()) return;
+	
 					// Each borough is a feature
 					chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, function (featureCollection) {
 	
@@ -12970,6 +12972,7 @@
 			value: function restart() {
 				var _this8 = this;
 	
+				window.console.log("restart()");
 				return this.setState({
 					gameInstance: null,
 					selectedBorough: null,
@@ -13260,7 +13263,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var geoJSONLoaded = false;
+	var _geoJSONLoaded = false;
 	
 	var TwoBlocksGame = function TwoBlocksGame(store) {
 	
@@ -13391,6 +13394,10 @@
 	
 			return this.store.getState().gameOver;
 		},
+		geoJSONLoaded: function geoJSONLoaded() {
+	
+			return _geoJSONLoaded;
+		},
 		getLocationData: function getLocationData() {
 			var _this2 = this;
 	
@@ -13472,7 +13479,7 @@
 			// Set 'geoJSONLoaded' flag to true so we don't produce
 			// the side effect of repeatedly loading the same GeoJSON
 			// over the map on every new game instance.  
-			geoJSONLoaded = true;
+			_geoJSONLoaded = true;
 	
 			this.locationData = locationData;
 	
@@ -13501,6 +13508,10 @@
 			this.getLocationData();
 	
 			this.addEventListeners();
+	
+			this.store.dispatch({
+				type: _actions2.default.START_GAME
+			});
 		},
 		startGamePlay: function startGamePlay() {
 	
@@ -16830,7 +16841,8 @@
 		SET_GAME_STAGE: 'SET_GAME_STAGE',
 		SET_LOAD_STATE: 'SET_LOAD_STATE',
 		SHOW_MAP: 'SHOW_MAP',
-		SHOW_PANORAMA: 'SHOW_PANORAMA'
+		SHOW_PANORAMA: 'SHOW_PANORAMA',
+		START_GAME: 'START_GAME'
 	
 	};
 
@@ -19468,6 +19480,9 @@
 		} else if (_actions2.default.RESTART_GAME === type) {
 	
 			nextState = DEFAULT_STATE;
+		} else if (_actions2.default.START_GAME) {
+	
+			nextState = false;
 		}
 	
 		return nextState;
