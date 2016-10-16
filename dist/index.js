@@ -12205,19 +12205,19 @@
 	
 	var _TwoBlocksGame2 = _interopRequireDefault(_TwoBlocksGame);
 	
-	var _TwoBlocksView = __webpack_require__(408);
+	var _TwoBlocksView = __webpack_require__(407);
 	
 	var _TwoBlocksView2 = _interopRequireDefault(_TwoBlocksView);
 	
-	var _TwoBlocksInterchange = __webpack_require__(413);
+	var _TwoBlocksInterchange = __webpack_require__(412);
 	
 	var _TwoBlocksInterchange2 = _interopRequireDefault(_TwoBlocksInterchange);
 	
-	var _stylizeBoroughName = __webpack_require__(415);
+	var _stylizeBoroughName = __webpack_require__(414);
 	
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 	
-	var _createGameComponents = __webpack_require__(418);
+	var _createGameComponents = __webpack_require__(417);
 	
 	var _createGameComponents2 = _interopRequireDefault(_createGameComponents);
 	
@@ -12225,9 +12225,13 @@
 	
 	var _createPromiseTimeout2 = _interopRequireDefault(_createPromiseTimeout);
 	
-	var _Countdown = __webpack_require__(423);
+	var _Countdown = __webpack_require__(422);
 	
 	var _Countdown2 = _interopRequireDefault(_Countdown);
+	
+	var _removeStreetNameAnnotations = __webpack_require__(423);
+	
+	var _removeStreetNameAnnotations2 = _interopRequireDefault(_removeStreetNameAnnotations);
 	
 	var _constants = __webpack_require__(340);
 	
@@ -12241,7 +12245,7 @@
 	
 	var _twoBlocks2 = _interopRequireDefault(_twoBlocks);
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -12391,7 +12395,11 @@
 			key: 'addDOMEventListeners',
 			value: function addDOMEventListeners() {
 	
+				/*----------  Resize map on window 'resize' events  ----------*/
+	
 				var onWindowResize = (0, _utils.debounce)(this.onWindowResize.bind(this), _constants.WINDOW_RESIZE_DEBOUNCE_TIMEOUT);
+	
+				/*----------  Handle key presses  ----------*/
 	
 				var onKeyPress = (0, _utils.debounce)(this.onKeypress.bind(this), _constants.KEY_PRESS_DEBOUNCE_TIMEOUT);
 	
@@ -12455,6 +12463,17 @@
 	
 				twoBlocks.on(_constants.events.RESTART_GAME, function () {
 					return _this3.restart();
+				});
+			}
+		}, {
+			key: 'addGameComponentEventListeners',
+			value: function addGameComponentEventListeners() {
+				var panorama = this.state.panorama;
+	
+				/*----------  Add listeners to panorama  ----------*/
+	
+				google.maps.event.addListener(panorama, 'pano_changed', function () {
+					return (0, _removeStreetNameAnnotations2.default)(panorama);
 				});
 			}
 		}, {
@@ -12694,8 +12713,10 @@
 					var GEO_JSON_SOURCE = _this7.state.locationData.GEO_JSON_SOURCE;
 					var chooseLocationMap = gameComponents.chooseLocationMap;
 	
-					// Each borough is a feature
 	
+					_this7.addGameComponentEventListeners();
+	
+					// Each borough is a feature
 					chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, function (featureCollection) {
 	
 						window.console.log("featureCollection:", featureCollection);
@@ -13221,17 +13242,13 @@
 	
 	var _getRandomPanoramaLocation3 = _interopRequireDefault(_getRandomPanoramaLocation2);
 	
-	var _removeStreetNameAnnotations = __webpack_require__(402);
+	var _events = __webpack_require__(402);
 	
-	var _removeStreetNameAnnotations2 = _interopRequireDefault(_removeStreetNameAnnotations);
-	
-	var _events = __webpack_require__(403);
-	
-	var _util = __webpack_require__(404);
+	var _util = __webpack_require__(403);
 	
 	var _constants = __webpack_require__(340);
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -13243,10 +13260,7 @@
 	
 		this.store = store;
 	
-		this.chooseLocationMap = null;
-		this.chooseLocationMarker = null;
 		this.locationData = null;
-		this.panorama = null;
 		this.spinner = null;
 	};
 	
@@ -13262,12 +13276,9 @@
 	
 			this.on(_constants.events.GAME_COMPONENTS, function (gameComponents) {
 	
-				for (var component in gameComponents) {
+				window.console.log("gameComponents:", gameComponents);
 	
-					_this[component] = gameComponents[component];
-				}
-	
-				_this.addEventListenersToGameComponents(gameComponents);
+				_this.spinner = gameComponents.spinner;
 			});
 	
 			this.on(_constants.events.GEO_JSON_LOADED, function (locationData) {
@@ -13338,18 +13349,6 @@
 				});
 	
 				_this.emit(_constants.events.GAME_STAGE, stage);
-			});
-		},
-		addEventListenersToGameComponents: function addEventListenersToGameComponents(gameComponents) {
-	
-			/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
-	
-			var panorama = gameComponents.panorama;
-	
-			/*----------  Add listeners to panorama  ----------*/
-	
-			google.maps.event.addListener(panorama, 'pano_changed', function () {
-				return (0, _removeStreetNameAnnotations2.default)(panorama);
 			});
 		},
 		addTurnToGameHistory: function addTurnToGameHistory() {
@@ -13437,46 +13436,6 @@
 				return turnHistory.selectedBorough === turnHistory.boroughName;
 			}).length;
 		},
-		loadCityGeoJSON: function loadCityGeoJSON() {
-			var _this3 = this;
-	
-			return new Promise(function (resolve) {
-	
-				if (geoJSONLoaded) {
-	
-					resolve();
-	
-					return;
-				}
-	
-				var chooseLocationMap = _this3.chooseLocationMap;
-	
-	
-				if (!chooseLocationMap) {
-	
-					throw new Error("The 'chooseLocationMap' has not been loaded.  Cannot load city's GeoJSON data.");
-				}
-	
-				/*----------  Load GeoJSON  ----------*/
-	
-				var GEO_JSON_SOURCE = _this3.locationData.GEO_JSON_SOURCE;
-	
-				// Each borough is a feature
-	
-				chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, function (featureCollection) {
-	
-					window.console.log("featureCollection:", featureCollection);
-	
-					_this3.locationData = _extends(_this3.locationData, { featureCollection: featureCollection });
-	
-					// this.emit(events.HOST_LOCATION_DATA, Object.assign({}, this.locationData));
-	
-					_this3.emit(_constants.events.GEO_JSON_LOADED, _extends({}, _this3.locationData));
-	
-					resolve();
-				});
-			});
-		},
 		maximumRoundsPlayed: function maximumRoundsPlayed() {
 			var _store$getState4 = this.store.getState();
 	
@@ -13486,7 +13445,7 @@
 			return totalRounds === _constants.DEFAULT_MAXIMUM_ROUNDS;
 		},
 		nextTurn: function nextTurn() {
-			var _this4 = this;
+			var _this3 = this;
 	
 			var featureCollection = this.locationData.featureCollection;
 	
@@ -13495,15 +13454,10 @@
 				type: _actions2.default.CAN_EVALUATE_ANSWER
 			});
 	
-			if (this.chooseLocationMarker) {
-	
-				this.chooseLocationMarker.setMap(null);
-			}
-	
 			return this.getRandomPanoramaLocation(featureCollection).then(function (locationData) {
 				// boroughName, randomLatLng
 	
-				_this4.store.dispatch({
+				_this3.store.dispatch({
 					type: _actions2.default.NEW_CURRENT_TURN,
 					turn: _extends({}, locationData, {
 						selectedBorough: null
@@ -13512,7 +13466,7 @@
 	
 				return locationData;
 			}).then(function (locationData) {
-				return _this4.emit(_constants.events.RANDOM_LOCATION, locationData);
+				return _this3.emit(_constants.events.RANDOM_LOCATION, locationData);
 			});
 		},
 		onGeoJSONLoaded: function onGeoJSONLoaded(locationData) {
@@ -15933,112 +15887,6 @@
 
 /***/ },
 /* 402 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _utils = __webpack_require__(359);
-	
-	var overriddenMethods = []; /* global window */
-	
-	var MAXIMUM_ANNOTATION_LENGTH = 2000;
-	
-	var POLL_INTERVAL = 50;
-	
-	var POLL_TIMEOUT = 3000;
-	
-	var getGoogleCallbacks = function getGoogleCallbacks() {
-	
-		var windowProps = Object.keys(window);
-	
-		var googCallbacks = windowProps.filter(function (prop) {
-			return prop.slice(0, 10) === "_callbacks";
-		});
-	
-		return googCallbacks;
-	};
-	
-	var overridingCallback = function overridingCallback(originalCallback, panorama) {
-	
-		return function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-	
-			// Recursively walk through the large array of metadata passed to the Google callback. 
-			// Some of the entities appear to be data images, so if the entity is a string with a
-			// short length, then check the panorama's 'shortDescription' property, which is the
-			// same as the label that appears on the map.  If the entity matches the
-			// 'shortDescription' value, then replace the entity with an empty string. 
-			(0, _utils.walkArray)(args, function (el, i, arr, path) {
-				// eslint-disable-line no-unused-vars
-	
-				if (!(0, _utils.isType)('string', el)) return;
-	
-				if (el.length > MAXIMUM_ANNOTATION_LENGTH) return;
-	
-				var _panorama$getLocation = panorama.getLocation();
-	
-				var shortDescription = _panorama$getLocation.shortDescription;
-	
-	
-				if (shortDescription.toLowerCase().indexOf(el.toLowerCase()) === -1) return;
-	
-				arr[i] = ""; // Erase label
-			});
-	
-			return originalCallback.apply(undefined, args);
-		};
-	};
-	
-	var overrideCallback = function overrideCallback(overriddenMethods, panorama) {
-	
-		var callbackOverridden = false;
-	
-		var googCallbacks = getGoogleCallbacks();
-	
-		if (googCallbacks.length === 0) return;
-	
-		/*----------  Override callbacks assigned to window._callbacks___<hash>.  ----------*/
-	
-		googCallbacks.forEach(function (callback) {
-	
-			if (overriddenMethods.indexOf(callback) > -1) return; // If method has already been overridden, exit
-	
-			overriddenMethods.push(callback);
-	
-			var originalCallback = window[callback];
-	
-			window[callback] = overridingCallback(originalCallback, panorama);
-	
-			callbackOverridden = true; // Returning true stops the polling
-		});
-	
-		return callbackOverridden;
-	};
-	
-	var removeStreetNameAnnotations = function removeStreetNameAnnotations(panorama) {
-	
-		(0, _utils.poll)(function () {
-			return overrideCallback(overriddenMethods, panorama);
-		}, POLL_INTERVAL, POLL_TIMEOUT)
-	
-		// Sometimes multiple 'pano_changed' events fire in succession, causing the code to find
-		// and replace a callback on the first event, but not the second, causing the poll's
-		// timeout to expire.  Catch and ignore the timeout expiration error in this case.
-		.catch(function (e) {
-			return e;
-		});
-	};
-	
-	exports.default = removeStreetNameAnnotations;
-
-/***/ },
-/* 403 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -16342,7 +16190,7 @@
 
 
 /***/ },
-/* 404 */
+/* 403 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -16870,7 +16718,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 	
-	exports.isBuffer = __webpack_require__(405);
+	exports.isBuffer = __webpack_require__(404);
 	
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -16914,7 +16762,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(406);
+	exports.inherits = __webpack_require__(405);
 	
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -16935,7 +16783,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(295)))
 
 /***/ },
-/* 405 */
+/* 404 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -16946,7 +16794,7 @@
 	}
 
 /***/ },
-/* 406 */
+/* 405 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -16975,7 +16823,7 @@
 
 
 /***/ },
-/* 407 */
+/* 406 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17001,7 +16849,7 @@
 	};
 
 /***/ },
-/* 408 */
+/* 407 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17016,11 +16864,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _TwoBlocksMap = __webpack_require__(409);
+	var _TwoBlocksMap = __webpack_require__(408);
 	
 	var _TwoBlocksMap2 = _interopRequireDefault(_TwoBlocksMap);
 	
-	var _TwoBlocksPanorama = __webpack_require__(412);
+	var _TwoBlocksPanorama = __webpack_require__(411);
 	
 	var _TwoBlocksPanorama2 = _interopRequireDefault(_TwoBlocksPanorama);
 	
@@ -17112,7 +16960,7 @@
 	exports.default = TwoBlocksView;
 
 /***/ },
-/* 409 */
+/* 408 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17127,11 +16975,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _GoogleMap = __webpack_require__(410);
+	var _GoogleMap = __webpack_require__(409);
 	
 	var _GoogleMap2 = _interopRequireDefault(_GoogleMap);
 	
-	var _getViewLayerClassName = __webpack_require__(411);
+	var _getViewLayerClassName = __webpack_require__(410);
 	
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 	
@@ -17226,7 +17074,7 @@
 	exports.default = TwoBlocksMap;
 
 /***/ },
-/* 410 */
+/* 409 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17284,7 +17132,7 @@
 	exports.default = GoogleMap;
 
 /***/ },
-/* 411 */
+/* 410 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17302,7 +17150,7 @@
 	exports.default = getViewLayerClassName;
 
 /***/ },
-/* 412 */
+/* 411 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17317,7 +17165,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _getViewLayerClassName = __webpack_require__(411);
+	var _getViewLayerClassName = __webpack_require__(410);
 	
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 	
@@ -17388,7 +17236,7 @@
 	exports.default = TwoBlocksPanorama;
 
 /***/ },
-/* 413 */
+/* 412 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17403,15 +17251,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _TwoBlocksPrompt = __webpack_require__(414);
+	var _TwoBlocksPrompt = __webpack_require__(413);
 	
 	var _TwoBlocksPrompt2 = _interopRequireDefault(_TwoBlocksPrompt);
 	
-	var _TwoBlocksSubmitter = __webpack_require__(416);
+	var _TwoBlocksSubmitter = __webpack_require__(415);
 	
 	var _TwoBlocksSubmitter2 = _interopRequireDefault(_TwoBlocksSubmitter);
 	
-	var _TwoBlocksReplayButton = __webpack_require__(417);
+	var _TwoBlocksReplayButton = __webpack_require__(416);
 	
 	var _TwoBlocksReplayButton2 = _interopRequireDefault(_TwoBlocksReplayButton);
 	
@@ -17500,7 +17348,7 @@
 	exports.default = TwoBlocksInterchange;
 
 /***/ },
-/* 414 */
+/* 413 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17513,7 +17361,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _stylizeBoroughName = __webpack_require__(415);
+	var _stylizeBoroughName = __webpack_require__(414);
 	
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 	
@@ -17580,7 +17428,7 @@
 	exports.default = TwoBlocksPrompt;
 
 /***/ },
-/* 415 */
+/* 414 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17598,7 +17446,7 @@
 	exports.default = stylizeBoroughName;
 
 /***/ },
-/* 416 */
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17611,7 +17459,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _stylizeBoroughName = __webpack_require__(415);
+	var _stylizeBoroughName = __webpack_require__(414);
 	
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 	
@@ -17696,7 +17544,7 @@
 	exports.default = TwoBlocksSubmitter;
 
 /***/ },
-/* 417 */
+/* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17759,7 +17607,7 @@
 	exports.default = TwoBlocksReplayButton;
 
 /***/ },
-/* 418 */
+/* 417 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17768,19 +17616,19 @@
 		value: true
 	});
 	
-	var _createPanorama = __webpack_require__(419);
+	var _createPanorama = __webpack_require__(418);
 	
 	var _createPanorama2 = _interopRequireDefault(_createPanorama);
 	
-	var _createSpinner = __webpack_require__(420);
+	var _createSpinner = __webpack_require__(419);
 	
 	var _createSpinner2 = _interopRequireDefault(_createSpinner);
 	
-	var _createWebGlManager = __webpack_require__(421);
+	var _createWebGlManager = __webpack_require__(420);
 	
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 	
-	var _createChooseLocationMap = __webpack_require__(422);
+	var _createChooseLocationMap = __webpack_require__(421);
 	
 	var _createChooseLocationMap2 = _interopRequireDefault(_createChooseLocationMap);
 	
@@ -17901,7 +17749,7 @@
 	exports.default = createGameComponents;
 
 /***/ },
-/* 419 */
+/* 418 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -17971,7 +17819,7 @@
 	exports.default = createPanorama;
 
 /***/ },
-/* 420 */
+/* 419 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17982,11 +17830,11 @@
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
 	
-	var _events = __webpack_require__(403);
+	var _events = __webpack_require__(402);
 	
 	var _utils = __webpack_require__(359);
 	
-	var _util = __webpack_require__(404);
+	var _util = __webpack_require__(403);
 	
 	/*=====================================
 	=            createSpinner()            =
@@ -18244,7 +18092,7 @@
 	exports.default = createSpinner;
 
 /***/ },
-/* 421 */
+/* 420 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18255,9 +18103,9 @@
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
 	
-	var _events = __webpack_require__(403);
+	var _events = __webpack_require__(402);
 	
-	var _util = __webpack_require__(404);
+	var _util = __webpack_require__(403);
 	
 	/*==========================================
 	=            createWebGlManager            =
@@ -18324,7 +18172,7 @@
 	exports.default = createWebGlManager;
 
 /***/ },
-/* 422 */
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -18353,7 +18201,7 @@
 	exports.default = createChooseLocationMap;
 
 /***/ },
-/* 423 */
+/* 422 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18364,9 +18212,9 @@
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _events = __webpack_require__(403);
+	var _events = __webpack_require__(402);
 	
-	var _util = __webpack_require__(404);
+	var _util = __webpack_require__(403);
 	
 	var _utils = __webpack_require__(359);
 	
@@ -18438,6 +18286,112 @@
 	});
 	
 	exports.default = Countdown;
+
+/***/ },
+/* 423 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _utils = __webpack_require__(359);
+	
+	var overriddenMethods = []; /* global window */
+	
+	var MAXIMUM_ANNOTATION_LENGTH = 2000;
+	
+	var POLL_INTERVAL = 50;
+	
+	var POLL_TIMEOUT = 3000;
+	
+	var getGoogleCallbacks = function getGoogleCallbacks() {
+	
+		var windowProps = Object.keys(window);
+	
+		var googCallbacks = windowProps.filter(function (prop) {
+			return prop.slice(0, 10) === "_callbacks";
+		});
+	
+		return googCallbacks;
+	};
+	
+	var overridingCallback = function overridingCallback(originalCallback, panorama) {
+	
+		return function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+	
+			// Recursively walk through the large array of metadata passed to the Google callback. 
+			// Some of the entities appear to be data images, so if the entity is a string with a
+			// short length, then check the panorama's 'shortDescription' property, which is the
+			// same as the label that appears on the map.  If the entity matches the
+			// 'shortDescription' value, then replace the entity with an empty string. 
+			(0, _utils.walkArray)(args, function (el, i, arr, path) {
+				// eslint-disable-line no-unused-vars
+	
+				if (!(0, _utils.isType)('string', el)) return;
+	
+				if (el.length > MAXIMUM_ANNOTATION_LENGTH) return;
+	
+				var _panorama$getLocation = panorama.getLocation();
+	
+				var shortDescription = _panorama$getLocation.shortDescription;
+	
+	
+				if (shortDescription.toLowerCase().indexOf(el.toLowerCase()) === -1) return;
+	
+				arr[i] = ""; // Erase label
+			});
+	
+			return originalCallback.apply(undefined, args);
+		};
+	};
+	
+	var overrideCallback = function overrideCallback(overriddenMethods, panorama) {
+	
+		var callbackOverridden = false;
+	
+		var googCallbacks = getGoogleCallbacks();
+	
+		if (googCallbacks.length === 0) return;
+	
+		/*----------  Override callbacks assigned to window._callbacks___<hash>.  ----------*/
+	
+		googCallbacks.forEach(function (callback) {
+	
+			if (overriddenMethods.indexOf(callback) > -1) return; // If method has already been overridden, exit
+	
+			overriddenMethods.push(callback);
+	
+			var originalCallback = window[callback];
+	
+			window[callback] = overridingCallback(originalCallback, panorama);
+	
+			callbackOverridden = true; // Returning true stops the polling
+		});
+	
+		return callbackOverridden;
+	};
+	
+	var removeStreetNameAnnotations = function removeStreetNameAnnotations(panorama) {
+	
+		(0, _utils.poll)(function () {
+			return overrideCallback(overriddenMethods, panorama);
+		}, POLL_INTERVAL, POLL_TIMEOUT)
+	
+		// Sometimes multiple 'pano_changed' events fire in succession, causing the code to find
+		// and replace a callback on the first event, but not the second, causing the poll's
+		// timeout to expire.  Catch and ignore the timeout expiration error in this case.
+		.catch(function (e) {
+			return e;
+		});
+	};
+	
+	exports.default = removeStreetNameAnnotations;
 
 /***/ },
 /* 424 */
@@ -19367,7 +19321,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19408,7 +19362,7 @@
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19462,7 +19416,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19504,7 +19458,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19545,7 +19499,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19587,7 +19541,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19624,7 +19578,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19665,7 +19619,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(407);
+	var _actions = __webpack_require__(406);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	

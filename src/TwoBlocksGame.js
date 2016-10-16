@@ -2,8 +2,7 @@
 
 import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
 import createPromiseTimeout from './createPromiseTimeout';  
-import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
-import removeStreetNameAnnotations from './removeStreetNameAnnotations'; 
+import getRandomPanoramaLocation from './getRandomPanoramaLocation';  
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
 import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH } from './constants/constants';   
@@ -14,11 +13,8 @@ let geoJSONLoaded = false;
 const TwoBlocksGame = function TwoBlocksGame(store) {
 
 	this.store = store;   
-
-	this.chooseLocationMap = null; 
-	this.chooseLocationMarker = null;  
+  
 	this.locationData = null; 
-	this.panorama = null; 
 	this.spinner = null; 
 
 }; 
@@ -35,14 +31,10 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(events.GAME_COMPONENTS, gameComponents => {
 		
-			for (const component in gameComponents) {
+			window.console.log("gameComponents:", gameComponents); 
 
-				this[component] = gameComponents[component]; 
-
-			}
-
-			this.addEventListenersToGameComponents(gameComponents);
-		
+			this.spinner = gameComponents.spinner; 
+					
 		}); 
 
 		this.on(events.GEO_JSON_LOADED, locationData => this.onGeoJSONLoaded(locationData)); 
@@ -118,18 +110,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		}); 
 
 	},
-
-	addEventListenersToGameComponents(gameComponents) {
-
-		/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
-
-		const { panorama } = gameComponents; 
-
-		/*----------  Add listeners to panorama  ----------*/
-		
-		google.maps.event.addListener(panorama, 'pano_changed', () => removeStreetNameAnnotations(panorama)); 
-
-	}, 
 
 	addTurnToGameHistory() {
 
@@ -225,49 +205,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	loadCityGeoJSON() {
-
-		return new Promise(resolve => {
-
-			if (geoJSONLoaded) {
-
-				resolve(); 
-
-				return; 
-
-			} 
-
-			const { chooseLocationMap } = this; 
-
-			if (!(chooseLocationMap)) {
-
-				throw new Error("The 'chooseLocationMap' has not been loaded.  Cannot load city's GeoJSON data."); 
-
-			}
-
-			/*----------  Load GeoJSON  ----------*/
-			
-			const { GEO_JSON_SOURCE } = this.locationData; 
-
-			// Each borough is a feature 
-			chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, featureCollection => {
-
-				window.console.log("featureCollection:", featureCollection); 
-
-				this.locationData = Object.assign(this.locationData, { featureCollection }); 
-
-				// this.emit(events.HOST_LOCATION_DATA, Object.assign({}, this.locationData)); 
-
-				this.emit(events.GEO_JSON_LOADED, Object.assign({}, this.locationData)); 
-
-				resolve();  
-
-			}); 
-
-		}); 		
-
-	}, 
-
 	maximumRoundsPlayed() {
 
 		const { totalRounds } = this.store.getState(); 
@@ -283,12 +220,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.store.dispatch({
 			type: actions.CAN_EVALUATE_ANSWER
 		}); 
-
-		if (this.chooseLocationMarker) {
-
-			this.chooseLocationMarker.setMap(null); 
-
-		}
 
 		return this.getRandomPanoramaLocation(featureCollection) 
 

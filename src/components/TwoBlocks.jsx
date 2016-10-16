@@ -7,7 +7,8 @@ import TwoBlocksInterchange from './TwoBlocksInterchange';
 import stylizeBoroughName from '../stylizeBoroughName';
 import createGameComponents from '../createGameComponents'; 
 import createPromiseTimeout from '../createPromiseTimeout';  
-import Countdown from '../Countdown'; 
+import Countdown from '../Countdown';
+import removeStreetNameAnnotations from '../removeStreetNameAnnotations';  
 import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { debounce, isOneOf, isType } from '../utils/utils';  
 import { createStore } from 'redux'; 
@@ -147,8 +148,12 @@ class TwoBlocks extends React.Component {
 
 	addDOMEventListeners() {
 
+		/*----------  Resize map on window 'resize' events  ----------*/
+
 		const onWindowResize = debounce(this.onWindowResize.bind(this), WINDOW_RESIZE_DEBOUNCE_TIMEOUT); 
 
+		/*----------  Handle key presses  ----------*/
+		
 		const onKeyPress = debounce(this.onKeypress.bind(this), KEY_PRESS_DEBOUNCE_TIMEOUT); 
 
 		window.addEventListener('resize', onWindowResize); 
@@ -187,6 +192,16 @@ class TwoBlocks extends React.Component {
 		twoBlocks.on(events.GAME_OVER, () => this.onGameOver()); 
 
 		twoBlocks.on(events.RESTART_GAME, () => this.restart()); 
+
+	}
+
+	addGameComponentEventListeners() {
+
+		const { panorama } = this.state; 
+
+		/*----------  Add listeners to panorama  ----------*/
+		
+		google.maps.event.addListener(panorama, 'pano_changed', () => removeStreetNameAnnotations(panorama)); 
 
 	}
 
@@ -405,6 +420,8 @@ class TwoBlocks extends React.Component {
 				const { GEO_JSON_SOURCE } = this.state.locationData; 
 
 				const { chooseLocationMap } = gameComponents; 
+
+				this.addGameComponentEventListeners(); 
 
 				// Each borough is a feature 
 				chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, featureCollection => {
