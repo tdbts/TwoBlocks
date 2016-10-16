@@ -13399,9 +13399,8 @@
 	
 			window.console.log("Evaluating final answer!");
 	
-			// this.canEvaluateAnswer = false;  // Don't allow answer evaluation until the next turn
 			this.store.dispatch({
-				type: _actions2.default.CANNOT_EVALUATE_ANSWER
+				type: _actions2.default.CANNOT_EVALUATE_ANSWER // Don't allow answer evaluation until the next turn
 			});
 	
 			if (selectedBorough === correctBorough) {
