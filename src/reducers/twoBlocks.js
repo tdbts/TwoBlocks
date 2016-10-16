@@ -5,7 +5,6 @@ import gameHistory from './gameHistory';
 import gameOver from './gameOver';   
 import gameStage from './gameStage';  
 import loading from './loading'; 
-import mapLatLng from './mapLatLng';
 import totalRounds from './totalRounds';  
 import view from './view'; 
 
@@ -16,7 +15,6 @@ const twoBlocks = combineReducers({
 	gameOver, 
 	gameStage, 
 	loading, 
-	mapLatLng,
 	totalRounds,  
 	view
 }); 

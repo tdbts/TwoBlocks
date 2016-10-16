@@ -358,15 +358,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.emit(events.HOST_LOCATION_DATA, locationData); 
 
-		const { lat, lng } = locationData.CENTER; 
-
-		const latLng = new google.maps.LatLng(lat, lng); 
-
-		this.store.dispatch({
-			latLng, 
-			type: actions.SET_MAP_LAT_LNG
-		}); 
-
 		const view = 'map'; 
 
 		this.store.dispatch({
