@@ -60,7 +60,7 @@
 	
 	var _injectGapiScript2 = _interopRequireDefault(_injectGapiScript);
 	
-	var _utils = __webpack_require__(352);
+	var _utils = __webpack_require__(359);
 	
 	var _reactDom = __webpack_require__(448);
 	
@@ -12205,19 +12205,23 @@
 	
 	var _TwoBlocksGame2 = _interopRequireDefault(_TwoBlocksGame);
 	
-	var _TwoBlocksView = __webpack_require__(413);
+	var _TwoBlocksView = __webpack_require__(408);
 	
 	var _TwoBlocksView2 = _interopRequireDefault(_TwoBlocksView);
 	
-	var _TwoBlocksInterchange = __webpack_require__(418);
+	var _TwoBlocksInterchange = __webpack_require__(413);
 	
 	var _TwoBlocksInterchange2 = _interopRequireDefault(_TwoBlocksInterchange);
 	
-	var _stylizeBoroughName = __webpack_require__(420);
+	var _stylizeBoroughName = __webpack_require__(415);
 	
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 	
-	var _createPromiseTimeout = __webpack_require__(397);
+	var _createGameComponents = __webpack_require__(418);
+	
+	var _createGameComponents2 = _interopRequireDefault(_createGameComponents);
+	
+	var _createPromiseTimeout = __webpack_require__(348);
 	
 	var _createPromiseTimeout2 = _interopRequireDefault(_createPromiseTimeout);
 	
@@ -12227,7 +12231,7 @@
 	
 	var _constants = __webpack_require__(340);
 	
-	var _utils = __webpack_require__(352);
+	var _utils = __webpack_require__(359);
 	
 	var _redux = __webpack_require__(424);
 	
@@ -12237,7 +12241,7 @@
 	
 	var _twoBlocks2 = _interopRequireDefault(_twoBlocks);
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -12404,7 +12408,7 @@
 				// twoBlocks.on(events.GAME_STAGE, stage => this.onGameStage(stage));
 	
 				twoBlocks.on(_constants.events.HOST_LOCATION_DATA, function (locationData) {
-					return _this3.setState({ locationData: locationData });
+					return _this3.onHostLocationData(locationData);
 				});
 	
 				// twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState));
@@ -12494,6 +12498,7 @@
 				var boroughLevelMapCanvas = _state2.boroughLevelMapCanvas;
 				var mapCanvas = _state2.mapCanvas;
 				var panoramaCanvas = _state2.panoramaCanvas;
+				var store = _state2.store;
 	
 	
 				if (!blockLevelMapCanvas || !boroughLevelMapCanvas || !mapCanvas || !panoramaCanvas) return;
@@ -12506,7 +12511,7 @@
 					}
 				});
 	
-				var twoBlocks = new _TwoBlocksGame2.default(mapCanvas, panoramaCanvas, this.state.store);
+				var twoBlocks = new _TwoBlocksGame2.default(store);
 	
 				window.console.log("twoBlocks:", twoBlocks);
 	
@@ -12665,6 +12670,46 @@
 			// }
 	
 		}, {
+			key: 'onHostLocationData',
+			value: function onHostLocationData(locationData) {
+				var _this7 = this;
+	
+				var _state5 = this.state;
+				var gameInstance = _state5.gameInstance;
+				var mapCanvas = _state5.mapCanvas;
+				var panoramaCanvas = _state5.panoramaCanvas;
+	
+	
+				var gameComponents = (0, _createGameComponents2.default)({
+					gameInstance: gameInstance,
+					locationData: locationData,
+					mapCanvas: mapCanvas,
+					panoramaCanvas: panoramaCanvas,
+					mapMarkerVisible: false
+				});
+	
+				return this.setState(_extends({}, gameComponents, { locationData: locationData })).then(function () {
+					return gameInstance.emit(_constants.events.GAME_COMPONENTS, gameComponents);
+				}).then(function () {
+					var GEO_JSON_SOURCE = _this7.state.locationData.GEO_JSON_SOURCE;
+					var chooseLocationMap = gameComponents.chooseLocationMap;
+	
+					// Each borough is a feature
+	
+					chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, function (featureCollection) {
+	
+						window.console.log("featureCollection:", featureCollection);
+	
+						_this7.setState({
+							locationData: _extends(_this7.state.locationData, { featureCollection: featureCollection })
+	
+						}).then(function () {
+							return gameInstance.emit(_constants.events.GEO_JSON_LOADED, _extends({}, _this7.state.locationData));
+						});
+					});
+				});
+			}
+		}, {
 			key: 'onHoveredBorough',
 			value: function onHoveredBorough(feature) {
 				var hoveredBorough = this.state.hoveredBorough;
@@ -12695,11 +12740,11 @@
 	
 				e.preventDefault(); // Prevent arrows from scrolling page
 	
-				var _state5 = this.state;
-				var gameInstance = _state5.gameInstance;
-				var hoveredBorough = _state5.hoveredBorough;
-				var selectedBorough = _state5.selectedBorough;
-				var store = _state5.store;
+				var _state6 = this.state;
+				var gameInstance = _state6.gameInstance;
+				var hoveredBorough = _state6.hoveredBorough;
+				var selectedBorough = _state6.selectedBorough;
+				var store = _state6.store;
 	
 				var _store$getState = store.getState();
 	
@@ -12815,9 +12860,9 @@
 			value: function onRandomLocation(randomLocationDetails) {
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
-				var _state6 = this.state;
-				var blockLevelMap = _state6.blockLevelMap;
-				var boroughLevelMap = _state6.boroughLevelMap;
+				var _state7 = this.state;
+				var blockLevelMap = _state7.blockLevelMap;
+				var boroughLevelMap = _state7.boroughLevelMap;
 	
 	
 				blockLevelMap.panTo(randomLatLng);
@@ -12861,10 +12906,10 @@
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _state7 = this.state;
-				var chooseLocationMap = _state7.chooseLocationMap;
-				var gameInstance = _state7.gameInstance;
-				var locationData = _state7.locationData;
+				var _state8 = this.state;
+				var chooseLocationMap = _state8.chooseLocationMap;
+				var gameInstance = _state8.gameInstance;
+				var locationData = _state8.locationData;
 	
 	
 				var promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
@@ -12883,9 +12928,9 @@
 		}, {
 			key: 'onWindowResize',
 			value: function onWindowResize() {
-				var _state8 = this.state;
-				var chooseLocationMap = _state8.chooseLocationMap;
-				var locationData = _state8.locationData;
+				var _state9 = this.state;
+				var chooseLocationMap = _state9.chooseLocationMap;
+				var locationData = _state9.locationData;
 				var CENTER = locationData.CENTER;
 	
 	
@@ -12896,7 +12941,7 @@
 		}, {
 			key: 'restart',
 			value: function restart() {
-				var _this7 = this;
+				var _this8 = this;
 	
 				return this.setState({
 					gameInstance: null,
@@ -12904,19 +12949,19 @@
 					store: (0, _redux.createStore)(_twoBlocks2.default),
 					promptText: "Starting new game..."
 				}).then(function () {
-					return _this7.initializeTwoBlocks();
+					return _this8.initializeTwoBlocks();
 				});
 			}
 		}, {
 			key: 'showRandomPanorama',
 			value: function showRandomPanorama(prevState) {
-				var _this8 = this;
+				var _this9 = this;
 	
 				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed
 	
-				var _state9 = this.state;
-				var gameInstance = _state9.gameInstance;
-				var store = _state9.store;
+				var _state10 = this.state;
+				var gameInstance = _state10.gameInstance;
+				var store = _state10.store;
 	
 	
 				var view = 'panorama';
@@ -12929,7 +12974,7 @@
 				gameInstance.emit(_constants.events.SHOWING_PANORAMA);
 	
 				return (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY).then(function () {
-					return _this8.setState({
+					return _this9.setState({
 	
 						promptText: 'Look closely...which borough is this Street View from?'
 	
@@ -12940,28 +12985,28 @@
 	
 					if (gameInstance.shouldUseDeviceOrientation()) {
 	
-						_this8.startStreetviewCountdown();
+						_this9.startStreetviewCountdown();
 					} else {
 	
-						_this8.showSpinner();
+						_this9.showSpinner();
 					}
 				});
 			}
 		}, {
 			key: 'showSpinner',
 			value: function showSpinner() {
-				var _this9 = this;
+				var _this10 = this;
 	
-				var _state10 = this.state;
-				var gameInstance = _state10.gameInstance;
-				var spinner = _state10.spinner;
+				var _state11 = this.state;
+				var gameInstance = _state11.gameInstance;
+				var spinner = _state11.spinner;
 	
 	
 				spinner.start();
 	
 				spinner.once('revolution', function () {
 	
-					_this9.onSpinnerRevolution();
+					_this10.onSpinnerRevolution();
 	
 					gameInstance.emit(_constants.events.CHOOSING_LOCATION);
 				});
@@ -12991,9 +13036,9 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state11 = this.state;
-				var chooseLocationMap = _state11.chooseLocationMap;
-				var selectedBorough = _state11.selectedBorough;
+				var _state12 = this.state;
+				var chooseLocationMap = _state12.chooseLocationMap;
+				var selectedBorough = _state12.selectedBorough;
 	
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
@@ -13018,10 +13063,10 @@
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _state12 = this.state;
-				var chooseLocationMap = _state12.chooseLocationMap;
-				var locationData = _state12.locationData;
-				var selectedBorough = _state12.selectedBorough;
+				var _state13 = this.state;
+				var chooseLocationMap = _state13.chooseLocationMap;
+				var locationData = _state13.locationData;
+				var selectedBorough = _state13.selectedBorough;
 	
 	
 				var clickedBoroughName = borough.getProperty('boro_name');
@@ -13079,7 +13124,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this10 = this;
+				var _this11 = this;
 	
 				var props = this.props;
 				var state = this.state;
@@ -13114,7 +13159,7 @@
 						promptText: state.promptText,
 						promptTwoBlocksClass: props.promptTwoBlocksClass,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this10.evaluateFinalAnswer();
+							return _this11.evaluateFinalAnswer();
 						},
 						selectedBorough: state.selectedBorough,
 						submitterTwoBlocksClass: props.submitterTwoBlocksClass,
@@ -13168,29 +13213,25 @@
 	
 	var _calculateDistanceFromMarkerToLocation2 = _interopRequireDefault(_calculateDistanceFromMarkerToLocation);
 	
-	var _createGameComponents2 = __webpack_require__(348);
-	
-	var _createGameComponents3 = _interopRequireDefault(_createGameComponents2);
-	
-	var _createPromiseTimeout = __webpack_require__(397);
+	var _createPromiseTimeout = __webpack_require__(348);
 	
 	var _createPromiseTimeout2 = _interopRequireDefault(_createPromiseTimeout);
 	
-	var _getRandomPanoramaLocation2 = __webpack_require__(398);
+	var _getRandomPanoramaLocation2 = __webpack_require__(349);
 	
 	var _getRandomPanoramaLocation3 = _interopRequireDefault(_getRandomPanoramaLocation2);
 	
-	var _removeStreetNameAnnotations = __webpack_require__(411);
+	var _removeStreetNameAnnotations = __webpack_require__(402);
 	
 	var _removeStreetNameAnnotations2 = _interopRequireDefault(_removeStreetNameAnnotations);
 	
-	var _events = __webpack_require__(351);
+	var _events = __webpack_require__(403);
 	
-	var _util = __webpack_require__(392);
+	var _util = __webpack_require__(404);
 	
 	var _constants = __webpack_require__(340);
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -13198,14 +13239,9 @@
 	
 	var geoJSONLoaded = false;
 	
-	var TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas, store) {
-	
-		this.validateArgs(mapCanvas, panoramaCanvas);
+	var TwoBlocksGame = function TwoBlocksGame(store) {
 	
 		this.store = store;
-	
-		this.mapCanvas = mapCanvas;
-		this.panoramaCanvas = panoramaCanvas;
 	
 		this.chooseLocationMap = null;
 		this.chooseLocationMarker = null;
@@ -13226,27 +13262,16 @@
 	
 			this.on(_constants.events.GAME_COMPONENTS, function (gameComponents) {
 	
+				for (var component in gameComponents) {
+	
+					_this[component] = gameComponents[component];
+				}
+	
 				_this.addEventListenersToGameComponents(gameComponents);
-	
-				_this.loadCityGeoJSON().then(function () {
-	
-					var stage = 'gameplay';
-	
-					_this.store.dispatch({
-						stage: stage,
-						type: _actions2.default.SET_GAME_STAGE
-					});
-	
-					_this.emit(_constants.events.GAME_STAGE, stage);
-				});
 			});
 	
-			this.on(_constants.events.GEO_JSON_LOADED, function () {
-	
-				// Set 'geoJSONLoaded' flag to true so we don't produce
-				// the side effect of repeatedly loading the same GeoJSON
-				// over the map on every new game instance.  
-				geoJSONLoaded = true;
+			this.on(_constants.events.GEO_JSON_LOADED, function (locationData) {
+				return _this.onGeoJSONLoaded(locationData);
 			});
 	
 			this.on(_constants.events.GAME_STAGE, function (gameStage) {
@@ -13337,23 +13362,6 @@
 				turn: currentTurn,
 				type: _actions2.default.SAVE_TURN
 			});
-		},
-		createGameComponents: function createGameComponents() {
-	
-			var gameComponents = (0, _createGameComponents3.default)({
-				gameInstance: this,
-				locationData: this.locationData,
-				mapCanvas: this.mapCanvas,
-				mapMarkerVisible: false,
-				panoramaCanvas: this.panoramaCanvas
-			});
-	
-			for (var component in gameComponents) {
-	
-				this[component] = gameComponents[component];
-			}
-	
-			this.emit(_constants.events.GAME_COMPONENTS, gameComponents);
 		},
 		evaluateFinalAnswer: function evaluateFinalAnswer(correctBorough, selectedBorough) {
 			var _store$getState2 = this.store.getState();
@@ -13461,9 +13469,9 @@
 	
 					_this3.locationData = _extends(_this3.locationData, { featureCollection: featureCollection });
 	
-					_this3.emit(_constants.events.HOST_LOCATION_DATA, _extends({}, _this3.locationData));
+					// this.emit(events.HOST_LOCATION_DATA, Object.assign({}, this.locationData));
 	
-					_this3.emit(_constants.events.GEO_JSON_LOADED);
+					_this3.emit(_constants.events.GEO_JSON_LOADED, _extends({}, _this3.locationData));
 	
 					resolve();
 				});
@@ -13507,6 +13515,17 @@
 				return _this4.emit(_constants.events.RANDOM_LOCATION, locationData);
 			});
 		},
+		onGeoJSONLoaded: function onGeoJSONLoaded(locationData) {
+	
+			// Set 'geoJSONLoaded' flag to true so we don't produce
+			// the side effect of repeatedly loading the same GeoJSON
+			// over the map on every new game instance.  
+			geoJSONLoaded = true;
+	
+			this.locationData = locationData;
+	
+			this.startGamePlay();
+		},
 		onPregameLocationDataReceived: function onPregameLocationDataReceived(locationData) {
 	
 			window.console.log("locationData:", locationData);
@@ -13526,7 +13545,7 @@
 	
 			this.locationData = locationData;
 	
-			this.createGameComponents();
+			// this.createGameComponents();
 		},
 		shouldUseDeviceOrientation: function shouldUseDeviceOrientation() {
 	
@@ -13544,12 +13563,16 @@
 	
 			this.addEventListeners();
 		},
-		validateArgs: function validateArgs(mapCanvas, panoramaCanvas) {
+		startGamePlay: function startGamePlay() {
 	
-			if (!mapCanvas || !panoramaCanvas) {
+			var stage = 'gameplay';
 	
-				throw new Error("Invalid arguments passed to TwoBlocksGame() constructor.");
-			}
+			this.store.dispatch({
+				stage: stage,
+				type: _actions2.default.SET_GAME_STAGE
+			});
+	
+			this.emit(_constants.events.GAME_STAGE, stage);
 		}
 	});
 	
@@ -13908,6 +13931,25 @@
 
 /***/ },
 /* 348 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var createPromiseTimeout = function createPromiseTimeout(timeout) {
+	
+		return new Promise(function (resolve) {
+	
+			setTimeout(resolve, timeout);
+		});
+	};
+	
+	exports.default = createPromiseTimeout;
+
+/***/ },
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13916,207 +13958,76 @@
 		value: true
 	});
 	
-	var _createPanorama = __webpack_require__(349);
+	var _getLatLngWithinBoundaries = __webpack_require__(350);
 	
-	var _createPanorama2 = _interopRequireDefault(_createPanorama);
+	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
 	
-	var _createSpinner = __webpack_require__(350);
+	var _requestNearestPanorama = __webpack_require__(353);
 	
-	var _createSpinner2 = _interopRequireDefault(_createSpinner);
+	var _requestNearestPanorama2 = _interopRequireDefault(_requestNearestPanorama);
 	
-	var _createWebGlManager = __webpack_require__(395);
+	var _getRandomFeature = __webpack_require__(354);
 	
-	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
+	var _getRandomFeature2 = _interopRequireDefault(_getRandomFeature);
 	
-	var _createChooseLocationMap = __webpack_require__(396);
+	var _selectRandomWeightedLinearRing = __webpack_require__(355);
 	
-	var _createChooseLocationMap2 = _interopRequireDefault(_createChooseLocationMap);
+	var _selectRandomWeightedLinearRing2 = _interopRequireDefault(_selectRandomWeightedLinearRing);
+	
+	var _getLatLngMaxMin = __webpack_require__(401);
+	
+	var _getLatLngMaxMin2 = _interopRequireDefault(_getLatLngMaxMin);
+	
+	var _utils = __webpack_require__(359);
+	
+	var _constants = __webpack_require__(340);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	/* global google */
+	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection, attemptsLeft) {
 	
-	var gameComponents = null;
+		var selectedBorough = (0, _getRandomFeature2.default)(featureCollection);
 	
-	var createGameComponents = function createGameComponents(gameState) {
+		var boroughName = selectedBorough.getProperty('boro_name');
 	
-		if (gameComponents) return gameComponents;
+		var selectedLinearRing = (0, _selectRandomWeightedLinearRing2.default)(selectedBorough);
 	
-		if (!('google' in window) || !('maps' in window.google) || !('geometry' in window.google.maps)) {
+		var latLngMaxMin = (0, _getLatLngMaxMin2.default)(selectedLinearRing.getArray());
 	
-			throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page.");
-		}
+		// Data.Polygon instance must be passed an array
+		var dataPolygon = new google.maps.Data.Polygon([selectedLinearRing]);
 	
-		var gameInstance = gameState.gameInstance;
-		var locationData = gameState.locationData;
-		var mapCanvas = gameState.mapCanvas;
-		var mapMarkerVisible = gameState.mapMarkerVisible;
-		var panoramaCanvas = gameState.panoramaCanvas;
-	
-	
-		var webGlManager = (0, _createWebGlManager2.default)(panoramaCanvas);
-	
-		var mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
-	
-		/*----------  Set up panorama  ----------*/
-	
-		var panorama = (0, _createPanorama2.default)(panoramaCanvas, {
-			mode: mode,
-			position: null,
-			visible: true,
-			zoomControl: gameInstance.shouldUseDeviceOrientation()
+		var polygon = new google.maps.Polygon({
+			paths: dataPolygon.getAt(0).getArray()
 		});
 	
-		/*----------  Set up spinner  ----------*/
+		var randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
 	
-		var spinner = (0, _createSpinner2.default)(panorama, {
-			punctuate: {
-				segments: 4,
-				delay: 2000
-			}
+		return (0, _utils.tryAtMost)(function () {
+			return (0, _requestNearestPanorama2.default)(randomLatLng);
+		}, _constants.MAXIMUM_PANORAMA_REQUESTS, function (panoRequestResults, requestAttemptsLeft) {
+	
+			window.console.log('onCaught()');
+	
+			var panoData = panoRequestResults.panoData;
+			var status = panoRequestResults.status;
+	
+	
+			window.console.log("panoData:", panoData);
+			window.console.log("status:", status);
+			window.console.log("requestAttemptsLeft:", requestAttemptsLeft);
+	
+			randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
+		})
+	
+		// N.B - Parentheses must be wrapped around an object literal
+		// returned by an arrow function
+		.then(function () {
+			return { boroughName: boroughName, randomLatLng: randomLatLng, selectedBorough: selectedBorough };
 		});
+	}; /* global google */
 	
-		spinner.on('revolution', function () {
-			return window.console.log('revolution');
-		});
-	
-		/*----------  Set up chooseLocationMap  ----------*/
-	
-		var CENTER = locationData.CENTER;
-	
-	
-		var mapOptions = {
-			center: new google.maps.LatLng(CENTER.lat, CENTER.lng),
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		};
-	
-		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
-	
-		// window.console.log("chooseLocationMap:", chooseLocationMap); 		
-	
-		/*----------  Set up marker  ----------*/
-	
-		// Outside the polygon boundaries, in the Atlantic Ocean
-		var _locationData$MARKER_ = locationData.MARKER_PLACEMENT;
-		var markerLat = _locationData$MARKER_.lat;
-		var markerLng = _locationData$MARKER_.lng;
-	
-	
-		var markerOptions = {
-			animation: google.maps.Animation.BOUNCE,
-			draggable: true,
-			map: chooseLocationMap,
-			position: new google.maps.LatLng(markerLat, markerLng),
-			visible: mapMarkerVisible
-		};
-	
-		var chooseLocationMarker = new google.maps.Marker(markerOptions);
-	
-		// Stop bouncing
-		google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
-			return chooseLocationMarker.setAnimation(null);
-		});
-	
-		google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
-			var latLng = e.latLng;
-	
-	
-			chooseLocationMarker.setPosition(latLng);
-			chooseLocationMarker.setAnimation(null);
-		});
-	
-		/*----------  Set up WebGl  ----------*/
-	
-		if (webGlManager.canUseWebGl()) {
-	
-			setTimeout(function () {
-				return webGlManager.initGl();
-			}, 1000);
-		}
-	
-		// Assign game components to variable so we can just return
-		// the already-created components if we start a new game
-		gameComponents = {
-			chooseLocationMap: chooseLocationMap,
-			chooseLocationMarker: chooseLocationMarker,
-			panorama: panorama,
-			spinner: spinner
-		};
-	
-		return gameComponents;
-	};
-	
-	exports.default = createGameComponents;
-
-/***/ },
-/* 349 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	/* global google */
-	
-	/*======================================
-	=            createPanorama()          =
-	======================================*/
-	
-	var createPanorama = function createPanorama(canvas) {
-		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-	
-	
-		var defaultOptions = {
-			position: null,
-			// Address control shows a box with basic information about the
-			// location, as well as a link to see the map on Google Maps
-			addressControl: false,
-			addressControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-			// clickToGo shows a rectangular "highlight" under the cursor, and on
-			// click, the street view moves to the location clicked upon.  We will
-			// want to keep this disabled for the game.			
-			clickToGo: false,
-			disableDoubleClickZoom: true,
-			// Below, we add an event listener to 'closeclick', which fires when
-			// the close button is clicked.  In the original author's implementation,
-			// the application reveals the map on 'closeclick'.  			
-			enableCloseButton: false,
-			imageDateControl: false,
-			linksControl: false,
-			mode: "webgl",
-			// Pan Control shows a UI element that allows you to rotate the pano
-			panControl: false,
-			panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
-			pano: null, // ID of panorama to use
-			pov: {
-				zoom: 1.1,
-				heading: 0,
-				pitch: 0
-			},
-			scrollwheel: false,
-			visible: true,
-			// Zoom control functionality is obvious
-			zoomControl: false,
-			zoomControlOptions: {
-				position: google.maps.ControlPosition.TOP_LEFT,
-				style: google.maps.ZoomControlStyle.DEFAULT
-			}
-		};
-	
-		var panoramaOptions = _extends({}, defaultOptions, options);
-	
-		// Documentation on streetViewPanorama class:
-		// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
-		return new google.maps.StreetViewPanorama(canvas, panoramaOptions);
-	};
-	
-	/*=====  End of createPanorama()  ======*/
-	
-	exports.default = createPanorama;
+	exports.default = getRandomPanoramaLocation;
 
 /***/ },
 /* 350 */
@@ -14128,271 +14039,2006 @@
 		value: true
 	});
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
+	var _getRandomCoords = __webpack_require__(351);
 	
-	var _events = __webpack_require__(351);
+	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
 	
-	var _utils = __webpack_require__(352);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var _util = __webpack_require__(392);
+	var getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, polygon) {
 	
-	/*=====================================
-	=            createSpinner()            =
-	=====================================*/
+		var isWithinBoundaries = false;
+		var randomLatLng = null;
 	
-	/**
-	 *
-	 * Add options object as last parameter.  Add option to 
-	 * not spin continuously, but rather, in a series of 
-	 * partial-spins.  Should be able to split the 360 degrees 
-	 * into "chunks", spin to one chunk, pause for a few 
-	 * seconds, and then continue to the next one.  
-	 *
-	 * Option will be called 'punctuate'.  Properties will be 
-	 * 'segments' and 'delay'.  Valid options for segments will be
-	 * even divisors of 360 -- 12 (30-degrees), 9 (40-degrees), 
-	 * 6 (60-degrees), 4 (90-degrees), 2 (180-degrees)
-	 * 
-	 */
+		// Until we find coordinates within our predefined region...
+		while (!isWithinBoundaries) {
 	
-	var createSpinner = function createSpinner(panorma) {
-		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+			var randomCoords = (0, _getRandomCoords2.default)(latLngMaxMin);
+	
+			var randomLat = randomCoords.randomLat;
+			var randomLng = randomCoords.randomLng;
 	
 	
-		var DEGREES_IN_A_CIRCLE = 360;
-		var DELAY_DEFAULT = 1000; // Milliseconds 
-		var INCREMENT_DEFAULT = 1; // Degrees
-		var INTERVAL_DEFAULT = 25; // Milliseconds
-		var SEGMENTS_DEFAULT = 4;
-		var VALID_SEGMENTS = [2, 4, 6, 9, 12];
+			randomLatLng = new google.maps.LatLng(randomLat, randomLng);
 	
-		var _canSpin = false;
-		var _lastRepaint = null;
-		var _paused = false;
-		var _started = false;
-		var _startHeading = null;
-		var segments = null;
-		var delay = null;
-		var increment = void 0;
-		var interval = void 0;
-		var timer = void 0;
-	
-		var spinner = null;
-	
-		var handlePunctuationOption = function handlePunctuationOption(options) {
-	
-			var punctuateSettings = null;
-	
-			if ('punctuate' in options) {
-				var _options$punctuate = options.punctuate;
-				var _segments = _options$punctuate.segments;
-				var _delay = _options$punctuate.delay;
-	
-	
-				if (!(0, _utils.isOneOf)(VALID_SEGMENTS, _segments)) {
-	
-					_segments = null;
-				}
-	
-				if (!_segments) {
-					_segments = SEGMENTS_DEFAULT;
-				}
-	
-				if (!_delay) {
-					_delay = DELAY_DEFAULT;
-				}
-	
-				punctuateSettings = { segments: _segments, delay: _delay };
-			}
-	
-			return punctuateSettings;
-		};
-	
-		var incrementHeading = function incrementHeading(pov, increment) {
-	
-			pov.heading += increment;
-	
-			while (pov.heading > DEGREES_IN_A_CIRCLE) {
-				pov.heading -= DEGREES_IN_A_CIRCLE;
-			}
-	
-			while (pov.heading < 0) {
-				pov.heading += DEGREES_IN_A_CIRCLE;
-			}
-	
-			return pov;
-		};
-	
-		// Initial implementation assumes that we are incrementing
-		// the spin by one degree each time we call spin(). 
-		// TODO: Make this more sophisticated and robust. 
-		var punctuate = function punctuate(pov, segments, delay) {
-	
-			// Heading is the number of degrees from cardinal direction North
-			var heading = pov.heading;
-	
-			// The valid values for 'segments' evenly divide 360 degrees. 
-			// If the heading is evenly divisible by the number of degrees
-			// in each segment, the spinning has completed one partial
-			// rotation, and it is time to pause the movement. 
-	
-			if (heading % (DEGREES_IN_A_CIRCLE / segments) === 0) {
-	
-				_paused = true;
-	
-				// If we were to pause the spinning on mouseover as
-				// the original author chose to do, we wouldn't actually
-				// want to start spinning when this timeout expires. 
-				// So we would need to read the mouseover state somehow
-				// and start only when the timeout has expired AND the
-				// mouse has left the canvas <div>.  This is where something
-				// like Redux is going to shine. 
-	
-				setTimeout(function () {
-	
-					// If the stop() method has not been called
-					// by the outside world...
-					if (_canSpin) {
-	
-						api.start();
-					}
-				}, delay);
-			}
-		};
-	
-		/*----------  Set punctuation options  ----------*/
-	
-		var punctuated = handlePunctuationOption(options);
-	
-		if (punctuated) {
-	
-			// Parentheses required when destructuring assigns
-			// to previously declared variables. 
-			segments = punctuated.segments;
-			delay = punctuated.delay;
+			// Check that the random coords are within polygon
+			isWithinBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, polygon);
 		}
 	
-		/*----------  Set increment option  ----------*/
+		return randomLatLng;
+	}; /* global google */
 	
-		increment = options.increment;
-	
-	
-		if (!increment) {
-	
-			increment = INCREMENT_DEFAULT; // Degrees
-		}
-	
-		/*----------  Set interval option  ----------*/
-	
-		interval = options.interval;
-	
-	
-		if (!interval) {
-	
-			interval = INTERVAL_DEFAULT;
-		}
-	
-		var onAnimationFrame = function onAnimationFrame(timestamp) {
-	
-			if (!_lastRepaint) {
-	
-				_lastRepaint = timestamp;
-			}
-	
-			var timeSinceLastRepaint = timestamp - _lastRepaint;
-	
-			if (timeSinceLastRepaint >= interval) {
-	
-				if (_canSpin && !_paused) {
-	
-					this.spin();
-				}
-	
-				window.requestAnimationFrame(onAnimationFrame.bind(this));
-			} else {
-	
-				window.requestAnimationFrame(onAnimationFrame.bind(this));
-			}
-		};
-	
-		/*----------  Public  ----------*/
-	
-		var api = {
-			spin: function spin() {
-	
-				// window.console.log('spin()');
-	
-				try {
-	
-					var pov = incrementHeading(panorma.getPov(), increment);
-	
-					panorma.setPov(pov);
-	
-					if (pov.heading % DEGREES_IN_A_CIRCLE === _startHeading) {
-	
-						spinner.emit('revolution');
-					}
-	
-					if (punctuated) {
-	
-						punctuate(pov, segments, delay);
-					}
-				} catch (e) {
-	
-					window.console.error("e:", e);
-				}
-			},
-			start: function start() {
-	
-				_canSpin = true;
-	
-				_paused = false;
-	
-				// window.console.log('spinner start()');
-	
-				if (!_started) {
-	
-					_started = true;
-	
-					_startHeading = panorma.getPov().heading;
-				}
-	
-				if (!timer) {
-	
-					timer = window.requestAnimationFrame(onAnimationFrame.bind(this));
-				}
-			},
-			started: function started() {
-	
-				return _started;
-			},
-			stop: function stop() {
-	
-				_canSpin = false;
-			}
-		};
-	
-		/*----------  Create Spinner instance  ----------*/
-	
-		// Create Spinner() constructor to inherit EventEmitter functionality
-		var Spinner = function Spinner() {};
-	
-		(0, _util.inherits)(Spinner, _events.EventEmitter);
-	
-		// Add API methods to prototype
-		_extends(Spinner.prototype, api);
-	
-		spinner = new Spinner();
-	
-		return spinner;
-	};
-	
-	/*=====  End of createSpinner()  ======*/
-	
-	exports.default = createSpinner;
+	exports.default = getLatLngWithinBoundaries;
 
 /***/ },
 /* 351 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _selectRandomValueOfRange = __webpack_require__(352);
+	
+	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 *
+	 * getRandomCoords() - Select random point from within min / max 
+	 *     lat / lng range
+	 *
+	 */
+	
+	var getRandomCoords = function getRandomCoords(latLngMaxMin) {
+		var lat = latLngMaxMin.lat;
+		var lng = latLngMaxMin.lng;
+	
+	
+		var randomLat = (0, _selectRandomValueOfRange2.default)(lat.min, lat.max).toFixed(6);
+	
+		var randomLng = (0, _selectRandomValueOfRange2.default)(lng.min, lng.max).toFixed(6);
+	
+		var randomCoords = { randomLat: randomLat, randomLng: randomLng };
+	
+		return randomCoords;
+	}; /* global window */
+	
+	exports.default = getRandomCoords;
+
+/***/ },
+/* 352 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var selectRandomValueOfRange = function selectRandomValueOfRange(min, max) {
+	
+		// If the order is incorrect, switch.
+		if (!(min <= max)) {
+			var _ref = [max, min];
+			min = _ref[0];
+			max = _ref[1];
+		}
+	
+		var difference = max - min;
+	
+		return min + Math.random() * difference;
+	};
+	
+	exports.default = selectRandomValueOfRange;
+
+/***/ },
+/* 353 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/* global google, window */
+	
+	var requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
+	
+		return new Promise(function (resolve, reject) {
+	
+			var streetViewService = new google.maps.StreetViewService();
+	
+			var locationRequest = {
+				location: randomLatLng,
+				preference: google.maps.StreetViewPreference.NEAREST
+			};
+	
+			streetViewService.getPanorama(locationRequest, function (panoData, status) {
+	
+				window.console.log("panoData:", panoData);
+				window.console.log("status:", status);
+	
+				if ('OK' === status) {
+	
+					resolve({ panoData: panoData, status: status });
+				} else {
+	
+					reject({ panoData: panoData, status: status });
+				}
+			});
+		});
+	};
+	
+	exports.default = requestNearestPanorama;
+
+/***/ },
+/* 354 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var getRandomFeature = function getRandomFeature(featureCollection) {
+	
+		var randomIndex = Math.floor(Math.random() * featureCollection.length);
+	
+		return featureCollection[randomIndex];
+	};
+	
+	exports.default = getRandomFeature;
+
+/***/ },
+/* 355 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _getGeometricConstituents = __webpack_require__(356);
+	
+	var _getGeometricConstituents2 = _interopRequireDefault(_getGeometricConstituents);
+	
+	var _sortLeastToGreatest = __webpack_require__(357);
+	
+	var _sortLeastToGreatest2 = _interopRequireDefault(_sortLeastToGreatest);
+	
+	var _playoff = __webpack_require__(358);
+	
+	var _playoff2 = _interopRequireDefault(_playoff);
+	
+	var _headToHeadMatchups = __webpack_require__(399);
+	
+	var _headToHeadMatchups2 = _interopRequireDefault(_headToHeadMatchups);
+	
+	var _weightedRandomSelection = __webpack_require__(400);
+	
+	var _weightedRandomSelection2 = _interopRequireDefault(_weightedRandomSelection);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(feature) {
+	
+		var polygonCollection = (0, _getGeometricConstituents2.default)('MultiPolygon', feature.getGeometry());
+	
+		var linearRingCollection = polygonCollection.map(function (polygon) {
+			return (0, _getGeometricConstituents2.default)('Polygon', polygon);
+		}).map(function (linearRings) {
+			return linearRings.shift();
+		});
+	
+		var linearRingPathLengths = linearRingCollection.map(function (linearRing) {
+			return linearRing.getLength();
+		});
+	
+		// Create map for quick lookup later
+		var linearRingLengthMap = linearRingCollection.reduce(function () {
+			var prev = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+			var curr = arguments[1];
+	
+	
+			prev[curr.getLength()] = curr;
+	
+			return prev;
+		});
+	
+		var sortedLinearRingPathLengths = (0, _sortLeastToGreatest2.default)(linearRingPathLengths.slice());
+	
+		// Drop smallest LinearRing
+		if (sortedLinearRingPathLengths.length % 2 !== 0) {
+	
+			sortedLinearRingPathLengths = sortedLinearRingPathLengths.slice(1);
+		}
+	
+		var initializer = function initializer(winners) {
+			return (0, _sortLeastToGreatest2.default)(winners.slice());
+		};
+	
+		var playOneRound = function playOneRound(players) {
+			return (0, _headToHeadMatchups2.default)(players, _weightedRandomSelection2.default);
+		};
+	
+		// Playoff returns an array of length 1 (winner)
+		var lengthOfSelectedLinearRing = (0, _playoff2.default)(sortedLinearRingPathLengths, playOneRound, initializer).pop();
+	
+		var selectedLinearRing = linearRingLengthMap[lengthOfSelectedLinearRing];
+	
+		return selectedLinearRing;
+	};
+	
+	exports.default = selectRandomWeightedLinearRing;
+
+/***/ },
+/* 356 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 *
+	 * @param desiredType - String 
+	 * @param geometry - MultiPolygon | Polygon | LinearRing 
+	 *
+	 * @desc Returns an array of the geometry's constituent 
+	 *     parts, e.g. MultiPolygon --> Polygon(s), 
+	 *     Polygon --> LinearRing(s) 
+	 *
+	 */
+	
+	var getGeometricConstituents = function getGeometricConstituents(desiredType, geometry) {
+	
+	  var result = null;
+	
+	  if (desiredType === geometry.getType()) {
+	
+	    result = geometry.getArray();
+	  }
+	
+	  return result;
+	};
+	
+	exports.default = getGeometricConstituents;
+
+/***/ },
+/* 357 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var sortLeastToGreatest = function sortLeastToGreatest(numbers) {
+	
+		return numbers.slice() // Don't modify the given array
+	
+		.sort(function (a, b) {
+	
+			if (a < b) return -1;
+			if (a > b) return 1;
+			if (a === b) return 0;
+		});
+	};
+	
+	exports.default = sortLeastToGreatest;
+
+/***/ },
+/* 358 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _utils = __webpack_require__(359);
+	
+	var playoff = function playoff(players, playOneRound, initializer) {
+	
+		if (players.length % 2 !== 0) {
+	
+			throw new Error("There must be an even number of players passed to playoff().");
+		}
+	
+		// Func
+		var process = function process(players) {
+	
+			if (initializer) {
+	
+				players = initializer(players);
+			}
+	
+			return playOneRound(players);
+		};
+	
+		// Condition
+		var onePlayerLeft = function onePlayerLeft(players) {
+			return players.length === 1;
+		};
+	
+		return (0, _utils.recurseUntilTrue)(process, onePlayerLeft, players);
+	};
+	
+	exports.default = playoff;
+
+/***/ },
+/* 359 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.walkArray = exports.typeIsValid = exports.tryAtMost = exports.truthyness = exports.throwErrorIfTrue = exports.throttle = exports.returnItem = exports.recurseUntilTrue = exports.poll = exports.pipeline = exports.once = exports.noUniqueBetweenSets = exports.noArguments = exports.negate = exports.merge = exports.length = exports.keys = exports.hasKeys = exports.isType = exports.isSomething = exports.isOneOf = exports.isNumeric = exports.isNothing = exports.isEmpty = exports.invoke = exports.halt = exports.getType = exports.getProp = exports.getOwnProp = exports.getArgumentsArray = exports.followPath = exports.existenceCheck = exports.extend = exports.emptyFunction = exports.debounce = exports.clone = exports.capitalize = exports.applyToOwnProp = exports.applyToAllOwnProps = undefined;
+	
+	var _applyToAllOwnProps = __webpack_require__(360);
+	
+	var _applyToAllOwnProps2 = _interopRequireDefault(_applyToAllOwnProps);
+	
+	var _applyToOwnProp = __webpack_require__(361);
+	
+	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
+	
+	var _capitalize = __webpack_require__(362);
+	
+	var _capitalize2 = _interopRequireDefault(_capitalize);
+	
+	var _clone = __webpack_require__(363);
+	
+	var _clone2 = _interopRequireDefault(_clone);
+	
+	var _debounce = __webpack_require__(366);
+	
+	var _debounce2 = _interopRequireDefault(_debounce);
+	
+	var _emptyFunction = __webpack_require__(367);
+	
+	var _emptyFunction2 = _interopRequireDefault(_emptyFunction);
+	
+	var _extend = __webpack_require__(368);
+	
+	var _extend2 = _interopRequireDefault(_extend);
+	
+	var _existenceCheck = __webpack_require__(373);
+	
+	var _existenceCheck2 = _interopRequireDefault(_existenceCheck);
+	
+	var _followPath = __webpack_require__(374);
+	
+	var _followPath2 = _interopRequireDefault(_followPath);
+	
+	var _getArgumentsArray = __webpack_require__(377);
+	
+	var _getArgumentsArray2 = _interopRequireDefault(_getArgumentsArray);
+	
+	var _getOwnProp = __webpack_require__(378);
+	
+	var _getOwnProp2 = _interopRequireDefault(_getOwnProp);
+	
+	var _getProp = __webpack_require__(379);
+	
+	var _getProp2 = _interopRequireDefault(_getProp);
+	
+	var _getType = __webpack_require__(364);
+	
+	var _getType2 = _interopRequireDefault(_getType);
+	
+	var _halt = __webpack_require__(380);
+	
+	var _halt2 = _interopRequireDefault(_halt);
+	
+	var _invoke = __webpack_require__(381);
+	
+	var _invoke2 = _interopRequireDefault(_invoke);
+	
+	var _isEmpty = __webpack_require__(382);
+	
+	var _isEmpty2 = _interopRequireDefault(_isEmpty);
+	
+	var _isNothing = __webpack_require__(375);
+	
+	var _isNothing2 = _interopRequireDefault(_isNothing);
+	
+	var _isNumeric = __webpack_require__(383);
+	
+	var _isNumeric2 = _interopRequireDefault(_isNumeric);
+	
+	var _isOneOf = __webpack_require__(365);
+	
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+	
+	var _isSomething = __webpack_require__(376);
+	
+	var _isSomething2 = _interopRequireDefault(_isSomething);
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	var _hasKeys = __webpack_require__(384);
+	
+	var _hasKeys2 = _interopRequireDefault(_hasKeys);
+	
+	var _keys = __webpack_require__(372);
+	
+	var _keys2 = _interopRequireDefault(_keys);
+	
+	var _length = __webpack_require__(369);
+	
+	var _length2 = _interopRequireDefault(_length);
+	
+	var _merge = __webpack_require__(385);
+	
+	var _merge2 = _interopRequireDefault(_merge);
+	
+	var _negate = __webpack_require__(386);
+	
+	var _negate2 = _interopRequireDefault(_negate);
+	
+	var _noArguments = __webpack_require__(387);
+	
+	var _noArguments2 = _interopRequireDefault(_noArguments);
+	
+	var _noUniqueBetweenSets = __webpack_require__(388);
+	
+	var _noUniqueBetweenSets2 = _interopRequireDefault(_noUniqueBetweenSets);
+	
+	var _once = __webpack_require__(389);
+	
+	var _once2 = _interopRequireDefault(_once);
+	
+	var _pipeline = __webpack_require__(390);
+	
+	var _pipeline2 = _interopRequireDefault(_pipeline);
+	
+	var _poll = __webpack_require__(391);
+	
+	var _poll2 = _interopRequireDefault(_poll);
+	
+	var _recurseUntilTrue = __webpack_require__(392);
+	
+	var _recurseUntilTrue2 = _interopRequireDefault(_recurseUntilTrue);
+	
+	var _returnItem = __webpack_require__(393);
+	
+	var _returnItem2 = _interopRequireDefault(_returnItem);
+	
+	var _throttle = __webpack_require__(394);
+	
+	var _throttle2 = _interopRequireDefault(_throttle);
+	
+	var _throwErrorIfTrue = __webpack_require__(395);
+	
+	var _throwErrorIfTrue2 = _interopRequireDefault(_throwErrorIfTrue);
+	
+	var _truthyness = __webpack_require__(396);
+	
+	var _truthyness2 = _interopRequireDefault(_truthyness);
+	
+	var _tryAtMost = __webpack_require__(397);
+	
+	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
+	
+	var _typeIsValid = __webpack_require__(371);
+	
+	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
+	
+	var _walkArray = __webpack_require__(398);
+	
+	var _walkArray2 = _interopRequireDefault(_walkArray);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.applyToAllOwnProps = _applyToAllOwnProps2.default;
+	exports.applyToOwnProp = _applyToOwnProp2.default;
+	exports.capitalize = _capitalize2.default;
+	exports.clone = _clone2.default;
+	exports.debounce = _debounce2.default;
+	exports.emptyFunction = _emptyFunction2.default;
+	exports.extend = _extend2.default;
+	exports.existenceCheck = _existenceCheck2.default;
+	exports.followPath = _followPath2.default;
+	exports.getArgumentsArray = _getArgumentsArray2.default;
+	exports.getOwnProp = _getOwnProp2.default;
+	exports.getProp = _getProp2.default;
+	exports.getType = _getType2.default;
+	exports.halt = _halt2.default;
+	exports.invoke = _invoke2.default;
+	exports.isEmpty = _isEmpty2.default;
+	exports.isNothing = _isNothing2.default;
+	exports.isNumeric = _isNumeric2.default;
+	exports.isOneOf = _isOneOf2.default;
+	exports.isSomething = _isSomething2.default;
+	exports.isType = _isType2.default;
+	exports.hasKeys = _hasKeys2.default;
+	exports.keys = _keys2.default;
+	exports.length = _length2.default;
+	exports.merge = _merge2.default;
+	exports.negate = _negate2.default;
+	exports.noArguments = _noArguments2.default;
+	exports.noUniqueBetweenSets = _noUniqueBetweenSets2.default;
+	exports.once = _once2.default;
+	exports.pipeline = _pipeline2.default;
+	exports.poll = _poll2.default;
+	exports.recurseUntilTrue = _recurseUntilTrue2.default;
+	exports.returnItem = _returnItem2.default;
+	exports.throttle = _throttle2.default;
+	exports.throwErrorIfTrue = _throwErrorIfTrue2.default;
+	exports.truthyness = _truthyness2.default;
+	exports.tryAtMost = _tryAtMost2.default;
+	exports.typeIsValid = _typeIsValid2.default;
+	exports.walkArray = _walkArray2.default;
+
+/***/ },
+/* 360 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _applyToOwnProp = __webpack_require__(361);
+	
+	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function applyToAllOwnProps(action, obj) {
+		return Object.keys(obj).forEach(function (prop) {
+			return (0, _applyToOwnProp2.default)(action, obj, prop);
+		});
+	}
+	
+	exports.default = applyToAllOwnProps;
+
+/***/ },
+/* 361 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function applyToOwnProp(action, obj, prop) {
+		if (obj.hasOwnProperty(prop)) {
+			return action(obj, prop);
+		}
+	}
+	
+	exports.default = applyToOwnProp;
+
+/***/ },
+/* 362 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var capitalize = function capitalize(str) {
+	
+		if (!str) return;
+	
+		return str[0].toUpperCase() + str.slice(1);
+	};
+	
+	exports.default = capitalize;
+
+/***/ },
+/* 363 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _getType = __webpack_require__(364);
+	
+	var _getType2 = _interopRequireDefault(_getType);
+	
+	var _isOneOf = __webpack_require__(365);
+	
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// Inspired by accepted answer at the following Stack Overflow question:
+	// http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object
+	
+	
+	function clone(obj) {
+	    var result = void 0;
+	    var copy = void 0;
+	
+	    // Handle the 3 simple types (string, number, boolean),
+	    // as well as NaN, null or undefined
+	    if ((0, _isOneOf2.default)(['null', 'undefined', 'NaN', 'string', 'number', 'boolean'], (0, _getType2.default)(obj))) {
+	        result = obj;
+	    } else if (obj instanceof Date) {
+	        // Handle instances of Date
+	        copy = new Date();
+	
+	        copy.setTime(obj.getTime());
+	
+	        result = copy;
+	    } else if ('array' === (0, _getType2.default)(obj)) {
+	        // Handle arrays
+	
+	        copy = [];
+	
+	        for (var i = 0, length = obj.length; i < length; i++) {
+	            copy[i] = clone(obj[i]);
+	        }
+	
+	        result = copy;
+	    } else if ('object' === (0, _getType2.default)(obj)) {
+	        // Handle objects
+	        copy = {};
+	
+	        for (var attr in obj) {
+	            if (obj.hasOwnProperty(attr)) {
+	                copy[attr] = clone(obj[attr]);
+	            }
+	        }
+	
+	        result = copy;
+	    }
+	
+	    return result;
+	}
+	
+	exports.default = clone;
+
+/***/ },
+/* 364 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isOneOf = __webpack_require__(365);
+	
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// Returns the type for any passed entitity. 
+	// NaN actually evaluates to 'NaN', not "number" as per Javascript quirkiness.
+	function getType(item) {
+	
+		var result = item !== item ? 'NaN' : Object.prototype.toString.call(item).slice(8, -1).toLowerCase();
+	
+		result = (0, _isOneOf2.default)(['arguments'], result) ? 'object' : result;
+	
+		return result;
+	}
+	
+	exports.default = getType;
+
+/***/ },
+/* 365 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function isOneOf(matches, givenItem) {
+		return matches.some(function (match) {
+			return match === givenItem;
+		});
+	}
+	
+	exports.default = isOneOf;
+
+/***/ },
+/* 366 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/* SOURCE: https://davidwalsh.name/javascript-debounce-function */
+	
+	// Returns a function, that, as long as it continues to be invoked, will not
+	// be triggered. The function will be called after it stops being called for
+	// N milliseconds. If `immediate` is passed, trigger the function on the
+	// leading edge, instead of the trailing.
+	var debounce = function debounce(func, wait, immediate) {
+	
+		var timeout = void 0;
+	
+		return function debouncer() {
+	
+			var context = this;
+	
+			var args = arguments;
+	
+			var later = function later() {
+	
+				timeout = null;
+	
+				if (!immediate) {
+	
+					func.apply(context, args);
+				}
+			};
+	
+			var callNow = immediate && !timeout;
+	
+			clearTimeout(timeout);
+	
+			timeout = setTimeout(later, wait);
+	
+			if (callNow) {
+	
+				func.apply(context, args);
+			}
+		};
+	};
+	
+	exports.default = debounce;
+
+/***/ },
+/* 367 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function emptyFunction() {
+		return function () {};
+	}
+	
+	exports.default = emptyFunction;
+
+/***/ },
+/* 368 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _length = __webpack_require__(369);
+	
+	var _length2 = _interopRequireDefault(_length);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var extend = function extend(o, modifications) {
+		for (var _len = arguments.length, rest = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+			rest[_key - 2] = arguments[_key];
+		}
+	
+		if ((0, _length2.default)(rest) > 0) {
+			var extension = extend(o, modifications);
+			var args = rest;
+	
+			args.unshift(extension);
+	
+			return extend.apply(undefined, args);
+		}
+	
+		var F = function F() {};
+	
+		if (modifications) {
+			for (var prop in modifications) {
+				o[prop] = modifications[prop];
+			}
+		}
+	
+		F.prototype = o;
+	
+		return new F();
+	};
+	
+	exports.default = extend;
+
+/***/ },
+/* 369 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	var _getType = __webpack_require__(364);
+	
+	var _getType2 = _interopRequireDefault(_getType);
+	
+	var _keys = __webpack_require__(372);
+	
+	var _keys2 = _interopRequireDefault(_keys);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function length(item) {
+		var result = void 0;
+	
+		if ((0, _isType2.default)(['array', 'string', 'function'], item)) {
+			result = item.length;
+		} else if ('object' === (0, _getType2.default)(item)) {
+			result = length((0, _keys2.default)(item));
+		}
+	
+		return result;
+	}
+	
+	exports.default = length;
+
+/***/ },
+/* 370 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _getType = __webpack_require__(364);
+	
+	var _getType2 = _interopRequireDefault(_getType);
+	
+	var _typeIsValid = __webpack_require__(371);
+	
+	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var isType = function isType(types, item) {
+		var result = void 0;
+	
+		if ('array' === (0, _getType2.default)(types)) {
+	
+			result = types.some(function (type) {
+				return isType(type, item);
+			});
+		} else if ('string' === (0, _getType2.default)(types)) {
+			var type = types;
+	
+			if ((0, _typeIsValid2.default)(type)) {
+				result = type === (0, _getType2.default)(item);
+			} else {
+				throw new TypeError("Invalid type provided: " + type);
+			}
+		}
+	
+		return result;
+	};
+	
+	exports.default = isType;
+
+/***/ },
+/* 371 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isOneOf = __webpack_require__(365);
+	
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+	
+	var _constants = __webpack_require__(340);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function typeisValid(givenType) {
+		return (0, _isOneOf2.default)(_constants.ALL_TYPES, givenType);
+	}
+	
+	exports.default = typeisValid;
+
+/***/ },
+/* 372 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function keys(obj) {
+		return Object.keys(obj);
+	}
+	
+	exports.default = keys;
+
+/***/ },
+/* 373 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _followPath = __webpack_require__(374);
+	
+	var _followPath2 = _interopRequireDefault(_followPath);
+	
+	var _isNothing = __webpack_require__(375);
+	
+	var _isNothing2 = _interopRequireDefault(_isNothing);
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	var _length = __webpack_require__(369);
+	
+	var _length2 = _interopRequireDefault(_length);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var existenceCheck = function existenceCheck(props, obj) {
+		var result = false;
+	
+		if ((0, _isNothing2.default)(props) || (0, _length2.default)(props) < 1 || !(0, _isType2.default)(['string', 'array'], props)) {
+			throw new Error("Missing or invalid properties passed to existenceCheck()");
+		}
+	
+		try {
+			(0, _followPath2.default)((0, _isType2.default)('array', props) ? props : [props], obj);
+	
+			result = true;
+		} catch (ignore) {
+			/* If followPath() throws an error, result will not be set to true. */
+		}
+	
+		return result;
+	};
+	
+	exports.default = existenceCheck;
+
+/***/ },
+/* 374 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/**
+	 *
+	 * @name followPath() 
+	 *
+	 * @desc Returns the entity located at the terminus of the 
+	 *     given path within the given object of nested objects.
+	 *
+	 * @param { string[] } path - Array of strings delineating 
+	 *     the path to follow.  
+	 * @param { object } obj - The object where the path will be  
+	 *     followed. 
+	 * @param { object } options - An object for setting options.
+	 *     - @prop { boolean } upsert - If true, in cases where the 
+	 *         property does not exist within the current object, an 
+	 *         empty object will be created at that property. 
+	 *     - @prop { function } terminus - A function that will be 
+	 *         called in order to set the value of the property 
+	 *         located at the terminus of the given path.     
+	 * 
+	 * @returns { any }
+	 *
+	 */
+	
+	var followPath = function followPath(path, obj) {
+		var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	
+		var result = void 0;
+	
+		if (path.length === 0) {
+			result = obj;
+		} else {
+			var prop = path[0];
+	
+			if ((0, _isType2.default)('object', obj)) {
+	
+				if (!(prop in obj)) {
+	
+					if (path.length === 1 && 'terminus' in options) {
+	
+						obj[prop] = options.terminus(obj[prop], obj, prop);
+					} else if ('upsert' in options && options.upsert) {
+	
+						obj[prop] = {};
+					} else {
+	
+						throw new ReferenceError('The property ' + prop + ' does not exist in the object ' + JSON.stringify(obj));
+					}
+				} else if (path.length === 1 && 'terminus' in options && (0, _isType2.default)('function', options.terminus)) {
+	
+					obj[prop] = options.terminus(obj[prop], obj, prop);
+				}
+			} else {
+				throw new Error('The path ' + path + ' is invalid for the entity ' + JSON.stringify(obj));
+			}
+	
+			result = followPath(path.slice(1), obj[prop], options);
+		}
+	
+		return result;
+	};
+	
+	exports.default = followPath;
+
+/***/ },
+/* 375 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isSomething = __webpack_require__(376);
+	
+	var _isSomething2 = _interopRequireDefault(_isSomething);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function isNothing(item) {
+		return !(0, _isSomething2.default)(item);
+	}
+	
+	exports.default = isNothing;
+
+/***/ },
+/* 376 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function isSomething(item) {
+		return item !== null && item !== undefined;
+	}
+	
+	exports.default = isSomething;
+
+/***/ },
+/* 377 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	// Obselete now that ES2015 is here, but
+	// still useful in browsers for a couple of years. 
+	
+	function getArgumentsArray(args, start, end) {
+		return Array.prototype.slice.call(args, start, end);
+	}
+	
+	exports.default = getArgumentsArray;
+
+/***/ },
+/* 378 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _applyToOwnProp = __webpack_require__(361);
+	
+	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
+	
+	var _getProp = __webpack_require__(379);
+	
+	var _getProp2 = _interopRequireDefault(_getProp);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function getOwnProp(obj, prop) {
+		var result = void 0;
+	
+		if (prop in obj) {
+			result = (0, _applyToOwnProp2.default)(_getProp2.default, obj, prop);
+		} else {
+			throw new ReferenceError("The property '" + prop + "' does not exist in the provided object: " + JSON.stringify(obj));
+		}
+	
+		return result;
+	}
+	
+	exports.default = getOwnProp;
+
+/***/ },
+/* 379 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function getProp(obj, prop) {
+		return obj[prop];
+	}
+	
+	exports.default = getProp;
+
+/***/ },
+/* 380 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	/**
+	 *
+	 * halt() - Pass in a function and some arguments, and 
+	 * 		it returns a function which will call the given 
+	 * 		function with the given arguments.  Good for 
+	 * 		when you want to set up an invocation, without 
+	 * 		actually invoking yet.  
+	 * 
+	 * @param func { function } - Function to invoke. 
+	 * @param args { array } - Arguments to pass on invocation. 
+	 * 
+	 * @returns { function } - Anonymous function which invokes the 
+	 * 		given function with the given arguments.  
+	 * 
+	 */
+	
+	function halt(func, args) {
+	  return function () {
+	    func.call.apply(func, [this].concat(_toConsumableArray(args)));
+	  };
+	}
+	
+	exports.default = halt;
+
+/***/ },
+/* 381 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/*==============================
+	=            invoke()            =
+	==============================*/
+	
+	var invoke = function invoke(obj, method) {
+		if (obj && method && (0, _isType2.default)('function', obj[method])) {
+			return obj[method]();
+		}
+	};
+	
+	/*=====  End of invoke()  ======*/
+	
+	exports.default = invoke;
+
+/***/ },
+/* 382 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _getType = __webpack_require__(364);
+	
+	var _getType2 = _interopRequireDefault(_getType);
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	var _keys = __webpack_require__(372);
+	
+	var _keys2 = _interopRequireDefault(_keys);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function isEmpty(item) {
+		var result = void 0;
+	
+		if ((0, _isType2.default)(['string', 'array'], item)) {
+			result = item.length === 0;
+		} else if ((0, _isType2.default)('object', item)) {
+			result = isEmpty((0, _keys2.default)(item));
+		} else {
+			throw new Error("isEmpty() cannot be used on {" + item + "} because its type is: " + (0, _getType2.default)(item));
+		}
+	
+		return result;
+	}
+	
+	exports.default = isEmpty;
+
+/***/ },
+/* 383 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var isNumeric = function isNumeric(n) {
+	
+	  return !isNaN(parseFloat(n)) && isFinite(n);
+	};
+	
+	exports.default = isNumeric;
+
+/***/ },
+/* 384 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var keyExists = function keyExists(desiredKey, keys) {
+		return keys.some(function (key) {
+			return key === desiredKey;
+		});
+	};
+	
+	var hasKeys = function hasKeys(keys, obj) {
+		var result = false;
+	
+		if ((0, _isType2.default)(['array', 'string'], keys) && (0, _isType2.default)('object', obj)) {
+	
+			if ((0, _isType2.default)('array', keys)) {
+				result = keys.every(function (key) {
+					return keyExists(key, Object.keys(obj));
+				});
+			} else {
+				result = keyExists(keys, Object.keys(obj));
+			}
+		} else {
+			throw new TypeError('The keys and/or object provided are of an invalid type: \n\t\t\t\tkeys: ' + keys + ' \n\t\t\t\tobject: ' + JSON.stringify(obj));
+		}
+	
+		return result;
+	};
+	
+	exports.default = hasKeys;
+
+/***/ },
+/* 385 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _applyToAllOwnProps = __webpack_require__(360);
+	
+	var _applyToAllOwnProps2 = _interopRequireDefault(_applyToAllOwnProps);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var addPropTo = function addPropTo(receiver) {
+		return function (obj, prop) {
+			receiver[prop] = obj[prop];
+		};
+	};
+	
+	var merge = function merge(first, second) {
+		(0, _applyToAllOwnProps2.default)(addPropTo(first), second);
+	};
+	
+	exports.default = merge;
+
+/***/ },
+/* 386 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function negate(action) {
+		return function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+	
+			return !action.apply(this, args);
+		};
+	}
+	
+	exports.default = negate;
+
+/***/ },
+/* 387 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isEmpty = __webpack_require__(382);
+	
+	var _isEmpty2 = _interopRequireDefault(_isEmpty);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var noArguments = function noArguments(args) {
+		return (0, _isEmpty2.default)(args);
+	};
+	
+	exports.default = noArguments;
+
+/***/ },
+/* 388 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isOneOf = __webpack_require__(365);
+	
+	var _isOneOf2 = _interopRequireDefault(_isOneOf);
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var noUniqueBetweenSets = function noUniqueBetweenSets(first, second) {
+	
+		if ((0, _isType2.default)('array', first) && (0, _isType2.default)('array', second)) {
+	
+			return first.every(function (item) {
+				return (0, _isOneOf2.default)(second, item);
+			}) && second.every(function (item) {
+				return (0, _isOneOf2.default)(first, item);
+			});
+		}
+	};
+	
+	exports.default = noUniqueBetweenSets;
+
+/***/ },
+/* 389 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	// SOURCE: https://leanpub.com/javascriptallongesix/read
+	
+	// N.B: This will not work within constructors!
+	// If used within a constructor's prototype, all
+	// instances will have the same once function,
+	// and the desired affect will not be achieved. 
+	var once = function once(fn) {
+		var hasRun = false;
+	
+		return function () {
+			if (hasRun) return;
+	
+			hasRun = true;
+	
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+	
+			return fn.apply(this, args);
+		};
+	};
+	
+	exports.default = once;
+
+/***/ },
+/* 390 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var pipeline = function pipeline() {
+		for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
+			fns[_key] = arguments[_key];
+		}
+	
+		return function (value) {
+			return fns.reduce(function (acc, fn) {
+				return fn(acc);
+			}, value);
+		};
+	};
+	
+	exports.default = pipeline;
+
+/***/ },
+/* 391 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/*==============================
+	=            poll()            =
+	==============================*/
+	
+	var poll = function poll(func) {
+		var interval = arguments.length <= 1 || arguments[1] === undefined ? 100 : arguments[1];
+		var timeout = arguments[2];
+	
+	
+		var endTime = Number(new Date()) + (timeout || 2000);
+	
+		return new Promise(function checkPolledCondition(resolve, reject) {
+	
+			var result = func();
+	
+			if (result) {
+	
+				// If the condition has been met, we're done
+				resolve(result);
+			} else if (Number(new Date()) < endTime) {
+	
+				// If the condition has not been met but the timeout
+				// has not elapsed, try again
+				setTimeout(function () {
+					return checkPolledCondition(resolve, reject);
+				}, interval);
+			} else {
+	
+				// Reject when the timeout expires
+				reject(new Error("poll() - Timeout of " + timeout + " milliseconds exceeded without the following condition check returning true: " + func));
+			}
+		});
+	};
+	
+	/*=====  End of poll()  ======*/
+	
+	exports.default = poll;
+
+/***/ },
+/* 392 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var recurseUntilTrue = function recurseUntilTrue(func, condition, initialArg) {
+	
+		var result = func(initialArg);
+	
+		if (condition(result)) return result;
+	
+		return recurseUntilTrue(func, condition, result);
+	};
+	
+	exports.default = recurseUntilTrue;
+
+/***/ },
+/* 393 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function returnItem(item) {
+		return function () {
+			return item;
+		};
+	}
+	
+	exports.default = returnItem;
+
+/***/ },
+/* 394 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var throttle = function throttle(fn) {
+		var threshhold = arguments.length <= 1 || arguments[1] === undefined ? 250 : arguments[1];
+		var context = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
+	
+	
+		var last = void 0;
+		var deferTimer = void 0;
+	
+		return function throttler() {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+	
+			var now = +new Date();
+	
+			if (last && now < last + threshhold) {
+	
+				// hold onto it
+				clearTimeout(deferTimer);
+	
+				deferTimer = setTimeout(function () {
+	
+					last = now;
+	
+					fn.apply(context, args);
+				}, threshhold);
+			} else {
+	
+				last = now;
+	
+				fn.apply(context, args);
+			}
+		};
+	};
+	
+	exports.default = throttle;
+
+/***/ },
+/* 395 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isSomething = __webpack_require__(376);
+	
+	var _isSomething2 = _interopRequireDefault(_isSomething);
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function throwErrorIfTrue(action, item, error) {
+		if ((0, _isType2.default)('function', action) && action(item)) {
+	
+			if ((0, _isSomething2.default)(error) && (0, _isType2.default)('error', error)) {
+				throw error;
+			} else {
+				throw new Error('Threw error because given action \'' + action + '\' on item \'' + item + '\' returned true.');
+			}
+		}
+	}
+	
+	exports.default = throwErrorIfTrue;
+
+/***/ },
+/* 396 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	function truthyness(item) {
+		return !!item;
+	}
+	
+	exports.default = truthyness;
+
+/***/ },
+/* 397 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var tryAtMost = function tryAtMost(thenable, maxTries) {
+		var onCaught = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
+	
+	
+		return thenable().catch(function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+	
+			maxTries -= 1;
+	
+			onCaught.apply(undefined, args.concat([maxTries]));
+	
+			if (maxTries < 1) {
+	
+				// Error must be thrown to be caught by
+				// the caller of tryAtMost()
+				throw new Error("Maximum number of tries exceeded.");
+			}
+	
+			// Recurse
+			return tryAtMost(thenable, maxTries, onCaught);
+		});
+	};
+	
+	exports.default = tryAtMost;
+
+/***/ },
+/* 398 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _isType = __webpack_require__(370);
+	
+	var _isType2 = _interopRequireDefault(_isType);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var DEFAULT_ON_TERMINUS = function DEFAULT_ON_TERMINUS(entity) {
+		return entity;
+	};
+	
+	var walkArray = function walkArray(arr) {
+		var onTerminus = arguments.length <= 1 || arguments[1] === undefined ? DEFAULT_ON_TERMINUS : arguments[1];
+		var path = arguments[2];
+	
+	
+		if (!path) path = [];
+	
+		arr.forEach(function (el, i, arr) {
+	
+			path.push(i);
+	
+			if ((0, _isType2.default)('array', el)) {
+	
+				return walkArray(el, onTerminus, path);
+			} else {
+	
+				onTerminus(el, i, arr, path);
+			}
+		});
+	};
+	
+	exports.default = walkArray;
+
+/***/ },
+/* 399 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var headToHeadMatchups = function headToHeadMatchups(players, playGame) {
+	
+		var winners = [];
+	
+		var i = 0;
+	
+		while (i < players.length / 2) {
+	
+			// Play game with first and last player, second and
+			// second-to-last player, and so on...
+			var winner = playGame(players[i], players[players.length - (i + 1)]);
+	
+			winners.push(winner);
+	
+			i += 1;
+		}
+	
+		return winners;
+	};
+	
+	exports.default = headToHeadMatchups;
+
+/***/ },
+/* 400 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var weightedRandomSelection = function weightedRandomSelection(a, b) {
+	
+		var argsAreValid = [a, b].every(function (num) {
+	
+			return num > 0 && num % 1 === 0;
+		});
+	
+		if (!argsAreValid) {
+	
+			throw new Error("Given numbers must be positive integers");
+		}
+	
+		// Switch arguments if greater number is not first 
+		if (a < b) {
+			var _ref = [b, a];
+			a = _ref[0];
+			b = _ref[1];
+		}
+	
+		var total = a + b;
+	
+		// Math.random() generates a (pseudo)-random
+		// number between 0 and 1.  If that random
+		// number is greater than the proportion of
+		// the total that belongs to 'a', then 'b'
+		// has won. 
+		if (Math.random() > a / total) {
+	
+			return b;
+		} else {
+	
+			return a;
+		}
+	};
+	
+	exports.default = weightedRandomSelection;
+
+/***/ },
+/* 401 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	/**
+	 *
+	 * getLatLngMaxMin() - Function which takes a set of lat / lng 
+	 *     values, and gets the max / min for both lat / lng 
+	 *
+	 */
+	
+	var getLatLngMaxMin = function getLatLngMaxMin(latLngs) {
+	
+		var latLngMaxMin = {
+			lat: {
+				min: null,
+				max: null
+			},
+	
+			lng: {
+				min: null,
+				max: null
+			}
+		};
+	
+		latLngMaxMin = latLngs.reduce(function (prev, curr, i) {
+			var lat = prev.lat;
+			var lng = prev.lng;
+	
+			// On the first invocation, the Lat and Lng
+			// values are both the min and max
+	
+			if (i === 0) {
+	
+				lat.min = lat.max = curr.lat();
+				lng.min = lng.max = curr.lng();
+			} else {
+	
+				lat.min = Math.min(lat.min, curr.lat());
+				lat.max = Math.max(lat.max, curr.lat());
+				lng.min = Math.min(lng.min, curr.lng());
+				lng.max = Math.max(lng.max, curr.lng());
+			}
+	
+			return prev;
+		}, latLngMaxMin);
+	
+		return latLngMaxMin;
+	};
+	
+	exports.default = getLatLngMaxMin;
+
+/***/ },
+/* 402 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _utils = __webpack_require__(359);
+	
+	var overriddenMethods = []; /* global window */
+	
+	var MAXIMUM_ANNOTATION_LENGTH = 2000;
+	
+	var POLL_INTERVAL = 50;
+	
+	var POLL_TIMEOUT = 3000;
+	
+	var getGoogleCallbacks = function getGoogleCallbacks() {
+	
+		var windowProps = Object.keys(window);
+	
+		var googCallbacks = windowProps.filter(function (prop) {
+			return prop.slice(0, 10) === "_callbacks";
+		});
+	
+		return googCallbacks;
+	};
+	
+	var overridingCallback = function overridingCallback(originalCallback, panorama) {
+	
+		return function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+	
+			// Recursively walk through the large array of metadata passed to the Google callback. 
+			// Some of the entities appear to be data images, so if the entity is a string with a
+			// short length, then check the panorama's 'shortDescription' property, which is the
+			// same as the label that appears on the map.  If the entity matches the
+			// 'shortDescription' value, then replace the entity with an empty string. 
+			(0, _utils.walkArray)(args, function (el, i, arr, path) {
+				// eslint-disable-line no-unused-vars
+	
+				if (!(0, _utils.isType)('string', el)) return;
+	
+				if (el.length > MAXIMUM_ANNOTATION_LENGTH) return;
+	
+				var _panorama$getLocation = panorama.getLocation();
+	
+				var shortDescription = _panorama$getLocation.shortDescription;
+	
+	
+				if (shortDescription.toLowerCase().indexOf(el.toLowerCase()) === -1) return;
+	
+				arr[i] = ""; // Erase label
+			});
+	
+			return originalCallback.apply(undefined, args);
+		};
+	};
+	
+	var overrideCallback = function overrideCallback(overriddenMethods, panorama) {
+	
+		var callbackOverridden = false;
+	
+		var googCallbacks = getGoogleCallbacks();
+	
+		if (googCallbacks.length === 0) return;
+	
+		/*----------  Override callbacks assigned to window._callbacks___<hash>.  ----------*/
+	
+		googCallbacks.forEach(function (callback) {
+	
+			if (overriddenMethods.indexOf(callback) > -1) return; // If method has already been overridden, exit
+	
+			overriddenMethods.push(callback);
+	
+			var originalCallback = window[callback];
+	
+			window[callback] = overridingCallback(originalCallback, panorama);
+	
+			callbackOverridden = true; // Returning true stops the polling
+		});
+	
+		return callbackOverridden;
+	};
+	
+	var removeStreetNameAnnotations = function removeStreetNameAnnotations(panorama) {
+	
+		(0, _utils.poll)(function () {
+			return overrideCallback(overriddenMethods, panorama);
+		}, POLL_INTERVAL, POLL_TIMEOUT)
+	
+		// Sometimes multiple 'pano_changed' events fire in succession, causing the code to find
+		// and replace a callback on the first event, but not the second, causing the poll's
+		// timeout to expire.  Catch and ignore the timeout expiration error in this case.
+		.catch(function (e) {
+			return e;
+		});
+	};
+	
+	exports.default = removeStreetNameAnnotations;
+
+/***/ },
+/* 403 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -14696,1432 +16342,7 @@
 
 
 /***/ },
-/* 352 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports.walkArray = exports.typeIsValid = exports.tryAtMost = exports.truthyness = exports.throwErrorIfTrue = exports.throttle = exports.returnItem = exports.recurseUntilTrue = exports.poll = exports.pipeline = exports.once = exports.noUniqueBetweenSets = exports.noArguments = exports.negate = exports.merge = exports.length = exports.keys = exports.hasKeys = exports.isType = exports.isSomething = exports.isOneOf = exports.isNumeric = exports.isNothing = exports.isEmpty = exports.invoke = exports.halt = exports.getType = exports.getProp = exports.getOwnProp = exports.getArgumentsArray = exports.followPath = exports.existenceCheck = exports.extend = exports.emptyFunction = exports.debounce = exports.clone = exports.capitalize = exports.applyToOwnProp = exports.applyToAllOwnProps = undefined;
-	
-	var _applyToAllOwnProps = __webpack_require__(353);
-	
-	var _applyToAllOwnProps2 = _interopRequireDefault(_applyToAllOwnProps);
-	
-	var _applyToOwnProp = __webpack_require__(354);
-	
-	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
-	
-	var _capitalize = __webpack_require__(355);
-	
-	var _capitalize2 = _interopRequireDefault(_capitalize);
-	
-	var _clone = __webpack_require__(356);
-	
-	var _clone2 = _interopRequireDefault(_clone);
-	
-	var _debounce = __webpack_require__(359);
-	
-	var _debounce2 = _interopRequireDefault(_debounce);
-	
-	var _emptyFunction = __webpack_require__(360);
-	
-	var _emptyFunction2 = _interopRequireDefault(_emptyFunction);
-	
-	var _extend = __webpack_require__(361);
-	
-	var _extend2 = _interopRequireDefault(_extend);
-	
-	var _existenceCheck = __webpack_require__(366);
-	
-	var _existenceCheck2 = _interopRequireDefault(_existenceCheck);
-	
-	var _followPath = __webpack_require__(367);
-	
-	var _followPath2 = _interopRequireDefault(_followPath);
-	
-	var _getArgumentsArray = __webpack_require__(370);
-	
-	var _getArgumentsArray2 = _interopRequireDefault(_getArgumentsArray);
-	
-	var _getOwnProp = __webpack_require__(371);
-	
-	var _getOwnProp2 = _interopRequireDefault(_getOwnProp);
-	
-	var _getProp = __webpack_require__(372);
-	
-	var _getProp2 = _interopRequireDefault(_getProp);
-	
-	var _getType = __webpack_require__(357);
-	
-	var _getType2 = _interopRequireDefault(_getType);
-	
-	var _halt = __webpack_require__(373);
-	
-	var _halt2 = _interopRequireDefault(_halt);
-	
-	var _invoke = __webpack_require__(374);
-	
-	var _invoke2 = _interopRequireDefault(_invoke);
-	
-	var _isEmpty = __webpack_require__(375);
-	
-	var _isEmpty2 = _interopRequireDefault(_isEmpty);
-	
-	var _isNothing = __webpack_require__(368);
-	
-	var _isNothing2 = _interopRequireDefault(_isNothing);
-	
-	var _isNumeric = __webpack_require__(376);
-	
-	var _isNumeric2 = _interopRequireDefault(_isNumeric);
-	
-	var _isOneOf = __webpack_require__(358);
-	
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-	
-	var _isSomething = __webpack_require__(369);
-	
-	var _isSomething2 = _interopRequireDefault(_isSomething);
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	var _hasKeys = __webpack_require__(377);
-	
-	var _hasKeys2 = _interopRequireDefault(_hasKeys);
-	
-	var _keys = __webpack_require__(365);
-	
-	var _keys2 = _interopRequireDefault(_keys);
-	
-	var _length = __webpack_require__(362);
-	
-	var _length2 = _interopRequireDefault(_length);
-	
-	var _merge = __webpack_require__(378);
-	
-	var _merge2 = _interopRequireDefault(_merge);
-	
-	var _negate = __webpack_require__(379);
-	
-	var _negate2 = _interopRequireDefault(_negate);
-	
-	var _noArguments = __webpack_require__(380);
-	
-	var _noArguments2 = _interopRequireDefault(_noArguments);
-	
-	var _noUniqueBetweenSets = __webpack_require__(381);
-	
-	var _noUniqueBetweenSets2 = _interopRequireDefault(_noUniqueBetweenSets);
-	
-	var _once = __webpack_require__(382);
-	
-	var _once2 = _interopRequireDefault(_once);
-	
-	var _pipeline = __webpack_require__(383);
-	
-	var _pipeline2 = _interopRequireDefault(_pipeline);
-	
-	var _poll = __webpack_require__(384);
-	
-	var _poll2 = _interopRequireDefault(_poll);
-	
-	var _recurseUntilTrue = __webpack_require__(385);
-	
-	var _recurseUntilTrue2 = _interopRequireDefault(_recurseUntilTrue);
-	
-	var _returnItem = __webpack_require__(386);
-	
-	var _returnItem2 = _interopRequireDefault(_returnItem);
-	
-	var _throttle = __webpack_require__(387);
-	
-	var _throttle2 = _interopRequireDefault(_throttle);
-	
-	var _throwErrorIfTrue = __webpack_require__(388);
-	
-	var _throwErrorIfTrue2 = _interopRequireDefault(_throwErrorIfTrue);
-	
-	var _truthyness = __webpack_require__(389);
-	
-	var _truthyness2 = _interopRequireDefault(_truthyness);
-	
-	var _tryAtMost = __webpack_require__(390);
-	
-	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
-	
-	var _typeIsValid = __webpack_require__(364);
-	
-	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
-	
-	var _walkArray = __webpack_require__(391);
-	
-	var _walkArray2 = _interopRequireDefault(_walkArray);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.applyToAllOwnProps = _applyToAllOwnProps2.default;
-	exports.applyToOwnProp = _applyToOwnProp2.default;
-	exports.capitalize = _capitalize2.default;
-	exports.clone = _clone2.default;
-	exports.debounce = _debounce2.default;
-	exports.emptyFunction = _emptyFunction2.default;
-	exports.extend = _extend2.default;
-	exports.existenceCheck = _existenceCheck2.default;
-	exports.followPath = _followPath2.default;
-	exports.getArgumentsArray = _getArgumentsArray2.default;
-	exports.getOwnProp = _getOwnProp2.default;
-	exports.getProp = _getProp2.default;
-	exports.getType = _getType2.default;
-	exports.halt = _halt2.default;
-	exports.invoke = _invoke2.default;
-	exports.isEmpty = _isEmpty2.default;
-	exports.isNothing = _isNothing2.default;
-	exports.isNumeric = _isNumeric2.default;
-	exports.isOneOf = _isOneOf2.default;
-	exports.isSomething = _isSomething2.default;
-	exports.isType = _isType2.default;
-	exports.hasKeys = _hasKeys2.default;
-	exports.keys = _keys2.default;
-	exports.length = _length2.default;
-	exports.merge = _merge2.default;
-	exports.negate = _negate2.default;
-	exports.noArguments = _noArguments2.default;
-	exports.noUniqueBetweenSets = _noUniqueBetweenSets2.default;
-	exports.once = _once2.default;
-	exports.pipeline = _pipeline2.default;
-	exports.poll = _poll2.default;
-	exports.recurseUntilTrue = _recurseUntilTrue2.default;
-	exports.returnItem = _returnItem2.default;
-	exports.throttle = _throttle2.default;
-	exports.throwErrorIfTrue = _throwErrorIfTrue2.default;
-	exports.truthyness = _truthyness2.default;
-	exports.tryAtMost = _tryAtMost2.default;
-	exports.typeIsValid = _typeIsValid2.default;
-	exports.walkArray = _walkArray2.default;
-
-/***/ },
-/* 353 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _applyToOwnProp = __webpack_require__(354);
-	
-	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function applyToAllOwnProps(action, obj) {
-		return Object.keys(obj).forEach(function (prop) {
-			return (0, _applyToOwnProp2.default)(action, obj, prop);
-		});
-	}
-	
-	exports.default = applyToAllOwnProps;
-
-/***/ },
-/* 354 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function applyToOwnProp(action, obj, prop) {
-		if (obj.hasOwnProperty(prop)) {
-			return action(obj, prop);
-		}
-	}
-	
-	exports.default = applyToOwnProp;
-
-/***/ },
-/* 355 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var capitalize = function capitalize(str) {
-	
-		if (!str) return;
-	
-		return str[0].toUpperCase() + str.slice(1);
-	};
-	
-	exports.default = capitalize;
-
-/***/ },
-/* 356 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _getType = __webpack_require__(357);
-	
-	var _getType2 = _interopRequireDefault(_getType);
-	
-	var _isOneOf = __webpack_require__(358);
-	
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	// Inspired by accepted answer at the following Stack Overflow question:
-	// http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object
-	
-	
-	function clone(obj) {
-	    var result = void 0;
-	    var copy = void 0;
-	
-	    // Handle the 3 simple types (string, number, boolean),
-	    // as well as NaN, null or undefined
-	    if ((0, _isOneOf2.default)(['null', 'undefined', 'NaN', 'string', 'number', 'boolean'], (0, _getType2.default)(obj))) {
-	        result = obj;
-	    } else if (obj instanceof Date) {
-	        // Handle instances of Date
-	        copy = new Date();
-	
-	        copy.setTime(obj.getTime());
-	
-	        result = copy;
-	    } else if ('array' === (0, _getType2.default)(obj)) {
-	        // Handle arrays
-	
-	        copy = [];
-	
-	        for (var i = 0, length = obj.length; i < length; i++) {
-	            copy[i] = clone(obj[i]);
-	        }
-	
-	        result = copy;
-	    } else if ('object' === (0, _getType2.default)(obj)) {
-	        // Handle objects
-	        copy = {};
-	
-	        for (var attr in obj) {
-	            if (obj.hasOwnProperty(attr)) {
-	                copy[attr] = clone(obj[attr]);
-	            }
-	        }
-	
-	        result = copy;
-	    }
-	
-	    return result;
-	}
-	
-	exports.default = clone;
-
-/***/ },
-/* 357 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isOneOf = __webpack_require__(358);
-	
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	// Returns the type for any passed entitity. 
-	// NaN actually evaluates to 'NaN', not "number" as per Javascript quirkiness.
-	function getType(item) {
-	
-		var result = item !== item ? 'NaN' : Object.prototype.toString.call(item).slice(8, -1).toLowerCase();
-	
-		result = (0, _isOneOf2.default)(['arguments'], result) ? 'object' : result;
-	
-		return result;
-	}
-	
-	exports.default = getType;
-
-/***/ },
-/* 358 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function isOneOf(matches, givenItem) {
-		return matches.some(function (match) {
-			return match === givenItem;
-		});
-	}
-	
-	exports.default = isOneOf;
-
-/***/ },
-/* 359 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	/* SOURCE: https://davidwalsh.name/javascript-debounce-function */
-	
-	// Returns a function, that, as long as it continues to be invoked, will not
-	// be triggered. The function will be called after it stops being called for
-	// N milliseconds. If `immediate` is passed, trigger the function on the
-	// leading edge, instead of the trailing.
-	var debounce = function debounce(func, wait, immediate) {
-	
-		var timeout = void 0;
-	
-		return function debouncer() {
-	
-			var context = this;
-	
-			var args = arguments;
-	
-			var later = function later() {
-	
-				timeout = null;
-	
-				if (!immediate) {
-	
-					func.apply(context, args);
-				}
-			};
-	
-			var callNow = immediate && !timeout;
-	
-			clearTimeout(timeout);
-	
-			timeout = setTimeout(later, wait);
-	
-			if (callNow) {
-	
-				func.apply(context, args);
-			}
-		};
-	};
-	
-	exports.default = debounce;
-
-/***/ },
-/* 360 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function emptyFunction() {
-		return function () {};
-	}
-	
-	exports.default = emptyFunction;
-
-/***/ },
-/* 361 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _length = __webpack_require__(362);
-	
-	var _length2 = _interopRequireDefault(_length);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var extend = function extend(o, modifications) {
-		for (var _len = arguments.length, rest = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-			rest[_key - 2] = arguments[_key];
-		}
-	
-		if ((0, _length2.default)(rest) > 0) {
-			var extension = extend(o, modifications);
-			var args = rest;
-	
-			args.unshift(extension);
-	
-			return extend.apply(undefined, args);
-		}
-	
-		var F = function F() {};
-	
-		if (modifications) {
-			for (var prop in modifications) {
-				o[prop] = modifications[prop];
-			}
-		}
-	
-		F.prototype = o;
-	
-		return new F();
-	};
-	
-	exports.default = extend;
-
-/***/ },
-/* 362 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	var _getType = __webpack_require__(357);
-	
-	var _getType2 = _interopRequireDefault(_getType);
-	
-	var _keys = __webpack_require__(365);
-	
-	var _keys2 = _interopRequireDefault(_keys);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function length(item) {
-		var result = void 0;
-	
-		if ((0, _isType2.default)(['array', 'string', 'function'], item)) {
-			result = item.length;
-		} else if ('object' === (0, _getType2.default)(item)) {
-			result = length((0, _keys2.default)(item));
-		}
-	
-		return result;
-	}
-	
-	exports.default = length;
-
-/***/ },
-/* 363 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _getType = __webpack_require__(357);
-	
-	var _getType2 = _interopRequireDefault(_getType);
-	
-	var _typeIsValid = __webpack_require__(364);
-	
-	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var isType = function isType(types, item) {
-		var result = void 0;
-	
-		if ('array' === (0, _getType2.default)(types)) {
-	
-			result = types.some(function (type) {
-				return isType(type, item);
-			});
-		} else if ('string' === (0, _getType2.default)(types)) {
-			var type = types;
-	
-			if ((0, _typeIsValid2.default)(type)) {
-				result = type === (0, _getType2.default)(item);
-			} else {
-				throw new TypeError("Invalid type provided: " + type);
-			}
-		}
-	
-		return result;
-	};
-	
-	exports.default = isType;
-
-/***/ },
-/* 364 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isOneOf = __webpack_require__(358);
-	
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-	
-	var _constants = __webpack_require__(340);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function typeisValid(givenType) {
-		return (0, _isOneOf2.default)(_constants.ALL_TYPES, givenType);
-	}
-	
-	exports.default = typeisValid;
-
-/***/ },
-/* 365 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function keys(obj) {
-		return Object.keys(obj);
-	}
-	
-	exports.default = keys;
-
-/***/ },
-/* 366 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _followPath = __webpack_require__(367);
-	
-	var _followPath2 = _interopRequireDefault(_followPath);
-	
-	var _isNothing = __webpack_require__(368);
-	
-	var _isNothing2 = _interopRequireDefault(_isNothing);
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	var _length = __webpack_require__(362);
-	
-	var _length2 = _interopRequireDefault(_length);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var existenceCheck = function existenceCheck(props, obj) {
-		var result = false;
-	
-		if ((0, _isNothing2.default)(props) || (0, _length2.default)(props) < 1 || !(0, _isType2.default)(['string', 'array'], props)) {
-			throw new Error("Missing or invalid properties passed to existenceCheck()");
-		}
-	
-		try {
-			(0, _followPath2.default)((0, _isType2.default)('array', props) ? props : [props], obj);
-	
-			result = true;
-		} catch (ignore) {
-			/* If followPath() throws an error, result will not be set to true. */
-		}
-	
-		return result;
-	};
-	
-	exports.default = existenceCheck;
-
-/***/ },
-/* 367 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	/**
-	 *
-	 * @name followPath() 
-	 *
-	 * @desc Returns the entity located at the terminus of the 
-	 *     given path within the given object of nested objects.
-	 *
-	 * @param { string[] } path - Array of strings delineating 
-	 *     the path to follow.  
-	 * @param { object } obj - The object where the path will be  
-	 *     followed. 
-	 * @param { object } options - An object for setting options.
-	 *     - @prop { boolean } upsert - If true, in cases where the 
-	 *         property does not exist within the current object, an 
-	 *         empty object will be created at that property. 
-	 *     - @prop { function } terminus - A function that will be 
-	 *         called in order to set the value of the property 
-	 *         located at the terminus of the given path.     
-	 * 
-	 * @returns { any }
-	 *
-	 */
-	
-	var followPath = function followPath(path, obj) {
-		var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-	
-		var result = void 0;
-	
-		if (path.length === 0) {
-			result = obj;
-		} else {
-			var prop = path[0];
-	
-			if ((0, _isType2.default)('object', obj)) {
-	
-				if (!(prop in obj)) {
-	
-					if (path.length === 1 && 'terminus' in options) {
-	
-						obj[prop] = options.terminus(obj[prop], obj, prop);
-					} else if ('upsert' in options && options.upsert) {
-	
-						obj[prop] = {};
-					} else {
-	
-						throw new ReferenceError('The property ' + prop + ' does not exist in the object ' + JSON.stringify(obj));
-					}
-				} else if (path.length === 1 && 'terminus' in options && (0, _isType2.default)('function', options.terminus)) {
-	
-					obj[prop] = options.terminus(obj[prop], obj, prop);
-				}
-			} else {
-				throw new Error('The path ' + path + ' is invalid for the entity ' + JSON.stringify(obj));
-			}
-	
-			result = followPath(path.slice(1), obj[prop], options);
-		}
-	
-		return result;
-	};
-	
-	exports.default = followPath;
-
-/***/ },
-/* 368 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isSomething = __webpack_require__(369);
-	
-	var _isSomething2 = _interopRequireDefault(_isSomething);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function isNothing(item) {
-		return !(0, _isSomething2.default)(item);
-	}
-	
-	exports.default = isNothing;
-
-/***/ },
-/* 369 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function isSomething(item) {
-		return item !== null && item !== undefined;
-	}
-	
-	exports.default = isSomething;
-
-/***/ },
-/* 370 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	// Obselete now that ES2015 is here, but
-	// still useful in browsers for a couple of years. 
-	
-	function getArgumentsArray(args, start, end) {
-		return Array.prototype.slice.call(args, start, end);
-	}
-	
-	exports.default = getArgumentsArray;
-
-/***/ },
-/* 371 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _applyToOwnProp = __webpack_require__(354);
-	
-	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
-	
-	var _getProp = __webpack_require__(372);
-	
-	var _getProp2 = _interopRequireDefault(_getProp);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function getOwnProp(obj, prop) {
-		var result = void 0;
-	
-		if (prop in obj) {
-			result = (0, _applyToOwnProp2.default)(_getProp2.default, obj, prop);
-		} else {
-			throw new ReferenceError("The property '" + prop + "' does not exist in the provided object: " + JSON.stringify(obj));
-		}
-	
-		return result;
-	}
-	
-	exports.default = getOwnProp;
-
-/***/ },
-/* 372 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function getProp(obj, prop) {
-		return obj[prop];
-	}
-	
-	exports.default = getProp;
-
-/***/ },
-/* 373 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	/**
-	 *
-	 * halt() - Pass in a function and some arguments, and 
-	 * 		it returns a function which will call the given 
-	 * 		function with the given arguments.  Good for 
-	 * 		when you want to set up an invocation, without 
-	 * 		actually invoking yet.  
-	 * 
-	 * @param func { function } - Function to invoke. 
-	 * @param args { array } - Arguments to pass on invocation. 
-	 * 
-	 * @returns { function } - Anonymous function which invokes the 
-	 * 		given function with the given arguments.  
-	 * 
-	 */
-	
-	function halt(func, args) {
-	  return function () {
-	    func.call.apply(func, [this].concat(_toConsumableArray(args)));
-	  };
-	}
-	
-	exports.default = halt;
-
-/***/ },
-/* 374 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	/*==============================
-	=            invoke()            =
-	==============================*/
-	
-	var invoke = function invoke(obj, method) {
-		if (obj && method && (0, _isType2.default)('function', obj[method])) {
-			return obj[method]();
-		}
-	};
-	
-	/*=====  End of invoke()  ======*/
-	
-	exports.default = invoke;
-
-/***/ },
-/* 375 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _getType = __webpack_require__(357);
-	
-	var _getType2 = _interopRequireDefault(_getType);
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	var _keys = __webpack_require__(365);
-	
-	var _keys2 = _interopRequireDefault(_keys);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function isEmpty(item) {
-		var result = void 0;
-	
-		if ((0, _isType2.default)(['string', 'array'], item)) {
-			result = item.length === 0;
-		} else if ((0, _isType2.default)('object', item)) {
-			result = isEmpty((0, _keys2.default)(item));
-		} else {
-			throw new Error("isEmpty() cannot be used on {" + item + "} because its type is: " + (0, _getType2.default)(item));
-		}
-	
-		return result;
-	}
-	
-	exports.default = isEmpty;
-
-/***/ },
-/* 376 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var isNumeric = function isNumeric(n) {
-	
-	  return !isNaN(parseFloat(n)) && isFinite(n);
-	};
-	
-	exports.default = isNumeric;
-
-/***/ },
-/* 377 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var keyExists = function keyExists(desiredKey, keys) {
-		return keys.some(function (key) {
-			return key === desiredKey;
-		});
-	};
-	
-	var hasKeys = function hasKeys(keys, obj) {
-		var result = false;
-	
-		if ((0, _isType2.default)(['array', 'string'], keys) && (0, _isType2.default)('object', obj)) {
-	
-			if ((0, _isType2.default)('array', keys)) {
-				result = keys.every(function (key) {
-					return keyExists(key, Object.keys(obj));
-				});
-			} else {
-				result = keyExists(keys, Object.keys(obj));
-			}
-		} else {
-			throw new TypeError('The keys and/or object provided are of an invalid type: \n\t\t\t\tkeys: ' + keys + ' \n\t\t\t\tobject: ' + JSON.stringify(obj));
-		}
-	
-		return result;
-	};
-	
-	exports.default = hasKeys;
-
-/***/ },
-/* 378 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _applyToAllOwnProps = __webpack_require__(353);
-	
-	var _applyToAllOwnProps2 = _interopRequireDefault(_applyToAllOwnProps);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var addPropTo = function addPropTo(receiver) {
-		return function (obj, prop) {
-			receiver[prop] = obj[prop];
-		};
-	};
-	
-	var merge = function merge(first, second) {
-		(0, _applyToAllOwnProps2.default)(addPropTo(first), second);
-	};
-	
-	exports.default = merge;
-
-/***/ },
-/* 379 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function negate(action) {
-		return function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-	
-			return !action.apply(this, args);
-		};
-	}
-	
-	exports.default = negate;
-
-/***/ },
-/* 380 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isEmpty = __webpack_require__(375);
-	
-	var _isEmpty2 = _interopRequireDefault(_isEmpty);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var noArguments = function noArguments(args) {
-		return (0, _isEmpty2.default)(args);
-	};
-	
-	exports.default = noArguments;
-
-/***/ },
-/* 381 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isOneOf = __webpack_require__(358);
-	
-	var _isOneOf2 = _interopRequireDefault(_isOneOf);
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var noUniqueBetweenSets = function noUniqueBetweenSets(first, second) {
-	
-		if ((0, _isType2.default)('array', first) && (0, _isType2.default)('array', second)) {
-	
-			return first.every(function (item) {
-				return (0, _isOneOf2.default)(second, item);
-			}) && second.every(function (item) {
-				return (0, _isOneOf2.default)(first, item);
-			});
-		}
-	};
-	
-	exports.default = noUniqueBetweenSets;
-
-/***/ },
-/* 382 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	// SOURCE: https://leanpub.com/javascriptallongesix/read
-	
-	// N.B: This will not work within constructors!
-	// If used within a constructor's prototype, all
-	// instances will have the same once function,
-	// and the desired affect will not be achieved. 
-	var once = function once(fn) {
-		var hasRun = false;
-	
-		return function () {
-			if (hasRun) return;
-	
-			hasRun = true;
-	
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-	
-			return fn.apply(this, args);
-		};
-	};
-	
-	exports.default = once;
-
-/***/ },
-/* 383 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var pipeline = function pipeline() {
-		for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
-			fns[_key] = arguments[_key];
-		}
-	
-		return function (value) {
-			return fns.reduce(function (acc, fn) {
-				return fn(acc);
-			}, value);
-		};
-	};
-	
-	exports.default = pipeline;
-
-/***/ },
-/* 384 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	/*==============================
-	=            poll()            =
-	==============================*/
-	
-	var poll = function poll(func) {
-		var interval = arguments.length <= 1 || arguments[1] === undefined ? 100 : arguments[1];
-		var timeout = arguments[2];
-	
-	
-		var endTime = Number(new Date()) + (timeout || 2000);
-	
-		return new Promise(function checkPolledCondition(resolve, reject) {
-	
-			var result = func();
-	
-			if (result) {
-	
-				// If the condition has been met, we're done
-				resolve(result);
-			} else if (Number(new Date()) < endTime) {
-	
-				// If the condition has not been met but the timeout
-				// has not elapsed, try again
-				setTimeout(function () {
-					return checkPolledCondition(resolve, reject);
-				}, interval);
-			} else {
-	
-				// Reject when the timeout expires
-				reject(new Error("poll() - Timeout of " + timeout + " milliseconds exceeded without the following condition check returning true: " + func));
-			}
-		});
-	};
-	
-	/*=====  End of poll()  ======*/
-	
-	exports.default = poll;
-
-/***/ },
-/* 385 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var recurseUntilTrue = function recurseUntilTrue(func, condition, initialArg) {
-	
-		var result = func(initialArg);
-	
-		if (condition(result)) return result;
-	
-		return recurseUntilTrue(func, condition, result);
-	};
-	
-	exports.default = recurseUntilTrue;
-
-/***/ },
-/* 386 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function returnItem(item) {
-		return function () {
-			return item;
-		};
-	}
-	
-	exports.default = returnItem;
-
-/***/ },
-/* 387 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var throttle = function throttle(fn) {
-		var threshhold = arguments.length <= 1 || arguments[1] === undefined ? 250 : arguments[1];
-		var context = arguments.length <= 2 || arguments[2] === undefined ? this : arguments[2];
-	
-	
-		var last = void 0;
-		var deferTimer = void 0;
-	
-		return function throttler() {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-	
-			var now = +new Date();
-	
-			if (last && now < last + threshhold) {
-	
-				// hold onto it
-				clearTimeout(deferTimer);
-	
-				deferTimer = setTimeout(function () {
-	
-					last = now;
-	
-					fn.apply(context, args);
-				}, threshhold);
-			} else {
-	
-				last = now;
-	
-				fn.apply(context, args);
-			}
-		};
-	};
-	
-	exports.default = throttle;
-
-/***/ },
-/* 388 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isSomething = __webpack_require__(369);
-	
-	var _isSomething2 = _interopRequireDefault(_isSomething);
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function throwErrorIfTrue(action, item, error) {
-		if ((0, _isType2.default)('function', action) && action(item)) {
-	
-			if ((0, _isSomething2.default)(error) && (0, _isType2.default)('error', error)) {
-				throw error;
-			} else {
-				throw new Error('Threw error because given action \'' + action + '\' on item \'' + item + '\' returned true.');
-			}
-		}
-	}
-	
-	exports.default = throwErrorIfTrue;
-
-/***/ },
-/* 389 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	function truthyness(item) {
-		return !!item;
-	}
-	
-	exports.default = truthyness;
-
-/***/ },
-/* 390 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var tryAtMost = function tryAtMost(thenable, maxTries) {
-		var onCaught = arguments.length <= 2 || arguments[2] === undefined ? function () {} : arguments[2];
-	
-	
-		return thenable().catch(function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-	
-			maxTries -= 1;
-	
-			onCaught.apply(undefined, args.concat([maxTries]));
-	
-			if (maxTries < 1) {
-	
-				// Error must be thrown to be caught by
-				// the caller of tryAtMost()
-				throw new Error("Maximum number of tries exceeded.");
-			}
-	
-			// Recurse
-			return tryAtMost(thenable, maxTries, onCaught);
-		});
-	};
-	
-	exports.default = tryAtMost;
-
-/***/ },
-/* 391 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _isType = __webpack_require__(363);
-	
-	var _isType2 = _interopRequireDefault(_isType);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var DEFAULT_ON_TERMINUS = function DEFAULT_ON_TERMINUS(entity) {
-		return entity;
-	};
-	
-	var walkArray = function walkArray(arr) {
-		var onTerminus = arguments.length <= 1 || arguments[1] === undefined ? DEFAULT_ON_TERMINUS : arguments[1];
-		var path = arguments[2];
-	
-	
-		if (!path) path = [];
-	
-		arr.forEach(function (el, i, arr) {
-	
-			path.push(i);
-	
-			if ((0, _isType2.default)('array', el)) {
-	
-				return walkArray(el, onTerminus, path);
-			} else {
-	
-				onTerminus(el, i, arr, path);
-			}
-		});
-	};
-	
-	exports.default = walkArray;
-
-/***/ },
-/* 392 */
+/* 404 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -16649,7 +16870,7 @@
 	}
 	exports.isPrimitive = isPrimitive;
 	
-	exports.isBuffer = __webpack_require__(393);
+	exports.isBuffer = __webpack_require__(405);
 	
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -16693,7 +16914,7 @@
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(394);
+	exports.inherits = __webpack_require__(406);
 	
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -16714,7 +16935,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(295)))
 
 /***/ },
-/* 393 */
+/* 405 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -16725,7 +16946,7 @@
 	}
 
 /***/ },
-/* 394 */
+/* 406 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -16754,799 +16975,7 @@
 
 
 /***/ },
-/* 395 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
-	
-	var _events = __webpack_require__(351);
-	
-	var _util = __webpack_require__(392);
-	
-	/*==========================================
-	=            createWebGlManager            =
-	==========================================*/
-	
-	var createWebGlManager = function createWebGlManager(canvas) {
-	
-		var WebGlManager = function WebGlManager(canvas) {
-	
-			this.canvas = canvas;
-		};
-	
-		// Inherit from EventEmitter
-		(0, _util.inherits)(WebGlManager, _events.EventEmitter);
-	
-		// Extend WebGlManager prototype with
-		// desired functionality.
-		_extends(WebGlManager.prototype, {
-			canUseWebGl: function canUseWebGl() {
-	
-				if (!window.WebGLRenderingContext) return false;
-	
-				var testCanvas = document.createElement('canvas');
-	
-				var result = void 0;
-	
-				if (testCanvas && 'getContext' in testCanvas) {
-	
-					var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
-	
-					// Reduce the array of webGlNames to a single boolean,
-					// which represents the result of canUseWebGl(). 
-					result = webGlNames.reduce(function (prev, curr) {
-	
-						if (prev) return prev; // If 'prev' is truthy, we can use WebGL.
-	
-						var context = testCanvas.getContext(curr);
-	
-						if (context && context instanceof WebGLRenderingContext) return true;
-					}, false); // Start with false (default)
-				}
-	
-				return result;
-			},
-			initGl: function initGl() {
-				var _this = this;
-	
-				if (this.canvas) {
-	
-					this.canvas.addEventListener('webglcontextrestored', function () {
-						return _this.emit('webglcontextrestored');
-					});
-				}
-			}
-		});
-	
-		// Return class instance which has inherited
-		// our desired functionality
-		return new WebGlManager(canvas);
-	};
-	
-	/*=====  End of createWebGlManager  ======*/
-	
-	exports.default = createWebGlManager;
-
-/***/ },
-/* 396 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global google */
-	
-	var _constants = __webpack_require__(340);
-	
-	var createChooseLocationMap = function createChooseLocationMap(canvas, options) {
-	
-		if (!canvas) {
-	
-			throw new Error("No canvas passed to createChooseLocationMap().");
-		}
-	
-		var mapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, options);
-		var map = new google.maps.Map(canvas, mapOptions);
-	
-		return map;
-	};
-	
-	exports.default = createChooseLocationMap;
-
-/***/ },
-/* 397 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var createPromiseTimeout = function createPromiseTimeout(timeout) {
-	
-		return new Promise(function (resolve) {
-	
-			setTimeout(resolve, timeout);
-		});
-	};
-	
-	exports.default = createPromiseTimeout;
-
-/***/ },
-/* 398 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _getLatLngWithinBoundaries = __webpack_require__(399);
-	
-	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
-	
-	var _requestNearestPanorama = __webpack_require__(402);
-	
-	var _requestNearestPanorama2 = _interopRequireDefault(_requestNearestPanorama);
-	
-	var _getRandomFeature = __webpack_require__(403);
-	
-	var _getRandomFeature2 = _interopRequireDefault(_getRandomFeature);
-	
-	var _selectRandomWeightedLinearRing = __webpack_require__(404);
-	
-	var _selectRandomWeightedLinearRing2 = _interopRequireDefault(_selectRandomWeightedLinearRing);
-	
-	var _getLatLngMaxMin = __webpack_require__(410);
-	
-	var _getLatLngMaxMin2 = _interopRequireDefault(_getLatLngMaxMin);
-	
-	var _utils = __webpack_require__(352);
-	
-	var _constants = __webpack_require__(340);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection, attemptsLeft) {
-	
-		var selectedBorough = (0, _getRandomFeature2.default)(featureCollection);
-	
-		var boroughName = selectedBorough.getProperty('boro_name');
-	
-		var selectedLinearRing = (0, _selectRandomWeightedLinearRing2.default)(selectedBorough);
-	
-		var latLngMaxMin = (0, _getLatLngMaxMin2.default)(selectedLinearRing.getArray());
-	
-		// Data.Polygon instance must be passed an array
-		var dataPolygon = new google.maps.Data.Polygon([selectedLinearRing]);
-	
-		var polygon = new google.maps.Polygon({
-			paths: dataPolygon.getAt(0).getArray()
-		});
-	
-		var randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
-	
-		return (0, _utils.tryAtMost)(function () {
-			return (0, _requestNearestPanorama2.default)(randomLatLng);
-		}, _constants.MAXIMUM_PANORAMA_REQUESTS, function (panoRequestResults, requestAttemptsLeft) {
-	
-			window.console.log('onCaught()');
-	
-			var panoData = panoRequestResults.panoData;
-			var status = panoRequestResults.status;
-	
-	
-			window.console.log("panoData:", panoData);
-			window.console.log("status:", status);
-			window.console.log("requestAttemptsLeft:", requestAttemptsLeft);
-	
-			randomLatLng = (0, _getLatLngWithinBoundaries2.default)(latLngMaxMin, polygon);
-		})
-	
-		// N.B - Parentheses must be wrapped around an object literal
-		// returned by an arrow function
-		.then(function () {
-			return { boroughName: boroughName, randomLatLng: randomLatLng, selectedBorough: selectedBorough };
-		});
-	}; /* global google */
-	
-	exports.default = getRandomPanoramaLocation;
-
-/***/ },
-/* 399 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _getRandomCoords = __webpack_require__(400);
-	
-	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, polygon) {
-	
-		var isWithinBoundaries = false;
-		var randomLatLng = null;
-	
-		// Until we find coordinates within our predefined region...
-		while (!isWithinBoundaries) {
-	
-			var randomCoords = (0, _getRandomCoords2.default)(latLngMaxMin);
-	
-			var randomLat = randomCoords.randomLat;
-			var randomLng = randomCoords.randomLng;
-	
-	
-			randomLatLng = new google.maps.LatLng(randomLat, randomLng);
-	
-			// Check that the random coords are within polygon
-			isWithinBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, polygon);
-		}
-	
-		return randomLatLng;
-	}; /* global google */
-	
-	exports.default = getLatLngWithinBoundaries;
-
-/***/ },
-/* 400 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _selectRandomValueOfRange = __webpack_require__(401);
-	
-	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	/**
-	 *
-	 * getRandomCoords() - Select random point from within min / max 
-	 *     lat / lng range
-	 *
-	 */
-	
-	var getRandomCoords = function getRandomCoords(latLngMaxMin) {
-		var lat = latLngMaxMin.lat;
-		var lng = latLngMaxMin.lng;
-	
-	
-		var randomLat = (0, _selectRandomValueOfRange2.default)(lat.min, lat.max).toFixed(6);
-	
-		var randomLng = (0, _selectRandomValueOfRange2.default)(lng.min, lng.max).toFixed(6);
-	
-		var randomCoords = { randomLat: randomLat, randomLng: randomLng };
-	
-		return randomCoords;
-	}; /* global window */
-	
-	exports.default = getRandomCoords;
-
-/***/ },
-/* 401 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var selectRandomValueOfRange = function selectRandomValueOfRange(min, max) {
-	
-		// If the order is incorrect, switch.
-		if (!(min <= max)) {
-			var _ref = [max, min];
-			min = _ref[0];
-			max = _ref[1];
-		}
-	
-		var difference = max - min;
-	
-		return min + Math.random() * difference;
-	};
-	
-	exports.default = selectRandomValueOfRange;
-
-/***/ },
-/* 402 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	/* global google, window */
-	
-	var requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
-	
-		return new Promise(function (resolve, reject) {
-	
-			var streetViewService = new google.maps.StreetViewService();
-	
-			var locationRequest = {
-				location: randomLatLng,
-				preference: google.maps.StreetViewPreference.NEAREST
-			};
-	
-			streetViewService.getPanorama(locationRequest, function (panoData, status) {
-	
-				window.console.log("panoData:", panoData);
-				window.console.log("status:", status);
-	
-				if ('OK' === status) {
-	
-					resolve({ panoData: panoData, status: status });
-				} else {
-	
-					reject({ panoData: panoData, status: status });
-				}
-			});
-		});
-	};
-	
-	exports.default = requestNearestPanorama;
-
-/***/ },
-/* 403 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var getRandomFeature = function getRandomFeature(featureCollection) {
-	
-		var randomIndex = Math.floor(Math.random() * featureCollection.length);
-	
-		return featureCollection[randomIndex];
-	};
-	
-	exports.default = getRandomFeature;
-
-/***/ },
-/* 404 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _getGeometricConstituents = __webpack_require__(405);
-	
-	var _getGeometricConstituents2 = _interopRequireDefault(_getGeometricConstituents);
-	
-	var _sortLeastToGreatest = __webpack_require__(406);
-	
-	var _sortLeastToGreatest2 = _interopRequireDefault(_sortLeastToGreatest);
-	
-	var _playoff = __webpack_require__(407);
-	
-	var _playoff2 = _interopRequireDefault(_playoff);
-	
-	var _headToHeadMatchups = __webpack_require__(408);
-	
-	var _headToHeadMatchups2 = _interopRequireDefault(_headToHeadMatchups);
-	
-	var _weightedRandomSelection = __webpack_require__(409);
-	
-	var _weightedRandomSelection2 = _interopRequireDefault(_weightedRandomSelection);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(feature) {
-	
-		var polygonCollection = (0, _getGeometricConstituents2.default)('MultiPolygon', feature.getGeometry());
-	
-		var linearRingCollection = polygonCollection.map(function (polygon) {
-			return (0, _getGeometricConstituents2.default)('Polygon', polygon);
-		}).map(function (linearRings) {
-			return linearRings.shift();
-		});
-	
-		var linearRingPathLengths = linearRingCollection.map(function (linearRing) {
-			return linearRing.getLength();
-		});
-	
-		// Create map for quick lookup later
-		var linearRingLengthMap = linearRingCollection.reduce(function () {
-			var prev = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-			var curr = arguments[1];
-	
-	
-			prev[curr.getLength()] = curr;
-	
-			return prev;
-		});
-	
-		var sortedLinearRingPathLengths = (0, _sortLeastToGreatest2.default)(linearRingPathLengths.slice());
-	
-		// Drop smallest LinearRing
-		if (sortedLinearRingPathLengths.length % 2 !== 0) {
-	
-			sortedLinearRingPathLengths = sortedLinearRingPathLengths.slice(1);
-		}
-	
-		var initializer = function initializer(winners) {
-			return (0, _sortLeastToGreatest2.default)(winners.slice());
-		};
-	
-		var playOneRound = function playOneRound(players) {
-			return (0, _headToHeadMatchups2.default)(players, _weightedRandomSelection2.default);
-		};
-	
-		// Playoff returns an array of length 1 (winner)
-		var lengthOfSelectedLinearRing = (0, _playoff2.default)(sortedLinearRingPathLengths, playOneRound, initializer).pop();
-	
-		var selectedLinearRing = linearRingLengthMap[lengthOfSelectedLinearRing];
-	
-		return selectedLinearRing;
-	};
-	
-	exports.default = selectRandomWeightedLinearRing;
-
-/***/ },
-/* 405 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	/**
-	 *
-	 * @param desiredType - String 
-	 * @param geometry - MultiPolygon | Polygon | LinearRing 
-	 *
-	 * @desc Returns an array of the geometry's constituent 
-	 *     parts, e.g. MultiPolygon --> Polygon(s), 
-	 *     Polygon --> LinearRing(s) 
-	 *
-	 */
-	
-	var getGeometricConstituents = function getGeometricConstituents(desiredType, geometry) {
-	
-	  var result = null;
-	
-	  if (desiredType === geometry.getType()) {
-	
-	    result = geometry.getArray();
-	  }
-	
-	  return result;
-	};
-	
-	exports.default = getGeometricConstituents;
-
-/***/ },
-/* 406 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var sortLeastToGreatest = function sortLeastToGreatest(numbers) {
-	
-		return numbers.slice() // Don't modify the given array
-	
-		.sort(function (a, b) {
-	
-			if (a < b) return -1;
-			if (a > b) return 1;
-			if (a === b) return 0;
-		});
-	};
-	
-	exports.default = sortLeastToGreatest;
-
-/***/ },
 /* 407 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _utils = __webpack_require__(352);
-	
-	var playoff = function playoff(players, playOneRound, initializer) {
-	
-		if (players.length % 2 !== 0) {
-	
-			throw new Error("There must be an even number of players passed to playoff().");
-		}
-	
-		// Func
-		var process = function process(players) {
-	
-			if (initializer) {
-	
-				players = initializer(players);
-			}
-	
-			return playOneRound(players);
-		};
-	
-		// Condition
-		var onePlayerLeft = function onePlayerLeft(players) {
-			return players.length === 1;
-		};
-	
-		return (0, _utils.recurseUntilTrue)(process, onePlayerLeft, players);
-	};
-	
-	exports.default = playoff;
-
-/***/ },
-/* 408 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var headToHeadMatchups = function headToHeadMatchups(players, playGame) {
-	
-		var winners = [];
-	
-		var i = 0;
-	
-		while (i < players.length / 2) {
-	
-			// Play game with first and last player, second and
-			// second-to-last player, and so on...
-			var winner = playGame(players[i], players[players.length - (i + 1)]);
-	
-			winners.push(winner);
-	
-			i += 1;
-		}
-	
-		return winners;
-	};
-	
-	exports.default = headToHeadMatchups;
-
-/***/ },
-/* 409 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var weightedRandomSelection = function weightedRandomSelection(a, b) {
-	
-		var argsAreValid = [a, b].every(function (num) {
-	
-			return num > 0 && num % 1 === 0;
-		});
-	
-		if (!argsAreValid) {
-	
-			throw new Error("Given numbers must be positive integers");
-		}
-	
-		// Switch arguments if greater number is not first 
-		if (a < b) {
-			var _ref = [b, a];
-			a = _ref[0];
-			b = _ref[1];
-		}
-	
-		var total = a + b;
-	
-		// Math.random() generates a (pseudo)-random
-		// number between 0 and 1.  If that random
-		// number is greater than the proportion of
-		// the total that belongs to 'a', then 'b'
-		// has won. 
-		if (Math.random() > a / total) {
-	
-			return b;
-		} else {
-	
-			return a;
-		}
-	};
-	
-	exports.default = weightedRandomSelection;
-
-/***/ },
-/* 410 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	/**
-	 *
-	 * getLatLngMaxMin() - Function which takes a set of lat / lng 
-	 *     values, and gets the max / min for both lat / lng 
-	 *
-	 */
-	
-	var getLatLngMaxMin = function getLatLngMaxMin(latLngs) {
-	
-		var latLngMaxMin = {
-			lat: {
-				min: null,
-				max: null
-			},
-	
-			lng: {
-				min: null,
-				max: null
-			}
-		};
-	
-		latLngMaxMin = latLngs.reduce(function (prev, curr, i) {
-			var lat = prev.lat;
-			var lng = prev.lng;
-	
-			// On the first invocation, the Lat and Lng
-			// values are both the min and max
-	
-			if (i === 0) {
-	
-				lat.min = lat.max = curr.lat();
-				lng.min = lng.max = curr.lng();
-			} else {
-	
-				lat.min = Math.min(lat.min, curr.lat());
-				lat.max = Math.max(lat.max, curr.lat());
-				lng.min = Math.min(lng.min, curr.lng());
-				lng.max = Math.max(lng.max, curr.lng());
-			}
-	
-			return prev;
-		}, latLngMaxMin);
-	
-		return latLngMaxMin;
-	};
-	
-	exports.default = getLatLngMaxMin;
-
-/***/ },
-/* 411 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _utils = __webpack_require__(352);
-	
-	var overriddenMethods = []; /* global window */
-	
-	var MAXIMUM_ANNOTATION_LENGTH = 2000;
-	
-	var POLL_INTERVAL = 50;
-	
-	var POLL_TIMEOUT = 3000;
-	
-	var getGoogleCallbacks = function getGoogleCallbacks() {
-	
-		var windowProps = Object.keys(window);
-	
-		var googCallbacks = windowProps.filter(function (prop) {
-			return prop.slice(0, 10) === "_callbacks";
-		});
-	
-		return googCallbacks;
-	};
-	
-	var overridingCallback = function overridingCallback(originalCallback, panorama) {
-	
-		return function () {
-			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-			}
-	
-			// Recursively walk through the large array of metadata passed to the Google callback. 
-			// Some of the entities appear to be data images, so if the entity is a string with a
-			// short length, then check the panorama's 'shortDescription' property, which is the
-			// same as the label that appears on the map.  If the entity matches the
-			// 'shortDescription' value, then replace the entity with an empty string. 
-			(0, _utils.walkArray)(args, function (el, i, arr, path) {
-				// eslint-disable-line no-unused-vars
-	
-				if (!(0, _utils.isType)('string', el)) return;
-	
-				if (el.length > MAXIMUM_ANNOTATION_LENGTH) return;
-	
-				var _panorama$getLocation = panorama.getLocation();
-	
-				var shortDescription = _panorama$getLocation.shortDescription;
-	
-	
-				if (shortDescription.toLowerCase().indexOf(el.toLowerCase()) === -1) return;
-	
-				arr[i] = ""; // Erase label
-			});
-	
-			return originalCallback.apply(undefined, args);
-		};
-	};
-	
-	var overrideCallback = function overrideCallback(overriddenMethods, panorama) {
-	
-		var callbackOverridden = false;
-	
-		var googCallbacks = getGoogleCallbacks();
-	
-		if (googCallbacks.length === 0) return;
-	
-		/*----------  Override callbacks assigned to window._callbacks___<hash>.  ----------*/
-	
-		googCallbacks.forEach(function (callback) {
-	
-			if (overriddenMethods.indexOf(callback) > -1) return; // If method has already been overridden, exit
-	
-			overriddenMethods.push(callback);
-	
-			var originalCallback = window[callback];
-	
-			window[callback] = overridingCallback(originalCallback, panorama);
-	
-			callbackOverridden = true; // Returning true stops the polling
-		});
-	
-		return callbackOverridden;
-	};
-	
-	var removeStreetNameAnnotations = function removeStreetNameAnnotations(panorama) {
-	
-		(0, _utils.poll)(function () {
-			return overrideCallback(overriddenMethods, panorama);
-		}, POLL_INTERVAL, POLL_TIMEOUT)
-	
-		// Sometimes multiple 'pano_changed' events fire in succession, causing the code to find
-		// and replace a callback on the first event, but not the second, causing the poll's
-		// timeout to expire.  Catch and ignore the timeout expiration error in this case.
-		.catch(function (e) {
-			return e;
-		});
-	};
-	
-	exports.default = removeStreetNameAnnotations;
-
-/***/ },
-/* 412 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17572,7 +17001,7 @@
 	};
 
 /***/ },
-/* 413 */
+/* 408 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17587,11 +17016,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _TwoBlocksMap = __webpack_require__(414);
+	var _TwoBlocksMap = __webpack_require__(409);
 	
 	var _TwoBlocksMap2 = _interopRequireDefault(_TwoBlocksMap);
 	
-	var _TwoBlocksPanorama = __webpack_require__(417);
+	var _TwoBlocksPanorama = __webpack_require__(412);
 	
 	var _TwoBlocksPanorama2 = _interopRequireDefault(_TwoBlocksPanorama);
 	
@@ -17683,7 +17112,7 @@
 	exports.default = TwoBlocksView;
 
 /***/ },
-/* 414 */
+/* 409 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17698,11 +17127,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _GoogleMap = __webpack_require__(415);
+	var _GoogleMap = __webpack_require__(410);
 	
 	var _GoogleMap2 = _interopRequireDefault(_GoogleMap);
 	
-	var _getViewLayerClassName = __webpack_require__(416);
+	var _getViewLayerClassName = __webpack_require__(411);
 	
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 	
@@ -17797,7 +17226,7 @@
 	exports.default = TwoBlocksMap;
 
 /***/ },
-/* 415 */
+/* 410 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17855,7 +17284,7 @@
 	exports.default = GoogleMap;
 
 /***/ },
-/* 416 */
+/* 411 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17873,7 +17302,7 @@
 	exports.default = getViewLayerClassName;
 
 /***/ },
-/* 417 */
+/* 412 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17888,7 +17317,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _getViewLayerClassName = __webpack_require__(416);
+	var _getViewLayerClassName = __webpack_require__(411);
 	
 	var _getViewLayerClassName2 = _interopRequireDefault(_getViewLayerClassName);
 	
@@ -17959,7 +17388,7 @@
 	exports.default = TwoBlocksPanorama;
 
 /***/ },
-/* 418 */
+/* 413 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17974,15 +17403,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _TwoBlocksPrompt = __webpack_require__(419);
+	var _TwoBlocksPrompt = __webpack_require__(414);
 	
 	var _TwoBlocksPrompt2 = _interopRequireDefault(_TwoBlocksPrompt);
 	
-	var _TwoBlocksSubmitter = __webpack_require__(421);
+	var _TwoBlocksSubmitter = __webpack_require__(416);
 	
 	var _TwoBlocksSubmitter2 = _interopRequireDefault(_TwoBlocksSubmitter);
 	
-	var _TwoBlocksReplayButton = __webpack_require__(422);
+	var _TwoBlocksReplayButton = __webpack_require__(417);
 	
 	var _TwoBlocksReplayButton2 = _interopRequireDefault(_TwoBlocksReplayButton);
 	
@@ -18071,7 +17500,7 @@
 	exports.default = TwoBlocksInterchange;
 
 /***/ },
-/* 419 */
+/* 414 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18084,7 +17513,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _stylizeBoroughName = __webpack_require__(420);
+	var _stylizeBoroughName = __webpack_require__(415);
 	
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 	
@@ -18151,7 +17580,7 @@
 	exports.default = TwoBlocksPrompt;
 
 /***/ },
-/* 420 */
+/* 415 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18169,7 +17598,7 @@
 	exports.default = stylizeBoroughName;
 
 /***/ },
-/* 421 */
+/* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18182,7 +17611,7 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _stylizeBoroughName = __webpack_require__(420);
+	var _stylizeBoroughName = __webpack_require__(415);
 	
 	var _stylizeBoroughName2 = _interopRequireDefault(_stylizeBoroughName);
 	
@@ -18267,7 +17696,7 @@
 	exports.default = TwoBlocksSubmitter;
 
 /***/ },
-/* 422 */
+/* 417 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18330,6 +17759,600 @@
 	exports.default = TwoBlocksReplayButton;
 
 /***/ },
+/* 418 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createPanorama = __webpack_require__(419);
+	
+	var _createPanorama2 = _interopRequireDefault(_createPanorama);
+	
+	var _createSpinner = __webpack_require__(420);
+	
+	var _createSpinner2 = _interopRequireDefault(_createSpinner);
+	
+	var _createWebGlManager = __webpack_require__(421);
+	
+	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
+	
+	var _createChooseLocationMap = __webpack_require__(422);
+	
+	var _createChooseLocationMap2 = _interopRequireDefault(_createChooseLocationMap);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	/* global google */
+	
+	var gameComponents = null;
+	
+	var createGameComponents = function createGameComponents(gameState) {
+	
+		if (gameComponents) return gameComponents;
+	
+		if (!('google' in window) || !('maps' in window.google) || !('geometry' in window.google.maps)) {
+	
+			throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page.");
+		}
+	
+		var gameInstance = gameState.gameInstance;
+		var locationData = gameState.locationData;
+		var mapCanvas = gameState.mapCanvas;
+		var mapMarkerVisible = gameState.mapMarkerVisible;
+		var panoramaCanvas = gameState.panoramaCanvas;
+	
+	
+		var webGlManager = (0, _createWebGlManager2.default)(panoramaCanvas);
+	
+		var mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
+	
+		/*----------  Set up panorama  ----------*/
+	
+		var panorama = (0, _createPanorama2.default)(panoramaCanvas, {
+			mode: mode,
+			position: null,
+			visible: true,
+			zoomControl: gameInstance.shouldUseDeviceOrientation()
+		});
+	
+		/*----------  Set up spinner  ----------*/
+	
+		var spinner = (0, _createSpinner2.default)(panorama, {
+			punctuate: {
+				segments: 4,
+				delay: 2000
+			}
+		});
+	
+		spinner.on('revolution', function () {
+			return window.console.log('revolution');
+		});
+	
+		/*----------  Set up chooseLocationMap  ----------*/
+	
+		var CENTER = locationData.CENTER;
+	
+	
+		var mapOptions = {
+			center: new google.maps.LatLng(CENTER.lat, CENTER.lng),
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+	
+		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions);
+	
+		// window.console.log("chooseLocationMap:", chooseLocationMap); 		
+	
+		/*----------  Set up marker  ----------*/
+	
+		// Outside the polygon boundaries, in the Atlantic Ocean
+		var _locationData$MARKER_ = locationData.MARKER_PLACEMENT;
+		var markerLat = _locationData$MARKER_.lat;
+		var markerLng = _locationData$MARKER_.lng;
+	
+	
+		var markerOptions = {
+			animation: google.maps.Animation.BOUNCE,
+			draggable: true,
+			map: chooseLocationMap,
+			position: new google.maps.LatLng(markerLat, markerLng),
+			visible: mapMarkerVisible
+		};
+	
+		var chooseLocationMarker = new google.maps.Marker(markerOptions);
+	
+		// Stop bouncing
+		google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
+			return chooseLocationMarker.setAnimation(null);
+		});
+	
+		google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
+			var latLng = e.latLng;
+	
+	
+			chooseLocationMarker.setPosition(latLng);
+			chooseLocationMarker.setAnimation(null);
+		});
+	
+		/*----------  Set up WebGl  ----------*/
+	
+		if (webGlManager.canUseWebGl()) {
+	
+			setTimeout(function () {
+				return webGlManager.initGl();
+			}, 1000);
+		}
+	
+		// Assign game components to variable so we can just return
+		// the already-created components if we start a new game
+		gameComponents = {
+			chooseLocationMap: chooseLocationMap,
+			chooseLocationMarker: chooseLocationMarker,
+			panorama: panorama,
+			spinner: spinner
+		};
+	
+		return gameComponents;
+	};
+	
+	exports.default = createGameComponents;
+
+/***/ },
+/* 419 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	/* global google */
+	
+	/*======================================
+	=            createPanorama()          =
+	======================================*/
+	
+	var createPanorama = function createPanorama(canvas) {
+		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+	
+		var defaultOptions = {
+			position: null,
+			// Address control shows a box with basic information about the
+			// location, as well as a link to see the map on Google Maps
+			addressControl: false,
+			addressControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+			// clickToGo shows a rectangular "highlight" under the cursor, and on
+			// click, the street view moves to the location clicked upon.  We will
+			// want to keep this disabled for the game.			
+			clickToGo: false,
+			disableDoubleClickZoom: true,
+			// Below, we add an event listener to 'closeclick', which fires when
+			// the close button is clicked.  In the original author's implementation,
+			// the application reveals the map on 'closeclick'.  			
+			enableCloseButton: false,
+			imageDateControl: false,
+			linksControl: false,
+			mode: "webgl",
+			// Pan Control shows a UI element that allows you to rotate the pano
+			panControl: false,
+			panControlOptions: { position: google.maps.ControlPosition.TOP_LEFT },
+			pano: null, // ID of panorama to use
+			pov: {
+				zoom: 1.1,
+				heading: 0,
+				pitch: 0
+			},
+			scrollwheel: false,
+			visible: true,
+			// Zoom control functionality is obvious
+			zoomControl: false,
+			zoomControlOptions: {
+				position: google.maps.ControlPosition.TOP_LEFT,
+				style: google.maps.ZoomControlStyle.DEFAULT
+			}
+		};
+	
+		var panoramaOptions = _extends({}, defaultOptions, options);
+	
+		// Documentation on streetViewPanorama class:
+		// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
+		return new google.maps.StreetViewPanorama(canvas, panoramaOptions);
+	};
+	
+	/*=====  End of createPanorama()  ======*/
+	
+	exports.default = createPanorama;
+
+/***/ },
+/* 420 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
+	
+	var _events = __webpack_require__(403);
+	
+	var _utils = __webpack_require__(359);
+	
+	var _util = __webpack_require__(404);
+	
+	/*=====================================
+	=            createSpinner()            =
+	=====================================*/
+	
+	/**
+	 *
+	 * Add options object as last parameter.  Add option to 
+	 * not spin continuously, but rather, in a series of 
+	 * partial-spins.  Should be able to split the 360 degrees 
+	 * into "chunks", spin to one chunk, pause for a few 
+	 * seconds, and then continue to the next one.  
+	 *
+	 * Option will be called 'punctuate'.  Properties will be 
+	 * 'segments' and 'delay'.  Valid options for segments will be
+	 * even divisors of 360 -- 12 (30-degrees), 9 (40-degrees), 
+	 * 6 (60-degrees), 4 (90-degrees), 2 (180-degrees)
+	 * 
+	 */
+	
+	var createSpinner = function createSpinner(panorma) {
+		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	
+	
+		var DEGREES_IN_A_CIRCLE = 360;
+		var DELAY_DEFAULT = 1000; // Milliseconds 
+		var INCREMENT_DEFAULT = 1; // Degrees
+		var INTERVAL_DEFAULT = 25; // Milliseconds
+		var SEGMENTS_DEFAULT = 4;
+		var VALID_SEGMENTS = [2, 4, 6, 9, 12];
+	
+		var _canSpin = false;
+		var _lastRepaint = null;
+		var _paused = false;
+		var _started = false;
+		var _startHeading = null;
+		var segments = null;
+		var delay = null;
+		var increment = void 0;
+		var interval = void 0;
+		var timer = void 0;
+	
+		var spinner = null;
+	
+		var handlePunctuationOption = function handlePunctuationOption(options) {
+	
+			var punctuateSettings = null;
+	
+			if ('punctuate' in options) {
+				var _options$punctuate = options.punctuate;
+				var _segments = _options$punctuate.segments;
+				var _delay = _options$punctuate.delay;
+	
+	
+				if (!(0, _utils.isOneOf)(VALID_SEGMENTS, _segments)) {
+	
+					_segments = null;
+				}
+	
+				if (!_segments) {
+					_segments = SEGMENTS_DEFAULT;
+				}
+	
+				if (!_delay) {
+					_delay = DELAY_DEFAULT;
+				}
+	
+				punctuateSettings = { segments: _segments, delay: _delay };
+			}
+	
+			return punctuateSettings;
+		};
+	
+		var incrementHeading = function incrementHeading(pov, increment) {
+	
+			pov.heading += increment;
+	
+			while (pov.heading > DEGREES_IN_A_CIRCLE) {
+				pov.heading -= DEGREES_IN_A_CIRCLE;
+			}
+	
+			while (pov.heading < 0) {
+				pov.heading += DEGREES_IN_A_CIRCLE;
+			}
+	
+			return pov;
+		};
+	
+		// Initial implementation assumes that we are incrementing
+		// the spin by one degree each time we call spin(). 
+		// TODO: Make this more sophisticated and robust. 
+		var punctuate = function punctuate(pov, segments, delay) {
+	
+			// Heading is the number of degrees from cardinal direction North
+			var heading = pov.heading;
+	
+			// The valid values for 'segments' evenly divide 360 degrees. 
+			// If the heading is evenly divisible by the number of degrees
+			// in each segment, the spinning has completed one partial
+			// rotation, and it is time to pause the movement. 
+	
+			if (heading % (DEGREES_IN_A_CIRCLE / segments) === 0) {
+	
+				_paused = true;
+	
+				// If we were to pause the spinning on mouseover as
+				// the original author chose to do, we wouldn't actually
+				// want to start spinning when this timeout expires. 
+				// So we would need to read the mouseover state somehow
+				// and start only when the timeout has expired AND the
+				// mouse has left the canvas <div>.  This is where something
+				// like Redux is going to shine. 
+	
+				setTimeout(function () {
+	
+					// If the stop() method has not been called
+					// by the outside world...
+					if (_canSpin) {
+	
+						api.start();
+					}
+				}, delay);
+			}
+		};
+	
+		/*----------  Set punctuation options  ----------*/
+	
+		var punctuated = handlePunctuationOption(options);
+	
+		if (punctuated) {
+	
+			// Parentheses required when destructuring assigns
+			// to previously declared variables. 
+			segments = punctuated.segments;
+			delay = punctuated.delay;
+		}
+	
+		/*----------  Set increment option  ----------*/
+	
+		increment = options.increment;
+	
+	
+		if (!increment) {
+	
+			increment = INCREMENT_DEFAULT; // Degrees
+		}
+	
+		/*----------  Set interval option  ----------*/
+	
+		interval = options.interval;
+	
+	
+		if (!interval) {
+	
+			interval = INTERVAL_DEFAULT;
+		}
+	
+		var onAnimationFrame = function onAnimationFrame(timestamp) {
+	
+			if (!_lastRepaint) {
+	
+				_lastRepaint = timestamp;
+			}
+	
+			var timeSinceLastRepaint = timestamp - _lastRepaint;
+	
+			if (timeSinceLastRepaint >= interval) {
+	
+				if (_canSpin && !_paused) {
+	
+					this.spin();
+				}
+	
+				window.requestAnimationFrame(onAnimationFrame.bind(this));
+			} else {
+	
+				window.requestAnimationFrame(onAnimationFrame.bind(this));
+			}
+		};
+	
+		/*----------  Public  ----------*/
+	
+		var api = {
+			spin: function spin() {
+	
+				// window.console.log('spin()');
+	
+				try {
+	
+					var pov = incrementHeading(panorma.getPov(), increment);
+	
+					panorma.setPov(pov);
+	
+					if (pov.heading % DEGREES_IN_A_CIRCLE === _startHeading) {
+	
+						spinner.emit('revolution');
+					}
+	
+					if (punctuated) {
+	
+						punctuate(pov, segments, delay);
+					}
+				} catch (e) {
+	
+					window.console.error("e:", e);
+				}
+			},
+			start: function start() {
+	
+				_canSpin = true;
+	
+				_paused = false;
+	
+				// window.console.log('spinner start()');
+	
+				if (!_started) {
+	
+					_started = true;
+	
+					_startHeading = panorma.getPov().heading;
+				}
+	
+				if (!timer) {
+	
+					timer = window.requestAnimationFrame(onAnimationFrame.bind(this));
+				}
+			},
+			started: function started() {
+	
+				return _started;
+			},
+			stop: function stop() {
+	
+				_canSpin = false;
+			}
+		};
+	
+		/*----------  Create Spinner instance  ----------*/
+	
+		// Create Spinner() constructor to inherit EventEmitter functionality
+		var Spinner = function Spinner() {};
+	
+		(0, _util.inherits)(Spinner, _events.EventEmitter);
+	
+		// Add API methods to prototype
+		_extends(Spinner.prototype, api);
+	
+		spinner = new Spinner();
+	
+		return spinner;
+	};
+	
+	/*=====  End of createSpinner()  ======*/
+	
+	exports.default = createSpinner;
+
+/***/ },
+/* 421 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global document, window */
+	
+	var _events = __webpack_require__(403);
+	
+	var _util = __webpack_require__(404);
+	
+	/*==========================================
+	=            createWebGlManager            =
+	==========================================*/
+	
+	var createWebGlManager = function createWebGlManager(canvas) {
+	
+		var WebGlManager = function WebGlManager(canvas) {
+	
+			this.canvas = canvas;
+		};
+	
+		// Inherit from EventEmitter
+		(0, _util.inherits)(WebGlManager, _events.EventEmitter);
+	
+		// Extend WebGlManager prototype with
+		// desired functionality.
+		_extends(WebGlManager.prototype, {
+			canUseWebGl: function canUseWebGl() {
+	
+				if (!window.WebGLRenderingContext) return false;
+	
+				var testCanvas = document.createElement('canvas');
+	
+				var result = void 0;
+	
+				if (testCanvas && 'getContext' in testCanvas) {
+	
+					var webGlNames = ["webgl", "experimental-webgl", "moz-webgl", "webkit-3d"];
+	
+					// Reduce the array of webGlNames to a single boolean,
+					// which represents the result of canUseWebGl(). 
+					result = webGlNames.reduce(function (prev, curr) {
+	
+						if (prev) return prev; // If 'prev' is truthy, we can use WebGL.
+	
+						var context = testCanvas.getContext(curr);
+	
+						if (context && context instanceof WebGLRenderingContext) return true;
+					}, false); // Start with false (default)
+				}
+	
+				return result;
+			},
+			initGl: function initGl() {
+				var _this = this;
+	
+				if (this.canvas) {
+	
+					this.canvas.addEventListener('webglcontextrestored', function () {
+						return _this.emit('webglcontextrestored');
+					});
+				}
+			}
+		});
+	
+		// Return class instance which has inherited
+		// our desired functionality
+		return new WebGlManager(canvas);
+	};
+	
+	/*=====  End of createWebGlManager  ======*/
+	
+	exports.default = createWebGlManager;
+
+/***/ },
+/* 422 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global google */
+	
+	var _constants = __webpack_require__(340);
+	
+	var createChooseLocationMap = function createChooseLocationMap(canvas, options) {
+	
+		if (!canvas) {
+	
+			throw new Error("No canvas passed to createChooseLocationMap().");
+		}
+	
+		var mapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, options);
+		var map = new google.maps.Map(canvas, mapOptions);
+	
+		return map;
+	};
+	
+	exports.default = createChooseLocationMap;
+
+/***/ },
 /* 423 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -18341,11 +18364,11 @@
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _events = __webpack_require__(351);
+	var _events = __webpack_require__(403);
 	
-	var _util = __webpack_require__(392);
+	var _util = __webpack_require__(404);
 	
-	var _utils = __webpack_require__(352);
+	var _utils = __webpack_require__(359);
 	
 	var _constants = __webpack_require__(340);
 	
@@ -19344,7 +19367,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19385,11 +19408,11 @@
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
-	var _utils = __webpack_require__(352);
+	var _utils = __webpack_require__(359);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -19439,7 +19462,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19481,7 +19504,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19522,7 +19545,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19564,7 +19587,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19601,7 +19624,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	
@@ -19642,7 +19665,7 @@
 		value: true
 	});
 	
-	var _actions = __webpack_require__(412);
+	var _actions = __webpack_require__(407);
 	
 	var _actions2 = _interopRequireDefault(_actions);
 	

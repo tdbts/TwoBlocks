@@ -5,6 +5,7 @@ import TwoBlocksGame from '../TwoBlocksGame';
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksInterchange from './TwoBlocksInterchange'; 
 import stylizeBoroughName from '../stylizeBoroughName';
+import createGameComponents from '../createGameComponents'; 
 import createPromiseTimeout from '../createPromiseTimeout';  
 import Countdown from '../Countdown'; 
 import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
@@ -161,7 +162,7 @@ class TwoBlocks extends React.Component {
 		// twoBlocks.on(events.GAME_STAGE, gameStage => this.setState({ gameStage })); 
 		// twoBlocks.on(events.GAME_STAGE, stage => this.onGameStage(stage)); 
 
-		twoBlocks.on(events.HOST_LOCATION_DATA, locationData => this.setState({ locationData })); 
+		twoBlocks.on(events.HOST_LOCATION_DATA, locationData => this.onHostLocationData(locationData)); 
 
 		// twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState));
 
@@ -215,7 +216,7 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.gameInstance) return;  // Game already initialized 
 
-		const { blockLevelMapCanvas, boroughLevelMapCanvas, mapCanvas, panoramaCanvas } = this.state;  
+		const { blockLevelMapCanvas, boroughLevelMapCanvas, mapCanvas, panoramaCanvas, store } = this.state;  
 
 		if (!(blockLevelMapCanvas) || !(boroughLevelMapCanvas) || !(mapCanvas) || !(panoramaCanvas)) return; 
 
@@ -229,7 +230,7 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
-		const twoBlocks = new TwoBlocksGame(mapCanvas, panoramaCanvas, this.state.store); 
+		const twoBlocks = new TwoBlocksGame(store); 
 
 		window.console.log("twoBlocks:", twoBlocks); 
 
@@ -382,6 +383,46 @@ class TwoBlocks extends React.Component {
 	// 	}); 		
 	
 	// }
+
+	onHostLocationData(locationData) {
+
+		const { gameInstance, mapCanvas, panoramaCanvas } = this.state; 
+
+		const gameComponents = createGameComponents({
+			gameInstance, 
+			locationData, 
+			mapCanvas, 
+			panoramaCanvas,	
+			mapMarkerVisible: false 
+		}); 		
+
+		return this.setState({ ...gameComponents, locationData })
+
+			.then(() => gameInstance.emit(events.GAME_COMPONENTS, gameComponents))
+
+			.then(() => {
+
+				const { GEO_JSON_SOURCE } = this.state.locationData; 
+
+				const { chooseLocationMap } = gameComponents; 
+
+				// Each borough is a feature 
+				chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, featureCollection => {
+
+					window.console.log("featureCollection:", featureCollection); 
+
+					this.setState({
+						locationData: Object.assign(this.state.locationData, { featureCollection })
+
+					})
+
+					.then(() => gameInstance.emit(events.GEO_JSON_LOADED, Object.assign({}, this.state.locationData)));  
+
+				}); 
+
+			}); 
+
+	}
 
 	onHoveredBorough(feature) {
 

@@ -1,7 +1,6 @@
 /* global window */
 
 import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
-import createGameComponents from './createGameComponents';
 import createPromiseTimeout from './createPromiseTimeout';  
 import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
 import removeStreetNameAnnotations from './removeStreetNameAnnotations'; 
@@ -12,14 +11,9 @@ import actions from './actions/actions';
 
 let geoJSONLoaded = false; 
 
-const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas, store) {
-
-	this.validateArgs(mapCanvas, panoramaCanvas); 
+const TwoBlocksGame = function TwoBlocksGame(store) {
 
 	this.store = store;   
- 
-	this.mapCanvas = mapCanvas; 
-	this.panoramaCanvas = panoramaCanvas; 
 
 	this.chooseLocationMap = null; 
 	this.chooseLocationMarker = null;  
@@ -41,33 +35,17 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(events.GAME_COMPONENTS, gameComponents => {
 		
+			for (const component in gameComponents) {
+
+				this[component] = gameComponents[component]; 
+
+			}
+
 			this.addEventListenersToGameComponents(gameComponents);
-
-			this.loadCityGeoJSON()
-				
-				.then(() => {
-					
-					const stage = 'gameplay';
-					
-					this.store.dispatch({
-						stage,
-						type: actions.SET_GAME_STAGE 
-					}); 
-
-					this.emit(events.GAME_STAGE, stage); 
-
-				}); 
 		
 		}); 
 
-		this.on(events.GEO_JSON_LOADED, () => {
-
-			// Set 'geoJSONLoaded' flag to true so we don't produce 
-			// the side effect of repeatedly loading the same GeoJSON 
-			// over the map on every new game instance.   
-			geoJSONLoaded = true; 
-
-		}); 
+		this.on(events.GEO_JSON_LOADED, locationData => this.onGeoJSONLoaded(locationData)); 
 
 		this.on(events.GAME_STAGE, gameStage => {
 
@@ -161,26 +139,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			turn: currentTurn, 
 			type: actions.SAVE_TURN
 		}); 
-
-	}, 
-
-	createGameComponents() {
-
-		const gameComponents = createGameComponents({
-			gameInstance: this, 
-			locationData: this.locationData, 
-			mapCanvas: this.mapCanvas, 
-			mapMarkerVisible: false, 
-			panoramaCanvas: this.panoramaCanvas	
-		}); 
-
-		for (const component in gameComponents) {
-
-			this[component] = gameComponents[component]; 
-
-		}
-
-		this.emit(events.GAME_COMPONENTS, gameComponents); 
 
 	}, 
 
@@ -298,9 +256,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 				this.locationData = Object.assign(this.locationData, { featureCollection }); 
 
-				this.emit(events.HOST_LOCATION_DATA, Object.assign({}, this.locationData)); 
+				// this.emit(events.HOST_LOCATION_DATA, Object.assign({}, this.locationData)); 
 
-				this.emit(events.GEO_JSON_LOADED); 
+				this.emit(events.GEO_JSON_LOADED, Object.assign({}, this.locationData)); 
 
 				resolve();  
 
@@ -352,6 +310,19 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	onGeoJSONLoaded(locationData) {
+
+		// Set 'geoJSONLoaded' flag to true so we don't produce 
+		// the side effect of repeatedly loading the same GeoJSON 
+		// over the map on every new game instance.   
+		geoJSONLoaded = true; 
+
+		this.locationData = locationData; 
+
+		this.startGamePlay(); 
+
+	}, 
+
 	onPregameLocationDataReceived(locationData) {
 
 		window.console.log("locationData:", locationData); 
@@ -371,7 +342,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.locationData = locationData; 
 
-		this.createGameComponents();  
+		// this.createGameComponents();  
 
 	}, 
 
@@ -398,13 +369,16 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	validateArgs(mapCanvas, panoramaCanvas) {
+	startGamePlay() {
 
-		if (!(mapCanvas) || !(panoramaCanvas)) {
+		const stage = 'gameplay';
+		
+		this.store.dispatch({
+			stage,
+			type: actions.SET_GAME_STAGE 
+		}); 
 
-			throw new Error("Invalid arguments passed to TwoBlocksGame() constructor."); 
-
-		}
+		this.emit(events.GAME_STAGE, stage); 
 
 	}
 
