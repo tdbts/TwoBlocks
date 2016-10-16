@@ -54,7 +54,6 @@ TwoBlocksView.propTypes = {
 	cityLevelMap 			: React.PropTypes.object, 
 	mapCanvasClassName 		: React.PropTypes.string, 
 	mapConfig 				: React.PropTypes.object, 
-	mapLatLng 				: React.PropTypes.object, 
 	mapMarker 				: React.PropTypes.object, 
 	mapMarkerVisible 		: React.PropTypes.bool, 
 	mapTwoBlocksClass 		: React.PropTypes.string.isRequired, 

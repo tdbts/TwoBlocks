@@ -12249,11 +12249,6 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global document, google, window */
 	
-	// import TwoBlocksPrompt from './TwoBlocksPrompt';
-	// import TwoBlocksSubmitter from './TwoBlocksSubmitter';
-	// import TwoBlocksReplayButton from './TwoBlocksReplayButton';
-	
-	
 	var TwoBlocks = function (_React$Component) {
 		_inherits(TwoBlocks, _React$Component);
 	
@@ -12492,7 +12487,7 @@
 			value: function initializeTwoBlocks() {
 				var _this4 = this;
 	
-				if (this.state.gameInstance) return;
+				if (this.state.gameInstance) return; // Game already initialized
 	
 				var _state2 = this.state;
 				var blockLevelMapCanvas = _state2.blockLevelMapCanvas;
@@ -13099,9 +13094,7 @@
 						boroughLevelMap: state.boroughLevelMap,
 						cityLevelMap: state.chooseLocationMap,
 						mapConfig: state.mapConfig,
-	
 						mapTwoBlocksClass: props.mapTwoBlocksClass,
-						mapLatLng: store ? store.getState().mapLatLng : null,
 						mapMarker: state.chooseLocationMarker,
 						mapMarkerVisible: state.mapMarkerVisible,
 						mapType: state.mapType,
@@ -17690,7 +17683,6 @@
 		cityLevelMap: _react2.default.PropTypes.object,
 		mapCanvasClassName: _react2.default.PropTypes.string,
 		mapConfig: _react2.default.PropTypes.object,
-		mapLatLng: _react2.default.PropTypes.object,
 		mapMarker: _react2.default.PropTypes.object,
 		mapMarkerVisible: _react2.default.PropTypes.bool,
 		mapTwoBlocksClass: _react2.default.PropTypes.string.isRequired,

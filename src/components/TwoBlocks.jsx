@@ -4,9 +4,6 @@ import React from 'react';
 import TwoBlocksGame from '../TwoBlocksGame'; 
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksInterchange from './TwoBlocksInterchange'; 
-// import TwoBlocksPrompt from './TwoBlocksPrompt';
-// import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
-// import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
 import Countdown from '../Countdown'; 
@@ -216,7 +213,7 @@ class TwoBlocks extends React.Component {
 
 	initializeTwoBlocks() {
 
-		if (this.state.gameInstance) return;
+		if (this.state.gameInstance) return;  // Game already initialized 
 
 		const { blockLevelMapCanvas, boroughLevelMapCanvas, mapCanvas, panoramaCanvas } = this.state;  
 
@@ -784,9 +781,7 @@ class TwoBlocks extends React.Component {
 					boroughLevelMap={ state.boroughLevelMap }
 					cityLevelMap={ state.chooseLocationMap }
 					mapConfig={ state.mapConfig }
-
 					mapTwoBlocksClass={ props.mapTwoBlocksClass }
-					mapLatLng={ store ? store.getState().mapLatLng : null }
 					mapMarker={ state.chooseLocationMarker }
 					mapMarkerVisible={ state.mapMarkerVisible }
 					mapType={ state.mapType }
