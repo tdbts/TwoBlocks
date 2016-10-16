@@ -15,7 +15,6 @@ const TwoBlocksGame = function TwoBlocksGame(store) {
 	this.store = store;   
   
 	this.locationData = null; 
-	this.spinner = null; 
 
 }; 
 	
@@ -28,14 +27,6 @@ inherits(TwoBlocksGame, EventEmitter);
 TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	addEventListeners() {
-
-		this.on(events.GAME_COMPONENTS, gameComponents => {
-		
-			window.console.log("gameComponents:", gameComponents); 
-
-			this.spinner = gameComponents.spinner; 
-					
-		}); 
 
 		this.on(events.GEO_JSON_LOADED, locationData => this.onGeoJSONLoaded(locationData)); 
 

@@ -13261,7 +13261,6 @@
 		this.store = store;
 	
 		this.locationData = null;
-		this.spinner = null;
 	};
 	
 	/*----------  Inherit from EventEmitter  ----------*/
@@ -13273,13 +13272,6 @@
 	TwoBlocksGame.prototype = _extends(TwoBlocksGame.prototype, {
 		addEventListeners: function addEventListeners() {
 			var _this = this;
-	
-			this.on(_constants.events.GAME_COMPONENTS, function (gameComponents) {
-	
-				window.console.log("gameComponents:", gameComponents);
-	
-				_this.spinner = gameComponents.spinner;
-			});
 	
 			this.on(_constants.events.GEO_JSON_LOADED, function (locationData) {
 				return _this.onGeoJSONLoaded(locationData);
