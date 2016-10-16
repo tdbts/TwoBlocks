@@ -7,7 +7,7 @@ import getRandomPanoramaLocation from './getRandomPanoramaLocation';
 import removeStreetNameAnnotations from './removeStreetNameAnnotations'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH, NYC_BOUNDARIES_DATASET_URL } from './constants/constants';   
+import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH } from './constants/constants';   
 import actions from './actions/actions'; 
 
 let geoJSONLoaded = false; 
@@ -308,8 +308,10 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			/*----------  Load GeoJSON  ----------*/
 			
+			const { GEO_JSON_SOURCE } = this.locationData; 
+
 			// Each borough is a feature 
-			chooseLocationMap.data.loadGeoJson(NYC_BOUNDARIES_DATASET_URL, {}, featureCollection => {
+			chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, featureCollection => {
 
 				window.console.log("featureCollection:", featureCollection); 
 
@@ -371,7 +373,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	onPregameLocationDataReceived(locationData) {
 
-		// window.console.log("locationData:", locationData); 
+		window.console.log("locationData:", locationData); 
 
 		this.emit(events.HOST_LOCATION_DATA, locationData); 
 

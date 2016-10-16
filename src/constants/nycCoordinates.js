@@ -1,9 +1,13 @@
+import NYC_BOUNDARIES_DATASET_URL from './NYC_BOUNDARIES_DATASET_URL'; 
+
 const nycCoordinates = {
 	
 	CENTER: {
 		lat: 40.6291566, 
 		lng: -74.0287341
 	}, 
+
+	GEO_JSON_SOURCE: NYC_BOUNDARIES_DATASET_URL, 
 
 	MARKER_PLACEMENT: {
 		lat: 40.480993, 
