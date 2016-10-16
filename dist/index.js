@@ -13211,7 +13211,6 @@
 	
 		this.store = store;
 	
-		this.gameIsOver = false;
 		this.mapCanvas = mapCanvas;
 		this.panoramaCanvas = panoramaCanvas;
 		this.totalRounds = 0;
@@ -13313,8 +13312,6 @@
 			this.on(_constants.events.GAME_OVER, function () {
 	
 				var stage = 'postgame';
-	
-				_this.gameIsOver = true;
 	
 				_this.store.dispatch({
 					stage: stage,
@@ -13418,7 +13415,7 @@
 		},
 		gameOver: function gameOver() {
 	
-			return this.gameIsOver;
+			return this.store.getState().gameOver;
 		},
 		getLocationData: function getLocationData() {
 			var _this2 = this;
@@ -17579,7 +17576,7 @@
 	
 		BOROUGH_SELECTED: 'BOROUGH_SELECTED',
 		CAN_EVALUATE_ANSWER: 'CAN_EVALUATE_ANSWER',
-		CANNOT_EVAULATE_ANSWER: 'CANNOT_EVAULATE_ANSWER',
+		CANNOT_EVALUATE_ANSWER: 'CANNOT_EVAULATE_ANSWER',
 		CHANGE_VIEW: 'CHANGE_VIEW',
 		CLEAR_CURRENT_TURN: 'CLEAR_CURRENT_TURN',
 		GAME_OVER: 'GAME_OVER',

@@ -18,7 +18,6 @@ const TwoBlocksGame = function TwoBlocksGame(mapCanvas, panoramaCanvas, store) {
 
 	this.store = store;   
  
-	this.gameIsOver = false; 
 	this.mapCanvas = mapCanvas; 
 	this.panoramaCanvas = panoramaCanvas; 
 	this.totalRounds = 0; 
@@ -130,8 +129,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		
 			const stage = 'postgame'; 
 
-			this.gameIsOver = true; 
-
 			this.store.dispatch({
 				stage, 
 				type: actions.SET_GAME_STAGE
@@ -238,7 +235,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	gameOver() {
 
-		return this.gameIsOver; 
+		return this.store.getState().gameOver; 
 	
 	},
 
