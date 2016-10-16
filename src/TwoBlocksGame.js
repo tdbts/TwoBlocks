@@ -145,26 +145,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
 
-		const { chooseLocationMap, chooseLocationMarker, panorama } = gameComponents; 
-		
-		const eventToEntityMap = {
-			'dragend': chooseLocationMarker, 
-			'click': chooseLocationMap
-		}; 
-
-		const logDistanceFromPanorama = () => {
-
-			const distanceFromPanoramaInMiles = calculateDistanceFromMarkerToLocation(panorama, chooseLocationMarker); 
-
-			window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles); 
-
-		}; 
-
-		for (const event in eventToEntityMap) {
-
-			google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama); 
-
-		} 	
+		const { panorama } = gameComponents; 
 
 		/*----------  Add listeners to panorama  ----------*/
 		

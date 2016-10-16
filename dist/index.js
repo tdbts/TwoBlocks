@@ -13319,27 +13319,7 @@
 	
 			/*----------  Add event listeners to Choose Location Map / Marker  ----------*/
 	
-			var chooseLocationMap = gameComponents.chooseLocationMap;
-			var chooseLocationMarker = gameComponents.chooseLocationMarker;
 			var panorama = gameComponents.panorama;
-	
-	
-			var eventToEntityMap = {
-				'dragend': chooseLocationMarker,
-				'click': chooseLocationMap
-			};
-	
-			var logDistanceFromPanorama = function logDistanceFromPanorama() {
-	
-				var distanceFromPanoramaInMiles = (0, _calculateDistanceFromMarkerToLocation2.default)(panorama, chooseLocationMarker);
-	
-				window.console.log("distanceFromPanoramaInMiles:", distanceFromPanoramaInMiles);
-			};
-	
-			for (var event in eventToEntityMap) {
-	
-				google.maps.event.addListener(eventToEntityMap[event], event, logDistanceFromPanorama);
-			}
 	
 			/*----------  Add listeners to panorama  ----------*/
 	
