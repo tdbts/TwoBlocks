@@ -3,9 +3,10 @@
 import React from 'react';
 import TwoBlocksGame from '../TwoBlocksGame'; 
 import TwoBlocksView from './TwoBlocksView';
-import TwoBlocksPrompt from './TwoBlocksPrompt';
-import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
-import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
+import TwoBlocksInterchange from './TwoBlocksInterchange'; 
+// import TwoBlocksPrompt from './TwoBlocksPrompt';
+// import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
+// import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 import stylizeBoroughName from '../stylizeBoroughName';
 import createPromiseTimeout from '../createPromiseTimeout';  
 import Countdown from '../Countdown'; 
@@ -796,23 +797,19 @@ class TwoBlocks extends React.Component {
 					twoBlocksClass={ props.viewTwoBlocksClass }
 					view={ store ? store.getState().view : 'map' } 
 				/>
-				<TwoBlocksPrompt
+				<TwoBlocksInterchange 
 					choosingLocation={ state.choosingLocation }
 					gameOver={ state.gameInstance && state.gameInstance.gameOver() }
-					hoveredBorough={ state.hoveredBorough } 
-					twoBlocksClass={ props.promptTwoBlocksClass } 
-					text={ state.promptText } 
-				/>
-				<TwoBlocksSubmitter 
 					hoveredBorough={ state.hoveredBorough }
+					twoBlocksClass={ props.promptTwoBlocksClass }
+					promptText={ state.promptText }
+					promptTwoBlocksClass={ props.promptTwoBlocksClass }
 					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
 					selectedBorough={ state.selectedBorough }
-					twoBlocksClass={ props.submitterTwoBlocksClass }
-				/>
-				<TwoBlocksReplayButton 
-					hidden={ !(store) || !(store.getState().gameOver) }
+					submitterTwoBlocksClass={ props.submitterTwoBlocksClass }
+					hideReplayButton={ !(store) || !(store.getState().gameOver) }
 					restart={ this.restart.bind(this) }
-					twoBlocksClass={ props.replayButtonTwoBlocksClass }
+					replayButtonTwoBlocksClass={ props.replayButtonTwoBlocksClass }
 				/>
 			</div>
 	
