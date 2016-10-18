@@ -78,6 +78,7 @@
 	    "arrow-spacing": [2,{"before":true,"after":true}],
 	    "constructor-super": 2,
 	    "no-const-assign": 2,
+	    "no-mixed-spaces-and-tabs": 1, 
 	    "no-this-before-super": 2,
 	    "no-var": 2,
 	    "object-shorthand": 2,

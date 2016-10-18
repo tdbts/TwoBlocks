@@ -3,7 +3,7 @@ import TwoBlocksPrompt from './TwoBlocksPrompt';
 import TwoBlocksSubmitter from './TwoBlocksSubmitter'; 
 import TwoBlocksReplayButton from './TwoBlocksReplayButton'; 
 
-const { INTERCHANGE_WRAPPER_CLASS_NAME } = ["component-wrapper", "two-blocks-interchange-wrapper"]; 
+const INTERCHANGE_WRAPPER_CLASS_NAME = "two-blocks-interchange"; 
 
 /*----------  Class  ----------*/
 
@@ -11,11 +11,11 @@ class TwoBlocksInterchange extends React.Component {
 
 	render() {
 
-		const { choosingLocation, gameOver, hoveredBorough, promptTwoBlocksClass, promptText, evaluateFinalAnswer, selectedBorough, submitterTwoBlocksClass, hideReplayButton, restart, replayButtonTwoBlocksClass } = this.props; 
+		const { choosingLocation, gameOver, hidden, hoveredBorough, mobile, promptTwoBlocksClass, promptText, evaluateFinalAnswer, selectedBorough, submitterTwoBlocksClass, hideReplayButton, onMobileBoroughSelection, restart, replayButtonTwoBlocksClass } = this.props; 
 
 		return (
 			
-			<div className={ INTERCHANGE_WRAPPER_CLASS_NAME }>
+			<div className={ [ INTERCHANGE_WRAPPER_CLASS_NAME, (mobile ? 'full-dimensions' : ''), (hidden ? 'offscreen' : '') ].join(' ').trim() }>
 				<TwoBlocksPrompt 
 					choosingLocation={ choosingLocation }
 					gameOver={ gameOver }
@@ -23,9 +23,12 @@ class TwoBlocksInterchange extends React.Component {
 					twoBlocksClass={ promptTwoBlocksClass }
 					text={ promptText }
 				/>
-				<TwoBlocksSubmitter 
+				<TwoBlocksSubmitter
+					choosingLocation={ choosingLocation } 
 					hoveredBorough={ hoveredBorough }
 					evaluateFinalAnswer={ evaluateFinalAnswer }
+					mobile={ mobile }
+					onTouchend={ onMobileBoroughSelection }
 					selectedBorough={ selectedBorough }
 					twoBlocksClass={ submitterTwoBlocksClass }
 				/>
@@ -46,14 +49,17 @@ class TwoBlocksInterchange extends React.Component {
 
 TwoBlocksInterchange.propTypes = {
 	choosingLocation: React.PropTypes.bool, 
-	gameOver: React.PropTypes.bool, 
+	evaluateFinalAnswer: React.PropTypes.func, 
+	gameOver: React.PropTypes.bool,
+	hidden: React.PropTypes.bool,  
+	hideReplayButton: React.PropTypes.bool, 
 	hoveredBorough: React.PropTypes.string, 
+	mobile: React.PropTypes.bool,
+	onMobileBoroughSelection: React.PropTypes.func,  
 	promptTwoBlocksClass: React.PropTypes.string, 
 	promptText: React.PropTypes.string, 
-	evaluateFinalAnswer: React.PropTypes.func, 
 	selectedBorough: React.PropTypes.string, 
 	submitterTwoBlocksClass: React.PropTypes.string, 
-	hideReplayButton: React.PropTypes.bool, 
 	restart: React.PropTypes.func, 
 	replayButtonTwoBlocksClass: React.PropTypes.string
 }; 

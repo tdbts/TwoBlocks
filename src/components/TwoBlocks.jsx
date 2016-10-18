@@ -9,7 +9,7 @@ import createGameComponents from '../createGameComponents';
 import createPromiseTimeout from '../createPromiseTimeout';  
 import Countdown from '../Countdown';
 import removeStreetNameAnnotations from '../removeStreetNameAnnotations';  
-import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { events, heardKeys, keyEventMaps, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_TOTAL_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { debounce, isOneOf, isType } from '../utils/utils';  
 import { createStore } from 'redux'; 
 import { composeWithDevTools } from 'redux-devtools-extension';
@@ -33,11 +33,13 @@ class TwoBlocks extends React.Component {
 			choosingLocation 		: false, 
 			gameInstance 			: null,  
 			hoveredBorough 			: null, 
+			interchangeHidden 		: false, 
 			locationData 			: null, 
 			mapCanvas 				: null, 
 			mapConfig 				: null, 
 			mapMarkerVisible 		: false,
 			mapType 				: 'city-level',   
+			mobile 					: null, 
 			panorama 				: null, 
 			panoramaBorough 		: null, 
 			panoramaCanvas 			: null, 
@@ -72,8 +74,11 @@ class TwoBlocks extends React.Component {
 		const store = createStore(twoBlocks, composeWithDevTools()); 
 
 		window.console.log("store:", store); 
+		
+		const mobile = this.shouldUseDeviceOrientation(); 
 
 		this.setState({
+			mobile, 
 			store
 		}); 
 
@@ -215,6 +220,12 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	getDeviceClass() {
+
+		return this.shouldUseDeviceOrientation() ? [ 'mobile' ].join(' ').trim() : ''; 
+
+	}
+
 	getFeatureByBoroughName(boroughName) {
 
 		if (!(boroughName) || !(isType('string', boroughName))) return; 
@@ -253,7 +264,7 @@ class TwoBlocks extends React.Component {
 		
 		const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 
 			mapTypeId: google.maps.MapTypeId.ROADMAP, 
-			zoom: 16 
+			zoom: this.state.mobile ? 18 : 16 
 		}); 
 
 		const blockLevelMap = new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions); 
@@ -262,7 +273,7 @@ class TwoBlocks extends React.Component {
 		
 		const boroughLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
 			mapTypeId: google.maps.MapTypeId.ROADMAP, 
-			zoom: 12
+			zoom: this.state.mobile ? 13 : 12
 		}); 
 
 		const boroughLevelMap = new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 
@@ -297,36 +308,47 @@ class TwoBlocks extends React.Component {
 			lng: answerDetails.randomLatLng.lng()
 		}; 
 
-		const { boroughLevelMap, blockLevelMap, showLocationMarker } = this.state; 
+		const { boroughLevelMap, blockLevelMap, showLocationMarker, mobile } = this.state; 
 
 		const showLocationMarkerPosition = new google.maps.LatLng(actualLocationLatLng); 
 
 		showLocationMarker.setVisible(true); 
-		showLocationMarker.setAnimation(google.maps.Animation.BOUNCE); 
+		showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); 
 		showLocationMarker.setMap(boroughLevelMap); 
 		showLocationMarker.setPosition(showLocationMarkerPosition); 
 
-		return this.setState({
+		return Promise.resolve()
 
-			choosingLocation: false, 
-			mapType: 'borough-level'
+			.then(() => {
 
-		}) 
+				if (!(this.state.mobile)) return; 
 
-		.then(() => createPromiseTimeout(ANSWER_EVALUATION_DELAY / 2))
- 
-		.then(() => {
+				return createPromiseTimeout(1500);  // Communicate result of answer evaluation 
 
-			showLocationMarker.setMap(blockLevelMap);
-			showLocationMarker.setAnimation(google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
+			})
 
-		})
+			.then(() => this.setState({
 
-		.then(() => this.setState( { 
-		
-			mapType: 'block-level' 
-		
-		})); 
+				interchangeHidden: this.state.mobile, 
+				choosingLocation: false, 
+				mapType: 'borough-level'
+
+			}))
+
+			.then(() => createPromiseTimeout(ANSWER_EVALUATION_DELAY / 2))
+
+			.then(() => {
+
+				showLocationMarker.setMap(blockLevelMap);
+				showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
+
+			})
+
+			.then(() => this.setState( { 
+			
+				mapType: 'block-level' 
+			
+			})); 
 
 	}
 
@@ -343,6 +365,7 @@ class TwoBlocks extends React.Component {
 		return this.setState({
 			choosingLocation: true, 
 			hoveredBorough: '', 
+			interchangeHidden: false, 
 			mapMarkerVisible: false,  // Set to true for location guessing  
 			promptText: "In which borough was the last panorama located?"
 		})
@@ -403,11 +426,11 @@ class TwoBlocks extends React.Component {
 		const { gameInstance, mapCanvas, panoramaCanvas, store } = this.state; 
 
 		const gameComponents = createGameComponents({
-			gameInstance, 
 			locationData, 
 			mapCanvas, 
 			panoramaCanvas,	
-			mapMarkerVisible: false 
+			mapMarkerVisible: false, 
+			mobile: this.shouldUseDeviceOrientation() 
 		}); 		
 
 		const view = 'map'; 
@@ -568,6 +591,15 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	onMobileBoroughSelection(boroughName) {
+		window.console.log("onMobileBoroughSelection()"); 
+		window.console.log("boroughName:", boroughName); 
+		const feature = this.getFeatureByBoroughName(boroughName); 
+
+		this.updateSelectedBorough(feature); 
+
+	}
+
 	onNextTurn() {
 
 		if (this.state.showLocationMarker) {
@@ -647,6 +679,7 @@ class TwoBlocks extends React.Component {
 		this.setState({
 			
 			promptText, 
+			interchangeHidden: false, 
 			selectedBorough: null
 		
 		}); 
@@ -678,6 +711,19 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	shouldUseDeviceOrientation() {
+
+		const conditions = [
+
+			!!(window.DeviceOrientationEvent) || !!(window.DeviceMotionEvent), 
+			window.screen.width < MINIMUM_SPINNER_SCREEN_WIDTH
+
+		]; 
+
+		return conditions.every(condition => !!condition); 
+
+	} 
+
 	showRandomPanorama(prevState) {
 
 		if (prevState.panoramaLatLng === this.state.panoramaLatLng) return;  // Don't show random panorama if the panoramaLatLng has not changed 
@@ -706,11 +752,17 @@ class TwoBlocks extends React.Component {
 			
 			}))
 
+			.then(() => (this.state.mobile) ? createPromiseTimeout(PANORAMA_LOAD_DELAY) : null)
+
 			.then(() => {
 
-				if (gameInstance.shouldUseDeviceOrientation()) {
+				if (this.shouldUseDeviceOrientation()) {
 
 					this.startStreetviewCountdown();  					
+
+					this.setState({
+						interchangeHidden: true
+					}); 
 
 				} else {
 
@@ -843,7 +895,7 @@ class TwoBlocks extends React.Component {
  
 		return (
 	
-			<div className={ props.gameTwoBlocksClass }>
+			<div className={ [ props.gameTwoBlocksClass, this.getDeviceClass() ].join(' ') }>
 				<TwoBlocksView 
 					blockLevelMap={ state.blockLevelMap }
 					boroughLevelMap={ state.boroughLevelMap }
@@ -864,6 +916,7 @@ class TwoBlocks extends React.Component {
 				<TwoBlocksInterchange 
 					choosingLocation={ state.choosingLocation }
 					gameOver={ state.gameInstance && state.gameInstance.gameOver() }
+					hidden={ state.interchangeHidden }
 					hoveredBorough={ state.hoveredBorough }
 					twoBlocksClass={ props.promptTwoBlocksClass }
 					promptText={ state.promptText }
@@ -874,6 +927,8 @@ class TwoBlocks extends React.Component {
 					hideReplayButton={ !(store) || !(store.getState().gameOver) }
 					restart={ this.restart.bind(this) }
 					replayButtonTwoBlocksClass={ props.replayButtonTwoBlocksClass }
+					mobile={ state.mobile }
+					onMobileBoroughSelection={ borough => this.onMobileBoroughSelection(borough) }
 				/>
 			</div>
 	

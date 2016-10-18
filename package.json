@@ -11,7 +11,7 @@
     "postlint": "echo 'Linting complete with no errors.'",
     "start": "nodemon --watch dist dist/server.js",
     "start-dev": "browser-sync start --serve-static 'dist' --no-open --server --index './build/index.dev.html' --files './dist/index.js, ./dist/index.min.js, ./build/*.html, ./build/*.js'",
-    "start-tunnel": "npm run start-bs --tunnel",
+    "start-tunnel": "browser-sync start --serve-static 'dist' --no-open --server --index './build/index.dev.html' --files './dist/index.js, ./dist/index.min.js, ./build/*.html, ./build/*.js' --tunnel",
     "watch": "watch 'npm run lint && npm run pack' ./src/ ./build/ ./public/"
   },
   "repository": {
@@ -50,6 +50,7 @@
     "eslint": "^2.9.0",
     "eslint-plugin-react": "^5.2.1",
     "mocha": "^2.4.5",
+    "react-hot-loader": "^3.0.0-beta.6",
     "sinon": "^1.17.4",
     "style-loader": "^0.13.1",
     "uglify-js": "^2.7.3",

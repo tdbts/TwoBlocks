@@ -1,12 +1,15 @@
 import React from 'react'; 
-import stylizeBoroughName from '../stylizeBoroughName'; 
+import stylizeBoroughName from '../stylizeBoroughName';
+import SubmitterDesktop from './SubmitterDesktop';  
+import SubmitterMobile from './SubmitterMobile'; 
 import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
 
 /*----------  Component  ----------*/
 
 const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
-	const { evaluateFinalAnswer, selectedBorough, twoBlocksClass } = props; 	
+	const { choosingLocation, evaluateFinalAnswer, mobile, onTouchend, selectedBorough, twoBlocksClass } = props; 	
+	
 	const calculatedClassName = getClassName(selectedBorough); 
 
 	const text = getText(selectedBorough); 
@@ -15,14 +18,28 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const buttonLabel = "Final answer?"; 
 
-	return (
+	const displayedComponent = (mobile && choosingLocation) 
 
-		<div className={ twoBlocksClass }>
-			<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
-			<button className={ calculatedClassName } onClick={ () => onSubmissionButtonClick(evaluateFinalAnswer) }>{ buttonLabel }</button>
-		</div>
+		? <SubmitterMobile 
+			buttonClassName={ calculatedClassName }
+			twoBlocksClass={ twoBlocksClass }
+			onTouchend={ onTouchend }
+			borough={ borough }
+			buttonLabel={ buttonLabel }
+			text={ text }
+			onClick={ () => onSubmissionButtonClick(evaluateFinalAnswer) }
+		  />  // elsint-disable-line no-mixed-spaces-and-tabs
 
-	); 
+		: <SubmitterDesktop 
+			borough={ borough }
+			buttonClassName={ calculatedClassName }
+			buttonLabel={ buttonLabel }
+			text={ text }
+			twoBlocksClass={ twoBlocksClass }
+			onClick={ () => onSubmissionButtonClick(evaluateFinalAnswer) }
+		  />;  // elsint-disable-line no-mixed-spaces-and-tabs 
+
+	return displayedComponent;  
 
 }; 
 

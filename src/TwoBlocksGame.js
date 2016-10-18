@@ -5,7 +5,7 @@ import createPromiseTimeout from './createPromiseTimeout';
 import getRandomPanoramaLocation from './getRandomPanoramaLocation';  
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, MINIMUM_SPINNER_SCREEN_WIDTH } from './constants/constants';   
+import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
 import actions from './actions/actions'; 
 
 let geoJSONLoaded = false; 
@@ -258,19 +258,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.emit(events.HOST_LOCATION_DATA, locationData); 
 
 		this.locationData = locationData; 
-
-	}, 
-
-	shouldUseDeviceOrientation() {
-
-		const conditions = [
-
-			!!(window.DeviceOrientationEvent) || !!(window.DeviceMotionEvent), 
-			window.screen.width < MINIMUM_SPINNER_SCREEN_WIDTH
-
-		]; 
-
-		return conditions.every(condition => !!condition); 
 
 	}, 
 
