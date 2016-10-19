@@ -13477,6 +13477,7 @@
 				var randomLatLng = randomLocationDetails.randomLatLng;
 	
 	
+				window.console.log("randomLatLng:", randomLatLng);
 				window.console.log("randomLatLng.lat():", randomLatLng.lat());
 				window.console.log("randomLatLng.lng():", randomLatLng.lng());
 	

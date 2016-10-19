@@ -185,6 +185,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				
 				const { randomLatLng } = randomLocationDetails; 
 
+				window.console.log("randomLatLng:", randomLatLng); 
 				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
 				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
 
