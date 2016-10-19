@@ -17556,7 +17556,7 @@
 			onClick: function onClick() {
 				return onSubmissionButtonClick(evaluateFinalAnswer);
 			}
-		}) // elsint-disable-line no-mixed-spaces-and-tabs
+		}) // eslint-disable-line no-mixed-spaces-and-tabs
 	
 		: _react2.default.createElement(_SubmitterDesktop2.default, {
 			borough: borough,
@@ -17567,7 +17567,7 @@
 			onClick: function onClick() {
 				return onSubmissionButtonClick(evaluateFinalAnswer);
 			}
-		}); // elsint-disable-line no-mixed-spaces-and-tabs
+		}); // eslint-disable-line no-mixed-spaces-and-tabs
 	
 		return displayedComponent;
 	};
@@ -17712,7 +17712,7 @@
 			text: text,
 			twoBlocksClass: twoBlocksClass,
 			onClick: onClick
-		}) // elsint-disable-line no-mixed-spaces-and-tabs
+		}) // eslint-disable-line no-mixed-spaces-and-tabs
 	
 		: _react2.default.createElement(
 			'div',
@@ -17752,7 +17752,7 @@
 					} },
 				'Staten Island'
 			)
-		); // elsint-disable-line no-mixed-spaces-and-tabs
+		); // eslint-disable-line no-mixed-spaces-and-tabs
 	
 		return markup;
 	};

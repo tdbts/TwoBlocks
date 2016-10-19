@@ -14,7 +14,7 @@ const SubmitterMobile = function SubmitterMobile(props) {
 			text={ text }
 			twoBlocksClass={ twoBlocksClass }
 			onClick={ onClick }			
-		  />  // elsint-disable-line no-mixed-spaces-and-tabs
+		  />  // eslint-disable-line no-mixed-spaces-and-tabs
 
 		: (	<div className={ twoBlocksClass }>
 				<button className="borough-selection-button" onClick={ () => onTouchend('Bronx') }>The Bronx</button>
@@ -23,7 +23,7 @@ const SubmitterMobile = function SubmitterMobile(props) {
 				<button className="borough-selection-button" onClick={ () => onTouchend('Brooklyn') }>Brooklyn</button>
 				<button className="borough-selection-button" onClick={ () => onTouchend('Staten Island') }>Staten Island</button>
 			</div>
-		  );  // elsint-disable-line no-mixed-spaces-and-tabs
+		  );  // eslint-disable-line no-mixed-spaces-and-tabs
 
 	return markup; 
 	

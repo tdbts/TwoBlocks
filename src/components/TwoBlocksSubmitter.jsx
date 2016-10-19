@@ -9,7 +9,7 @@ import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants';
 const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const { choosingLocation, evaluateFinalAnswer, mobile, onTouchend, selectedBorough, twoBlocksClass } = props; 	
-	
+
 	const calculatedClassName = getClassName(selectedBorough); 
 
 	const text = getText(selectedBorough); 
@@ -28,7 +28,7 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 			buttonLabel={ buttonLabel }
 			text={ text }
 			onClick={ () => onSubmissionButtonClick(evaluateFinalAnswer) }
-		  />  // elsint-disable-line no-mixed-spaces-and-tabs
+		  />  // eslint-disable-line no-mixed-spaces-and-tabs
 
 		: <SubmitterDesktop 
 			borough={ borough }
@@ -37,7 +37,7 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 			text={ text }
 			twoBlocksClass={ twoBlocksClass }
 			onClick={ () => onSubmissionButtonClick(evaluateFinalAnswer) }
-		  />;  // elsint-disable-line no-mixed-spaces-and-tabs 
+		  />;  // eslint-disable-line no-mixed-spaces-and-tabs 
 
 	return displayedComponent;  
 
