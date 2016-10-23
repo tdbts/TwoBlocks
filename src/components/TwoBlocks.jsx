@@ -445,8 +445,8 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				const { GEO_JSON_SOURCE } = this.state.locationData; 
-
+				const { locationData } = this.state; 
+				const { GEO_JSON_SOURCE } = locationData; 
 				const { chooseLocationMap } = gameComponents; 
 
 				this.addGameComponentEventListeners(); 
@@ -458,12 +458,14 @@ class TwoBlocks extends React.Component {
 
 					window.console.log("featureCollection:", featureCollection); 
 
-					this.setState({
-						locationData: Object.assign(this.state.locationData, { featureCollection })
-
+					return this.setState({
+						locationData: {
+							...locationData, 
+							featureCollection
+						}
 					})
 
-					.then(() => gameInstance.emit(events.GEO_JSON_LOADED, Object.assign({}, this.state.locationData)));  
+					.then(() => gameInstance.emit(events.GEO_JSON_LOADED, { ...this.state.locationData })); 
 
 				}); 
 

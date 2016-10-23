@@ -12737,7 +12737,8 @@
 				return this.setState(_extends({}, gameComponents, { locationData: locationData })).then(function () {
 					return gameInstance.emit(_constants.events.GAME_COMPONENTS, gameComponents);
 				}).then(function () {
-					var GEO_JSON_SOURCE = _this7.state.locationData.GEO_JSON_SOURCE;
+					var locationData = _this7.state.locationData;
+					var GEO_JSON_SOURCE = locationData.GEO_JSON_SOURCE;
 					var chooseLocationMap = gameComponents.chooseLocationMap;
 	
 	
@@ -12750,9 +12751,10 @@
 	
 						window.console.log("featureCollection:", featureCollection);
 	
-						_this7.setState({
-							locationData: _extends(_this7.state.locationData, { featureCollection: featureCollection })
-	
+						return _this7.setState({
+							locationData: _extends({}, locationData, {
+								featureCollection: featureCollection
+							})
 						}).then(function () {
 							return gameInstance.emit(_constants.events.GEO_JSON_LOADED, _extends({}, _this7.state.locationData));
 						});
