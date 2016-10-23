@@ -1,3 +1,5 @@
+import turf from '@turf/turf'; 
+
 /**
  *
  * @param desiredType - String 
@@ -9,13 +11,26 @@
  *
  */
 
-const getGeometricConstituents = (desiredType, geometry) => {
+const typeToMethodMap = {
+	'MultiPolygon': 'multipolygon', 
+	'Polygon': 'polygon'
+}; 
+
+const getGeometricConstituents = (desiredType, feature) => {
+
+	if (Array.isArray(feature)) {
+
+		const method = typeToMethodMap[desiredType]; 
+
+		feature = turf[method](feature); 
+
+	}
 
 	let result = null; 
 
-	if (desiredType === geometry.getType()) {
+	if (desiredType === feature.type || feature.geometry.type) {
 
-		result = geometry.getArray(); 
+		result = feature.coordinates || feature.geometry.coordinates; 
 
 	}
 

@@ -5,6 +5,10 @@
  *
  */
 
+// Order for latitude, longitude is reversed (lng, lat) for GeoJSON spec.
+const LATITUDE_INDEX = 1; 
+const LONGITUDE_INDEX = 0; 
+
 const getLatLngMaxMin = function getLatLngMaxMin(latLngs) {
 
 	let latLngMaxMin = {
@@ -27,15 +31,15 @@ const getLatLngMaxMin = function getLatLngMaxMin(latLngs) {
 		// values are both the min and max 
 		if (i === 0) {
 
-			lat.min = lat.max = curr.lat(); 
-			lng.min = lng.max = curr.lng(); 
+			lat.min = lat.max = curr[LATITUDE_INDEX]; 
+			lng.min = lng.max = curr[LONGITUDE_INDEX]; 
 
 		} else {
 
-			lat.min = Math.min(lat.min, curr.lat()); 
-			lat.max = Math.max(lat.max, curr.lat()); 
-			lng.min = Math.min(lng.min, curr.lng()); 
-			lng.max = Math.max(lng.max, curr.lng()); 
+			lat.min = Math.min(lat.min, curr[LATITUDE_INDEX]); 
+			lat.max = Math.max(lat.max, curr[LATITUDE_INDEX]); 
+			lng.min = Math.min(lng.min, curr[LONGITUDE_INDEX]); 
+			lng.max = Math.max(lng.max, curr[LONGITUDE_INDEX]); 
 
 		}
 

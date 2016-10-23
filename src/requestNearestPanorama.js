@@ -6,8 +6,14 @@ const requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
 
 		const streetViewService = new google.maps.StreetViewService(); 
 
+		const { coordinates } = randomLatLng.geometry; 
+
+		const [ lat, lng ] = coordinates; 
+
+		const location = { lat, lng };  
+
 		const locationRequest = {
-			location: randomLatLng, 
+			location, 
 			preference: google.maps.StreetViewPreference.NEAREST
 		}; 
 

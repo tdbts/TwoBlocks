@@ -1,8 +1,8 @@
 const getRandomFeature = featureCollection => {
 
-	const randomIndex = Math.floor(Math.random() * featureCollection.length); 
+	const randomIndex = Math.floor(Math.random() * featureCollection.features.length); 
 
-	return featureCollection[randomIndex]; 
+	return featureCollection.features[randomIndex]; 
 	
 }; 
 

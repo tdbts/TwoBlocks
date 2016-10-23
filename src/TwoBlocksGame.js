@@ -3,6 +3,7 @@
 import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
 import createPromiseTimeout from './createPromiseTimeout';  
 import getRandomPanoramaLocation from './getRandomPanoramaLocation';  
+import request from 'superagent'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
 import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
@@ -186,8 +187,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				const { randomLatLng } = randomLocationDetails; 
 
 				window.console.log("randomLatLng:", randomLatLng); 
-				window.console.log("randomLatLng.lat():", randomLatLng.lat()); 
-				window.console.log("randomLatLng.lng():", randomLatLng.lng()); 
 
 				return randomLocationDetails; 
 
@@ -241,14 +240,32 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	onGeoJSONLoaded(locationData) {
 
+		const { GEO_JSON_SOURCE } = nycCoordinates; 
+
 		// Set 'geoJSONLoaded' flag to true so we don't produce 
 		// the side effect of repeatedly loading the same GeoJSON 
 		// over the map on every new game instance.   
 		geoJSONLoaded = true; 
 
-		this.locationData = locationData; 
+		return request.get(GEO_JSON_SOURCE)
 
-		this.startGamePlay(); 
+			.then(response => {
+
+				const geoJSON = response.body; 
+
+				if (!(geoJSON)) {
+
+					throw new Error("No GeoJSON returned from the request for location data."); 
+
+				}
+
+				locationData.featureCollection = geoJSON;
+				
+				this.locationData = locationData; 
+
+				this.startGamePlay(); 
+
+			}); 
 
 	}, 
 

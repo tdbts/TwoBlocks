@@ -1,10 +1,13 @@
 /* global google */
 
+import turf from '@turf/turf'; 
 import getLatLngWithinBoundaries from './getLatLngWithinBoundaries'; 
 import requestNearestPanorama from './requestNearestPanorama'; 
+import createFeatureCollection from './geoJSON-utils/createFeatureCollection'; 
 import getRandomFeature from './getRandomFeature'; 
 import selectRandomWeightedLinearRing from './selectRandomWeightedLinearRing'; 
 import getLatLngMaxMin from './getLatLngMaxMin'; 
+import pointToLatLngLiteral from './pointToLatLngLiteral'; 
 import { tryAtMost } from './utils/utils';
 import { MAXIMUM_PANORAMA_REQUESTS } from './constants/constants';  
 
@@ -12,19 +15,21 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
  
 	const selectedBorough = getRandomFeature(featureCollection); 
 
-	const boroughName = selectedBorough.getProperty('boro_name'); 
+	// const boroughName = selectedBorough.getProperty('boro_name'); 
+	const boroughName = selectedBorough.properties.boro_name; 
 
 	const selectedLinearRing = selectRandomWeightedLinearRing(selectedBorough); 
+ 
+	const latLngMaxMin = getLatLngMaxMin(selectedLinearRing); 
 
-	const latLngMaxMin = getLatLngMaxMin(selectedLinearRing.getArray()); 
-
-	// Data.Polygon instance must be passed an array 
-	const dataPolygon = new google.maps.Data.Polygon([selectedLinearRing]); 
-
-	const polygon = new google.maps.Polygon({
-		paths: dataPolygon.getAt(0).getArray()
-	}); 
+	const polygon = turf.polygon([selectedLinearRing]); 
 	
+	polygon.geometry.coordinates[0] = polygon.geometry.coordinates[0].map(coords => {
+
+		return [coords[1], coords[0]]; 
+
+	}); 
+
 	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
 
 	return tryAtMost(() => requestNearestPanorama(randomLatLng), MAXIMUM_PANORAMA_REQUESTS, (panoRequestResults, requestAttemptsLeft) => {
@@ -40,6 +45,8 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 		randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon); 
 
 	})
+
+	.then(() => (randomLatLng = (pointToLatLngLiteral(randomLatLng))))
 
 	// N.B - Parentheses must be wrapped around an object literal 
 	// returned by an arrow function

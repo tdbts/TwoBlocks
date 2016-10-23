@@ -6,7 +6,7 @@ import weightedRandomSelection from './weightedRandomSelection';
 
 const selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(feature) {
 
-	const polygonCollection = getGeometricConstituents('MultiPolygon', feature.getGeometry()); 
+	const polygonCollection = getGeometricConstituents('MultiPolygon', feature.geometry); 
 	
 	const linearRingCollection = polygonCollection
 
@@ -14,12 +14,12 @@ const selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(f
 
 		.map(linearRings => linearRings.shift()); 
 
-	const linearRingPathLengths = linearRingCollection.map(linearRing => linearRing.getLength()); 
+	const linearRingPathLengths = linearRingCollection.map(linearRing => linearRing.length); 
 
 	// Create map for quick lookup later 
 	const linearRingLengthMap = linearRingCollection.reduce((prev = {}, curr) => {
 
-		prev[curr.getLength()] = curr; 
+		prev[curr.length] = curr; 
 
 		return prev; 
 

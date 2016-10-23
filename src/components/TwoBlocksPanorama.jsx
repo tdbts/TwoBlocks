@@ -15,8 +15,8 @@ class TwoBlocksPanorama extends React.Component {
 
 		if (!(latLng) || !(panorama)) return; 
 
-		if (latLng.equals(previousProps.latLng)) return;
-
+		if (latLng === previousProps.latLng) return;
+ 
 		panorama.setPosition(latLng); 
 
 	}	

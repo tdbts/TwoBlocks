@@ -1,5 +1,6 @@
 /* global google */
 
+import turf from '@turf/turf';
 import getRandomCoords from './getRandomCoords'; 
 
 const getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMin, polygon) {
@@ -14,11 +15,15 @@ const getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMi
 		
 		const { randomLat, randomLng } = randomCoords; 
 
-		randomLatLng = new google.maps.LatLng(randomLat, randomLng); 
+		const pointCoords = [parseFloat(randomLat), parseFloat(randomLng)]; 
+
+		window.console.log("pointCoords:", pointCoords); 
+
+		randomLatLng = turf.point(pointCoords); 
 
 		// Check that the random coords are within polygon
-		isWithinBoundaries = google.maps.geometry.poly.containsLocation(randomLatLng, polygon); 
-
+		isWithinBoundaries = turf.inside(randomLatLng, polygon); 
+ 
 	}
 
 	return randomLatLng; 

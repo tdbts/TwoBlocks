@@ -304,8 +304,8 @@ class TwoBlocks extends React.Component {
 	onAnswerEvaluated(answerDetails) {
 
 		const actualLocationLatLng = {
-			lat: answerDetails.randomLatLng.lat(), 
-			lng: answerDetails.randomLatLng.lng()
+			lat: answerDetails.randomLatLng.lat, 
+			lng: answerDetails.randomLatLng.lng
 		}; 
 
 		const { boroughLevelMap, blockLevelMap, showLocationMarker, mobile } = this.state; 
@@ -594,8 +594,7 @@ class TwoBlocks extends React.Component {
 	}
 
 	onMobileBoroughSelection(boroughName) {
-		window.console.log("onMobileBoroughSelection()"); 
-		window.console.log("boroughName:", boroughName); 
+
 		const feature = this.getFeatureByBoroughName(boroughName); 
 
 		this.updateSelectedBorough(feature); 
@@ -701,7 +700,7 @@ class TwoBlocks extends React.Component {
 	}
 
 	restart() {
-		window.console.log("restart()"); 
+
 		return this.setState({
 			gameInstance: null, 
 			selectedBorough: null, 
