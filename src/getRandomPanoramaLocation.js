@@ -1,36 +1,18 @@
-/* global google */
-
-import turf from '@turf/turf'; 
-import getLatLngWithinBoundaries from './getLatLngWithinBoundaries'; 
-import requestNearestPanorama from './requestNearestPanorama'; 
-import createFeatureCollection from './geoJSON-utils/createFeatureCollection'; 
-import getRandomFeature from './getRandomFeature'; 
-import selectRandomWeightedLinearRing from './selectRandomWeightedLinearRing'; 
-import getLatLngMaxMin from './getLatLngMaxMin'; 
+import requestNearestPanorama from './requestNearestPanorama';  
 import pointToLatLngLiteral from './pointToLatLngLiteral'; 
+import RandomLocationGenerator from './RandomLocationGenerator'; 
 import { tryAtMost } from './utils/utils';
 import { MAXIMUM_PANORAMA_REQUESTS } from './constants/constants';  
 
 const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
  
-	const selectedBorough = getRandomFeature(featureCollection); 
+	const generator = new RandomLocationGenerator(featureCollection); 
 
-	// const boroughName = selectedBorough.getProperty('boro_name'); 
+	const selectedBorough = generator.selectedBorough; 
+
 	const boroughName = selectedBorough.properties.boro_name; 
 
-	const selectedLinearRing = selectRandomWeightedLinearRing(selectedBorough); 
- 
-	const latLngMaxMin = getLatLngMaxMin(selectedLinearRing); 
-
-	const polygon = turf.polygon([selectedLinearRing]); 
-	
-	polygon.geometry.coordinates[0] = polygon.geometry.coordinates[0].map(coords => {
-
-		return [coords[1], coords[0]]; 
-
-	}); 
-
-	let randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon);  
+	let randomLatLng = generator.randomLatLng(); 
 
 	return tryAtMost(() => requestNearestPanorama(randomLatLng), MAXIMUM_PANORAMA_REQUESTS, (panoRequestResults, requestAttemptsLeft) => {
 		
@@ -42,7 +24,7 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 		window.console.log("status:", status); 
 		window.console.log("requestAttemptsLeft:", requestAttemptsLeft);
 
-		randomLatLng = getLatLngWithinBoundaries(latLngMaxMin, polygon); 
+		randomLatLng = generator.randomLatLng();  
 
 	})
 
