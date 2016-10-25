@@ -25111,17 +25111,22 @@
 	
 			maxTries -= 1;
 	
-			onCaught.apply(undefined, args.concat([maxTries]));
+			return Promise.resolve().then(function () {
+				return onCaught.apply(undefined, args.concat([maxTries]));
+			}).then(function () {
 	
-			if (maxTries < 1) {
+				if (maxTries < 1) {
 	
-				// Error must be thrown to be caught by
-				// the caller of tryAtMost()
-				throw new Error("Maximum number of tries exceeded.");
-			}
+					// Error must be thrown to be caught by
+					// the caller of tryAtMost()
+					throw new Error("Maximum number of tries exceeded.");
+				}
+			})
 	
 			// Recurse
-			return tryAtMost(thenable, maxTries, onCaught);
+			.then(function () {
+				return tryAtMost(thenable, maxTries, onCaught);
+			});
 		});
 	};
 	
