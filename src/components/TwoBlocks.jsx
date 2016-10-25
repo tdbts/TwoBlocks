@@ -169,12 +169,9 @@ class TwoBlocks extends React.Component {
 
 	addGameEventListeners(twoBlocks) {
 
-		// twoBlocks.on(events.GAME_STAGE, gameStage => this.setState({ gameStage })); 
-		// twoBlocks.on(events.GAME_STAGE, stage => this.onGameStage(stage)); 
-
 		twoBlocks.on(events.HOST_LOCATION_DATA, locationData => this.onHostLocationData(locationData)); 
 
-		// twoBlocks.on(events.VIEW_CHANGE, viewState => this.setState(viewState));
+		twoBlocks.on(events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONLoaded(geoJSON)); 
 
 		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.onGameComponents(gameComponents)); 
 
@@ -387,8 +384,7 @@ class TwoBlocks extends React.Component {
 		return this.setState({
 			...gameComponents, 
 			showLocationMarker: gameComponents.chooseLocationMarker
-		}); 
-
+		});
 	}
 
 	onGameOver() {
@@ -412,14 +408,27 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	// onGameStage(stage) {
-		
-	// 	store.dispatch({
-	// 		stage, 
-	// 		type: actions.SET_GAME_STAGE
-	// 	}); 		
-	
-	// }
+	onGeoJSONLoaded(geoJSON) {
+
+		const { chooseLocationMap, gameInstance, locationData } = this.state; 
+
+		if (gameInstance.geoJSONLoaded()) return; 
+
+		// Each borough is a feature 
+		const featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
+
+		window.console.log("featureCollection:", featureCollection); 
+
+		return this.setState({
+			
+			locationData: {
+				...locationData, 
+				featureCollection
+			}
+
+		});
+
+	}
 
 	onHostLocationData(locationData) {
 
@@ -441,35 +450,9 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({ ...gameComponents, locationData })
 
-			.then(() => gameInstance.emit(events.GAME_COMPONENTS, gameComponents))
+			.then(() => this.addGameComponentEventListeners())
 
-			.then(() => {
-
-				const { locationData } = this.state; 
-				const { GEO_JSON_SOURCE } = locationData; 
-				const { chooseLocationMap } = gameComponents; 
-
-				this.addGameComponentEventListeners(); 
-
-				if (gameInstance.geoJSONLoaded()) return; 
-
-				// Each borough is a feature 
-				chooseLocationMap.data.loadGeoJson(GEO_JSON_SOURCE, {}, featureCollection => {
-
-					window.console.log("featureCollection:", featureCollection); 
-
-					return this.setState({
-						locationData: {
-							...locationData, 
-							featureCollection
-						}
-					})
-
-					.then(() => gameInstance.emit(events.GEO_JSON_LOADED, { ...this.state.locationData })); 
-
-				}); 
-
-			}); 
+			.then(() => gameInstance.emit(events.GAME_COMPONENTS, gameComponents));
 
 	}
 

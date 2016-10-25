@@ -29,6 +29,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	addEventListeners() {
 
+		this.on(events.GAME_COMPONENTS, () => this.onGameComponents()); 
+
 		this.on(events.GEO_JSON_LOADED, locationData => this.onGeoJSONLoaded(locationData)); 
 
 		this.on(events.GAME_STAGE, gameStage => {
@@ -194,14 +196,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	totalCorrectAnswers() {
-
-		const { gameHistory } = this.store.getState(); 
-
-		return gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.boroughName).length; 
-
-	}, 
-
 	maximumRoundsPlayed() {
 
 		const { totalRounds } = this.store.getState(); 
@@ -238,14 +232,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	onGeoJSONLoaded(locationData) {
+	onGameComponents() {
 
 		const { GEO_JSON_SOURCE } = nycCoordinates; 
-
-		// Set 'geoJSONLoaded' flag to true so we don't produce 
-		// the side effect of repeatedly loading the same GeoJSON 
-		// over the map on every new game instance.   
-		geoJSONLoaded = true; 
 
 		return request.get(GEO_JSON_SOURCE)
 
@@ -259,13 +248,26 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 				}
 
-				locationData.featureCollection = geoJSON;
-				
-				this.locationData = locationData; 
+				this.locationData = {
+
+					featureCollection: geoJSON
+
+				}; 
+				window.console.log("Before emitting event -- geoJSON:", geoJSON); 
+				this.emit(events.GEO_JSON_LOADED, geoJSON); 
 
 				this.startGamePlay(); 
 
 			}); 
+
+	}, 
+
+	onGeoJSONLoaded(locationData) {
+
+		// Set 'geoJSONLoaded' flag to true so we don't produce 
+		// the side effect of repeatedly loading the same GeoJSON 
+		// over the map on every new game instance.   
+		geoJSONLoaded = true; 
 
 	}, 
 
@@ -304,7 +306,15 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.emit(events.GAME_STAGE, stage); 
 
-	}
+	}, 
+
+	totalCorrectAnswers() {
+
+		const { gameHistory } = this.store.getState(); 
+
+		return gameHistory.filter(turnHistory => turnHistory.selectedBorough === turnHistory.boroughName).length; 
+
+	} 	
 
 }); 
 

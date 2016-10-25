@@ -43,7 +43,9 @@ const nycCoordinates = {
 
 	}, 
 	
-	featureCollection: null 
+	featureCollection: null, 
+
+	geoJSON: null
 
 };
 
