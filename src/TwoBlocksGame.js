@@ -166,7 +166,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	getRandomPanoramaLocation(featureCollection, attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS) {
 		
-		return getRandomPanoramaLocation(featureCollection, attemptsLeft) 
+		return getRandomPanoramaLocation(featureCollection) 
 
 			.catch(() => {
 
@@ -180,7 +180,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 				window.console.log(`Failure to request nearest panorama.  ${attemptsLeft} more attempts left.`); 
 
-				return getRandomPanoramaLocation(featureCollection, attemptsLeft); 
+				return getRandomPanoramaLocation(featureCollection); 
 
 			}) 						
 

@@ -13461,7 +13461,7 @@
 			var attemptsLeft = arguments.length <= 1 || arguments[1] === undefined ? _constants.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS : arguments[1];
 	
 	
-			return (0, _getRandomPanoramaLocation3.default)(featureCollection, attemptsLeft).catch(function () {
+			return (0, _getRandomPanoramaLocation3.default)(featureCollection).catch(function () {
 	
 				if (attemptsLeft === 0) {
 	
@@ -13472,7 +13472,7 @@
 	
 				window.console.log('Failure to request nearest panorama.  ' + attemptsLeft + ' more attempts left.');
 	
-				return (0, _getRandomPanoramaLocation3.default)(featureCollection, attemptsLeft);
+				return (0, _getRandomPanoramaLocation3.default)(featureCollection);
 			}).then(function (randomLocationDetails) {
 				var randomLatLng = randomLocationDetails.randomLatLng;
 	
@@ -14015,7 +14015,7 @@
 	
 	/* global google */
 	
-	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection, attemptsLeft) {
+	var getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
 	
 		var selectedBorough = (0, _getRandomFeature2.default)(featureCollection);
 	
