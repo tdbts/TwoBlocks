@@ -2,11 +2,12 @@
 
 import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
 import createPromiseTimeout from './createPromiseTimeout';  
-import getRandomPanoramaLocation from './getRandomPanoramaLocation';  
+import getRandomPanoramaLocation from './getRandomPanoramaLocation';   
+import TwoBlocksWorker from './workers/twoBlocks.worker.js'; 
 import request from 'superagent'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
+import { events, nycCoordinates, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
 import actions from './actions/actions'; 
 
 let geoJSONLoaded = false; 
@@ -16,6 +17,7 @@ const TwoBlocksGame = function TwoBlocksGame(store) {
 	this.store = store;   
   
 	this.locationData = null; 
+	this.worker = window.Worker ? new TwoBlocksWorker() : null; 
 
 }; 
 	
@@ -206,6 +208,34 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	nextTurn() {
 
+		/*==========================================
+		=            Web Worker Testing            =
+		==========================================*/
+		
+		window.console.log("this.worker:", this.worker); 		
+
+		this.worker.onmessage = e => window.console.log("Heard dis:", e.data); 
+
+		this.worker.addEventListener('error', e => window.console.log("Fucking error:", e)); 
+
+		// this.worker.postMessage({
+		// 	message: workerMessages.LOAD_GEO_JSON, 
+		// 	payload: null
+		// }); 
+
+		this.worker.postMessage({
+			message: workerMessages.REQUEST_GEO_JSON, 
+			payload: "poop"
+		}); 
+
+		this.worker.postMessage({
+			message: workerMessages.GET_RANDOM_LOCATION, 
+			payload: null
+		}); 
+		
+		/*=====  End of Web Worker Testing  ======*/
+		
+
 		const { featureCollection } = this.locationData;  
 
 		this.store.dispatch({
@@ -234,31 +264,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	onGameComponents() {
 
-		const { GEO_JSON_SOURCE } = nycCoordinates; 
-
-		return request.get(GEO_JSON_SOURCE)
-
-			.then(response => {
-
-				const geoJSON = response.body; 
-
-				if (!(geoJSON)) {
-
-					throw new Error("No GeoJSON returned from the request for location data."); 
-
-				}
-
-				this.locationData = {
-
-					featureCollection: geoJSON
-
-				}; 
-				window.console.log("Before emitting event -- geoJSON:", geoJSON); 
-				this.emit(events.GEO_JSON_LOADED, geoJSON); 
-
-				this.startGamePlay(); 
-
-			}); 
+		return this.requestGeoJSON(); 
 
 	}, 
 
@@ -281,6 +287,97 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	readyForGameplay() {
+
+		const geoJSONLoaded = new Promise(resolve => {
+
+			this.on(events.GEO_JSON_LOADED, resolve); 
+
+		}); 
+
+		const prerequisites = [
+
+			geoJSONLoaded
+		
+		]; 
+
+		return Promise.all(prerequisites); 
+
+	}, 
+
+	requestGeoJSON() {
+
+		const { GEO_JSON_SOURCE } = nycCoordinates; 
+
+		const onGeoJSONReceived = geoJSON => {
+
+			if (!(geoJSON)) {
+
+				throw new Error("No GeoJSON returned from the request for location data."); 
+
+			}
+
+			this.locationData = {
+
+				featureCollection: geoJSON
+
+			}; 
+
+			this.emit(events.GEO_JSON_LOADED, geoJSON); 
+
+		}; 
+
+		/*----------  If TwoBlocks WebWorker, use it to load the GeoJSON  ----------*/
+		
+		if (this.worker) {
+
+			const geoJSONTransmissionListener = e => {
+
+				window.console.log("e:", e); 
+
+				const eventData = e.data; 
+
+				const { message, payload } = eventData; 
+
+				if (workerMessages.GEO_JSON_LOADED === message) {
+
+					this.worker.postMessage({
+						message: workerMessages.REQUEST_GEO_JSON, 
+						payload: null
+					}); 
+
+				} else if (workerMessages.SENDING_GEO_JSON === message) {
+
+					onGeoJSONReceived(payload); 
+
+					this.worker.removeEventListener('message', geoJSONTransmissionListener); 
+
+				}
+
+			}; 
+
+			// Add listener before posting message to worker 
+			this.worker.addEventListener('message', geoJSONTransmissionListener); 
+
+			/*----------  Instruct worker to load GeoJSON  ----------*/
+			
+			return this.worker.postMessage({
+
+				message: workerMessages.LOAD_GEO_JSON, 
+				payload: GEO_JSON_SOURCE
+
+			}); 
+
+		} else {
+
+			return request.get(GEO_JSON_SOURCE)
+
+				.then(response => onGeoJSONReceived(response.body)); 
+
+		}
+
+	}, 
+
 	startGame() {
 
 		this.emit(events.GAME_STAGE, 'pregame'); 
@@ -292,6 +389,10 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.store.dispatch({
 			type: actions.START_GAME
 		}); 
+
+		this.readyForGameplay()
+
+			.then(() => this.startGamePlay()); 
 
 	}, 
 

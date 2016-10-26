@@ -21,7 +21,8 @@ import isSomething from './isSomething';
 import isType from './isType';
 import hasKeys from './hasKeys';   
 import keys from './keys';  
-import length from './length';  
+import length from './length';
+import makeRequest from './makeRequest';   
 import merge from './merge'; 
 import negate from './negate'; 
 import noArguments from './noArguments';
@@ -62,7 +63,8 @@ export {
 	isType, 
 	hasKeys,  
 	keys, 
-	length, 
+	length,
+	makeRequest,  
 	merge, 
 	negate, 
 	noArguments,  

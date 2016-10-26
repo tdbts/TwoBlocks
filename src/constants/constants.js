@@ -1,7 +1,8 @@
 import events from './events'; 
 import heardKeys from './heardKeys'; 
 import keyEventMaps from './keyEventMaps'; 
-import nycCoordinates from './nycCoordinates'; 
+import nycCoordinates from './nycCoordinates';
+import workerMessages from './workerMessages'; 
 import ALL_TYPES from './ALL_TYPES'; 
 import DEFAULT_MAP_OPTIONS from './DEFAULT_MAP_OPTIONS'; 
 
@@ -26,6 +27,7 @@ export {
 	heardKeys, 
 	keyEventMaps, 
 	nycCoordinates, 
+	workerMessages, 
 	ALL_TYPES,
 	ANSWER_EVALUATION_DELAY, 
 	DEFAULT_MAP_OPTIONS, 
