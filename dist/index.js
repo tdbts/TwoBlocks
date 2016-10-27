@@ -12572,7 +12572,7 @@
 	
 				this.addGameEventListeners(twoBlocks);
 	
-				twoBlocks.startGame();
+				twoBlocks.start();
 	
 				var nextState = {
 					blockLevelMap: blockLevelMap,
@@ -12700,6 +12700,8 @@
 		}, {
 			key: 'onGeoJSONLoaded',
 			value: function onGeoJSONLoaded(geoJSON) {
+				var _this7 = this;
+	
 				var _state5 = this.state;
 				var chooseLocationMap = _state5.chooseLocationMap;
 				var gameInstance = _state5.gameInstance;
@@ -12708,23 +12710,33 @@
 	
 				if (gameInstance.geoJSONLoaded()) return;
 	
-				// Each borough is a feature
-				var featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
+				// If the chooseLocationMap does not exist yet, wait until the 'GAME_COMPONENTS'
+				// event fires to execute the rest of the method body. 
+				if (!chooseLocationMap) {
 	
-				window.console.log("featureCollection:", featureCollection);
+					this.once(_constants.events.GAME_COMPONENTS, function () {
+						return _this7.onGeoJSONLoaded(geoJSON);
+					});
+				} else {
 	
-				return this.setState({
+					// Each borough is a feature
+					var featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
 	
-					locationData: _extends({}, locationData, {
-						featureCollection: featureCollection
-					})
+					window.console.log("featureCollection:", featureCollection);
 	
-				});
+					return this.setState({
+	
+						locationData: _extends({}, locationData, {
+							featureCollection: featureCollection
+						})
+	
+					});
+				}
 			}
 		}, {
 			key: 'onHostLocationData',
 			value: function onHostLocationData(locationData) {
-				var _this7 = this;
+				var _this8 = this;
 	
 				var _state6 = this.state;
 				var gameInstance = _state6.gameInstance;
@@ -12748,7 +12760,7 @@
 				gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
 	
 				return this.setState(_extends({}, gameComponents, { locationData: locationData })).then(function () {
-					return _this7.addGameComponentEventListeners();
+					return _this8.addGameComponentEventListeners();
 				}).then(function () {
 					return gameInstance.emit(_constants.events.GAME_COMPONENTS, gameComponents);
 				});
@@ -12994,7 +13006,7 @@
 		}, {
 			key: 'restart',
 			value: function restart() {
-				var _this8 = this;
+				var _this9 = this;
 	
 				return this.setState({
 					gameInstance: null,
@@ -13002,7 +13014,7 @@
 					store: (0, _redux.createStore)(_twoBlocks2.default),
 					promptText: "Starting new game..."
 				}).then(function () {
-					return _this8.initializeTwoBlocks();
+					return _this9.initializeTwoBlocks();
 				});
 			}
 		}, {
@@ -13018,7 +13030,7 @@
 		}, {
 			key: 'showRandomPanorama',
 			value: function showRandomPanorama(prevState) {
-				var _this9 = this;
+				var _this10 = this;
 	
 				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed
 	
@@ -13039,32 +13051,32 @@
 				}).then(function () {
 					return gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
 				}).then(function () {
-					return _this9.setState({
+					return _this10.setState({
 	
 						promptText: 'Look closely...which borough is this Street View from?'
 	
 					});
 				}).then(function () {
-					return _this9.state.mobile ? (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY) : null;
+					return _this10.state.mobile ? (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY) : null;
 				}).then(function () {
 	
-					if (_this9.shouldUseDeviceOrientation()) {
+					if (_this10.shouldUseDeviceOrientation()) {
 	
-						_this9.startStreetviewCountdown();
+						_this10.startStreetviewCountdown();
 	
-						_this9.setState({
+						_this10.setState({
 							interchangeHidden: true
 						});
 					} else {
 	
-						_this9.showSpinner();
+						_this10.showSpinner();
 					}
 				});
 			}
 		}, {
 			key: 'showSpinner',
 			value: function showSpinner() {
-				var _this10 = this;
+				var _this11 = this;
 	
 				var _state12 = this.state;
 				var gameInstance = _state12.gameInstance;
@@ -13075,7 +13087,7 @@
 	
 				spinner.once('revolution', function () {
 	
-					_this10.onSpinnerRevolution();
+					_this11.onSpinnerRevolution();
 	
 					gameInstance.emit(_constants.events.CHOOSING_LOCATION);
 				});
@@ -13193,7 +13205,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this11 = this;
+				var _this12 = this;
 	
 				var props = this.props;
 				var state = this.state;
@@ -13229,7 +13241,7 @@
 						promptText: state.promptText,
 						promptTwoBlocksClass: props.promptTwoBlocksClass,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this11.evaluateFinalAnswer();
+							return _this12.evaluateFinalAnswer();
 						},
 						selectedBorough: state.selectedBorough,
 						submitterTwoBlocksClass: props.submitterTwoBlocksClass,
@@ -13238,7 +13250,7 @@
 						replayButtonTwoBlocksClass: props.replayButtonTwoBlocksClass,
 						mobile: state.mobile,
 						onMobileBoroughSelection: function onMobileBoroughSelection(borough) {
-							return _this11.onMobileBoroughSelection(borough);
+							return _this12.onMobileBoroughSelection(borough);
 						}
 					})
 				);
@@ -13453,16 +13465,16 @@
 	
 			return this.store.getState().gameOver;
 		},
-		geoJSONLoaded: function geoJSONLoaded() {
-	
-			return _geoJSONLoaded;
-		},
-		getLocationData: function getLocationData() {
+		getGeoJSONSourceURL: function getGeoJSONSourceURL() {
 			var _this2 = this;
 	
 			return Promise.resolve(_constants.nycCoordinates).then(function (locationData) {
 				return _this2.onPregameLocationDataReceived(locationData);
 			});
+		},
+		geoJSONLoaded: function geoJSONLoaded() {
+	
+			return _geoJSONLoaded;
 		},
 		getRandomPanoramaLocation: function getRandomPanoramaLocation(featureCollection) {
 			var attemptsLeft = arguments.length <= 1 || arguments[1] === undefined ? _constants.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS : arguments[1];
@@ -13658,12 +13670,12 @@
 				});
 			}
 		},
-		startGame: function startGame() {
+		start: function start() {
 			var _this6 = this;
 	
 			this.emit(_constants.events.GAME_STAGE, 'pregame');
 	
-			this.getLocationData();
+			this.getGeoJSONSourceURL();
 	
 			this.addEventListeners();
 	

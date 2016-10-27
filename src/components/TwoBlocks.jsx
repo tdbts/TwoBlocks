@@ -285,7 +285,7 @@ class TwoBlocks extends React.Component {
 
 		this.addGameEventListeners(twoBlocks); 
 
-		twoBlocks.startGame(); 
+		twoBlocks.start(); 
 
 		const nextState = {
 			blockLevelMap, 
@@ -414,19 +414,29 @@ class TwoBlocks extends React.Component {
 
 		if (gameInstance.geoJSONLoaded()) return; 
 
-		// Each borough is a feature 
-		const featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
-
-		window.console.log("featureCollection:", featureCollection); 
-
-		return this.setState({
+		// If the chooseLocationMap does not exist yet, wait until the 'GAME_COMPONENTS' 
+		// event fires to execute the rest of the method body.  
+		if (!(chooseLocationMap)) {
 			
-			locationData: {
-				...locationData, 
-				featureCollection
-			}
+			this.once(events.GAME_COMPONENTS, () => this.onGeoJSONLoaded(geoJSON)); 
 
-		});
+		} else {
+
+			// Each borough is a feature 
+			const featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
+
+			window.console.log("featureCollection:", featureCollection); 
+
+			return this.setState({
+				
+				locationData: {
+					...locationData, 
+					featureCollection
+				}
+
+			});
+			
+		}
 
 	}
 

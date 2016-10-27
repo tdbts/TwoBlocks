@@ -152,19 +152,19 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	
 	},
 
-	geoJSONLoaded() {
-
-		return geoJSONLoaded; 
-
-	}, 
-
-	getLocationData() {
+	getGeoJSONSourceURL() {
 
 		return Promise.resolve(nycCoordinates)
 
 			.then(locationData => this.onPregameLocationDataReceived(locationData)); 
 
 	},
+
+	geoJSONLoaded() {
+
+		return geoJSONLoaded; 
+
+	}, 
 
 	getRandomPanoramaLocation(featureCollection, attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS) {
 		
@@ -378,11 +378,11 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	startGame() {
+	start() {
 
 		this.emit(events.GAME_STAGE, 'pregame'); 
 
-		this.getLocationData(); 
+		this.getGeoJSONSourceURL(); 
 
 		this.addEventListeners(); 
 
