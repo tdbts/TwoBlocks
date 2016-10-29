@@ -171,7 +171,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	getRandomPanoramaLocation(featureCollection, attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS) {
 		
-		return getRandomPanoramaLocation(featureCollection) 
+		return getRandomPanoramaLocation(featureCollection, this.worker) 
 
 			.catch(() => {
 
@@ -185,7 +185,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 				window.console.log(`Failure to request nearest panorama.  ${attemptsLeft} more attempts left.`); 
 
-				return getRandomPanoramaLocation(featureCollection); 
+				return getRandomPanoramaLocation(featureCollection, this.worker); 
 
 			}) 						
 
@@ -211,32 +211,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	nextTurn() {
 
-		/*==========================================
-		=            Web Worker Testing            =
-		==========================================*/
-		
-		window.console.log("this.worker:", this.worker); 		
-
-		this.worker.postMessage({
-			message: workerMessages.REQUEST_GEO_JSON, 
-			payload: "poop"
-		}); 
-
-		this.worker.postMessage({
-			message: workerMessages.GET_RANDOM_LOCATION, 
-			payload: null
-		}); 
-		
-		/*=====  End of Web Worker Testing  ======*/
-		
-
 		const { featureCollection } = this.locationData;  
 
 		this.store.dispatch({
 			type: actions.CAN_EVALUATE_ANSWER
 		}); 
 
-		return this.getRandomPanoramaLocation(featureCollection) 
+		return this.getRandomPanoramaLocation(featureCollection, this.worker) 
 
 			.then(locationData => {  // boroughName, randomLatLng
 

@@ -3,7 +3,10 @@
 import 'babel-polyfill'; 
 import { makeRequest } from '../utils/utils'; 
 import { workerMessages } from '../constants/constants'; 
+// import pointToLatLngLiteral from '../pointToLatLngLiteral'; 
+import RandomLocationGenerator from '../RandomLocationGenerator'; 
 
+let generator = null; 
 let geoJSON = null; 
 
 try {
@@ -51,9 +54,26 @@ try {
 
 			self.postMessage("Getting random location..."); 
 
+			const { newTurn } = payload; 
+
+			if (newTurn || (!(generator))) {
+
+				generator = new RandomLocationGenerator(geoJSON); 
+
+			}
+
+			const randomLatLng = generator.randomLatLng(); 
+
+			const { selectedBorough } = generator;  
+
 			self.postMessage({
 				message: workerMessages.RANDOM_LOCATION_CHOSEN, 
-				payload: { lat: 40.04320, lng: -73.38329 }
+				payload: {
+					selectedBorough, 
+					boroughName: selectedBorough.properties.boro_name,  
+					// latLng: pointToLatLngLiteral(randomLatLng)
+					latLng: randomLatLng
+				}
 			}); 
 
 		} 

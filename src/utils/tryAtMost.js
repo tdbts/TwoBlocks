@@ -1,30 +1,33 @@
 const tryAtMost = function tryAtMost(thenable, maxTries, onCaught = function () {}) {
 
-	return thenable().catch((...args) => {
+	return thenable()
 
-		maxTries -= 1; 
+		.catch((...args) => {
 
-		return Promise.resolve()
+			window.console.log("Caught tryAtMost()..."); 
 
-			.then(() => onCaught(...args, maxTries)) 
+			maxTries -= 1; 
 
-			.then(() => {
+			return onCaught(...args, maxTries)
 
-				if (maxTries < 1) {
+				.then(() => {
 
-					// Error must be thrown to be caught by 
-					// the caller of tryAtMost() 
-					throw new Error("Maximum number of tries exceeded."); 
-				
-				}
+					if (maxTries < 1) {
 
-			})
+						// Error must be thrown to be caught by 
+						// the caller of tryAtMost() 
+						throw new Error("Maximum number of tries exceeded."); 
 
-			// Recurse 
-			.then(() => tryAtMost(thenable, maxTries, onCaught)); 
+					}
 
-	}); 
+				})
+
+				// Recurse 
+				.then(() => tryAtMost(thenable, maxTries, onCaught)); 
+
+		}); 
 
 }; 
+
 
 export default tryAtMost; 
