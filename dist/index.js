@@ -14227,6 +14227,8 @@
 		value: true
 	});
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -14747,7 +14749,9 @@
 			value: function onGeoJSONLoaded(geoJSON) {
 				var _this8 = this;
 	
-				var chooseLocationMap = this.state.chooseLocationMap;
+				var _state4 = this.state;
+				var chooseLocationMap = _state4.chooseLocationMap;
+				var mobile = _state4.mobile;
 				var _props2 = this.props;
 				var gameInstance = _props2.gameInstance;
 				var locationData = _props2.locationData;
@@ -14763,11 +14767,14 @@
 					});
 				} else {
 	
-					// Add GeoJSON to the chooseLocationMap.  The 'addGeoJson()' method
-					// returns the feature collection.  Each borough is a feature. 
-					var featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
+					if (!mobile) {
 	
-					locationData.featureCollection = featureCollection;
+						// Add GeoJSON to the chooseLocationMap if not on mobile.  The 'addGeoJson()' method
+						// returns the feature collection.  Each borough is a feature. 
+						var featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
+	
+						locationData.featureCollection = featureCollection;
+					}
 	
 					gameInstance.emit(_constants.events.VIEW_READY);
 				}
@@ -14803,9 +14810,9 @@
 	
 				e.preventDefault(); // Prevent arrows from scrolling page
 	
-				var _state4 = this.state;
-				var hoveredBorough = _state4.hoveredBorough;
-				var selectedBorough = _state4.selectedBorough;
+				var _state5 = this.state;
+				var hoveredBorough = _state5.hoveredBorough;
+				var selectedBorough = _state5.selectedBorough;
 				var _props3 = this.props;
 				var gameInstance = _props3.gameInstance;
 				var store = _props3.store;
@@ -14904,9 +14911,7 @@
 			key: 'onMobileBoroughSelection',
 			value: function onMobileBoroughSelection(boroughName) {
 	
-				var feature = this.getFeatureByBoroughName(boroughName);
-	
-				this.updateSelectedBorough(feature);
+				this.updateSelectedBorough(boroughName);
 			}
 		}, {
 			key: 'onNextTurn',
@@ -14934,9 +14939,9 @@
 			value: function onRandomLocation(randomLocationDetails) {
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
-				var _state5 = this.state;
-				var blockLevelMap = _state5.blockLevelMap;
-				var boroughLevelMap = _state5.boroughLevelMap;
+				var _state6 = this.state;
+				var blockLevelMap = _state6.blockLevelMap;
+				var boroughLevelMap = _state6.boroughLevelMap;
 	
 	
 				blockLevelMap.panTo(randomLatLng);
@@ -14959,7 +14964,9 @@
 	
 				this.styleSelectedBorough(feature);
 	
-				this.updateSelectedBorough(feature);
+				var boroughName = this.getBoroughName(feature);
+	
+				this.updateSelectedBorough(boroughName);
 			}
 		}, {
 			key: 'onShowingPanorama',
@@ -15018,9 +15025,44 @@
 				var _this9 = this;
 	
 				var worker = this.props.worker;
+				var mobile = this.state.mobile;
 	
 	
 				if (!worker) return;
+	
+				// If player is on mobile device and the worker exists,
+				// just wait for the GEO_JSON_LOADED message from the worker
+				// and let the game instance know that the GeoJSON has been
+				// loaded. 
+				if (mobile) {
+					var _ret = function () {
+						var gameInstance = _this9.props.gameInstance;
+	
+	
+						var geoJSONLoadListener = function geoJSONLoadListener(event) {
+	
+							var eventData = event.data;
+	
+							var message = eventData.message;
+	
+	
+							if (_constants.workerMessages.GEO_JSON_LOADED === message) {
+	
+								gameInstance.emit(_constants.events.GEO_JSON_LOADED);
+	
+								worker.removeEventListener('message', geoJSONLoadListener);
+							}
+						};
+	
+						worker.addEventListener('message', geoJSONLoadListener);
+	
+						return {
+							v: void 0
+						};
+					}();
+	
+					if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+				}
 	
 				/*----------  OnNoGeoJSON()  ----------*/
 	
@@ -15071,10 +15113,10 @@
 	
 							onNoGeoJSON();
 						} else {
-							var gameInstance = _this9.props.gameInstance;
+							var _gameInstance = _this9.props.gameInstance;
 	
 	
-							gameInstance.emit(_constants.events.GEO_JSON_LOADED, payload);
+							_gameInstance.emit(_constants.events.GEO_JSON_LOADED, payload);
 	
 							worker.removeEventListener('message', onGeoJSONSent);
 						}
@@ -15209,9 +15251,9 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state6 = this.state;
-				var chooseLocationMap = _state6.chooseLocationMap;
-				var selectedBorough = _state6.selectedBorough;
+				var _state7 = this.state;
+				var chooseLocationMap = _state7.chooseLocationMap;
+				var selectedBorough = _state7.selectedBorough;
 	
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
@@ -15238,9 +15280,9 @@
 			value: function styleUnselectedBoroughs(borough) {
 				var _this12 = this;
 	
-				var _state7 = this.state;
-				var chooseLocationMap = _state7.chooseLocationMap;
-				var selectedBorough = _state7.selectedBorough;
+				var _state8 = this.state;
+				var chooseLocationMap = _state8.chooseLocationMap;
+				var selectedBorough = _state8.selectedBorough;
 				var locationData = this.props.locationData;
 	
 	
@@ -15282,9 +15324,7 @@
 			}
 		}, {
 			key: 'updateSelectedBorough',
-			value: function updateSelectedBorough(feature) {
-	
-				var boroughName = this.getBoroughName(feature);
+			value: function updateSelectedBorough(boroughName) {
 	
 				if (this.state.selectedBorough === boroughName) return;
 	

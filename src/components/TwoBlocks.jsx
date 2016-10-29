@@ -438,7 +438,7 @@ class TwoBlocks extends React.Component {
 
 	onGeoJSONLoaded(geoJSON) {
 
-		const { chooseLocationMap } = this.state; 
+		const { chooseLocationMap, mobile } = this.state; 
 
 		const { gameInstance, locationData } = this.props;  
 
@@ -451,11 +451,15 @@ class TwoBlocks extends React.Component {
 
 		} else {
 
-			// Add GeoJSON to the chooseLocationMap.  The 'addGeoJson()' method 
-			// returns the feature collection.  Each borough is a feature.  
-			const featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
+			if (!(mobile)) {
 
-			locationData.featureCollection = featureCollection; 
+				// Add GeoJSON to the chooseLocationMap if not on mobile.  The 'addGeoJson()' method 
+				// returns the feature collection.  Each borough is a feature.  
+				const featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
+
+				locationData.featureCollection = featureCollection; 
+
+			}
 
 			gameInstance.emit(events.VIEW_READY); 
 			
@@ -587,9 +591,7 @@ class TwoBlocks extends React.Component {
 
 	onMobileBoroughSelection(boroughName) {
 
-		const feature = this.getFeatureByBoroughName(boroughName); 
-
-		this.updateSelectedBorough(feature); 
+		this.updateSelectedBorough(boroughName);  
 
 	}
 
@@ -641,7 +643,9 @@ class TwoBlocks extends React.Component {
 		
 		this.styleSelectedBorough(feature);
 		
-		this.updateSelectedBorough(feature);
+		const boroughName = this.getBoroughName(feature); 
+
+		this.updateSelectedBorough(boroughName);
 
 	}
 
@@ -701,7 +705,39 @@ class TwoBlocks extends React.Component {
 
 		const { worker } = this.props; 
 
+		const { mobile } = this.state; 
+
 		if (!(worker)) return; 
+
+		// If player is on mobile device and the worker exists, 
+		// just wait for the GEO_JSON_LOADED message from the worker 
+		// and let the game instance know that the GeoJSON has been 
+		// loaded.  
+		if (mobile) {
+
+			const { gameInstance } = this.props; 
+
+			const geoJSONLoadListener = event => {
+
+				const eventData = event.data; 
+
+				const { message } = eventData; 
+
+				if (workerMessages.GEO_JSON_LOADED === message) {
+
+					gameInstance.emit(events.GEO_JSON_LOADED); 
+
+					worker.removeEventListener('message', geoJSONLoadListener); 
+
+				}
+
+			}; 
+
+			worker.addEventListener('message', geoJSONLoadListener); 
+
+			return; 
+
+		} 
 
 		/*----------  OnNoGeoJSON()  ----------*/
 		
@@ -957,9 +993,7 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	updateSelectedBorough(feature) {
-
-		const boroughName = this.getBoroughName(feature); 
+	updateSelectedBorough(boroughName) {
 
 		if (this.state.selectedBorough === boroughName) return; 
 
