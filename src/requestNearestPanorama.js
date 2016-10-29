@@ -8,7 +8,8 @@ const requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
 
 		const { coordinates } = randomLatLng.geometry; 
 
-		const [ lat, lng ] = coordinates; 
+		// const [ lat, lng ] = coordinates; 
+		const [ lng, lat ] = coordinates; 
 
 		const location = { lat, lng };  
 

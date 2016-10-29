@@ -1,4 +1,5 @@
 import turf from '@turf/turf'; 
+import normalizeLinearRings from './normalizeLinearRings'; 
 
 /**
  *
@@ -28,7 +29,7 @@ const getGeometricConstituents = (desiredType, feature) => {
 
 	let result = null; 
 
-	if (desiredType === feature.type || feature.geometry.type) {
+	if ((desiredType === feature.type) || (desiredType === feature.geometry.type)) {
 
 		result = feature.coordinates || feature.geometry.coordinates; 
 

@@ -14,6 +14,10 @@ const view = function view(state = 'map', action) {
 
 		nextState = 'map'; 
 
+	} else if (actions.RESTART_GAME === type) {
+
+		nextState = 'map'; 
+		
 	}
 
 	return nextState; 

@@ -2,7 +2,7 @@ const getBoroughFromFeatureCollection = function getBoroughFromFeatureCollection
 
 	if (!(featureCollection) || !(boroughName)) return; 
 
-	return featureCollection.filter(feature => boroughName.toLowerCase() === feature.getProperty('boro_name').toLowerCase()).pop(); 
+	return featureCollection.filter(feature => boroughName.toLowerCase() === feature.properties.boro_name.toLowerCase())[0]; 
 
 }; 
 

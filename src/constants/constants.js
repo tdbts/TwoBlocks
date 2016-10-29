@@ -9,7 +9,7 @@ import DEFAULT_MAP_OPTIONS from './DEFAULT_MAP_OPTIONS';
 const ANSWER_EVALUATION_DELAY 			= 6000;  // milliseconds 
 const TWO_BLOCKS_BUTTON_CLASS 			= "two-blocks-button";  
 const DEFAULT_MAP_ZOOM 					= 10; 
-const DEFAULT_MAXIMUM_ROUNDS 			= 5; 
+const DEFAULT_MAXIMUM_ROUNDS 			= 5;
 const HOVERED_BOROUGH_FILL_COLOR  		= "#A8FFFC";
 const KEY_PRESS_DEBOUNCE_TIMEOUT 		= 100; 
 const MAXIMUM_PANORAMA_REQUESTS  		= 25; 

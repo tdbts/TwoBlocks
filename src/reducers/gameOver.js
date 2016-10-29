@@ -16,7 +16,7 @@ const gameOver = function gameOver(state = DEFAULT_STATE, action) {
 
 		nextState = DEFAULT_STATE; 
 
-	} else if (actions.START_GAME) {
+	} else if (actions.START_GAME === type) {
 
 		nextState = false; 
 		

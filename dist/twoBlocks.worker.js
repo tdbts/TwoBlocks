@@ -8858,7 +8858,8 @@
 		RESTART_GAME: 'RESTART_GAME',
 		SHOWING_PANORAMA: 'SHOWING_PANORAMA',
 		TURN_COMPLETE: 'TURN_COMPLETE',
-		VIEW_CHANGE: 'VIEW_CHANGE'
+		VIEW_CHANGE: 'VIEW_CHANGE',
+		VIEW_READY: 'VIEW_READY'
 	
 	};
 	
@@ -9003,6 +9004,7 @@
 	  value: true
 	});
 	exports.default = "https://data.cityofnewyork.us/api/views/6jcb-t2g6/rows.geojson";
+	// export default "https://dl.dropboxusercontent.com/u/94150787/json/nyc-feature-collection.json";
 
 /***/ },
 /* 318 */

@@ -15,9 +15,8 @@ const getLatLngWithinBoundaries = function getLatLngWithinBoundaries(latLngMaxMi
 		
 		const { randomLat, randomLng } = randomCoords; 
 
-		const pointCoords = [parseFloat(randomLat), parseFloat(randomLng)]; 
-
-		window.console.log("pointCoords:", pointCoords); 
+		// const pointCoords = [parseFloat(randomLat), parseFloat(randomLng)];
+		const pointCoords = [parseFloat(randomLng), parseFloat(randomLat)];
 
 		randomLatLng = turf.point(pointCoords); 
 

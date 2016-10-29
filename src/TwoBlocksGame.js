@@ -3,21 +3,22 @@
 import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
 import createPromiseTimeout from './createPromiseTimeout';  
 import getRandomPanoramaLocation from './getRandomPanoramaLocation';   
-import TwoBlocksWorker from './workers/twoBlocks.worker.js'; 
 import request from 'superagent'; 
+import actions from './actions/actions'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
 import { events, nycCoordinates, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
-import actions from './actions/actions'; 
 
 let geoJSONLoaded = false; 
 
-const TwoBlocksGame = function TwoBlocksGame(store) {
+const TwoBlocksGame = function TwoBlocksGame(store, worker) {
+
+	geoJSONLoaded = !!(worker);  // If worker exists, it will have already started loading the geoJSON 
 
 	this.store = store;   
   
 	this.locationData = null; 
-	this.worker = window.Worker ? new TwoBlocksWorker() : null; 
+	this.worker = worker
 
 }; 
 	
@@ -33,7 +34,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(events.GAME_COMPONENTS, () => this.onGameComponents()); 
 
-		this.on(events.GEO_JSON_LOADED, locationData => this.onGeoJSONLoaded(locationData)); 
+		this.on(events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONLoaded(geoJSON)); 
 
 		this.on(events.GAME_STAGE, gameStage => {
 
@@ -105,6 +106,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		
 		}); 
 
+		this.on(events.RESTART_GAME, () => this.restart()); 
+
 	},
 
 	addTurnToGameHistory() {
@@ -156,7 +159,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return Promise.resolve(nycCoordinates)
 
-			.then(locationData => this.onPregameLocationDataReceived(locationData)); 
+			.then(locationData => this.onCityLocationDataReceived(locationData)); 
 
 	},
 
@@ -214,15 +217,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		
 		window.console.log("this.worker:", this.worker); 		
 
-		this.worker.onmessage = e => window.console.log("Heard dis:", e.data); 
-
-		this.worker.addEventListener('error', e => window.console.log("Fucking error:", e)); 
-
-		// this.worker.postMessage({
-		// 	message: workerMessages.LOAD_GEO_JSON, 
-		// 	payload: null
-		// }); 
-
 		this.worker.postMessage({
 			message: workerMessages.REQUEST_GEO_JSON, 
 			payload: "poop"
@@ -262,28 +256,34 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	onGameComponents() {
+	onCityLocationDataReceived(locationData) {
 
-		return this.requestGeoJSON(); 
+		window.console.log("locationData:", locationData); 
+
+		this.locationData = locationData; 
+		
+		this.emit(events.HOST_LOCATION_DATA, locationData); 
 
 	}, 
 
-	onGeoJSONLoaded(locationData) {
+	onGameComponents() {
+
+		// return this.requestGeoJSON(); 
+
+	}, 
+
+	onGeoJSONLoaded(geoJSON) {
 
 		// Set 'geoJSONLoaded' flag to true so we don't produce 
 		// the side effect of repeatedly loading the same GeoJSON 
 		// over the map on every new game instance.   
 		geoJSONLoaded = true; 
 
-	}, 
+		this.locationData = {
 
-	onPregameLocationDataReceived(locationData) {
+			featureCollection: geoJSON
 
-		window.console.log("locationData:", locationData); 
-
-		this.emit(events.HOST_LOCATION_DATA, locationData); 
-
-		this.locationData = locationData; 
+		}; 
 
 	}, 
 
@@ -295,9 +295,16 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}); 
 
+		const viewReady = new Promise(resolve => {
+
+			this.on(events.VIEW_READY, resolve); 
+
+		}); 
+
 		const prerequisites = [
 
-			geoJSONLoaded
+			geoJSONLoaded, 
+			viewReady
 		
 		]; 
 
@@ -306,8 +313,11 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	}, 
 
 	requestGeoJSON() {
+ 
+		// Don't load the data more than once 
+		if (geoJSONLoaded) return; 
 
-		const { GEO_JSON_SOURCE } = nycCoordinates; 
+		const { GEO_JSON_SOURCE } = this.locationData; 
 
 		const onGeoJSONReceived = geoJSON => {
 
@@ -316,12 +326,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				throw new Error("No GeoJSON returned from the request for location data."); 
 
 			}
-
-			this.locationData = {
-
-				featureCollection: geoJSON
-
-			}; 
 
 			this.emit(events.GEO_JSON_LOADED, geoJSON); 
 
@@ -332,8 +336,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		if (this.worker) {
 
 			const geoJSONTransmissionListener = e => {
-
-				window.console.log("e:", e); 
 
 				const eventData = e.data; 
 
@@ -378,11 +380,21 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	restart() {
+
+		this.store.dispatch({
+			type: actions.RESTART_GAME
+		}); 
+
+		this.startGamePlay(); 
+
+	}, 
+
 	start() {
 
 		this.emit(events.GAME_STAGE, 'pregame'); 
-
-		this.getGeoJSONSourceURL(); 
+ 
+		this.requestGeoJSON(); 
 
 		this.addEventListeners(); 
 

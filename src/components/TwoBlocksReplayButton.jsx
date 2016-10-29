@@ -10,7 +10,7 @@ const TwoBlocksReplayButton = function TwoBlocksReplayButton(props) {
 	const calculatedClassName = getClassName(twoBlocksClass, hidden); 
 
 	return (
-		<button className={ calculatedClassName } onClick={ () =>  onReplayButtonClick(restart) }>Play again?</button>
+		<button className={ calculatedClassName } onClick={ () => onReplayButtonClick(restart) }>Play again?</button>
 	);
 	
 }; 
@@ -30,7 +30,8 @@ const getClassName = function getClassName(twoBlocksClass, hidden) {
 }; 
 
 const onReplayButtonClick = function onReplayButtonClick(restart) {
-
+	window.console.log("onReplayButtonClick()"); 
+	window.console.log("restart:", restart); 
 	return restart(); 
 
 }; 

@@ -7,24 +7,30 @@ import weightedRandomSelection from './weightedRandomSelection';
 const selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(feature) {
 
 	const polygonCollection = getGeometricConstituents('MultiPolygon', feature.geometry); 
-	
+
 	const linearRingCollection = polygonCollection
 
 		.map(polygon => getGeometricConstituents('Polygon', polygon))
 
-		.map(linearRings => linearRings.shift()); 
+		.map(linearRings => linearRings[0]); 
+	 
+	const linearRingPathLengths = linearRingCollection.map(linearRing => {
 
-	const linearRingPathLengths = linearRingCollection.map(linearRing => linearRing.length); 
+		return linearRing.length;
 
+	}); 
+	
 	// Create map for quick lookup later 
-	const linearRingLengthMap = linearRingCollection.reduce((prev = {}, curr) => {
+	const linearRingLengthMap = linearRingCollection.reduce((prev, curr) => {
+
+		if (!(curr)) return prev; 
 
 		prev[curr.length] = curr; 
 
 		return prev; 
 
-	});  
-
+	}, {});  
+	
 	let sortedLinearRingPathLengths = sortLeastToGreatest(linearRingPathLengths.slice()); 
 
 	// Drop smallest LinearRing 
@@ -39,7 +45,7 @@ const selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(f
 	const playOneRound = players => headToHeadMatchups(players, weightedRandomSelection); 
 
 	// Playoff returns an array of length 1 (winner)
-	const lengthOfSelectedLinearRing = playoff(sortedLinearRingPathLengths, playOneRound, initializer).pop(); 
+	const lengthOfSelectedLinearRing = playoff(sortedLinearRingPathLengths, playOneRound, initializer)[0]; 
 
 	const selectedLinearRing = linearRingLengthMap[lengthOfSelectedLinearRing];  
 

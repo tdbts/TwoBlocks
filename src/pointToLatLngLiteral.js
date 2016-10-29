@@ -16,7 +16,8 @@ const pointToLatLngLiteral = function pointToLatLngLiteral(point) {
 
 	}
 
-	const [ lat, lng ] = coordinates; 
+	// const [ lat, lng ] = coordinates;
+	const [ lng, lat ] = coordinates;  
 
 	return { lat, lng }; 
 

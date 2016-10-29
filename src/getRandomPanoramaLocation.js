@@ -5,7 +5,7 @@ import { tryAtMost } from './utils/utils';
 import { MAXIMUM_PANORAMA_REQUESTS } from './constants/constants';  
 
 const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection) {
- 
+
 	const generator = new RandomLocationGenerator(featureCollection); 
 
 	const selectedBorough = generator.selectedBorough; 
@@ -27,6 +27,8 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureColl
 		randomLatLng = generator.randomLatLng();  
 
 	})
+
+	.then(() => window.console.log("randomLatLng:", randomLatLng))
 
 	.then(() => (randomLatLng = (pointToLatLngLiteral(randomLatLng))))
 
