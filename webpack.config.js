@@ -53,14 +53,13 @@ module.exports = [
 		entry: {
 			index: './build/index.js'
 		},
-		// devtool: 'source-map',
-		devtool: 'cheap-module-source-map' 
+		devtool: 'cheap-module-source-map',  
 		output: { 
 			path: path.join(__dirname, 'dist'), 
 			filename: '[name].js' 
 		}, 
 		resolve: {
-			extensions: ['', '.js', '.jsx']
+			extensions: ['', '.js', '.jsx'], 
 			alias: alias
 		},
 		module: {
