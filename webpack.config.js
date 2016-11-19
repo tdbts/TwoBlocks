@@ -17,6 +17,24 @@ fs.readdirSync('node_modules')
 		nodeModules[mod] = 'commonjs ' + mod; 
 	}); 
 
+var plugins = []; 
+
+if (process.env.NODE_ENV === 'production') {
+
+	plugins.push(new webpack.DefinePlugin({
+    
+    	'process.env': {
+      		'NODE_ENV': JSON.stringify('production')
+    	}
+  	
+  	})); 
+
+  	plugins.push(new webpack.optimize.UglifyJsPlugin()); 
+
+  	plugins.push(new webpack.optimize.DedupePlugin()); 
+
+}
+
 module.exports = [
 
 	/*----------  Client (DOM)  ----------*/
@@ -66,6 +84,7 @@ module.exports = [
 	      		}
 	    	]
 	  	}, 
+	  	plugins: plugins, 
 	  	worker: {
 	  		output: {
 	  			filename: "twoBlocks.worker.js", 
