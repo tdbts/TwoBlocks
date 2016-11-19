@@ -20,9 +20,15 @@ require('../public/css/two-blocks.css');  // Use Webpack loaders to add CSS
 
 /*----------  Create Redux Store  ----------*/
 
-const devTools = ('development' === process.env.NODE_ENV) ? composeWithDevTools() : function () {}; 
+const createStoreArgs = [twoBlocks]; 
 
-const store = createStore(twoBlocks, devTools); 
+if ('development' === process.env.NODE_ENV) {
+
+	createStoreArgs.push(composeWithDevTools()); 
+
+}
+
+const store = createStore(...createStoreArgs); 
 
 /*----------  Create TwoBlocks WebWorker  ----------*/
 
