@@ -19,8 +19,8 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 require('../public/css/two-blocks.css');  // Use Webpack loaders to add CSS 
 
 /*----------  Create Redux Store  ----------*/
-
-const store = createStore(twoBlocks, composeWithDevTools()); 
+window.console.log("process.env.NODE_ENV:", process.env.NODE_ENV); 
+const store = createStore(twoBlocks, ('development' === process.env.NODE_ENV) ?  composeWithDevTools() : null); 
 
 /*----------  Create TwoBlocks WebWorker  ----------*/
 

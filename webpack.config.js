@@ -19,15 +19,15 @@ fs.readdirSync('node_modules')
 global.console.log("process.env.NODE_ENV:", process.env.NODE_ENV); 
 var plugins = []; 
 
-if (process.env.NODE_ENV === 'production') {
+plugins.push(new webpack.DefinePlugin({
 
-	plugins.push(new webpack.DefinePlugin({
-    
-    	'process.env': {
-      		'NODE_ENV': JSON.stringify('production')
-    	}
-  	
-  	})); 
+	'process.env': {
+  		'NODE_ENV': JSON.stringify(process.env.NODE_ENV === 'production' ? 'production' : 'development')
+	}
+	
+}));
+
+if (process.env.NODE_ENV === 'production') {
 
   	plugins.push(new webpack.optimize.UglifyJsPlugin()); 
 
