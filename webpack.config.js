@@ -16,7 +16,7 @@ fs.readdirSync('node_modules')
 	.forEach(function (mod) {
 		nodeModules[mod] = 'commonjs ' + mod; 
 	}); 
-
+global.console.log("process.env.NODE_ENV:", process.env.NODE_ENV); 
 var plugins = []; 
 
 if (process.env.NODE_ENV === 'production') {
@@ -35,6 +35,16 @@ if (process.env.NODE_ENV === 'production') {
 
 }
 
+var alias = {}; 
+
+if (process.env.NODE_ENV === 'production') {
+
+	alias["react"] = path.join(__dirname, "node_modules/react/dist/react.min.js"); 
+	alias["react-dom"] = path.join(__dirname, "node_modules/react-dom/dist/react-dom.min.js"); 
+	alias["redux"] = path.join(__dirname, "node_modules/redux/dist/redux.min.js")
+
+}
+
 module.exports = [
 
 	/*----------  Client (DOM)  ----------*/
@@ -43,13 +53,15 @@ module.exports = [
 		entry: {
 			index: './build/index.js'
 		},
-		devtool: 'source-map', 
+		// devtool: 'source-map',
+		devtool: 'cheap-module-source-map' 
 		output: { 
 			path: path.join(__dirname, 'dist'), 
 			filename: '[name].js' 
 		}, 
 		resolve: {
 			extensions: ['', '.js', '.jsx']
+			alias: alias
 		},
 		module: {
 			preloaders: [
