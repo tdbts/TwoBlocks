@@ -5,7 +5,7 @@ import getRandomLocationFromWorker from './getRandomLocationFromWorker';
 import { tryAtMost } from './utils/utils';
 import { MAXIMUM_PANORAMA_REQUESTS } from './constants/constants';  
 
-const getRandomPanoramaLocation = function getRandomPanoramaLocation(featureCollection, worker) {
+const getRandomPanoramaLocation = function getRandomPanoramaLocation(worker, featureCollection) {
 
 	let generator = null; 
 	let randomLatLng = null; 

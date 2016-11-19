@@ -30,6 +30,8 @@ const worker = window.Worker ? new TwoBlocksWorker() : null;
 
 const gameInstance = new TwoBlocksGame(store, worker); 
 
+window.console.log("gameInstance:", gameInstance); 
+
 /*----------  Start Loading the GeoGson Immediately  ----------*/
 
 const { GEO_JSON_SOURCE } = nycCoordinates; 
