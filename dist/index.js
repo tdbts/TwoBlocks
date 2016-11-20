@@ -14328,7 +14328,7 @@
 			key: 'componentWillMount',
 			value: function componentWillMount() {
 
-				var mobile = this.shouldUseDeviceOrientation();
+				var mobile = this.isMobile();
 
 				this.setState({ mobile: mobile });
 			}
@@ -14337,7 +14337,7 @@
 			value: function componentDidMount() {
 
 				this.addDOMEventListeners();
-				this.requestGeoJSONFromWebWorker();
+				this.requestGeoJSON();
 			}
 		}, {
 			key: 'componentDidUpdate',
@@ -14555,7 +14555,7 @@
 				var store = _props.store;
 
 
-				if (!blockLevelMapCanvas || !boroughLevelMapCanvas || !mapCanvas || !panoramaCanvas) return;
+				if (!blockLevelMapCanvas || !boroughLevelMapCanvas || !mapCanvas || !panoramaCanvas) return; // DOM elements must exist before the game instance can be initialized
 
 				[mapCanvas, panoramaCanvas].forEach(function (canvas) {
 
@@ -14620,6 +14620,12 @@
 				}).then(function () {
 					return gameInstance.emit(_constants.events.GAME_COMPONENTS, gameComponents);
 				});
+			}
+		}, {
+			key: 'isMobile',
+			value: function isMobile() {
+
+				return this.shouldUseDeviceOrientation();
 			}
 		}, {
 			key: 'onAnswerEvaluated',
@@ -15010,20 +15016,27 @@
 				chooseLocationMap.setCenter(centerLatLng);
 			}
 		}, {
+			key: 'requestGeoJSON',
+			value: function requestGeoJSON() {
+				var worker = this.props.worker;
+
+
+				if (!worker) return; // TODO: If no Web Workers are available, request the GeoJSON data with AJAX
+
+				this.requestGeoJSONFromWebWorker(worker);
+			}
+		}, {
 			key: 'requestGeoJSONFromWebWorker',
-			value: function requestGeoJSONFromWebWorker() {
+			value: function requestGeoJSONFromWebWorker(worker) {
 				var _this9 = this;
 
-				var worker = this.props.worker;
 				var mobile = this.state.mobile;
-
-
-				if (!worker) return;
 
 				// If player is on mobile device and the worker exists,
 				// just wait for the GEO_JSON_LOADED message from the worker
 				// and let the game instance know that the GeoJSON has been
 				// loaded. 
+
 				if (mobile) {
 					var _ret = function () {
 						var gameInstance = _this9.props.gameInstance;

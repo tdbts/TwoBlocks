@@ -65,7 +65,7 @@ class TwoBlocks extends React.Component {
 
 	componentWillMount() {
 
-		const mobile = this.shouldUseDeviceOrientation(); 
+		const mobile = this.isMobile(); 
 
 		this.setState({ mobile }); 
 
@@ -74,7 +74,7 @@ class TwoBlocks extends React.Component {
 	componentDidMount() {
 
 		this.addDOMEventListeners(); 
-		this.requestGeoJSONFromWebWorker(); 
+		this.requestGeoJSON(); 
 
 	}
 
@@ -253,7 +253,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, locationData, store } = this.props; 
 
-		if (!(blockLevelMapCanvas) || !(boroughLevelMapCanvas) || !(mapCanvas) || !(panoramaCanvas)) return; 
+		if (!(blockLevelMapCanvas) || !(boroughLevelMapCanvas) || !(mapCanvas) || !(panoramaCanvas)) return;  // DOM elements must exist before the game instance can be initialized 
 
 		[ mapCanvas, panoramaCanvas ].forEach(canvas => {
 
@@ -321,6 +321,12 @@ class TwoBlocks extends React.Component {
 			.then(() => this.addGameComponentEventListeners())
 
 			.then(() => gameInstance.emit(events.GAME_COMPONENTS, gameComponents));		
+
+	}
+
+	isMobile() {
+
+		return this.shouldUseDeviceOrientation(); 
 
 	}
 
@@ -701,13 +707,19 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	requestGeoJSONFromWebWorker() {
+	requestGeoJSON() {
 
 		const { worker } = this.props; 
 
-		const { mobile } = this.state; 
+		if (!(worker)) return;  // TODO: If no Web Workers are available, request the GeoJSON data with AJAX
 
-		if (!(worker)) return; 
+		this.requestGeoJSONFromWebWorker(worker); 
+
+	}
+
+	requestGeoJSONFromWebWorker(worker) {
+
+		const { mobile } = this.state; 
 
 		// If player is on mobile device and the worker exists, 
 		// just wait for the GEO_JSON_LOADED message from the worker 
