@@ -161,7 +161,7 @@ class TwoBlocks extends React.Component {
 
 	addGameEventListeners(twoBlocks) {
 
-		twoBlocks.once(events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONLoaded(geoJSON)); 
+		// twoBlocks.once(events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONReceived(geoJSON)); 
 
 		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.onGameComponents(gameComponents)); 
 
@@ -320,7 +320,17 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.addGameComponentEventListeners())
 
-			.then(() => gameInstance.emit(events.GAME_COMPONENTS, gameComponents));		
+			.then(() => gameInstance.emit(events.GAME_COMPONENTS, gameComponents))
+
+			.then(() => {
+
+				if (this.state.mobile) {
+
+					gameInstance.emit(events.VIEW_READY); 
+
+				}
+
+			}); 	
 
 	}
 
@@ -442,7 +452,7 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onGeoJSONLoaded(geoJSON) {
+	onGeoJSONReceived(geoJSON) {
 
 		const { chooseLocationMap, mobile } = this.state; 
 
@@ -453,7 +463,7 @@ class TwoBlocks extends React.Component {
 		// the rest of the method body.  
 		if (!(chooseLocationMap)) {
 			
-			gameInstance.once(events.GAME_COMPONENTS, () => this.onGeoJSONLoaded(geoJSON)); 
+			gameInstance.once(events.GAME_COMPONENTS, () => this.onGeoJSONReceived(geoJSON)); 
 
 		} else {
 
@@ -717,105 +727,54 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	/**
+	 *
+	 * Request the GeoJSON from the Web Worker.  If the data has 
+	 * not been loaded yet, assign a listener to await the GeoJSON. 
+	 * Once the worker indicates the data has loaded, inform the 
+	 * game instance.  
+	 *
+	 */
+	
 	requestGeoJSONFromWebWorker(worker) {
+
+		const { gameInstance } = this.props; 
 
 		const { mobile } = this.state; 
 
-		// If player is on mobile device and the worker exists, 
-		// just wait for the GEO_JSON_LOADED message from the worker 
-		// and let the game instance know that the GeoJSON has been 
-		// loaded.  
-		if (mobile) {
+		if (mobile) return;  // Request GeoJSON only on desktop (for map)
 
-			const { gameInstance } = this.props; 
+		gameInstance.geoJSONLoaded() 
 
-			const geoJSONLoadListener = event => {
+			.then(() => {
+				window.console.log("GEO JSON LOADED ACCORDING TO GAME."); 
+				/*----------  onGeoJSONSent()  ----------*/
 
-				const { message } = event.data; 
+				const onGeoJSONSent = event => {
 
-				if (workerMessages.GEO_JSON_LOADED === message) {
+					const { message, payload } = event.data; 
 
-					gameInstance.emit(events.GEO_JSON_LOADED); 
+					if (workerMessages.SENDING_GEO_JSON === message) {
 
-					worker.removeEventListener('message', geoJSONLoadListener); 
+						this.onGeoJSONReceived(payload);  
 
-				}
+						worker.removeEventListener('message', onGeoJSONSent); 
 
-			}; 
+					}
 
-			worker.addEventListener('message', geoJSONLoadListener); 
+				}; 
 
-			return; 
+				// Assign the event listener before posting message 
+				worker.addEventListener('message', onGeoJSONSent); 
 
-		} 
-
-		/*----------  OnNoGeoJSON()  ----------*/
-		
-		// Race condition circumvention: Sometimes after the component mounts, 
-		// the worker has not yet finshed loading the GeoJSON.  In this case, 
-		// wait for the 'GEO_JSON_LOADED' message from the worker and then 
-		// request the GeoJSON again.   
-		const onNoGeoJSON = () => worker.addEventListener('message', geoJSONLoadListener);
-
-		/*----------  geoJSONLoadListener()  ----------*/
-
-		// Request the GeoJSON data once the 'GEO_JSON_LOADED' worker 
-		// message has been received.  			
-		const geoJSONLoadListener = event => {
-
-			const { message } = event.data; 
-
-			if (workerMessages.GEO_JSON_LOADED === message) {
-
-				worker.removeEventListener('message', geoJSONLoadListener); 
-
+				// Request GeoJSON from web worker 
 				worker.postMessage({
+
 					message: workerMessages.REQUEST_GEO_JSON
-				}); 
 
-			} 
+				}); 		
 
-		}; 
-
-		/*----------  onGeoJSONSent()  ----------*/
-
-		// If the component requests the GeoJSON, but the worker has not 
-		// yet finished loading the data, the 'payload' will be null.  
-		const onGeoJSONSent = event => {
- 
-			const eventData = event.data; 
-
-			const { message, payload } = eventData; 
-
-			if (workerMessages.SENDING_GEO_JSON === message) {
-
-				if (!(payload)) {
-
-					onNoGeoJSON(); 
-
-				} else {
-
-					const { gameInstance } = this.props; 
-
-					gameInstance.emit(events.GEO_JSON_LOADED, payload); 
-
-					worker.removeEventListener('message', onGeoJSONSent); 
-				
-				}
-
-			}
-
-		}; 
-
-		// Assign the event listener before posting message 
-		worker.addEventListener('message', onGeoJSONSent); 
-
-		// Request GeoJSON from web worker 
-		worker.postMessage({
-
-			message: workerMessages.REQUEST_GEO_JSON
-
-		}); 		
+			}); 
 
 	}
 

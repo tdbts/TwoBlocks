@@ -62,15 +62,13 @@ service.requestCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Star
 
 	.then(response => {
 
+		const payload = response ? response.body : null; 
+		window.console.log("Service got da data.  Indicating data load."); 
 		// When a Web Worker is available, the GeoJSON object stays on the worker 
 		// thread, and the game instance requests data as needed.  Without 
 		// a worker, however, this is not the case.  Here, once the GeoJSON has been 
 		// loaded, inform the game instance and pass the JSON to it for reference.
-		if (!(worker)) {
-
-			gameInstance.emit(events.GEO_JSON_LOADED, response.body); 
-
-		}
+		gameInstance.emit(events.GEO_JSON_LOADED, payload); 
 
 	}); 	
 

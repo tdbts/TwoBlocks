@@ -9,14 +9,14 @@ import { EventEmitter } from 'events';
 import { inherits } from 'util';
 import { events, nycCoordinates, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
 
-let geoJSONLoaded = false; 
-
 const TwoBlocksGame = function TwoBlocksGame(store, worker) {
 
 	this.store = store;   
   
 	this.locationData = {}; 
 	this.worker = worker
+
+	this._geoJSONLoaded = new Promise(resolve => this.once(events.GEO_JSON_LOADED, resolve)); 
 
 }; 
 	
@@ -163,7 +163,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	geoJSONLoaded() {
 
-		return geoJSONLoaded; 
+		return this._geoJSONLoaded; 
 
 	}, 
 
@@ -247,18 +247,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	onGameComponents() {
 
-		// return this.requestGeoJSON(); 
+
 
 	}, 
 
 	onGeoJSONLoaded(geoJSON) {
 
-		// Set 'geoJSONLoaded' flag to true so we don't produce 
-		// the side effect of repeatedly loading the same GeoJSON 
-		// over the map on every new game instance.   
-		geoJSONLoaded = true; 
-
-		if (this.worker) {
+		if (!(this.worker)) {
 
 			this.locationData.featureCollection = geoJSON; 
 
@@ -268,12 +263,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	readyForGameplay() {
 
-		const geoJSONLoaded = new Promise(resolve => {
-
-			this.on(events.GEO_JSON_LOADED, resolve); 
-
-		}); 
-
 		const viewReady = new Promise(resolve => {
 
 			this.on(events.VIEW_READY, resolve); 
@@ -282,7 +271,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		const prerequisites = [
 
-			geoJSONLoaded, 
+			this.geoJSONLoaded(),  
 			viewReady
 		
 		]; 

@@ -1,4 +1,5 @@
 import requestGeoJSON from './requestGeoJSON'; 
+import { workerMessages } from './constants/constants'; 
 
 /*----------  Constructor  ----------*/
 
@@ -15,6 +16,12 @@ TwoBlocksService.prototype = {
 	requestCityLocationData(url) {
 
 		return requestGeoJSON(url, this.worker); 
+
+	}, 
+
+	usingWorker() {
+
+		return !!(this.worker); 
 
 	}
 
