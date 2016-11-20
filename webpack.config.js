@@ -2,6 +2,10 @@ var fs = require('fs'),
 	path = require('path'), 
     webpack = require('webpack');
  
+global.console.log("process.env.NODE_ENV:", process.env.NODE_ENV); 
+
+var isProduction = 'production' === process.env.NODE_ENV; 
+
 // Need to add dependencies from 'node_modules' directory 
 // to 'externals' array so that Webpack can be used for 
 // server-side Node.js code as well. 
@@ -16,18 +20,18 @@ fs.readdirSync('node_modules')
 	.forEach(function (mod) {
 		nodeModules[mod] = 'commonjs ' + mod; 
 	}); 
-global.console.log("process.env.NODE_ENV:", process.env.NODE_ENV); 
+	
 var plugins = []; 
 
 plugins.push(new webpack.DefinePlugin({
 
 	'process.env': {
-  		'NODE_ENV': JSON.stringify(process.env.NODE_ENV === 'production' ? 'production' : 'development')
+  		'NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development')
 	}
 	
 }));
 
-if (process.env.NODE_ENV === 'production') {
+if (isProduction) {
 
   	plugins.push(new webpack.optimize.UglifyJsPlugin()); 
 
@@ -37,7 +41,7 @@ if (process.env.NODE_ENV === 'production') {
 
 var alias = {}; 
 
-if (process.env.NODE_ENV === 'production') {
+if (isProduction) {
 
 	alias["react"] = path.join(__dirname, "node_modules/react/dist/react.min.js"); 
 	alias["react-dom"] = path.join(__dirname, "node_modules/react-dom/dist/react-dom.min.js"); 
@@ -56,7 +60,7 @@ module.exports = [
 		devtool: 'cheap-module-source-map',  
 		output: { 
 			path: path.join(__dirname, 'dist'), 
-			filename: '[name].js' 
+			filename: isProduction ? "[name].min.js" : "[name].js" 
 		}, 
 		resolve: {
 			extensions: ['', '.js', '.jsx'], 

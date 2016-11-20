@@ -15340,9 +15340,9 @@
 					'div',
 					{ className: [props.gameTwoBlocksClass, this.getDeviceClass()].join(' ') },
 					_react2.default.createElement(_TwoBlocksView2.default, {
-						blockLevelMap: null,
-						boroughLevelMap: null,
-						cityLevelMap: null,
+						blockLevelMap: state.blockLevelMap,
+						boroughLevelMap: state.boroughLevelMap,
+						cityLevelMap: state.chooseLocationMap,
 						mapConfig: state.mapConfig,
 						mapTwoBlocksClass: props.mapTwoBlocksClass,
 						mapMarker: state.chooseLocationMarker,
@@ -16476,7 +16476,7 @@
 		// Assign game components to variable so we can just return
 		// the already-created components if we start a new game
 		gameComponents = {
-			// chooseLocationMap,
+			chooseLocationMap: chooseLocationMap,
 			chooseLocationMarker: chooseLocationMarker,
 			panorama: panorama,
 			spinner: spinner
