@@ -1,9 +1,11 @@
 /* global window */
 
 import request from 'superagent'; 
-import { events, workerMessages } from './constants/constants'; 
+import { workerMessages } from './constants/constants'; 
 
-const requestGeoJSON = function requestGeoJSON(url, gameInstance, worker) {
+const requestGeoJSON = function requestGeoJSON(url, worker) {
+
+	let result = null; 
 
 	/*----------  If TwoBlocks WebWorker, use it to load the GeoJSON  ----------*/
 	
@@ -11,20 +13,22 @@ const requestGeoJSON = function requestGeoJSON(url, gameInstance, worker) {
 
 		/*----------  Instruct worker to load GeoJSON  ----------*/
 		
-		return worker.postMessage({
+		worker.postMessage({
 
 			message: workerMessages.LOAD_GEO_JSON, 
 			payload: url
 
-		}); 
+		});
+
+		result = Promise.resolve();  
 
 	} else {
 
-		return request.get(url)
-
-			.then(response => gameInstance.emit(events.GEO_JSON_LOADED, response.body)); 
+		result = request.get(url);  
 
 	}	
+
+	return result; 
 
 }; 
 

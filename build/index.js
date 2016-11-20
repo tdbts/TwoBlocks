@@ -2,9 +2,9 @@
 
 import 'babel-polyfill'; 
 import React from 'react'; 
-import requestGeoJSON from '../src/requestGeoJSON'; 
 import TwoBlocks from '../src/components/TwoBlocks';
-import TwoBlocksGame from '../src/TwoBlocksGame';  
+import TwoBlocksGame from '../src/TwoBlocksGame';
+import TwoBlocksService from '../src/TwoBlocksService';   
 import TwoBlocksWorker from '../src/workers/twoBlocks.worker.js';
 import injectGapiScript from '../src/injectGapiScript'; 
 import twoBlocks from '../src/reducers/twoBlocks';
@@ -12,7 +12,7 @@ import twoBlocks from '../src/reducers/twoBlocks';
 import { createStore } from 'redux';
 import { render } from 'react-dom';
 import { poll } from '../src/utils/utils';
-import { nycCoordinates } from '../src/constants/constants';  
+import { events, nycCoordinates } from '../src/constants/constants';  
 import { composeWithDevTools } from 'redux-devtools-extension';
 // import { Provider } from 'react-redux'; 
 
@@ -50,9 +50,29 @@ if (worker) {
 
 	worker.addEventListener('error', e => window.console.log("Worker error:", e)); 
 
-	requestGeoJSON(GEO_JSON_SOURCE, gameInstance, worker);  // The GeoJSON is heavy.  Start loading it as soon as possible 
-
 }
+
+/*----------  Create service for data requests  ----------*/
+
+const service = new TwoBlocksService(worker); 
+
+window.console.log("service:", service); 
+
+service.requestCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start loading it as soon as possible 
+
+	.then(response => {
+
+		// When a Web Worker is available, the GeoJSON object stays on the worker 
+		// thread, and the game instance requests data as needed.  Without 
+		// a worker, however, this is not the case.  Here, once the GeoJSON has been 
+		// loaded, inform the game instance and pass the JSON to it for reference.
+		if (!(worker)) {
+
+			gameInstance.emit(events.GEO_JSON_LOADED, response.body); 
+
+		}
+
+	}); 	
 
 /*----------  Add Google Maps Script  ----------*/
 

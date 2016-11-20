@@ -13,8 +13,6 @@ let geoJSONLoaded = false;
 
 const TwoBlocksGame = function TwoBlocksGame(store, worker) {
 
-	geoJSONLoaded = !!(worker);  // If worker exists, it will have already started loading the geoJSON 
-
 	this.store = store;   
   
 	this.locationData = {}; 
