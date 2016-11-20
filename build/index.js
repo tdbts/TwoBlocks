@@ -20,7 +20,7 @@ require('../public/css/two-blocks.css');  // Use Webpack loaders to add CSS
 
 /*----------  Create Redux Store  ----------*/
 
-const createStoreArgs = [twoBlocks]; 
+const createStoreArgs = [ twoBlocks ]; 
 
 if ('development' === process.env.NODE_ENV) {
 
@@ -46,11 +46,11 @@ const { GEO_JSON_SOURCE } = nycCoordinates;
 
 if (worker) {
 
-	worker.onmessage = e => window.console.log("Heard dis:", e.data); 
+	worker.onmessage = e => window.console.log("Worker message:", e.data); 
 
-	worker.addEventListener('error', e => window.console.log("Fucking error:", e)); 
+	worker.addEventListener('error', e => window.console.log("Worker error:", e)); 
 
-	requestGeoJSON(GEO_JSON_SOURCE, worker); 
+	requestGeoJSON(GEO_JSON_SOURCE, gameInstance, worker);  // The GeoJSON is heavy.  Start loading it as soon as possible 
 
 }
 

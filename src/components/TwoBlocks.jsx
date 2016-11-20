@@ -711,7 +711,7 @@ class TwoBlocks extends React.Component {
 
 		const { worker } = this.props; 
 
-		if (!(worker)) return;  // TODO: If no Web Workers are available, request the GeoJSON data with AJAX
+		if (!(worker)) return;  
 
 		this.requestGeoJSONFromWebWorker(worker); 
 
@@ -731,9 +731,7 @@ class TwoBlocks extends React.Component {
 
 			const geoJSONLoadListener = event => {
 
-				const eventData = event.data; 
-
-				const { message } = eventData; 
+				const { message } = event.data; 
 
 				if (workerMessages.GEO_JSON_LOADED === message) {
 
@@ -765,9 +763,7 @@ class TwoBlocks extends React.Component {
 		// message has been received.  			
 		const geoJSONLoadListener = event => {
 
-			const eventData = event.data; 
-
-			const { message } = eventData; 
+			const { message } = event.data; 
 
 			if (workerMessages.GEO_JSON_LOADED === message) {
 

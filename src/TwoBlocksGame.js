@@ -260,11 +260,11 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		// over the map on every new game instance.   
 		geoJSONLoaded = true; 
 
-		// this.locationData = {
+		if (this.worker) {
 
-		// 	featureCollection: geoJSON
+			this.locationData.featureCollection = geoJSON; 
 
-		// }; 
+		}
 
 	}, 
 
@@ -293,74 +293,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	requestGeoJSON() {
- 
-		// Don't load the data more than once 
-		if (geoJSONLoaded) return; 
-
-		const { GEO_JSON_SOURCE } = this.locationData; 
-
-		const onGeoJSONReceived = geoJSON => {
-
-			if (!(geoJSON)) {
-
-				throw new Error("No GeoJSON returned from the request for location data."); 
-
-			}
-
-			this.emit(events.GEO_JSON_LOADED, geoJSON); 
-
-		}; 
-
-		/*----------  If TwoBlocks WebWorker, use it to load the GeoJSON  ----------*/
-		
-		if (this.worker) {
-
-			const geoJSONTransmissionListener = e => {
-
-				const eventData = e.data; 
-
-				const { message, payload } = eventData; 
-
-				if (workerMessages.GEO_JSON_LOADED === message) {
-
-					this.worker.postMessage({
-						message: workerMessages.REQUEST_GEO_JSON, 
-						payload: null
-					}); 
-
-				} else if (workerMessages.SENDING_GEO_JSON === message) {
-
-					onGeoJSONReceived(payload); 
-
-					this.worker.removeEventListener('message', geoJSONTransmissionListener); 
-
-				}
-
-			}; 
-
-			// Add listener before posting message to worker 
-			this.worker.addEventListener('message', geoJSONTransmissionListener); 
-
-			/*----------  Instruct worker to load GeoJSON  ----------*/
-			
-			return this.worker.postMessage({
-
-				message: workerMessages.LOAD_GEO_JSON, 
-				payload: GEO_JSON_SOURCE
-
-			}); 
-
-		} else {
-
-			return request.get(GEO_JSON_SOURCE)
-
-				.then(response => onGeoJSONReceived(response.body)); 
-
-		}
-
-	}, 
-
 	restart() {
 
 		this.store.dispatch({
@@ -374,8 +306,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	start() {
 
 		this.emit(events.GAME_STAGE, 'pregame'); 
- 
-		this.requestGeoJSON(); 
 
 		this.addEventListeners(); 
 

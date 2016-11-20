@@ -123,14 +123,14 @@
 	if (worker) {
 
 		worker.onmessage = function (e) {
-			return window.console.log("Heard dis:", e.data);
+			return window.console.log("Worker message:", e.data);
 		};
 
 		worker.addEventListener('error', function (e) {
-			return window.console.log("Fucking error:", e);
+			return window.console.log("Worker error:", e);
 		});
 
-		(0, _requestGeoJSON2.default)(GEO_JSON_SOURCE, worker);
+		(0, _requestGeoJSON2.default)(GEO_JSON_SOURCE, gameInstance, worker); // The GeoJSON is heavy.  Start loading it as soon as possible
 	}
 
 	/*----------  Add Google Maps Script  ----------*/
@@ -12251,52 +12251,11 @@
 
 	/* global window */
 
-	var requestGeoJSON = function requestGeoJSON(url, worker) {
-
-		// const onGeoJSONReceived = geoJSON => {
-
-		// 	if (!(geoJSON)) {
-
-		// 		throw new Error("No GeoJSON returned from the request for location data.");
-
-		// 	}
-		// 	window.console.log("events.GEO_JSON_LOADED");
-		// 	gameInstance.emit(events.GEO_JSON_LOADED, geoJSON);
-
-		// };
+	var requestGeoJSON = function requestGeoJSON(url, gameInstance, worker) {
 
 		/*----------  If TwoBlocks WebWorker, use it to load the GeoJSON  ----------*/
 
 		if (worker) {
-
-			// const geoJSONTransmissionListener = e => {
-
-			// 	window.console.log("e:", e);
-
-			// 	const eventData = e.data;
-
-			// 	const { message, payload } = eventData;
-
-			// 	if (workerMessages.GEO_JSON_LOADED === message) {
-
-			// 		worker.postMessage({
-			// 			message: workerMessages.REQUEST_GEO_JSON,
-			// 			payload: null
-			// 		});
-
-			// 	}
-			// else if (workerMessages.SENDING_GEO_JSON === message) {
-
-			// 	onGeoJSONReceived(payload);
-
-			// 	worker.removeEventListener('message', geoJSONTransmissionListener);
-
-			// }
-
-			// };
-
-			// Add listener before posting message to worker
-			// worker.addEventListener('message', geoJSONTransmissionListener);
 
 			/*----------  Instruct worker to load GeoJSON  ----------*/
 
@@ -12309,7 +12268,7 @@
 		} else {
 
 			return _superagent2.default.get(url).then(function (response) {
-				return onGeoJSONReceived(response.body);
+				return gameInstance.emit(_constants.events.GEO_JSON_LOADED, response.body);
 			});
 		}
 	};
@@ -15021,7 +14980,7 @@
 				var worker = this.props.worker;
 
 
-				if (!worker) return; // TODO: If no Web Workers are available, request the GeoJSON data with AJAX
+				if (!worker) return;
 
 				this.requestGeoJSONFromWebWorker(worker);
 			}
@@ -15043,10 +15002,7 @@
 
 
 						var geoJSONLoadListener = function geoJSONLoadListener(event) {
-
-							var eventData = event.data;
-
-							var message = eventData.message;
+							var message = event.data.message;
 
 
 							if (_constants.workerMessages.GEO_JSON_LOADED === message) {
@@ -15082,10 +15038,7 @@
 				// Request the GeoJSON data once the 'GEO_JSON_LOADED' worker
 				// message has been received.  			
 				var geoJSONLoadListener = function geoJSONLoadListener(event) {
-
-					var eventData = event.data;
-
-					var message = eventData.message;
+					var message = event.data.message;
 
 
 					if (_constants.workerMessages.GEO_JSON_LOADED === message) {
@@ -19644,8 +19597,6 @@
 		value: true
 	});
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global window */
 
 	var _calculateDistanceFromMarkerToLocation = __webpack_require__(418);
@@ -19910,11 +19861,10 @@
 			// over the map on every new game instance.  
 			_geoJSONLoaded = true;
 
-			// this.locationData = {
+			if (this.worker) {
 
-			// 	featureCollection: geoJSON
-
-			// };
+				this.locationData.featureCollection = geoJSON;
+			}
 		},
 		readyForGameplay: function readyForGameplay() {
 			var _this5 = this;
@@ -19933,75 +19883,6 @@
 
 			return Promise.all(prerequisites);
 		},
-		requestGeoJSON: function requestGeoJSON() {
-			var _this6 = this;
-
-			// Don't load the data more than once
-			if (_geoJSONLoaded) return;
-
-			var GEO_JSON_SOURCE = this.locationData.GEO_JSON_SOURCE;
-
-
-			var onGeoJSONReceived = function onGeoJSONReceived(geoJSON) {
-
-				if (!geoJSON) {
-
-					throw new Error("No GeoJSON returned from the request for location data.");
-				}
-
-				_this6.emit(_constants.events.GEO_JSON_LOADED, geoJSON);
-			};
-
-			/*----------  If TwoBlocks WebWorker, use it to load the GeoJSON  ----------*/
-
-			if (this.worker) {
-				var _ret = function () {
-
-					var geoJSONTransmissionListener = function geoJSONTransmissionListener(e) {
-
-						var eventData = e.data;
-
-						var message = eventData.message;
-						var payload = eventData.payload;
-
-
-						if (_constants.workerMessages.GEO_JSON_LOADED === message) {
-
-							_this6.worker.postMessage({
-								message: _constants.workerMessages.REQUEST_GEO_JSON,
-								payload: null
-							});
-						} else if (_constants.workerMessages.SENDING_GEO_JSON === message) {
-
-							onGeoJSONReceived(payload);
-
-							_this6.worker.removeEventListener('message', geoJSONTransmissionListener);
-						}
-					};
-
-					// Add listener before posting message to worker
-					_this6.worker.addEventListener('message', geoJSONTransmissionListener);
-
-					/*----------  Instruct worker to load GeoJSON  ----------*/
-
-					return {
-						v: _this6.worker.postMessage({
-
-							message: _constants.workerMessages.LOAD_GEO_JSON,
-							payload: GEO_JSON_SOURCE
-
-						})
-					};
-				}();
-
-				if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-			} else {
-
-				return _superagent2.default.get(GEO_JSON_SOURCE).then(function (response) {
-					return onGeoJSONReceived(response.body);
-				});
-			}
-		},
 		restart: function restart() {
 
 			this.store.dispatch({
@@ -20011,11 +19892,9 @@
 			this.startGamePlay();
 		},
 		start: function start() {
-			var _this7 = this;
+			var _this6 = this;
 
 			this.emit(_constants.events.GAME_STAGE, 'pregame');
-
-			this.requestGeoJSON();
 
 			this.addEventListeners();
 
@@ -20024,7 +19903,7 @@
 			});
 
 			this.readyForGameplay().then(function () {
-				return _this7.startGamePlay();
+				return _this6.startGamePlay();
 			});
 		},
 		startGamePlay: function startGamePlay() {
