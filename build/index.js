@@ -1,4 +1,4 @@
-/* global document, google, window */
+/* global document, window */
 
 import 'babel-polyfill'; 
 import React from 'react'; 
@@ -6,12 +6,10 @@ import TwoBlocks from '../src/components/TwoBlocks';
 import TwoBlocksGame from '../src/TwoBlocksGame';
 import TwoBlocksService from '../src/TwoBlocksService';   
 import TwoBlocksWorker from '../src/workers/twoBlocks.worker.js';
-import injectGapiScript from '../src/injectGapiScript'; 
 import twoBlocks from '../src/reducers/twoBlocks';
 
 import { createStore } from 'redux';
 import { render } from 'react-dom';
-import { poll } from '../src/utils/utils';
 import { events, nycCoordinates } from '../src/constants/constants';  
 import { composeWithDevTools } from 'redux-devtools-extension';
 // import { Provider } from 'react-redux'; 
@@ -58,12 +56,12 @@ const service = new TwoBlocksService(worker);
 
 window.console.log("service:", service); 
 
-service.requestCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start loading it as soon as possible 
+service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start loading it as soon as possible 
 
 	.then(response => {
 
 		const payload = response ? response.body : null; 
-		window.console.log("Service got da data.  Indicating data load."); 
+
 		// When a Web Worker is available, the GeoJSON object stays on the worker 
 		// thread, and the game instance requests data as needed.  Without 
 		// a worker, however, this is not the case.  Here, once the GeoJSON has been 
@@ -74,19 +72,7 @@ service.requestCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Star
 
 /*----------  Add Google Maps Script  ----------*/
 
-injectGapiScript("AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE") 
-
-	/*----------  Poll for 'geometry' library in google.maps object  ----------*/
-
-	.then(() => {
-
-		const geometryLibraryLoaded = () => 'geometry' in google.maps; 
-
-		const pollForGeometryLibrary = poll(geometryLibraryLoaded, 25, 5000); 
-
-		return pollForGeometryLibrary; 				
-	
-	})
+service.loadGoogleMaps() 
 
 	.then(() => render(
 		// <Provider store={store}>

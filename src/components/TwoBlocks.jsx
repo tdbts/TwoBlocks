@@ -67,6 +67,12 @@ class TwoBlocks extends React.Component {
 
 		const mobile = this.isMobile(); 
 
+		if (mobile) {
+
+			this.onMobileDeviceDetected(); 
+
+		}
+
 		this.setState({ mobile }); 
 
 	}
@@ -611,6 +617,12 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	onMobileDeviceDetected() {
+
+		
+
+	}
+
 	onNextTurn() {
 
 		if (this.state.showLocationMarker) {
@@ -1015,6 +1027,7 @@ class TwoBlocks extends React.Component {
 }
 
 TwoBlocks.propTypes = {
+	service 					: React.PropTypes.object.isRequired, 
 	store 						: React.PropTypes.object.isRequired, 
 	worker 						: React.PropTypes.object, 
 	gameInstance 				: React.PropTypes.object.isRequired, 
