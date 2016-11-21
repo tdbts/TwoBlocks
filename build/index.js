@@ -79,6 +79,7 @@ service.loadGoogleMaps()
 			<TwoBlocks 
 				gameInstance={ gameInstance }
 				locationData= { nycCoordinates }
+				service={ service }
 				store={ store }
 				worker={ worker }
 			/>, 
