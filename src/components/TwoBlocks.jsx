@@ -107,9 +107,9 @@ class TwoBlocks extends React.Component {
 
 		if (!(borough)) return; 
 
-		const { chooseLocationMap } = this.state;
+		const { chooseLocationMap, mobile, selectedBorough } = this.state;
 
-		const { selectedBorough } = this.state; 
+		if (mobile) return; 
 
 		if (selectedBorough !== this.getBoroughName(borough)) {
 
@@ -401,11 +401,15 @@ class TwoBlocks extends React.Component {
 
 	onChoosingLocation() {
 
-		const { chooseLocationMap } = this.state; 
+		const { chooseLocationMap, mobile } = this.state; 
 
 		const { store } = this.props; 
 
-		chooseLocationMap.data.revertStyle(); 
+		if (!(mobile)) {
+
+			chooseLocationMap.data.revertStyle(); 
+		
+		}
 
 		store.dispatch({
 			type: actions.SHOW_MAP
@@ -519,7 +523,9 @@ class TwoBlocks extends React.Component {
 
 		e.preventDefault();  // Prevent arrows from scrolling page 
 
-		const { hoveredBorough, selectedBorough } = this.state;
+		const { hoveredBorough, mobile, selectedBorough } = this.state;
+
+		if (mobile) return;  // Keypresses only apply to desktop 
 
 		const { gameInstance, store } = this.props; 
 
@@ -685,7 +691,9 @@ class TwoBlocks extends React.Component {
 
 	onShowingPanorama() {
 
-		const { chooseLocationMap } = this.state; 
+		const { chooseLocationMap, mobile } = this.state; 
+
+		if (mobile) return; 
 
 		chooseLocationMap.data.revertStyle(); 
 
@@ -701,13 +709,18 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { chooseLocationMap } = this.state; 
+		const { chooseLocationMap, mobile } = this.state; 
 
 		const { gameInstance, locationData } = this.props; 
 
 		const promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
 
-		chooseLocationMap.data.revertStyle(); 
+		if (!(mobile)) {
+
+			chooseLocationMap.data.revertStyle(); 
+		
+		}
+
 		chooseLocationMap.panTo(locationData.CENTER); 
 		chooseLocationMap.setZoom(DEFAULT_MAP_ZOOM); 		
 
@@ -908,7 +921,9 @@ class TwoBlocks extends React.Component {
 
 	styleHoveredBorough(borough) {
 
-		const { chooseLocationMap, selectedBorough } = this.state; 
+		const { chooseLocationMap, mobile, selectedBorough } = this.state; 
+
+		if (mobile) return; 
 
 		// On hover, change the fill color of the borough, unless the 
 		// borough is the selected borough. 
@@ -924,7 +939,9 @@ class TwoBlocks extends React.Component {
 
 	styleSelectedBorough(borough) {
 
-		const { chooseLocationMap } = this.state; 
+		const { chooseLocationMap, mobile } = this.state; 
+
+		if (mobile) return; 
 
 		chooseLocationMap.data.overrideStyle(borough, {
 			fillColor: SELECTED_BOROUGH_FILL_COLOR
@@ -934,7 +951,9 @@ class TwoBlocks extends React.Component {
 
 	styleUnselectedBoroughs(borough) {
 			
-		const { chooseLocationMap, selectedBorough } = this.state; 
+		const { chooseLocationMap, mobile, selectedBorough } = this.state; 
+
+		if (mobile) return; 
 
 		const { locationData } = this.props; 
 

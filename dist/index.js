@@ -12390,9 +12390,13 @@
 
 				if (!borough) return;
 
-				var chooseLocationMap = this.state.chooseLocationMap;
-				var selectedBorough = this.state.selectedBorough;
+				var _state = this.state;
+				var chooseLocationMap = _state.chooseLocationMap;
+				var mobile = _state.mobile;
+				var selectedBorough = _state.selectedBorough;
 
+
+				if (mobile) return;
 
 				if (selectedBorough !== this.getBoroughName(borough)) {
 
@@ -12404,9 +12408,9 @@
 			value: function addChooseLocationMapEventListeners(prevState) {
 				var _this2 = this;
 
-				var _state = this.state;
-				var chooseLocationMap = _state.chooseLocationMap;
-				var mobile = _state.mobile;
+				var _state2 = this.state;
+				var chooseLocationMap = _state2.chooseLocationMap;
+				var mobile = _state2.mobile;
 
 
 				if (mobile) return; // Event listeners below only apply to desktop game instances 
@@ -12519,9 +12523,9 @@
 
 				if (!this.state.choosingLocation) return;
 
-				var _state2 = this.state;
-				var panoramaBorough = _state2.panoramaBorough;
-				var selectedBorough = _state2.selectedBorough;
+				var _state3 = this.state;
+				var panoramaBorough = _state3.panoramaBorough;
+				var selectedBorough = _state3.selectedBorough;
 				var gameInstance = this.props.gameInstance;
 
 
@@ -12572,11 +12576,11 @@
 
 				if (this.state.initialized) return; // Game already initialized
 
-				var _state3 = this.state;
-				var blockLevelMapCanvas = _state3.blockLevelMapCanvas;
-				var boroughLevelMapCanvas = _state3.boroughLevelMapCanvas;
-				var mapCanvas = _state3.mapCanvas;
-				var panoramaCanvas = _state3.panoramaCanvas;
+				var _state4 = this.state;
+				var blockLevelMapCanvas = _state4.blockLevelMapCanvas;
+				var boroughLevelMapCanvas = _state4.boroughLevelMapCanvas;
+				var mapCanvas = _state4.mapCanvas;
+				var panoramaCanvas = _state4.panoramaCanvas;
 				var _props = this.props;
 				var gameInstance = _props.gameInstance;
 				var locationData = _props.locationData;
@@ -12671,11 +12675,11 @@
 					lng: answerDetails.randomLatLng.lng
 				};
 
-				var _state4 = this.state;
-				var boroughLevelMap = _state4.boroughLevelMap;
-				var blockLevelMap = _state4.blockLevelMap;
-				var showLocationMarker = _state4.showLocationMarker;
-				var mobile = _state4.mobile;
+				var _state5 = this.state;
+				var boroughLevelMap = _state5.boroughLevelMap;
+				var blockLevelMap = _state5.blockLevelMap;
+				var showLocationMarker = _state5.showLocationMarker;
+				var mobile = _state5.mobile;
 
 
 				var showLocationMarkerPosition = new google.maps.LatLng(actualLocationLatLng);
@@ -12717,11 +12721,16 @@
 			value: function onChoosingLocation() {
 				var _this7 = this;
 
-				var chooseLocationMap = this.state.chooseLocationMap;
+				var _state6 = this.state;
+				var chooseLocationMap = _state6.chooseLocationMap;
+				var mobile = _state6.mobile;
 				var store = this.props.store;
 
 
-				chooseLocationMap.data.revertStyle();
+				if (!mobile) {
+
+					chooseLocationMap.data.revertStyle();
+				}
 
 				store.dispatch({
 					type: _actions2.default.SHOW_MAP
@@ -12779,9 +12788,9 @@
 			value: function onGeoJSONReceived(geoJSON) {
 				var _this8 = this;
 
-				var _state5 = this.state;
-				var chooseLocationMap = _state5.chooseLocationMap;
-				var mobile = _state5.mobile;
+				var _state7 = this.state;
+				var chooseLocationMap = _state7.chooseLocationMap;
+				var mobile = _state7.mobile;
 				var _props2 = this.props;
 				var gameInstance = _props2.gameInstance;
 				var locationData = _props2.locationData;
@@ -12840,9 +12849,14 @@
 
 				e.preventDefault(); // Prevent arrows from scrolling page
 
-				var _state6 = this.state;
-				var hoveredBorough = _state6.hoveredBorough;
-				var selectedBorough = _state6.selectedBorough;
+				var _state8 = this.state;
+				var hoveredBorough = _state8.hoveredBorough;
+				var mobile = _state8.mobile;
+				var selectedBorough = _state8.selectedBorough;
+
+
+				if (mobile) return; // Keypresses only apply to desktop
+
 				var _props3 = this.props;
 				var gameInstance = _props3.gameInstance;
 				var store = _props3.store;
@@ -12979,9 +12993,9 @@
 			value: function onRandomLocation(randomLocationDetails) {
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
-				var _state7 = this.state;
-				var blockLevelMap = _state7.blockLevelMap;
-				var boroughLevelMap = _state7.boroughLevelMap;
+				var _state9 = this.state;
+				var blockLevelMap = _state9.blockLevelMap;
+				var boroughLevelMap = _state9.boroughLevelMap;
 
 
 				blockLevelMap.panTo(randomLatLng);
@@ -13011,8 +13025,12 @@
 		}, {
 			key: 'onShowingPanorama',
 			value: function onShowingPanorama() {
-				var chooseLocationMap = this.state.chooseLocationMap;
+				var _state10 = this.state;
+				var chooseLocationMap = _state10.chooseLocationMap;
+				var mobile = _state10.mobile;
 
+
+				if (mobile) return;
 
 				chooseLocationMap.data.revertStyle();
 			}
@@ -13027,7 +13045,9 @@
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var chooseLocationMap = this.state.chooseLocationMap;
+				var _state11 = this.state;
+				var chooseLocationMap = _state11.chooseLocationMap;
+				var mobile = _state11.mobile;
 				var _props4 = this.props;
 				var gameInstance = _props4.gameInstance;
 				var locationData = _props4.locationData;
@@ -13035,7 +13055,11 @@
 
 				var promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
 
-				chooseLocationMap.data.revertStyle();
+				if (!mobile) {
+
+					chooseLocationMap.data.revertStyle();
+				}
+
 				chooseLocationMap.panTo(locationData.CENTER);
 				chooseLocationMap.setZoom(_constants.DEFAULT_MAP_ZOOM);
 
@@ -13233,13 +13257,16 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state8 = this.state;
-				var chooseLocationMap = _state8.chooseLocationMap;
-				var selectedBorough = _state8.selectedBorough;
+				var _state12 = this.state;
+				var chooseLocationMap = _state12.chooseLocationMap;
+				var mobile = _state12.mobile;
+				var selectedBorough = _state12.selectedBorough;
+
+
+				if (mobile) return;
 
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
-
 				if (selectedBorough !== this.getBoroughName(borough)) {
 
 					chooseLocationMap.data.overrideStyle(borough, {
@@ -13250,8 +13277,12 @@
 		}, {
 			key: 'styleSelectedBorough',
 			value: function styleSelectedBorough(borough) {
-				var chooseLocationMap = this.state.chooseLocationMap;
+				var _state13 = this.state;
+				var chooseLocationMap = _state13.chooseLocationMap;
+				var mobile = _state13.mobile;
 
+
+				if (mobile) return;
 
 				chooseLocationMap.data.overrideStyle(borough, {
 					fillColor: _constants.SELECTED_BOROUGH_FILL_COLOR
@@ -13262,9 +13293,14 @@
 			value: function styleUnselectedBoroughs(borough) {
 				var _this12 = this;
 
-				var _state9 = this.state;
-				var chooseLocationMap = _state9.chooseLocationMap;
-				var selectedBorough = _state9.selectedBorough;
+				var _state14 = this.state;
+				var chooseLocationMap = _state14.chooseLocationMap;
+				var mobile = _state14.mobile;
+				var selectedBorough = _state14.selectedBorough;
+
+
+				if (mobile) return;
+
 				var locationData = this.props.locationData;
 
 
