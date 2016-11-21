@@ -121,7 +121,9 @@ class TwoBlocks extends React.Component {
 
 	addChooseLocationMapEventListeners(prevState) {
 
-		const { chooseLocationMap } = this.state; 
+		const { chooseLocationMap, mobile } = this.state; 
+
+		if (mobile) return;  // Event listeners below only apply to desktop game instances  
 
 		// If we have already added listeners to the choose location map, 
 		// or the choose location map does not yet exist, exit. 
@@ -725,11 +727,15 @@ class TwoBlocks extends React.Component {
 
 		const { locationData } = this.props; 
 
-		const { CENTER } =locationData; 
+		const { CENTER } = locationData; 
 
 		const centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng); 		
 
 		chooseLocationMap.setCenter(centerLatLng); 
+
+		this.setState({
+			mobile: this.isMobile()
+		}); 
 
 	}
 

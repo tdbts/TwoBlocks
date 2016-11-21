@@ -12404,11 +12404,15 @@
 			value: function addChooseLocationMapEventListeners(prevState) {
 				var _this2 = this;
 
-				var chooseLocationMap = this.state.chooseLocationMap;
+				var _state = this.state;
+				var chooseLocationMap = _state.chooseLocationMap;
+				var mobile = _state.mobile;
+
+
+				if (mobile) return; // Event listeners below only apply to desktop game instances 
 
 				// If we have already added listeners to the choose location map,
 				// or the choose location map does not yet exist, exit.
-
 				if (prevState.chooseLocationMap || !chooseLocationMap) return;
 
 				chooseLocationMap.data.addListener('mouseover', function (event) {
@@ -12515,9 +12519,9 @@
 
 				if (!this.state.choosingLocation) return;
 
-				var _state = this.state;
-				var panoramaBorough = _state.panoramaBorough;
-				var selectedBorough = _state.selectedBorough;
+				var _state2 = this.state;
+				var panoramaBorough = _state2.panoramaBorough;
+				var selectedBorough = _state2.selectedBorough;
 				var gameInstance = this.props.gameInstance;
 
 
@@ -12568,11 +12572,11 @@
 
 				if (this.state.initialized) return; // Game already initialized
 
-				var _state2 = this.state;
-				var blockLevelMapCanvas = _state2.blockLevelMapCanvas;
-				var boroughLevelMapCanvas = _state2.boroughLevelMapCanvas;
-				var mapCanvas = _state2.mapCanvas;
-				var panoramaCanvas = _state2.panoramaCanvas;
+				var _state3 = this.state;
+				var blockLevelMapCanvas = _state3.blockLevelMapCanvas;
+				var boroughLevelMapCanvas = _state3.boroughLevelMapCanvas;
+				var mapCanvas = _state3.mapCanvas;
+				var panoramaCanvas = _state3.panoramaCanvas;
 				var _props = this.props;
 				var gameInstance = _props.gameInstance;
 				var locationData = _props.locationData;
@@ -12667,11 +12671,11 @@
 					lng: answerDetails.randomLatLng.lng
 				};
 
-				var _state3 = this.state;
-				var boroughLevelMap = _state3.boroughLevelMap;
-				var blockLevelMap = _state3.blockLevelMap;
-				var showLocationMarker = _state3.showLocationMarker;
-				var mobile = _state3.mobile;
+				var _state4 = this.state;
+				var boroughLevelMap = _state4.boroughLevelMap;
+				var blockLevelMap = _state4.blockLevelMap;
+				var showLocationMarker = _state4.showLocationMarker;
+				var mobile = _state4.mobile;
 
 
 				var showLocationMarkerPosition = new google.maps.LatLng(actualLocationLatLng);
@@ -12775,9 +12779,9 @@
 			value: function onGeoJSONReceived(geoJSON) {
 				var _this8 = this;
 
-				var _state4 = this.state;
-				var chooseLocationMap = _state4.chooseLocationMap;
-				var mobile = _state4.mobile;
+				var _state5 = this.state;
+				var chooseLocationMap = _state5.chooseLocationMap;
+				var mobile = _state5.mobile;
 				var _props2 = this.props;
 				var gameInstance = _props2.gameInstance;
 				var locationData = _props2.locationData;
@@ -12836,9 +12840,9 @@
 
 				e.preventDefault(); // Prevent arrows from scrolling page
 
-				var _state5 = this.state;
-				var hoveredBorough = _state5.hoveredBorough;
-				var selectedBorough = _state5.selectedBorough;
+				var _state6 = this.state;
+				var hoveredBorough = _state6.hoveredBorough;
+				var selectedBorough = _state6.selectedBorough;
 				var _props3 = this.props;
 				var gameInstance = _props3.gameInstance;
 				var store = _props3.store;
@@ -12975,9 +12979,9 @@
 			value: function onRandomLocation(randomLocationDetails) {
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
-				var _state6 = this.state;
-				var blockLevelMap = _state6.blockLevelMap;
-				var boroughLevelMap = _state6.boroughLevelMap;
+				var _state7 = this.state;
+				var blockLevelMap = _state7.blockLevelMap;
+				var boroughLevelMap = _state7.boroughLevelMap;
 
 
 				blockLevelMap.panTo(randomLatLng);
@@ -13054,6 +13058,10 @@
 				var centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng);
 
 				chooseLocationMap.setCenter(centerLatLng);
+
+				this.setState({
+					mobile: this.isMobile()
+				});
 			}
 		}, {
 			key: 'requestGeoJSON',
@@ -13225,9 +13233,9 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state7 = this.state;
-				var chooseLocationMap = _state7.chooseLocationMap;
-				var selectedBorough = _state7.selectedBorough;
+				var _state8 = this.state;
+				var chooseLocationMap = _state8.chooseLocationMap;
+				var selectedBorough = _state8.selectedBorough;
 
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
@@ -13254,9 +13262,9 @@
 			value: function styleUnselectedBoroughs(borough) {
 				var _this12 = this;
 
-				var _state8 = this.state;
-				var chooseLocationMap = _state8.chooseLocationMap;
-				var selectedBorough = _state8.selectedBorough;
+				var _state9 = this.state;
+				var chooseLocationMap = _state9.chooseLocationMap;
+				var selectedBorough = _state9.selectedBorough;
 				var locationData = this.props.locationData;
 
 
@@ -13646,8 +13654,6 @@
 	};
 
 	/*----------  Component  ----------*/
-
-	/* eslint-disable */
 
 	var GoogleMap = function Map(props) {
 		var className = props.className;

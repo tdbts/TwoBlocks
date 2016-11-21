@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import React from 'react'; 
 
 const updateConfig = function updateConfig(mapInstance, config) {
