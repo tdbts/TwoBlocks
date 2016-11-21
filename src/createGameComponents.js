@@ -71,18 +71,6 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	const chooseLocationMarker = new google.maps.Marker(markerOptions); 
 
-	// Stop bouncing 
-	google.maps.event.addListener(chooseLocationMarker, 'dragstart', () => chooseLocationMarker.setAnimation(null)); 
-
-	google.maps.event.addListener(chooseLocationMap, 'click', e => {
-
-		const { latLng } = e; 
-
-		chooseLocationMarker.setPosition(latLng); 
-		chooseLocationMarker.setAnimation(null); 
-
-	});
-
 	/*----------  Set up WebGl  ----------*/
 	
 	if (webGlManager.canUseWebGl()) {

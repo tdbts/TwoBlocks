@@ -13541,7 +13541,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* eslint-disable */
 
-
 	var MAP_CLASS_NAME = "two-blocks-map";
 
 	/*----------  Component  ----------*/
@@ -14741,19 +14740,6 @@
 		};
 
 		var chooseLocationMarker = new google.maps.Marker(markerOptions);
-
-		// Stop bouncing
-		google.maps.event.addListener(chooseLocationMarker, 'dragstart', function () {
-			return chooseLocationMarker.setAnimation(null);
-		});
-
-		google.maps.event.addListener(chooseLocationMap, 'click', function (e) {
-			var latLng = e.latLng;
-
-
-			chooseLocationMarker.setPosition(latLng);
-			chooseLocationMarker.setAnimation(null);
-		});
 
 		/*----------  Set up WebGl  ----------*/
 
