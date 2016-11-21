@@ -621,7 +621,9 @@ class TwoBlocks extends React.Component {
 
 		const { service } = this.props; 
 
-		service.loadLeaflet(); 
+		service.loadLeaflet()
+
+			.then(() => window.console.log("window.L:", window.L)); 
 
 	}
 

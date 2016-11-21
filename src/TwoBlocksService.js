@@ -1,7 +1,8 @@
 /* global google */
 
 import requestGeoJSON from './requestGeoJSON'; 
-import injectGapiScript from './injectGapiScript'; 
+import injectGapiScript from './injectGapiScript';
+import loadLeaflet from './loadLeaflet';  
 import { poll } from './utils/utils'; 
 import { workerMessages } from './constants/constants'; 
 
@@ -47,7 +48,7 @@ TwoBlocksService.prototype = {
 
 	loadLeaflet() {
 
-		
+		return loadLeaflet(); 
 
 	}, 
 
