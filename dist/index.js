@@ -146,12 +146,13 @@
 
 	/*----------  Add Google Maps Script  ----------*/
 
-	service.loadGoogleMaps().then(function () {
+	service.loadGoogleMaps(("AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE")).then(function () {
 		return (0, _reactDom.render)(
 		// <Provider store={store}>
 		_react2.default.createElement(_TwoBlocks2.default, {
 			gameInstance: gameInstance,
 			locationData: _constants.nycCoordinates,
+			service: service,
 			store: store,
 			worker: worker
 		}),
@@ -12940,7 +12941,12 @@
 			}
 		}, {
 			key: 'onMobileDeviceDetected',
-			value: function onMobileDeviceDetected() {}
+			value: function onMobileDeviceDetected() {
+				var service = this.props.service;
+
+
+				service.loadLeaflet();
+			}
 		}, {
 			key: 'onNextTurn',
 			value: function onNextTurn() {
@@ -17025,7 +17031,7 @@
 	var debugEnviron;
 	exports.debuglog = function(set) {
 	  if (isUndefined(debugEnviron))
-	    debugEnviron = ({"NODE_ENV":"development"}).NODE_DEBUG || '';
+	    debugEnviron = ({"MAPS_API_KEY":"AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE","NODE_ENV":"development"}).NODE_DEBUG || '';
 	  set = set.toUpperCase();
 	  if (!debugs[set]) {
 	    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
@@ -30069,9 +30075,9 @@
 
 			return (0, _requestGeoJSON2.default)(url, this.worker);
 		},
-		loadGoogleMaps: function loadGoogleMaps() {
+		loadGoogleMaps: function loadGoogleMaps(MAPS_API_KEY) {
 
-			return (0, _injectGapiScript2.default)("AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE")
+			return (0, _injectGapiScript2.default)(MAPS_API_KEY)
 
 			/*----------  Poll for 'geometry' library in google.maps object  ----------*/
 
@@ -30090,6 +30096,7 @@
 				return pollForGeometryLibrary;
 			});
 		},
+		loadLeaflet: function loadLeaflet() {},
 		usingWorker: function usingWorker() {
 
 			return !!this.worker;
@@ -30169,7 +30176,9 @@
 	/* global document */
 
 	var injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
+
 		window.console.log('Injecting GAPI script.');
+
 		return new Promise(function (resolve) {
 
 			var script = document.createElement("script");

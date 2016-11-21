@@ -72,7 +72,7 @@ service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start l
 
 /*----------  Add Google Maps Script  ----------*/
 
-service.loadGoogleMaps() 
+service.loadGoogleMaps(process.env.MAPS_API_KEY) 
 
 	.then(() => render(
 		// <Provider store={store}>

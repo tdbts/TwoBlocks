@@ -1,7 +1,9 @@
 /* global document */
 
 const injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
+	
 	window.console.log('Injecting GAPI script.'); 
+
 	return new Promise(resolve => {
 
 		const script = document.createElement("script");

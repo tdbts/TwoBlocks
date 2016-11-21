@@ -619,7 +619,9 @@ class TwoBlocks extends React.Component {
 
 	onMobileDeviceDetected() {
 
-		
+		const { service } = this.props; 
+
+		service.loadLeaflet(); 
 
 	}
 

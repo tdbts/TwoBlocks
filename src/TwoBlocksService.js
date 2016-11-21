@@ -23,9 +23,9 @@ TwoBlocksService.prototype = {
 
 	}, 
 
-	loadGoogleMaps() {
+	loadGoogleMaps(MAPS_API_KEY) {
 
-		return injectGapiScript("AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE") 
+		return injectGapiScript(MAPS_API_KEY) 
 
 			/*----------  Poll for 'geometry' library in google.maps object  ----------*/
 
@@ -42,6 +42,12 @@ TwoBlocksService.prototype = {
 				return pollForGeometryLibrary; 				
 			
 			}); 
+
+	}, 
+
+	loadLeaflet() {
+
+		
 
 	}, 
 
