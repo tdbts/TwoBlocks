@@ -717,64 +717,54 @@ class TwoBlocks extends React.Component {
 
 	}
 
+
 	requestGeoJSON() {
-
-		const { worker } = this.props; 
-
-		if (!(worker)) return;  
-
-		this.requestGeoJSONFromWebWorker(worker); 
-
-	}
-
-	/**
-	 *
-	 * Request the GeoJSON from the Web Worker.  If the data has 
-	 * not been loaded yet, assign a listener to await the GeoJSON. 
-	 * Once the worker indicates the data has loaded, inform the 
-	 * game instance.  
-	 *
-	 */
-	
-	requestGeoJSONFromWebWorker(worker) {
-
-		const { gameInstance } = this.props; 
 
 		const { mobile } = this.state; 
 
 		if (mobile) return;  // Request GeoJSON only on desktop (for map)
 
+		const { gameInstance, worker } = this.props; 
+
 		gameInstance.geoJSONLoaded() 
 
 			.then(() => {
-				window.console.log("GEO JSON LOADED ACCORDING TO GAME."); 
-				/*----------  onGeoJSONSent()  ----------*/
 
-				const onGeoJSONSent = event => {
+				if (worker) {
 
-					const { message, payload } = event.data; 
+					/*----------  onGeoJSONSent()  ----------*/
 
-					if (workerMessages.SENDING_GEO_JSON === message) {
+					const onGeoJSONSent = event => {
 
-						this.onGeoJSONReceived(payload);  
+						const { message, payload } = event.data; 
 
-						worker.removeEventListener('message', onGeoJSONSent); 
+						if (workerMessages.SENDING_GEO_JSON === message) {
 
-					}
+							this.onGeoJSONReceived(payload);  
 
-				}; 
+							worker.removeEventListener('message', onGeoJSONSent); 
 
-				// Assign the event listener before posting message 
-				worker.addEventListener('message', onGeoJSONSent); 
+						}
 
-				// Request GeoJSON from web worker 
-				worker.postMessage({
+					}; 
 
-					message: workerMessages.REQUEST_GEO_JSON
+					// Assign the event listener before posting message 
+					worker.addEventListener('message', onGeoJSONSent); 
 
-				}); 		
+					// Request GeoJSON from web worker 
+					worker.postMessage({
 
-			}); 
+						message: workerMessages.REQUEST_GEO_JSON
+
+					}); 
+
+				} else {
+
+					this.onGeoJSONReceived(gameInstance.locationData.featureCollection); 
+
+				}
+
+			}); 	
 
 	}
 

@@ -13061,69 +13061,61 @@
 		}, {
 			key: 'requestGeoJSON',
 			value: function requestGeoJSON() {
-				var worker = this.props.worker;
-
-
-				if (!worker) return;
-
-				this.requestGeoJSONFromWebWorker(worker);
-			}
-
-			/**
-	   *
-	   * Request the GeoJSON from the Web Worker.  If the data has 
-	   * not been loaded yet, assign a listener to await the GeoJSON. 
-	   * Once the worker indicates the data has loaded, inform the 
-	   * game instance.  
-	   *
-	   */
-
-		}, {
-			key: 'requestGeoJSONFromWebWorker',
-			value: function requestGeoJSONFromWebWorker(worker) {
 				var _this9 = this;
 
-				var gameInstance = this.props.gameInstance;
 				var mobile = this.state.mobile;
 
 
 				if (mobile) return; // Request GeoJSON only on desktop (for map)
 
+				var _props5 = this.props;
+				var gameInstance = _props5.gameInstance;
+				var worker = _props5.worker;
+
+
 				gameInstance.geoJSONLoaded().then(function () {
-					window.console.log("GEO JSON LOADED ACCORDING TO GAME.");
-					/*----------  onGeoJSONSent()  ----------*/
 
-					var onGeoJSONSent = function onGeoJSONSent(event) {
-						var _event$data = event.data;
-						var message = _event$data.message;
-						var payload = _event$data.payload;
+					if (worker) {
+						(function () {
+
+							/*----------  onGeoJSONSent()  ----------*/
+
+							var onGeoJSONSent = function onGeoJSONSent(event) {
+								var _event$data = event.data;
+								var message = _event$data.message;
+								var payload = _event$data.payload;
 
 
-						if (_constants.workerMessages.SENDING_GEO_JSON === message) {
+								if (_constants.workerMessages.SENDING_GEO_JSON === message) {
 
-							_this9.onGeoJSONReceived(payload);
+									_this9.onGeoJSONReceived(payload);
 
-							worker.removeEventListener('message', onGeoJSONSent);
-						}
-					};
+									worker.removeEventListener('message', onGeoJSONSent);
+								}
+							};
 
-					// Assign the event listener before posting message
-					worker.addEventListener('message', onGeoJSONSent);
+							// Assign the event listener before posting message
+							worker.addEventListener('message', onGeoJSONSent);
 
-					// Request GeoJSON from web worker
-					worker.postMessage({
+							// Request GeoJSON from web worker
+							worker.postMessage({
 
-						message: _constants.workerMessages.REQUEST_GEO_JSON
+								message: _constants.workerMessages.REQUEST_GEO_JSON
 
-					});
+							});
+						})();
+					} else {
+
+						_this9.onGeoJSONReceived(gameInstance.locationData.featureCollection);
+					}
 				});
 			}
 		}, {
 			key: 'restart',
 			value: function restart() {
-				var _props5 = this.props;
-				var gameInstance = _props5.gameInstance;
-				var store = _props5.store;
+				var _props6 = this.props;
+				var gameInstance = _props6.gameInstance;
+				var store = _props6.store;
 
 
 				var view = 'map';
@@ -13154,9 +13146,9 @@
 
 				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed 
 
-				var _props6 = this.props;
-				var gameInstance = _props6.gameInstance;
-				var store = _props6.store;
+				var _props7 = this.props;
+				var gameInstance = _props7.gameInstance;
+				var store = _props7.store;
 
 
 				var view = 'panorama';
