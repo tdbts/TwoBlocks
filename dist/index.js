@@ -12290,7 +12290,7 @@
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global document, google, window */
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global document, google, window, L */
 
 	var TwoBlocks = function (_React$Component) {
 		_inherits(TwoBlocks, _React$Component);
@@ -12580,12 +12580,22 @@
 				var blockLevelMapCanvas = _state4.blockLevelMapCanvas;
 				var boroughLevelMapCanvas = _state4.boroughLevelMapCanvas;
 				var mapCanvas = _state4.mapCanvas;
+				var mobile = _state4.mobile;
 				var panoramaCanvas = _state4.panoramaCanvas;
 				var _props = this.props;
 				var gameInstance = _props.gameInstance;
 				var locationData = _props.locationData;
+				var service = _props.service;
 				var store = _props.store;
 
+				// If on mobile device, wait for Leaflet library to load
+
+				if (mobile && !window.L) {
+
+					return service.loadLeaflet().then(function () {
+						return _this5.initializeTwoBlocks();
+					});
+				}
 
 				if (!blockLevelMapCanvas || !boroughLevelMapCanvas || !mapCanvas || !panoramaCanvas) return; // DOM elements must exist before the game instance can be initialized
 
@@ -12601,19 +12611,36 @@
 
 				var blockLevelMapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, {
 					mapTypeId: google.maps.MapTypeId.ROADMAP,
-					zoom: this.state.mobile ? 18 : 16
+					zoom: mobile ? 18 : 16
 				});
 
-				var blockLevelMap = new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions);
+				var blockLevelMap = mobile ? L.map(blockLevelMapCanvas, blockLevelMapOptions) : new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions);
 
 				/*----------  Create borough-level map  ----------*/
 
 				var boroughLevelMapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, {
 					mapTypeId: google.maps.MapTypeId.ROADMAP,
-					zoom: this.state.mobile ? 13 : 12
+					zoom: mobile ? 13 : 12
 				});
 
-				var boroughLevelMap = new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions);
+				var boroughLevelMap = mobile ? L.map(boroughLevelMapCanvas, boroughLevelMapOptions) : new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions);
+
+				/*----------  Add tile layer to mobile maps  ----------*/
+
+				if (mobile) {
+
+					// Separate tile layers and attribution must be used
+					var boroughLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
+						attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
+					});
+
+					var blockLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
+						attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
+					});
+
+					boroughLevelTileLayer.addTo(boroughLevelMap);
+					blockLevelTileLayer.addTo(blockLevelMap);
+				}
 
 				/*----------  Create Game Components  ----------*/
 
@@ -12684,12 +12711,22 @@
 				var mobile = _state5.mobile;
 
 
-				var showLocationMarkerPosition = new google.maps.LatLng(actualLocationLatLng);
+				var showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng);
 
-				showLocationMarker.setVisible(true);
-				showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);
-				showLocationMarker.setMap(boroughLevelMap);
-				showLocationMarker.setPosition(showLocationMarkerPosition);
+				window.console.log("showLocationMarkerPosition:", showLocationMarkerPosition);
+
+				if (mobile) {
+
+					showLocationMarker.setOpacity(1);
+					showLocationMarker.setLatLng(showLocationMarkerPosition);
+					showLocationMarker.addTo(boroughLevelMap);
+				} else {
+
+					showLocationMarker.setVisible(true);
+					showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);
+					showLocationMarker.setMap(boroughLevelMap);
+					showLocationMarker.setPosition(showLocationMarkerPosition);
+				}
 
 				return Promise.resolve().then(function () {
 
@@ -12699,7 +12736,7 @@
 				}).then(function () {
 					return _this6.setState({
 
-						interchangeHidden: _this6.state.mobile,
+						interchangeHidden: mobile,
 						choosingLocation: false,
 						mapType: 'borough-level'
 
@@ -12708,8 +12745,17 @@
 					return (0, _createPromiseTimeout2.default)(_constants.ANSWER_EVALUATION_DELAY / 2);
 				}).then(function () {
 
-					showLocationMarker.setMap(blockLevelMap);
-					showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); // Need to reset animation animation if map changes
+					if (mobile) {
+
+						boroughLevelMap.removeLayer(showLocationMarker);
+						// showLocationMarker.setOpacity(1);
+						// showLocationMarker.setLatLng(showLocationMarkerPosition); 					
+						showLocationMarker.addTo(blockLevelMap);
+					} else {
+
+						showLocationMarker.setMap(blockLevelMap);
+						showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); // Need to reset animation animation if map changes
+					}
 				}).then(function () {
 					return _this6.setState({
 
@@ -12771,13 +12817,22 @@
 				window.console.log("GAME OVER.");
 
 				var gameInstance = this.props.gameInstance;
+				var _state7 = this.state;
+				var mobile = _state7.mobile;
+				var showLocationMarker = _state7.showLocationMarker;
 
 
 				var totalCorrect = gameInstance.totalCorrectAnswers();
 
-				if (this.state.showLocationMarker) {
+				if (showLocationMarker) {
 
-					this.state.showLocationMarker.setMap(null);
+					if (mobile) {
+
+						showLocationMarker.setOpacity(0);
+					} else {
+
+						showLocationMarker.setMap(null);
+					}
 				}
 
 				return this.setState({
@@ -12790,9 +12845,9 @@
 			value: function onGeoJSONReceived(geoJSON) {
 				var _this8 = this;
 
-				var _state7 = this.state;
-				var chooseLocationMap = _state7.chooseLocationMap;
-				var mobile = _state7.mobile;
+				var _state8 = this.state;
+				var chooseLocationMap = _state8.chooseLocationMap;
+				var mobile = _state8.mobile;
 				var _props2 = this.props;
 				var gameInstance = _props2.gameInstance;
 				var locationData = _props2.locationData;
@@ -12851,10 +12906,10 @@
 
 				e.preventDefault(); // Prevent arrows from scrolling page
 
-				var _state8 = this.state;
-				var hoveredBorough = _state8.hoveredBorough;
-				var mobile = _state8.mobile;
-				var selectedBorough = _state8.selectedBorough;
+				var _state9 = this.state;
+				var hoveredBorough = _state9.hoveredBorough;
+				var mobile = _state9.mobile;
+				var selectedBorough = _state9.selectedBorough;
 
 
 				if (mobile) return; // Keypresses only apply to desktop
@@ -12972,10 +13027,20 @@
 		}, {
 			key: 'onNextTurn',
 			value: function onNextTurn() {
+				var _state10 = this.state;
+				var mobile = _state10.mobile;
+				var showLocationMarker = _state10.showLocationMarker;
 
-				if (this.state.showLocationMarker) {
 
-					this.state.showLocationMarker.setMap(null);
+				if (showLocationMarker) {
+
+					if (mobile) {
+
+						showLocationMarker.setOpacity(0);
+					} else {
+
+						showLocationMarker.setMap(null);
+					}
 				}
 
 				this.setState({
@@ -12995,9 +13060,9 @@
 			value: function onRandomLocation(randomLocationDetails) {
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
-				var _state9 = this.state;
-				var blockLevelMap = _state9.blockLevelMap;
-				var boroughLevelMap = _state9.boroughLevelMap;
+				var _state11 = this.state;
+				var blockLevelMap = _state11.blockLevelMap;
+				var boroughLevelMap = _state11.boroughLevelMap;
 
 				// blockLevelMap.onRandomLocation()
 
@@ -13028,9 +13093,9 @@
 		}, {
 			key: 'onShowingPanorama',
 			value: function onShowingPanorama() {
-				var _state10 = this.state;
-				var chooseLocationMap = _state10.chooseLocationMap;
-				var mobile = _state10.mobile;
+				var _state12 = this.state;
+				var chooseLocationMap = _state12.chooseLocationMap;
+				var mobile = _state12.mobile;
 
 
 				if (mobile) return;
@@ -13048,9 +13113,9 @@
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _state11 = this.state;
-				var chooseLocationMap = _state11.chooseLocationMap;
-				var mobile = _state11.mobile;
+				var _state13 = this.state;
+				var chooseLocationMap = _state13.chooseLocationMap;
+				var mobile = _state13.mobile;
 				var _props4 = this.props;
 				var gameInstance = _props4.gameInstance;
 				var locationData = _props4.locationData;
@@ -13260,10 +13325,10 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state12 = this.state;
-				var chooseLocationMap = _state12.chooseLocationMap;
-				var mobile = _state12.mobile;
-				var selectedBorough = _state12.selectedBorough;
+				var _state14 = this.state;
+				var chooseLocationMap = _state14.chooseLocationMap;
+				var mobile = _state14.mobile;
+				var selectedBorough = _state14.selectedBorough;
 
 
 				if (mobile) return;
@@ -13280,9 +13345,9 @@
 		}, {
 			key: 'styleSelectedBorough',
 			value: function styleSelectedBorough(borough) {
-				var _state13 = this.state;
-				var chooseLocationMap = _state13.chooseLocationMap;
-				var mobile = _state13.mobile;
+				var _state15 = this.state;
+				var chooseLocationMap = _state15.chooseLocationMap;
+				var mobile = _state15.mobile;
 
 
 				if (mobile) return;
@@ -13296,10 +13361,10 @@
 			value: function styleUnselectedBoroughs(borough) {
 				var _this12 = this;
 
-				var _state14 = this.state;
-				var chooseLocationMap = _state14.chooseLocationMap;
-				var mobile = _state14.mobile;
-				var selectedBorough = _state14.selectedBorough;
+				var _state16 = this.state;
+				var chooseLocationMap = _state16.chooseLocationMap;
+				var mobile = _state16.mobile;
+				var selectedBorough = _state16.selectedBorough;
 
 
 				if (mobile) return;
@@ -13628,7 +13693,7 @@
 					'div',
 					{ className: getClassName(twoBlocksClass, view) },
 					_react2.default.createElement(_GoogleMap2.default, {
-						className: (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'city-level'),
+						className: ["two-blocks-city-level-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'city-level')].join(' '),
 						config: config ? config.cityLevelMap : null,
 						mapInstance: cityLevelMap,
 						mapType: 'city-level',
@@ -13636,7 +13701,7 @@
 						visible: mapType === 'city-level'
 					}),
 					_react2.default.createElement(_GoogleMap2.default, {
-						className: (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'borough-level'),
+						className: ["two-blocks-borough-level-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'borough-level')].join(' '),
 						config: config ? config.boroughLevelMap : null,
 						mapInstance: boroughLevelMap,
 						mapType: 'borough-level',
@@ -13644,7 +13709,7 @@
 						visible: mapType === 'borough-level'
 					}),
 					_react2.default.createElement(_GoogleMap2.default, {
-						className: (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'block-level'),
+						className: ["two-blocks-block-level-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'block-level')].join(' '),
 						config: config ? config.mapLevelMap : null,
 						mapInstance: blockLevelMap,
 						mapType: 'block-level',
@@ -14257,6 +14322,8 @@
 		var twoBlocksClass = props.twoBlocksClass;
 
 
+		var mobileClassName = "two-blocks-button two-blocks-mobile-button borough-selection-button";
+
 		var markup = borough ? _react2.default.createElement(_SubmitterDesktop2.default, {
 			borough: borough,
 			buttonClassName: buttonClassName,
@@ -14271,35 +14338,35 @@
 			{ className: twoBlocksClass },
 			_react2.default.createElement(
 				'button',
-				{ className: 'borough-selection-button', onClick: function onClick() {
+				{ className: mobileClassName, onClick: function onClick() {
 						return onTouchend('Bronx');
 					} },
 				'The Bronx'
 			),
 			_react2.default.createElement(
 				'button',
-				{ className: 'borough-selection-button', onClick: function onClick() {
+				{ className: mobileClassName, onClick: function onClick() {
 						return onTouchend('Manhattan');
 					} },
 				'Manhattan'
 			),
 			_react2.default.createElement(
 				'button',
-				{ className: 'borough-selection-button', onClick: function onClick() {
+				{ className: mobileClassName, onClick: function onClick() {
 						return onTouchend('Queens');
 					} },
 				'Queens'
 			),
 			_react2.default.createElement(
 				'button',
-				{ className: 'borough-selection-button', onClick: function onClick() {
+				{ className: mobileClassName, onClick: function onClick() {
 						return onTouchend('Brooklyn');
 					} },
 				'Brooklyn'
 			),
 			_react2.default.createElement(
 				'button',
-				{ className: 'borough-selection-button', onClick: function onClick() {
+				{ className: mobileClassName, onClick: function onClick() {
 						return onTouchend('Staten Island');
 					} },
 				'Staten Island'
@@ -14729,7 +14796,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var gameComponents = null; /* global google */
+	var gameComponents = null; /* global google, L */
 
 	var createGameComponents = function createGameComponents(gameState) {
 
@@ -14805,7 +14872,7 @@
 			visible: mapMarkerVisible
 		};
 
-		var chooseLocationMarker = new google.maps.Marker(markerOptions);
+		var chooseLocationMarker = mobile ? new L.Marker() : new google.maps.Marker(markerOptions);
 
 		/*----------  Set up WebGl  ----------*/
 
@@ -30366,26 +30433,34 @@
 
 	/*----------  loadLeaflet()  ----------*/
 
+	var loadPromise = null;
+
 	var loadLeaflet = function loadLeaflet() {
 
-		return new Promise(function (resolve) {
+		if (!loadPromise) {
+			// Load Leaflet library only once
 
-			var styling = document.createElement('link');
+			loadPromise = new Promise(function (resolve) {
 
-			styling.rel = "stylesheet";
-			styling.href = LEAFLET_CSS;
+				var styling = document.createElement('link');
 
-			document.head.appendChild(styling);
+				styling.rel = "stylesheet";
+				styling.href = LEAFLET_CSS;
 
-			var api = document.createElement('script');
+				document.head.appendChild(styling);
 
-			api.addEventListener('load', resolve, { once: true });
+				var api = document.createElement('script');
 
-			api.type = "text/javascript";
-			api.src = LEAFLET_API;
+				api.addEventListener('load', resolve, { once: true });
 
-			document.body.appendChild(api);
-		});
+				api.type = "text/javascript";
+				api.src = LEAFLET_API;
+
+				document.body.appendChild(api);
+			});
+		}
+
+		return loadPromise;
 	};
 
 	/*----------  Export  ----------*/
@@ -47794,7 +47869,7 @@
 
 
 	// module
-	exports.push([module.id, "html, body {\n\theight: 100%; \n\tmargin: 0; \n\tpadding: 0;\n} \n\n.full-dimensions {\n\theight: 100%; \n\twidth: 100%; \n}\n\n.inherit-dimensions {\n\theight: inherit; \n\twidth: inherit; \n}\n\n.hidden {\n\tdisplay: none; \n}\n\n.offscreen {\n\tleft: -10000px;\n}\n\n/* Elements with '.visible' class are on top of the \n\tstack of maps / panoramas */\n.visible {\n\tz-index: 100; \n}\n\n.layered {\n\tposition: absolute; \n}\n\n/* ------ Components ------ */\n\n.two-blocks {\n\twidth: 100%; \n\theight: calc(100% - 150px);\n\tfont-family: \"Lucida Console\", Monaco, monospace; \n}\n\n.two-blocks-view {\n\tbox-shadow: 2px 2px 10px #000;\n}\n\n.two-blocks-view, \n.two-blocks-prompt {\n\tposition: relative;\n}\n\n.two-blocks-map {\n\tposition: absolute; \n}\n\n.two-blocks-submitter-borough-name {\n\tcolor: #D9285B;\n}\n\n.two-blocks-button {\n\tbackground: rgb(200, 200, 200);\n\tbackground-image : -webkit-linear-gradient(rgb(224,224,224), rgb(160,160,160));\n\tbackground-image : -o-linear-gradient(rgb(224,224,224), rgb(160,160,160));\n\tbackground-image : linear-gradient(rgb(224,224,224), rgb(160,160,160));\n\tborder-radius: 10px;\n\theight: 2em;\n\tletter-spacing: 1px; \n}\n\n/* MOBILE CSS */\n\n.mobile.two-blocks {\n\theight: 100%; \n}\n\n.mobile .two-blocks-view, \n.mobile .two-blocks-prompt {\n\tposition: absolute; \n}\n\n.mobile .two-blocks-interchange {\n    position: absolute;\n    z-index: 100;\n\tbackground-color: #000;\n    opacity: 0.7;\n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-submitter-text {\n\tcolor: #fff;\n    font-size: 3em;\n    text-align: center;\n    top: 15%;\t\n}\n\n.mobile .two-blocks-submitter {\n\tposition: absolute; \n\twidth: 100%; \n\theight: 20%; \n\ttop: 35%; \n}\n\n.mobile .borough-selection-button, \n.mobile .two-blocks-submitter-button {\n\tdisplay: block; \n\twidth: 500px; \n\theight: 100px; \n\tmargin: 0px auto 50px auto; \n\tfont-size: 3em; \n}\n\n", ""]);
+	exports.push([module.id, "html, body {\n\theight: 100%; \n\tmargin: 0; \n\tpadding: 0;\n} \n\n.full-dimensions {\n\theight: 100%; \n\twidth: 100%; \n}\n\n.inherit-dimensions {\n\theight: inherit; \n\twidth: inherit; \n}\n\n.hidden {\n\tdisplay: none; \n}\n\n.offscreen {\n\tleft: -10000px;\n}\n\n/* Elements with '.visible' class are on top of the \n\tstack of maps / panoramas */\n.visible {\n\tz-index: 100; \n}\n\n.layered {\n\tposition: absolute; \n}\n\n/* ------ Components ------ */\n\n.two-blocks {\n\twidth: 100%; \n\theight: calc(100% - 150px);\n\tfont-family: \"Lucida Console\", Monaco, monospace; \n}\n\n.two-blocks-view {\n\tbox-shadow: 2px 2px 10px #000;\n}\n\n.two-blocks-view, \n.two-blocks-prompt {\n\tposition: relative;\n}\n\n.two-blocks-map {\n\tposition: absolute; \n}\n\n.two-blocks-submitter-borough-name {\n\tcolor: #D9285B;\n}\n\n.two-blocks-button {\n/*\tbackground: rgb(200, 200, 200);\n\tbackground-image : -webkit-linear-gradient(rgb(224,224,224), rgb(160,160,160));\n\tbackground-image : -o-linear-gradient(rgb(224,224,224), rgb(160,160,160));\n\tbackground-image : linear-gradient(rgb(224,224,224), rgb(160,160,160));\n*/\tborder-radius: 10px;\n\theight: 2em;\n\tletter-spacing: 1px; \n}\n\n/* MOBILE CSS */\n\n.mobile.two-blocks {\n\theight: 100%; \n}\n\n.mobile .two-blocks-view, \n.mobile .two-blocks-prompt {\n\tposition: absolute; \n}\n\n.mobile .two-blocks-interchange {\n    position: absolute;\n    z-index: 100;\n\tbackground-color: #000;\n    opacity: 0.7;\n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-submitter-text {\n\tcolor: #fff;\n    font-size: 1.5em;\n    text-align: center;\n    top: 10%;\t\n}\n\n.mobile .two-blocks-submitter {\n\tposition: absolute; \n\twidth: 100%; \n\theight: 20%; \n\ttop: 35%; \n}\n\n.mobile .borough-selection-button, \n.mobile .two-blocks-submitter-button {\n\tdisplay: block; \n\twidth: 250px; \n\theight: 50px; \n\tmargin: 0px auto 35px auto; \n\tfont-size: 2em; \n}\n\n", ""]);
 
 	// exports
 

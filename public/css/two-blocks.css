@@ -58,11 +58,11 @@ html, body {
 }
 
 .two-blocks-button {
-	background: rgb(200, 200, 200);
+/*	background: rgb(200, 200, 200);
 	background-image : -webkit-linear-gradient(rgb(224,224,224), rgb(160,160,160));
 	background-image : -o-linear-gradient(rgb(224,224,224), rgb(160,160,160));
 	background-image : linear-gradient(rgb(224,224,224), rgb(160,160,160));
-	border-radius: 10px;
+*/	border-radius: 10px;
 	height: 2em;
 	letter-spacing: 1px; 
 }
@@ -88,9 +88,9 @@ html, body {
 .mobile .two-blocks-prompt, 
 .mobile .two-blocks-submitter-text {
 	color: #fff;
-    font-size: 3em;
+    font-size: 1.5em;
     text-align: center;
-    top: 15%;	
+    top: 10%;	
 }
 
 .mobile .two-blocks-submitter {
@@ -103,9 +103,9 @@ html, body {
 .mobile .borough-selection-button, 
 .mobile .two-blocks-submitter-button {
 	display: block; 
-	width: 500px; 
-	height: 100px; 
-	margin: 0px auto 50px auto; 
-	font-size: 3em; 
+	width: 250px; 
+	height: 50px; 
+	margin: 0px auto 35px auto; 
+	font-size: 2em; 
 }
 

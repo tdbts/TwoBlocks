@@ -1,4 +1,4 @@
-/* global google */
+/* global google, L */
 
 import { mapTypes } from './constants/constants'; 
 import createPanorama from './createPanorama'; 
@@ -70,7 +70,7 @@ const createGameComponents = function createGameComponents(gameState) {
 		visible: mapMarkerVisible
 	}; 
 
-	const chooseLocationMarker = new google.maps.Marker(markerOptions); 
+	const chooseLocationMarker = mobile ? new L.Marker() : new google.maps.Marker(markerOptions); 
 
 	/*----------  Set up WebGl  ----------*/
 	

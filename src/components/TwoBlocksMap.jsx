@@ -26,7 +26,7 @@ class TwoBlocksMap extends React.Component {
 
 			<div className={ getClassName(twoBlocksClass, view) }>
 				<GoogleMap 
-					className={ getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'city-level')) }
+					className={ [ "two-blocks-city-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'city-level')) ].join(' ') }
 					config={ config ? config.cityLevelMap : null }
 					mapInstance={ cityLevelMap }
 					mapType={ 'city-level' }
@@ -34,7 +34,7 @@ class TwoBlocksMap extends React.Component {
 					visible={ mapType === 'city-level' }
 				/>
 				<GoogleMap 
-					className={ getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'borough-level')) }
+					className={ [ "two-blocks-borough-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'borough-level')) ].join(' ') }
 					config={ config ? config.boroughLevelMap : null }
 					mapInstance={ boroughLevelMap }
 					mapType={ 'borough-level' }
@@ -42,7 +42,7 @@ class TwoBlocksMap extends React.Component {
 					visible={ mapType === 'borough-level' }
 				/>
 				<GoogleMap 
-					className={ getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'block-level')) }
+					className={ [ "two-blocks-block-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'block-level')) ].join(' ') }
 					config={ config ? config.mapLevelMap : null }
 					mapInstance={ blockLevelMap }
 					mapType={ 'block-level' }

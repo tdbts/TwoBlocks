@@ -8,27 +8,35 @@ const LEAFLET_API = "https://unpkg.com/leaflet@1.0.1/dist/leaflet.js";
 
 /*----------  loadLeaflet()  ----------*/
 
+let loadPromise = null; 
+
 const loadLeaflet = function loadLeaflet() {
 
-	return new Promise(resolve => {
+	if (!(loadPromise)) {  // Load Leaflet library only once 
 
-		const styling = document.createElement('link'); 
+		loadPromise = new Promise(resolve => {
 
-		styling.rel = "stylesheet";
-		styling.href = LEAFLET_CSS; 
+			const styling = document.createElement('link'); 
 
-		document.head.appendChild(styling); 
+			styling.rel = "stylesheet";
+			styling.href = LEAFLET_CSS; 
 
-		const api = document.createElement('script'); 
+			document.head.appendChild(styling); 
 
-		api.addEventListener('load', resolve, { once: true }); 
+			const api = document.createElement('script'); 
 
-		api.type = "text/javascript"; 
-		api.src = LEAFLET_API; 
+			api.addEventListener('load', resolve, { once: true }); 
 
-		document.body.appendChild(api); 
+			api.type = "text/javascript"; 
+			api.src = LEAFLET_API; 
 
-	}); 
+			document.body.appendChild(api); 
+
+		}); 
+
+	}  
+
+	return loadPromise; 
 
 }; 
 

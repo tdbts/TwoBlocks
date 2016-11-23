@@ -1,4 +1,4 @@
-/* global document, google, window */
+/* global document, google, window, L */
 
 import React from 'react'; 
 import TwoBlocksView from './TwoBlocksView';
@@ -257,9 +257,18 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.initialized) return;  // Game already initialized 
 
-		const { blockLevelMapCanvas, boroughLevelMapCanvas, mapCanvas, panoramaCanvas } = this.state;  
+		const { blockLevelMapCanvas, boroughLevelMapCanvas, mapCanvas, mobile, panoramaCanvas } = this.state;  
 
-		const { gameInstance, locationData, store } = this.props; 
+		const { gameInstance, locationData, service, store } = this.props; 
+
+		// If on mobile device, wait for Leaflet library to load 
+		if (mobile && !(window.L)) {
+
+			return service.loadLeaflet()
+
+				.then(() => this.initializeTwoBlocks()); 
+
+		}
 
 		if (!(blockLevelMapCanvas) || !(boroughLevelMapCanvas) || !(mapCanvas) || !(panoramaCanvas)) return;  // DOM elements must exist before the game instance can be initialized 
 
@@ -277,19 +286,37 @@ class TwoBlocks extends React.Component {
 		
 		const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 
 			mapTypeId: google.maps.MapTypeId.ROADMAP, 
-			zoom: this.state.mobile ? 18 : 16 
+			zoom: mobile ? 18 : 16 
 		}); 
 
-		const blockLevelMap = new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions); 
+		const blockLevelMap = mobile ? L.map(blockLevelMapCanvas, blockLevelMapOptions) : new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions); 
 
 		/*----------  Create borough-level map  ----------*/
 		
 		const boroughLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
 			mapTypeId: google.maps.MapTypeId.ROADMAP, 
-			zoom: this.state.mobile ? 13 : 12
+			zoom: mobile ? 13 : 12
 		}); 
 
-		const boroughLevelMap = new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 
+		const boroughLevelMap = mobile ? L.map(boroughLevelMapCanvas, boroughLevelMapOptions) : new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 
+
+		/*----------  Add tile layer to mobile maps  ----------*/
+		
+		if (mobile) {
+			
+			// Separate tile layers and attribution must be used 
+			const boroughLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
+				attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
+			});			
+
+			const blockLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
+				attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
+			});
+
+			boroughLevelTileLayer.addTo(boroughLevelMap); 
+			blockLevelTileLayer.addTo(blockLevelMap);  
+
+		}
 
 		/*----------  Create Game Components  ----------*/
 						
@@ -359,12 +386,24 @@ class TwoBlocks extends React.Component {
 
 		const { boroughLevelMap, blockLevelMap, showLocationMarker, mobile } = this.state; 
 
-		const showLocationMarkerPosition = new google.maps.LatLng(actualLocationLatLng); 
+		const showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng); 
 
-		showLocationMarker.setVisible(true); 
-		showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); 
-		showLocationMarker.setMap(boroughLevelMap); 
-		showLocationMarker.setPosition(showLocationMarkerPosition); 
+		window.console.log("showLocationMarkerPosition:", showLocationMarkerPosition); 
+
+		if (mobile) {
+
+			showLocationMarker.setOpacity(1); 
+			showLocationMarker.setLatLng(showLocationMarkerPosition); 
+			showLocationMarker.addTo(boroughLevelMap); 
+
+		} else {
+
+			showLocationMarker.setVisible(true); 
+			showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); 
+			showLocationMarker.setMap(boroughLevelMap); 
+			showLocationMarker.setPosition(showLocationMarkerPosition); 
+		
+		}
 
 		return Promise.resolve()
 
@@ -378,7 +417,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.setState({
 
-				interchangeHidden: this.state.mobile, 
+				interchangeHidden: mobile, 
 				choosingLocation: false, 
 				mapType: 'borough-level'
 
@@ -388,8 +427,19 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				showLocationMarker.setMap(blockLevelMap);
-				showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
+				if (mobile) {
+					
+					boroughLevelMap.removeLayer(showLocationMarker);
+					// showLocationMarker.setOpacity(1); 
+					// showLocationMarker.setLatLng(showLocationMarkerPosition); 					 
+					showLocationMarker.addTo(blockLevelMap); 
+
+				} else {
+
+					showLocationMarker.setMap(blockLevelMap);
+					showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
+				
+				}
 
 			})
 
@@ -450,12 +500,22 @@ class TwoBlocks extends React.Component {
 		window.console.log("GAME OVER."); 
 
 		const { gameInstance } = this.props; 
+
+		const { mobile, showLocationMarker } = this.state; 
  
 		const totalCorrect = gameInstance.totalCorrectAnswers(); 
 
-		if (this.state.showLocationMarker) {
+		if (showLocationMarker) {
 
-			this.state.showLocationMarker.setMap(null); 
+			if (mobile) {
+
+				showLocationMarker.setOpacity(0); 
+
+			} else {
+
+				showLocationMarker.setMap(null); 
+			
+			}
 
 		}
 
@@ -639,9 +699,19 @@ class TwoBlocks extends React.Component {
 
 	onNextTurn() {
 
-		if (this.state.showLocationMarker) {
+		const { mobile, showLocationMarker } = this.state; 
 
-			this.state.showLocationMarker.setMap(null); 
+		if (showLocationMarker) {
+
+			if (mobile) {
+
+				showLocationMarker.setOpacity(0); 
+
+			} else {
+
+				showLocationMarker.setMap(null); 
+			
+			}
 			
 		}
 
