@@ -12,7 +12,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	if (gameComponents) return gameComponents; 
 
-	if (!('google' in window) || !('maps' in window.google) || !('geometry' in window.google.maps)) {
+	if (!('google' in window) || !('maps' in window.google)) {
 
 		throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page."); 
 

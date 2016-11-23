@@ -14735,7 +14735,7 @@
 
 		if (gameComponents) return gameComponents;
 
-		if (!('google' in window) || !('maps' in window.google) || !('geometry' in window.google.maps)) {
+		if (!('google' in window) || !('maps' in window.google)) {
 
 			throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page.");
 		}
@@ -30235,24 +30235,7 @@
 		},
 		loadGoogleMaps: function loadGoogleMaps(MAPS_API_KEY) {
 
-			return (0, _injectGapiScript2.default)(MAPS_API_KEY)
-
-			/*----------  Poll for 'geometry' library in google.maps object  ----------*/
-
-			.then(function () {
-
-				var geometryLibraryLoaded = function geometryLibraryLoaded() {
-					return 'geometry' in google.maps;
-				};
-
-				var INTERVAL = 25; // milliseconds
-
-				var TIMEOUT = 5000; // milliseconds
-
-				var pollForGeometryLibrary = (0, _utils.poll)(geometryLibraryLoaded, INTERVAL, TIMEOUT);
-
-				return pollForGeometryLibrary;
-			});
+			return (0, _injectGapiScript2.default)(MAPS_API_KEY);
 		},
 		loadLeaflet: function loadLeaflet() {
 
@@ -30344,15 +30327,17 @@
 
 			var script = document.createElement("script");
 
-			var source = "https://maps.googleapis.com/maps/api/js?libraries=geometry";
+			var source = "https://maps.googleapis.com/maps/api/js";
 
 			script.type = "text/javascript";
 
 			if (MAPS_API_KEY) {
 
-				source += "&key=" + MAPS_API_KEY;
+				source += "?key=" + MAPS_API_KEY;
 			}
+
 			window.console.log("source:", source);
+
 			script.src = source;
 			script.onload = resolve;
 

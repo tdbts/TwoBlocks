@@ -26,23 +26,7 @@ TwoBlocksService.prototype = {
 
 	loadGoogleMaps(MAPS_API_KEY) {
 
-		return injectGapiScript(MAPS_API_KEY) 
-
-			/*----------  Poll for 'geometry' library in google.maps object  ----------*/
-
-			.then(() => {
-
-				const geometryLibraryLoaded = () => 'geometry' in google.maps; 
-
-				const INTERVAL = 25;  // milliseconds 
-
-				const TIMEOUT = 5000;  // milliseconds 
-
-				const pollForGeometryLibrary = poll(geometryLibraryLoaded, INTERVAL, TIMEOUT); 
-
-				return pollForGeometryLibrary; 				
-			
-			}); 
+		return injectGapiScript(MAPS_API_KEY); 
 
 	}, 
 
