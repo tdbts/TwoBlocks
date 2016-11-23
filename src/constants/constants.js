@@ -1,6 +1,7 @@
 import events from './events'; 
 import heardKeys from './heardKeys'; 
-import keyEventMaps from './keyEventMaps'; 
+import keyEventMaps from './keyEventMaps';
+import mapTypes from './mapTypes';  
 import nycCoordinates from './nycCoordinates';
 import workerMessages from './workerMessages'; 
 import ALL_TYPES from './ALL_TYPES'; 
@@ -26,6 +27,7 @@ export {
 	events, 
 	heardKeys, 
 	keyEventMaps, 
+	mapTypes, 
 	nycCoordinates, 
 	workerMessages, 
 	ALL_TYPES,

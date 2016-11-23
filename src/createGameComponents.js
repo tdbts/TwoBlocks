@@ -1,5 +1,6 @@
 /* global google */
 
+import { mapTypes } from './constants/constants'; 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
@@ -45,16 +46,16 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	/*----------  Set up chooseLocationMap  ----------*/
 
-	const { CENTER } = locationData; 
+	const { lat, lng } = locationData.CENTER; 
 
 	const mapOptions = {
-		center: new google.maps.LatLng(CENTER.lat, CENTER.lng),  
+		center: { lat, lng },   
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	}; 
 
-	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions);	
+	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions, mobile);	
 
-	// window.console.log("chooseLocationMap:", chooseLocationMap); 		
+	window.console.log("chooseLocationMap:", chooseLocationMap); 		
 
 	/*----------  Set up marker  ----------*/
 
@@ -64,7 +65,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	const markerOptions = {
 		animation: google.maps.Animation.BOUNCE, 
 		draggable: true, 
-		map: chooseLocationMap, 
+		map: chooseLocationMap.map, 
 		position: new google.maps.LatLng(markerLat, markerLng), 
 		visible: mapMarkerVisible
 	}; 

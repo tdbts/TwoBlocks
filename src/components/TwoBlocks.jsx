@@ -113,7 +113,7 @@ class TwoBlocks extends React.Component {
 
 		if (selectedBorough !== this.getBoroughName(borough)) {
 
-			chooseLocationMap.data.revertStyle(borough); 
+			chooseLocationMap.unselectBorough(borough); 
 
 		}
 
@@ -129,9 +129,9 @@ class TwoBlocks extends React.Component {
 		// or the choose location map does not yet exist, exit. 
 		if (prevState.chooseLocationMap || !(chooseLocationMap)) return;
 
-		chooseLocationMap.data.addListener('mouseover', event => this.onHoveredBorough(event.feature));
+		chooseLocationMap.map.data.addListener('mouseover', event => this.onHoveredBorough(event.feature));
 
-		chooseLocationMap.data.addListener('mouseout', event => {
+		chooseLocationMap.map.data.addListener('mouseout', event => {
 
 			this.updateHoveredBorough('');
 
@@ -139,7 +139,7 @@ class TwoBlocks extends React.Component {
 
 		}); 	
 
-		chooseLocationMap.data.addListener('click', event => {
+		chooseLocationMap.map.data.addListener('click', event => {
 
 			const { gameInstance } = this.props; 
 
@@ -301,6 +301,8 @@ class TwoBlocks extends React.Component {
 			mobile: this.shouldUseDeviceOrientation() 
 		}); 		
 
+		window.console.log("gameComponents:", gameComponents); 
+
 		/*----------  Start Game Instance  ----------*/
 		
 		this.addGameEventListeners(gameInstance); 
@@ -407,7 +409,7 @@ class TwoBlocks extends React.Component {
 
 		if (!(mobile)) {
 
-			chooseLocationMap.data.revertStyle(); 
+			chooseLocationMap.onChoosingLocation(); 
 		
 		}
 
@@ -483,7 +485,7 @@ class TwoBlocks extends React.Component {
 
 				// Add GeoJSON to the chooseLocationMap if not on mobile.  The 'addGeoJson()' method 
 				// returns the feature collection.  Each borough is a feature.  
-				const featureCollection = chooseLocationMap.data.addGeoJson(geoJSON);
+				const featureCollection = chooseLocationMap.onGeoJSONReceived(geoJSON); 
 
 				locationData.featureCollection = featureCollection; 
 
@@ -663,6 +665,7 @@ class TwoBlocks extends React.Component {
 
 		const { blockLevelMap, boroughLevelMap } = this.state; 
 
+		// blockLevelMap.onRandomLocation() 
 		blockLevelMap.panTo(randomLatLng); 
 		boroughLevelMap.panTo(randomLatLng); 
 
@@ -695,7 +698,7 @@ class TwoBlocks extends React.Component {
 
 		if (mobile) return; 
 
-		chooseLocationMap.data.revertStyle(); 
+		chooseLocationMap.onShowingPanorama();  
 
 	}
 
@@ -717,7 +720,7 @@ class TwoBlocks extends React.Component {
 
 		if (!(mobile)) {
 
-			chooseLocationMap.data.revertStyle(); 
+			chooseLocationMap.onTurnComplete(); 
 		
 		}
 
@@ -744,7 +747,7 @@ class TwoBlocks extends React.Component {
 
 		const centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng); 		
 
-		chooseLocationMap.setCenter(centerLatLng); 
+		chooseLocationMap.setCenter(centerLatLng);
 
 		this.setState({
 			mobile: this.isMobile()
@@ -929,7 +932,7 @@ class TwoBlocks extends React.Component {
 		// borough is the selected borough. 
 		if (selectedBorough !== this.getBoroughName(borough)) {
 
-			chooseLocationMap.data.overrideStyle(borough, {
+			chooseLocationMap.onHoveredBorough(borough, {
 				fillColor: HOVERED_BOROUGH_FILL_COLOR
 			}); 
 
@@ -943,9 +946,9 @@ class TwoBlocks extends React.Component {
 
 		if (mobile) return; 
 
-		chooseLocationMap.data.overrideStyle(borough, {
+		chooseLocationMap.onSelectedBorough(borough, {
 			fillColor: SELECTED_BOROUGH_FILL_COLOR
-		}); 	
+		}); 
 
 	}
 
@@ -967,7 +970,7 @@ class TwoBlocks extends React.Component {
 
 		const unselectedBoroughs = featureCollection.filter(feature => this.getBoroughName(feature) !== clickedBoroughName); 
  
-		unselectedBoroughs.forEach(feature => chooseLocationMap.data.revertStyle(feature)); 
+		unselectedBoroughs.forEach(feature => chooseLocationMap.unselectBorough(feature)); 
 
 	}
 

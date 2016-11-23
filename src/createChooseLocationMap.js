@@ -1,8 +1,9 @@
 /* global google */
 
-import { DEFAULT_MAP_OPTIONS } from './constants/constants'; 
+import { mapTypes, DEFAULT_MAP_OPTIONS } from './constants/constants'; 
+import ChooseLocationMap from './ChooseLocationMap'; 
 
-const createChooseLocationMap = function createChooseLocationMap(canvas, options) {
+const createChooseLocationMap = function createChooseLocationMap(canvas, options, mobile) {  // eslint-disable-line no-unused-vars 
 
 	if (!(canvas)) {
 
@@ -13,7 +14,7 @@ const createChooseLocationMap = function createChooseLocationMap(canvas, options
 	const mapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, options); 
 	const map = new google.maps.Map(canvas, mapOptions); 
 
-	return map; 
+	return new ChooseLocationMap(map, mapTypes.GOOGLE); 
 
 }; 
 
