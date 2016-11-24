@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "find . -name test -type d ! -path './node_modules/*' -exec mocha {} --compilers js:babel-core/register --recursive ';'",
-    "build": "npm run lint && NODE_ENV=production webpack -p", 
+    "build": "npm run lint && NODE_ENV=production webpack -p",
     "pack": "UV_THREADPOOL_SIZE=100 webpack",
     "lint": "eslint src/**/* build/",
     "postlint": "echo 'Linting complete with no errors.'",
@@ -66,6 +66,7 @@
     "bootstrap": "^3.3.7",
     "connect": "^3.5.0",
     "express": "^4.14.0",
+    "leaflet": "^1.0.2",
     "nodemon": "^1.11.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
