@@ -1,6 +1,6 @@
 /* global google, L */
 
-import { mapTypes, tileLayer, DEFAULT_MAP_OPTIONS } from './constants/constants'; 
+import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, DEFAULT_MAP_OPTIONS } from './constants/constants'; 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
@@ -67,7 +67,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 
 		mapTypeId,
-		zoom: mobile ? 18 : 16 
+		zoom: BLOCK_LEVEL_ZOOM 
 	}); 
 
 	const blockLevelMap = mobile ? L.map(blockLevelMapCanvas, blockLevelMapOptions) : new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions); 
@@ -76,7 +76,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	const boroughLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
 		mapTypeId, 
-		zoom: mobile ? 13 : 12
+		zoom: BOROUGH_LEVEL_ZOOM
 	}); 
 
 	const boroughLevelMap = mobile ? L.map(boroughLevelMapCanvas, boroughLevelMapOptions) : new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 			

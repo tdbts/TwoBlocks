@@ -9,7 +9,8 @@ import ALL_TYPES from './ALL_TYPES';
 import DEFAULT_MAP_OPTIONS from './DEFAULT_MAP_OPTIONS'; 
 
 const ANSWER_EVALUATION_DELAY 			= 6000;  // milliseconds 
-const TWO_BLOCKS_BUTTON_CLASS 			= "two-blocks-button";  
+const BLOCK_LEVEL_ZOOM 					= 16; 
+const BOROUGH_LEVEL_ZOOM 				= 12; 
 const DEFAULT_MAP_ZOOM 					= 10; 
 const DEFAULT_MAXIMUM_ROUNDS 			= 5;
 const HOVERED_BOROUGH_FILL_COLOR  		= "#A8FFFC";
@@ -22,6 +23,7 @@ const MINIMUM_SPINNER_SCREEN_WIDTH 		= 720;
 const PANORAMA_LOAD_DELAY  				= 3000; 
 const SELECTED_BOROUGH_FILL_COLOR 		= "#FFFFFF";
 const STREETVIEW_COUNTDOWN_LENGTH 		= 15;  // Seconds 
+const TWO_BLOCKS_BUTTON_CLASS 			= "two-blocks-button";  
 const WINDOW_RESIZE_DEBOUNCE_TIMEOUT 	= 100;
 
 export { 
@@ -33,7 +35,9 @@ export {
 	tileLayer,  
 	workerMessages, 
 	ALL_TYPES,
-	ANSWER_EVALUATION_DELAY, 
+	ANSWER_EVALUATION_DELAY,
+	BLOCK_LEVEL_ZOOM, 
+	BOROUGH_LEVEL_ZOOM,  
 	DEFAULT_MAP_OPTIONS, 
 	DEFAULT_MAP_ZOOM, 
 	DEFAULT_MAXIMUM_ROUNDS,
