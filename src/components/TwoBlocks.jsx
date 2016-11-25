@@ -8,7 +8,7 @@ import createGameComponents from '../createGameComponents';
 import createPromiseTimeout from '../createPromiseTimeout';  
 import Countdown from '../Countdown';
 import removeStreetNameAnnotations from '../removeStreetNameAnnotations';  
-import { events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_OPTIONS, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
@@ -285,6 +285,8 @@ class TwoBlocks extends React.Component {
 		/*----------  Create Game Components  ----------*/
 						
 		const gameComponents = createGameComponents({
+			blockLevelMapCanvas, 
+			boroughLevelMapCanvas, 
 			locationData, 
 			mapCanvas, 
 			mobile,  
@@ -293,50 +295,6 @@ class TwoBlocks extends React.Component {
 		}); 		
 
 		window.console.log("gameComponents:", gameComponents); 
-
-		/*----------  Create block-level map  ----------*/
-		
-		const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 
-			mapTypeId: google.maps.MapTypeId.ROADMAP, 
-			zoom: mobile ? 18 : 16 
-		}); 
-
-		const blockLevelMap = mobile ? L.map(blockLevelMapCanvas, blockLevelMapOptions) : new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions); 
-
-		/*----------  Create borough-level map  ----------*/
-		
-		const boroughLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
-			mapTypeId: google.maps.MapTypeId.ROADMAP, 
-			zoom: mobile ? 13 : 12
-		}); 
-
-		const boroughLevelMap = mobile ? L.map(boroughLevelMapCanvas, boroughLevelMapOptions) : new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 
-
-		/*----------  Add tile layer to mobile maps  ----------*/
-		
-		if (mobile) {
-
-			const { chooseLocationMap } = gameComponents; 
-			
-			// Separate tile layers and attribution must be used 
-			
-			const cityLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
-				attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
-			});			
-
-			const boroughLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
-				attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
-			});			
-
-			const blockLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
-				attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
-			});
-
-			cityLevelTileLayer.addTo(chooseLocationMap.map); 
-			boroughLevelTileLayer.addTo(boroughLevelMap); 
-			blockLevelTileLayer.addTo(blockLevelMap);  
-
-		}
 
 		/*----------  Start Game Instance  ----------*/
 		
@@ -356,8 +314,6 @@ class TwoBlocks extends React.Component {
 		
 		const nextState = {
 			...gameComponents,  
-			blockLevelMap, 
-			boroughLevelMap,
 			initialized: true
 		}; 
 
