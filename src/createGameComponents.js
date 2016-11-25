@@ -1,6 +1,6 @@
 /* global google, L */
 
-import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, DEFAULT_MAP_OPTIONS } from './constants/constants'; 
+import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, DEFAULT_MAP_OPTIONS } from './constants/constants'; 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
@@ -52,7 +52,8 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	const mapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
 		mapTypeId,  
-		center: mobile ? L.latLng(lat, lng) : { lat, lng }
+		center: mobile ? L.latLng(lat, lng) : { lat, lng }, 
+		zoom: mobile ? CITY_LEVEL_ZOOM + 1 : CITY_LEVEL_ZOOM
 	});
 
 	const map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(canvas, mapOptions); 
@@ -63,11 +64,11 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	window.console.log("chooseLocationMap:", chooseLocationMap); 
 
-	/*----------  Create block-level map  ----------*/
+	/*----------  CITY_LEVEL_ZOOM, Create block-level map  ----------*/
 	
 	const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 
 		mapTypeId,
-		zoom: BLOCK_LEVEL_ZOOM 
+		zoom: mobile ? BLOCK_LEVEL_ZOOM + 1 : BLOCK_LEVEL_ZOOM 
 	}); 
 
 	const blockLevelMap = mobile ? L.map(blockLevelMapCanvas, blockLevelMapOptions) : new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions); 
@@ -76,7 +77,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	const boroughLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
 		mapTypeId, 
-		zoom: BOROUGH_LEVEL_ZOOM
+		zoom: mobile ? BOROUGH_LEVEL_ZOOM + 1 : BOROUGH_LEVEL_ZOOM
 	}); 
 
 	const boroughLevelMap = mobile ? L.map(boroughLevelMapCanvas, boroughLevelMapOptions) : new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 			

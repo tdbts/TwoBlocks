@@ -8792,7 +8792,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.TWO_BLOCKS_BUTTON_CLASS = exports.STREETVIEW_COUNTDOWN_LENGTH = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.MINIMUM_SPINNER_SCREEN_WIDTH = exports.MILLISECONDS_IN_A_SECOND = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_MAXIMUM_ROUNDS = exports.DEFAULT_MAP_ZOOM = exports.DEFAULT_MAP_OPTIONS = exports.BOROUGH_LEVEL_ZOOM = exports.BLOCK_LEVEL_ZOOM = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.workerMessages = exports.tileLayer = exports.nycCoordinates = exports.mapTypes = exports.keyEventMaps = exports.heardKeys = exports.events = undefined;
+	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.TWO_BLOCKS_BUTTON_CLASS = exports.STREETVIEW_COUNTDOWN_LENGTH = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.MINIMUM_SPINNER_SCREEN_WIDTH = exports.MILLISECONDS_IN_A_SECOND = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_MAXIMUM_ROUNDS = exports.DEFAULT_MAP_OPTIONS = exports.CITY_LEVEL_ZOOM = exports.BOROUGH_LEVEL_ZOOM = exports.BLOCK_LEVEL_ZOOM = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.workerMessages = exports.tileLayer = exports.nycCoordinates = exports.mapTypes = exports.keyEventMaps = exports.heardKeys = exports.events = undefined;
 
 	var _events = __webpack_require__(313);
 
@@ -8835,7 +8835,7 @@
 	var ANSWER_EVALUATION_DELAY = 6000; // milliseconds
 	var BLOCK_LEVEL_ZOOM = 16;
 	var BOROUGH_LEVEL_ZOOM = 12;
-	var DEFAULT_MAP_ZOOM = 10;
+	var CITY_LEVEL_ZOOM = 10;
 	var DEFAULT_MAXIMUM_ROUNDS = 5;
 	var HOVERED_BOROUGH_FILL_COLOR = "#A8FFFC";
 	var KEY_PRESS_DEBOUNCE_TIMEOUT = 100;
@@ -8861,8 +8861,8 @@
 	exports.ANSWER_EVALUATION_DELAY = ANSWER_EVALUATION_DELAY;
 	exports.BLOCK_LEVEL_ZOOM = BLOCK_LEVEL_ZOOM;
 	exports.BOROUGH_LEVEL_ZOOM = BOROUGH_LEVEL_ZOOM;
+	exports.CITY_LEVEL_ZOOM = CITY_LEVEL_ZOOM;
 	exports.DEFAULT_MAP_OPTIONS = _DEFAULT_MAP_OPTIONS2.default;
-	exports.DEFAULT_MAP_ZOOM = DEFAULT_MAP_ZOOM;
 	exports.DEFAULT_MAXIMUM_ROUNDS = DEFAULT_MAXIMUM_ROUNDS;
 	exports.HOVERED_BOROUGH_FILL_COLOR = HOVERED_BOROUGH_FILL_COLOR;
 	exports.KEY_PRESS_DEBOUNCE_TIMEOUT = KEY_PRESS_DEBOUNCE_TIMEOUT;
@@ -9126,7 +9126,7 @@
 		mapTypeId: null,
 		scrollwheel: false,
 		streetViewControl: false,
-		zoom: 10, // Cannot use DEFAULT_MAP_ZOOM from 'constants' because WebPack v1.x cannot handle circular dependencies
+		zoom: null, // Cannot use DEFAULT_MAP_ZOOM from 'constants' because WebPack v1.x cannot handle circular dependencies
 		zoomControl: false
 		};
 
