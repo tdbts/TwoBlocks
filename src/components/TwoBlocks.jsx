@@ -282,6 +282,18 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
+		/*----------  Create Game Components  ----------*/
+						
+		const gameComponents = createGameComponents({
+			locationData, 
+			mapCanvas, 
+			mobile,  
+			panoramaCanvas,	
+			mapMarkerVisible: false 
+		}); 		
+
+		window.console.log("gameComponents:", gameComponents); 
+
 		/*----------  Create block-level map  ----------*/
 		
 		const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 
@@ -303,8 +315,15 @@ class TwoBlocks extends React.Component {
 		/*----------  Add tile layer to mobile maps  ----------*/
 		
 		if (mobile) {
+
+			const { chooseLocationMap } = gameComponents; 
 			
 			// Separate tile layers and attribution must be used 
+			
+			const cityLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
+				attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
+			});			
+
 			const boroughLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
 				attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
 			});			
@@ -313,22 +332,11 @@ class TwoBlocks extends React.Component {
 				attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
 			});
 
+			cityLevelTileLayer.addTo(chooseLocationMap.map); 
 			boroughLevelTileLayer.addTo(boroughLevelMap); 
 			blockLevelTileLayer.addTo(blockLevelMap);  
 
 		}
-
-		/*----------  Create Game Components  ----------*/
-						
-		const gameComponents = createGameComponents({
-			locationData, 
-			mapCanvas, 
-			panoramaCanvas,	
-			mapMarkerVisible: false, 
-			mobile: this.shouldUseDeviceOrientation() 
-		}); 		
-
-		window.console.log("gameComponents:", gameComponents); 
 
 		/*----------  Start Game Instance  ----------*/
 		

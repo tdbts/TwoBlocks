@@ -12607,6 +12607,18 @@
 					}
 				});
 
+				/*----------  Create Game Components  ----------*/
+
+				var gameComponents = (0, _createGameComponents2.default)({
+					locationData: locationData,
+					mapCanvas: mapCanvas,
+					mobile: mobile,
+					panoramaCanvas: panoramaCanvas,
+					mapMarkerVisible: false
+				});
+
+				window.console.log("gameComponents:", gameComponents);
+
 				/*----------  Create block-level map  ----------*/
 
 				var blockLevelMapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, {
@@ -12628,8 +12640,14 @@
 				/*----------  Add tile layer to mobile maps  ----------*/
 
 				if (mobile) {
+					var chooseLocationMap = gameComponents.chooseLocationMap;
 
 					// Separate tile layers and attribution must be used
+
+					var cityLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
+						attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
+					});
+
 					var boroughLevelTileLayer = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoidGRidHMiLCJhIjoiY2l2dWJreXBkMDZyMjJ0cXZjYmc2YTQ4eiJ9.CorNv4UczrzVzhT8npBzwA", {
 						attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
 					});
@@ -12638,21 +12656,10 @@
 						attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>"
 					});
 
+					cityLevelTileLayer.addTo(chooseLocationMap.map);
 					boroughLevelTileLayer.addTo(boroughLevelMap);
 					blockLevelTileLayer.addTo(blockLevelMap);
 				}
-
-				/*----------  Create Game Components  ----------*/
-
-				var gameComponents = (0, _createGameComponents2.default)({
-					locationData: locationData,
-					mapCanvas: mapCanvas,
-					panoramaCanvas: panoramaCanvas,
-					mapMarkerVisible: false,
-					mobile: this.shouldUseDeviceOrientation()
-				});
-
-				window.console.log("gameComponents:", gameComponents);
 
 				/*----------  Start Game Instance  ----------*/
 
@@ -14848,8 +14855,8 @@
 
 
 		var mapOptions = {
-			center: { lat: lat, lng: lng },
-			mapTypeId: google.maps.MapTypeId.ROADMAP
+			center: mobile ? L.latLng(lat, lng) : { lat: lat, lng: lng },
+			mapTypeId: mobile ? null : google.maps.MapTypeId.ROADMAP
 		};
 
 		var chooseLocationMap = (0, _createChooseLocationMap2.default)(mapCanvas, mapOptions, mobile);
@@ -17772,7 +17779,7 @@
 		value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global google */
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global google, L */
 
 	var _constants = __webpack_require__(347);
 
@@ -17791,9 +17798,11 @@
 		}
 
 		var mapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, options);
-		var map = new google.maps.Map(canvas, mapOptions);
+		var map = mobile ? new L.Map(canvas, mapOptions) : new google.maps.Map(canvas, mapOptions);
 
-		return new _ChooseLocationMap2.default(map, _constants.mapTypes.GOOGLE);
+		var mapType = mobile ? _constants.mapTypes.LEAFLET : _constants.mapTypes.GOOGLE;
+
+		return new _ChooseLocationMap2.default(map, mapType);
 	};
 
 	exports.default = createChooseLocationMap;

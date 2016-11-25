@@ -49,13 +49,13 @@ const createGameComponents = function createGameComponents(gameState) {
 	const { lat, lng } = locationData.CENTER; 
 
 	const mapOptions = {
-		center: { lat, lng },   
-		mapTypeId: google.maps.MapTypeId.ROADMAP
+		center: mobile ? L.latLng(lat, lng) : { lat, lng },   
+		mapTypeId: mobile ? null : google.maps.MapTypeId.ROADMAP
 	}; 
 
 	const chooseLocationMap = createChooseLocationMap(mapCanvas, mapOptions, mobile);	
 
-	window.console.log("chooseLocationMap:", chooseLocationMap); 		
+	window.console.log("chooseLocationMap:", chooseLocationMap); 	
 
 	/*----------  Set up marker  ----------*/
 
