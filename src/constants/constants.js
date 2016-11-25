@@ -3,6 +3,7 @@ import heardKeys from './heardKeys';
 import keyEventMaps from './keyEventMaps';
 import mapTypes from './mapTypes';  
 import nycCoordinates from './nycCoordinates';
+import tileLayer from './tileLayer';
 import workerMessages from './workerMessages'; 
 import ALL_TYPES from './ALL_TYPES'; 
 import DEFAULT_MAP_OPTIONS from './DEFAULT_MAP_OPTIONS'; 
@@ -28,7 +29,8 @@ export {
 	heardKeys, 
 	keyEventMaps, 
 	mapTypes, 
-	nycCoordinates, 
+	nycCoordinates,
+	tileLayer,  
 	workerMessages, 
 	ALL_TYPES,
 	ANSWER_EVALUATION_DELAY, 
