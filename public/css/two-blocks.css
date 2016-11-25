@@ -100,6 +100,10 @@ html, body {
 	top: 35%; 
 }
 
+.mobile .two-blocks-button {
+	background-color: rgb(255, 255, 255);	
+}
+
 .mobile .borough-selection-button, 
 .mobile .two-blocks-submitter-button {
 	display: block; 
