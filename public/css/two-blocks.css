@@ -107,9 +107,9 @@ html, body {
 .mobile .borough-selection-button, 
 .mobile .two-blocks-submitter-button {
 	display: block; 
-	width: 250px; 
-	height: 50px; 
-	margin: 0px auto 35px auto; 
-	font-size: 2em; 
+	width: 60%; 
+	height: 30%; 
+	margin: 0px auto 35px auto;
+	font-size: 1.2em;   
 }
 
