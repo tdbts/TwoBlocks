@@ -14876,7 +14876,7 @@
 		var mapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, {
 			mapTypeId: mapTypeId,
 			center: mobile ? L.latLng(lat, lng) : { lat: lat, lng: lng },
-			zoom: mobile ? _constants.CITY_LEVEL_ZOOM + 1 : _constants.CITY_LEVEL_ZOOM
+			zoom: _constants.CITY_LEVEL_ZOOM
 		});
 
 		var map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(mapCanvas, mapOptions);

@@ -53,7 +53,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	const mapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
 		mapTypeId,  
 		center: mobile ? L.latLng(lat, lng) : { lat, lng }, 
-		zoom: mobile ? CITY_LEVEL_ZOOM + 1 : CITY_LEVEL_ZOOM
+		zoom: CITY_LEVEL_ZOOM
 	});
 
 	const map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(mapCanvas, mapOptions); 
