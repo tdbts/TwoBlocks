@@ -13428,6 +13428,9 @@
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
 							return _this13.evaluateFinalAnswer();
 						},
+						clearSelectedBorough: function clearSelectedBorough() {
+							return _this13.setState({ selectedBorough: null });
+						},
 						selectedBorough: state.selectedBorough,
 						submitterTwoBlocksClass: props.submitterTwoBlocksClass,
 						hideReplayButton: !store || !store.getState().gameOver,
@@ -13921,6 +13924,7 @@
 				var promptTwoBlocksClass = _props.promptTwoBlocksClass;
 				var promptText = _props.promptText;
 				var evaluateFinalAnswer = _props.evaluateFinalAnswer;
+				var clearSelectedBorough = _props.clearSelectedBorough;
 				var selectedBorough = _props.selectedBorough;
 				var submitterTwoBlocksClass = _props.submitterTwoBlocksClass;
 				var hideReplayButton = _props.hideReplayButton;
@@ -13943,6 +13947,7 @@
 						choosingLocation: choosingLocation,
 						hoveredBorough: hoveredBorough,
 						evaluateFinalAnswer: evaluateFinalAnswer,
+						clearSelectedBorough: clearSelectedBorough,
 						mobile: mobile,
 						onTouchend: onMobileBoroughSelection,
 						selectedBorough: selectedBorough,
@@ -13965,6 +13970,7 @@
 	TwoBlocksInterchange.propTypes = {
 		choosingLocation: _react2.default.PropTypes.bool,
 		evaluateFinalAnswer: _react2.default.PropTypes.func,
+		clearSelectedBorough: _react2.default.PropTypes.func,
 		gameOver: _react2.default.PropTypes.bool,
 		hidden: _react2.default.PropTypes.bool,
 		hideReplayButton: _react2.default.PropTypes.bool,
@@ -14114,6 +14120,7 @@
 	var TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 		var choosingLocation = props.choosingLocation;
 		var evaluateFinalAnswer = props.evaluateFinalAnswer;
+		var clearSelectedBorough = props.clearSelectedBorough;
 		var mobile = props.mobile;
 		var onTouchend = props.onTouchend;
 		var selectedBorough = props.selectedBorough;
@@ -14126,28 +14133,34 @@
 
 		var borough = getBorough(selectedBorough);
 
-		var buttonLabel = "Final answer?";
+		var submissionButtonLabel = "Final answer?";
+
+		var clearSelectedButtonLabel = "Go back.";
 
 		var displayedComponent = mobile && choosingLocation ? _react2.default.createElement(_SubmitterMobile2.default, {
 			buttonClassName: calculatedClassName,
 			twoBlocksClass: twoBlocksClass,
 			onTouchend: onTouchend,
 			borough: borough,
-			buttonLabel: buttonLabel,
+			submissionButtonLabel: submissionButtonLabel,
+			clearSelectedButtonLabel: clearSelectedButtonLabel,
 			text: text,
-			onClick: function onClick() {
-				return onSubmissionButtonClick(evaluateFinalAnswer);
+			onSubmissionButtonClick: function onSubmissionButtonClick() {
+				return evaluateFinalAnswer();
+			},
+			onClearSelectedButtonClick: function onClearSelectedButtonClick() {
+				return clearSelectedBorough();
 			}
 		}) // eslint-disable-line no-mixed-spaces-and-tabs
 
 		: _react2.default.createElement(_SubmitterDesktop2.default, {
 			borough: borough,
 			buttonClassName: calculatedClassName,
-			buttonLabel: buttonLabel,
+			submissionButtonLabel: submissionButtonLabel,
 			text: text,
 			twoBlocksClass: twoBlocksClass,
-			onClick: function onClick() {
-				return onSubmissionButtonClick(evaluateFinalAnswer);
+			onSubmissionButtonClick: function onSubmissionButtonClick() {
+				return evaluateFinalAnswer();
 			}
 		}); // eslint-disable-line no-mixed-spaces-and-tabs
 
@@ -14169,11 +14182,6 @@
 	var getText = function getText(selectedBorough) {
 
 		return selectedBorough ? "You chose: " : "";
-	};
-
-	var onSubmissionButtonClick = function onSubmissionButtonClick(evaluateFinalAnswer) {
-
-		return evaluateFinalAnswer();
 	};
 
 	/*----------  Define PropTypes  ----------*/
@@ -14211,10 +14219,10 @@
 	var SubmitterDesktop = function SubmitterDesktop(props) {
 		var borough = props.borough;
 		var buttonClassName = props.buttonClassName;
-		var buttonLabel = props.buttonLabel;
+		var submissionButtonLabel = props.submissionButtonLabel;
 		var text = props.text;
 		var twoBlocksClass = props.twoBlocksClass;
-		var _onClick = props.onClick;
+		var onSubmissionButtonClick = props.onSubmissionButtonClick;
 
 
 		return _react2.default.createElement(
@@ -14235,9 +14243,9 @@
 			_react2.default.createElement(
 				'button',
 				{ className: buttonClassName, onClick: function onClick() {
-						return _onClick();
+						return onSubmissionButtonClick();
 					} },
-				buttonLabel
+				submissionButtonLabel
 			)
 		);
 	};
@@ -14248,10 +14256,10 @@
 
 		borough: _react2.default.PropTypes.string,
 		buttonClassName: _react2.default.PropTypes.string,
-		buttonLabel: _react2.default.PropTypes.string,
+		submissionButtonLabel: _react2.default.PropTypes.string,
 		text: _react2.default.PropTypes.string,
 		twoBlocksClass: _react2.default.PropTypes.string,
-		onClick: _react2.default.PropTypes.func
+		onSubmissionButtonClick: _react2.default.PropTypes.func
 
 	};
 
@@ -14261,7 +14269,7 @@
 /* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -14271,70 +14279,94 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _SubmitterDesktop = __webpack_require__(345);
-
-	var _SubmitterDesktop2 = _interopRequireDefault(_SubmitterDesktop);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var SubmitterMobile = function SubmitterMobile(props) {
 		var borough = props.borough;
 		var buttonClassName = props.buttonClassName;
-		var buttonLabel = props.buttonLabel;
-		var onClick = props.onClick;
+		var submissionButtonLabel = props.submissionButtonLabel;
+		var clearSelectedButtonLabel = props.clearSelectedButtonLabel;
+		var onSubmissionButtonClick = props.onSubmissionButtonClick;
+		var onClearSelectedButtonClick = props.onClearSelectedButtonClick;
 		var onTouchend = props.onTouchend;
 		var text = props.text;
 		var twoBlocksClass = props.twoBlocksClass;
 
 
-		var mobileClassName = "two-blocks-button two-blocks-mobile-button borough-selection-button";
+		var boroughButtonClassName = "two-blocks-button two-blocks-mobile-button borough-selection-button";
 
-		var markup = borough ? _react2.default.createElement(_SubmitterDesktop2.default, {
-			borough: borough,
-			buttonClassName: buttonClassName,
-			buttonLabel: buttonLabel,
-			text: text,
-			twoBlocksClass: twoBlocksClass,
-			onClick: onClick
-		}) // eslint-disable-line no-mixed-spaces-and-tabs
+		var finalAnswerClassName = ["two-blocks-final-answer-button", buttonClassName].join(' ');
 
-		: _react2.default.createElement(
-			'div',
+		var clearSelectedBoroughClassName = ["two-blocks-clear-selected-borough-button", buttonClassName].join(' ');
+
+		var markup = borough ? _react2.default.createElement(
+			"div",
+			{ className: [twoBlocksClass, borough ? '' : 'hidden'].join(' ') },
+			_react2.default.createElement(
+				"p",
+				{ className: "two-blocks-submitter-text" },
+				" ",
+				text,
+				" ",
+				_react2.default.createElement(
+					"span",
+					{ className: "two-blocks-submitter-borough-name" },
+					borough
+				)
+			),
+			_react2.default.createElement(
+				"button",
+				{ className: finalAnswerClassName, onClick: function onClick() {
+						return onSubmissionButtonClick();
+					} },
+				submissionButtonLabel
+			),
+			_react2.default.createElement(
+				"button",
+				{ className: clearSelectedBoroughClassName, onClick: function onClick() {
+						return onClearSelectedButtonClick();
+					} },
+				clearSelectedButtonLabel
+			)
+		) : // eslint-disable-line no-mixed-spaces-and-tabs
+
+		_react2.default.createElement(
+			"div",
 			{ className: twoBlocksClass },
 			_react2.default.createElement(
-				'button',
-				{ className: mobileClassName, onClick: function onClick() {
+				"button",
+				{ className: boroughButtonClassName, onClick: function onClick() {
 						return onTouchend('Bronx');
 					} },
-				'The Bronx'
+				"The Bronx"
 			),
 			_react2.default.createElement(
-				'button',
-				{ className: mobileClassName, onClick: function onClick() {
+				"button",
+				{ className: boroughButtonClassName, onClick: function onClick() {
 						return onTouchend('Manhattan');
 					} },
-				'Manhattan'
+				"Manhattan"
 			),
 			_react2.default.createElement(
-				'button',
-				{ className: mobileClassName, onClick: function onClick() {
+				"button",
+				{ className: boroughButtonClassName, onClick: function onClick() {
 						return onTouchend('Queens');
 					} },
-				'Queens'
+				"Queens"
 			),
 			_react2.default.createElement(
-				'button',
-				{ className: mobileClassName, onClick: function onClick() {
+				"button",
+				{ className: boroughButtonClassName, onClick: function onClick() {
 						return onTouchend('Brooklyn');
 					} },
-				'Brooklyn'
+				"Brooklyn"
 			),
 			_react2.default.createElement(
-				'button',
-				{ className: mobileClassName, onClick: function onClick() {
+				"button",
+				{ className: boroughButtonClassName, onClick: function onClick() {
 						return onTouchend('Staten Island');
 					} },
-				'Staten Island'
+				"Staten Island"
 			)
 		); // eslint-disable-line no-mixed-spaces-and-tabs
 
@@ -14847,7 +14879,7 @@
 			zoom: mobile ? _constants.CITY_LEVEL_ZOOM + 1 : _constants.CITY_LEVEL_ZOOM
 		});
 
-		var map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(canvas, mapOptions);
+		var map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(mapCanvas, mapOptions);
 
 		var mapType = mobile ? _constants.mapTypes.LEAFLET : _constants.mapTypes.GOOGLE;
 

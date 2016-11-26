@@ -4,13 +4,13 @@ import React from 'react';
 
 const SubmitterDesktop = function SubmitterDesktop(props) {
 
-	const { borough, buttonClassName, buttonLabel, text, twoBlocksClass, onClick } = props; 
+	const { borough, buttonClassName, submissionButtonLabel, text, twoBlocksClass, onSubmissionButtonClick } = props; 
 
 	return (
 		
 		<div className={ [twoBlocksClass, borough ? '' : 'hidden'].join(' ') }>
 			<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
-			<button className={ buttonClassName } onClick={ () => onClick() }>{ buttonLabel }</button>
+			<button className={ buttonClassName } onClick={ () => onSubmissionButtonClick() }>{ submissionButtonLabel }</button>
 		</div>
 
 	);
@@ -23,10 +23,10 @@ SubmitterDesktop.propTypes = {
 
 	borough: React.PropTypes.string, 
 	buttonClassName: React.PropTypes.string, 
-	buttonLabel: React.PropTypes.string, 
+	submissionButtonLabel: React.PropTypes.string, 
 	text: React.PropTypes.string, 
 	twoBlocksClass: React.PropTypes.string, 
-	onClick: React.PropTypes.func
+	onSubmissionButtonClick: React.PropTypes.func
 
 }; 
 

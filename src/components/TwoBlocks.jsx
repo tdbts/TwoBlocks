@@ -1076,6 +1076,7 @@ class TwoBlocks extends React.Component {
 					promptText={ state.promptText }
 					promptTwoBlocksClass={ props.promptTwoBlocksClass }
 					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
+					clearSelectedBorough={ () => this.setState({ selectedBorough: null }) }
 					selectedBorough={ state.selectedBorough }
 					submitterTwoBlocksClass={ props.submitterTwoBlocksClass }
 					hideReplayButton={ !(store) || !(store.getState().gameOver) }

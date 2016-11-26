@@ -56,7 +56,7 @@ const createGameComponents = function createGameComponents(gameState) {
 		zoom: mobile ? CITY_LEVEL_ZOOM + 1 : CITY_LEVEL_ZOOM
 	});
 
-	const map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(canvas, mapOptions); 
+	const map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(mapCanvas, mapOptions); 
 
 	const mapType = mobile ? mapTypes.LEAFLET : mapTypes.GOOGLE;  
 

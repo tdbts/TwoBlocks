@@ -8,7 +8,7 @@ import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants';
 
 const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
-	const { choosingLocation, evaluateFinalAnswer, mobile, onTouchend, selectedBorough, twoBlocksClass } = props; 	
+	const { choosingLocation, evaluateFinalAnswer, clearSelectedBorough, mobile, onTouchend, selectedBorough, twoBlocksClass } = props; 	
 
 	const calculatedClassName = getClassName(selectedBorough); 
 
@@ -16,7 +16,9 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const borough = getBorough(selectedBorough); 
 
-	const buttonLabel = "Final answer?"; 
+	const submissionButtonLabel = "Final answer?"; 
+
+	const clearSelectedButtonLabel = "Go back."; 
 
 	const displayedComponent = (mobile && choosingLocation) 
 
@@ -25,18 +27,20 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 			twoBlocksClass={ twoBlocksClass }
 			onTouchend={ onTouchend }
 			borough={ borough }
-			buttonLabel={ buttonLabel }
+			submissionButtonLabel={ submissionButtonLabel }
+			clearSelectedButtonLabel={ clearSelectedButtonLabel }
 			text={ text }
-			onClick={ () => onSubmissionButtonClick(evaluateFinalAnswer) }
+			onSubmissionButtonClick={ () => evaluateFinalAnswer() }
+			onClearSelectedButtonClick={ () => clearSelectedBorough() }
 		  />  // eslint-disable-line no-mixed-spaces-and-tabs
 
 		: <SubmitterDesktop 
 			borough={ borough }
 			buttonClassName={ calculatedClassName }
-			buttonLabel={ buttonLabel }
+			submissionButtonLabel={ submissionButtonLabel }
 			text={ text }
 			twoBlocksClass={ twoBlocksClass }
-			onClick={ () => onSubmissionButtonClick(evaluateFinalAnswer) }
+			onSubmissionButtonClick={ () => evaluateFinalAnswer() }
 		  />;  // eslint-disable-line no-mixed-spaces-and-tabs 
 
 	return displayedComponent;  
@@ -66,12 +70,6 @@ const getClassName = function getClassName(selectedBorough) {
 const getText = function getText(selectedBorough) {
 
 	return selectedBorough ? "You chose: " : ""; 
-
-}; 
-
-const onSubmissionButtonClick = function onSubmissionButtonClick(evaluateFinalAnswer) {
-
-	return evaluateFinalAnswer(); 
 
 }; 
 

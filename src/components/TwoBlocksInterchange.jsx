@@ -11,7 +11,7 @@ class TwoBlocksInterchange extends React.Component {
 
 	render() {
 
-		const { choosingLocation, gameOver, hidden, hoveredBorough, mobile, promptTwoBlocksClass, promptText, evaluateFinalAnswer, selectedBorough, submitterTwoBlocksClass, hideReplayButton, onMobileBoroughSelection, restart, replayButtonTwoBlocksClass } = this.props; 
+		const { choosingLocation, gameOver, hidden, hoveredBorough, mobile, promptTwoBlocksClass, promptText, evaluateFinalAnswer, clearSelectedBorough, selectedBorough, submitterTwoBlocksClass, hideReplayButton, onMobileBoroughSelection, restart, replayButtonTwoBlocksClass } = this.props; 
 
 		return (
 			
@@ -27,6 +27,7 @@ class TwoBlocksInterchange extends React.Component {
 					choosingLocation={ choosingLocation } 
 					hoveredBorough={ hoveredBorough }
 					evaluateFinalAnswer={ evaluateFinalAnswer }
+					clearSelectedBorough={ clearSelectedBorough }
 					mobile={ mobile }
 					onTouchend={ onMobileBoroughSelection }
 					selectedBorough={ selectedBorough }
@@ -49,7 +50,8 @@ class TwoBlocksInterchange extends React.Component {
 
 TwoBlocksInterchange.propTypes = {
 	choosingLocation: React.PropTypes.bool, 
-	evaluateFinalAnswer: React.PropTypes.func, 
+	evaluateFinalAnswer: React.PropTypes.func,
+	clearSelectedBorough: React.PropTypes.func, 
 	gameOver: React.PropTypes.bool,
 	hidden: React.PropTypes.bool,  
 	hideReplayButton: React.PropTypes.bool, 
