@@ -20,7 +20,7 @@ class TwoBlocksInterchange extends React.Component {
 					choosingLocation={ choosingLocation }
 					gameOver={ gameOver }
 					hoveredBorough={ hoveredBorough }
-					twoBlocksClass={ promptTwoBlocksClass }
+					twoBlocksClass={ [ "two-blocks-interchange-component", promptTwoBlocksClass ].join(' ') }
 					text={ promptText }
 				/>
 				<TwoBlocksSubmitter
@@ -31,12 +31,12 @@ class TwoBlocksInterchange extends React.Component {
 					mobile={ mobile }
 					onTouchend={ onMobileBoroughSelection }
 					selectedBorough={ selectedBorough }
-					twoBlocksClass={ submitterTwoBlocksClass }
+					twoBlocksClass={ [ "two-blocks-interchange-component", submitterTwoBlocksClass ].join(' ') }
 				/>
 				<TwoBlocksReplayButton 
 					hidden={ hideReplayButton }
 					restart={ restart }
-					twoBlocksClass={ replayButtonTwoBlocksClass }
+					twoBlocksClass={ [ "two-blocks-interchange-component", replayButtonTwoBlocksClass ].join(' ') }
 				/>
 			</div>
 

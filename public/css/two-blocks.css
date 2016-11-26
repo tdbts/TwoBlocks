@@ -103,6 +103,8 @@ html, body {
 .mobile .two-blocks-button {
 	background-color: rgb(255, 255, 255);	
 	font-size: 1.2em; 
+	max-width: 250px; 
+	min-height: 25px; 
 }
 
 .mobile .two-blocks-countdown {
@@ -131,4 +133,21 @@ html, body {
 	right: 0; 
 	top: 50%; 
 	margin: auto; 
+}
+
+@media screen and (orientation: landscape) {
+
+	.mobile .borough-selection-button {
+		margin-bottom: 15px; 
+	}
+
+	.mobile .two-blocks-prompt {
+		top: 5%; 
+	}
+
+	.mobile .two-blocks-submitter {
+		top: 40%; 
+		position: relative;
+	}	
+
 }
