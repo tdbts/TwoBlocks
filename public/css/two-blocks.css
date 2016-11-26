@@ -102,6 +102,7 @@ html, body {
 
 .mobile .two-blocks-button {
 	background-color: rgb(255, 255, 255);	
+	font-size: 1.2em; 
 }
 
 .mobile .borough-selection-button, 
@@ -109,7 +110,15 @@ html, body {
 	display: block; 
 	width: 60%; 
 	height: 30%; 
-	margin: 0px auto 35px auto;
-	font-size: 1.2em;   
+	margin: 0px auto 35px auto;  
 }
 
+.mobile .two-blocks-replay-button {
+	position: absolute; 
+	width: 60%; 
+	height: 5%; 
+	left: 0; 
+	right: 0; 
+	top: 50%; 
+	margin: auto; 
+}
