@@ -26,7 +26,8 @@ class TwoBlocks extends React.Component {
 			boroughLevelMapCanvas 	: null, 
 			chooseLocationMap 		: null, 
 			chooseLocationMarker 	: null, 
-			choosingLocation 		: false,   
+			choosingLocation 		: false,
+			countdownTimeLeft 		: null,    
 			hoveredBorough 			: null,
 			initialized 			: false,  
 			interchangeHidden 		: false, 
@@ -944,15 +945,27 @@ class TwoBlocks extends React.Component {
 
 		const countdown = new Countdown(STREETVIEW_COUNTDOWN_LENGTH); 
 
-		countdown.on('tick', timeLeft => window.console.log("timeLeft:", timeLeft)); 
+		countdown.on('tick', timeLeft => {
 
-		countdown.on('end', () => {
-			gameInstance.emit(events.CHOOSING_LOCATION); 
+			window.console.log("timeLeft:", timeLeft); 
+
+			this.setState({
+				countdownTimeLeft: timeLeft
+			}); 
+
 		}); 
+
+		countdown.on('end', () => gameInstance.emit(events.CHOOSING_LOCATION)); 
 
 		countdown.on('start', () => window.console.log("countdown start.")); 
 
-		countdown.start(); 		
+		return this.setState({
+				
+				countdownTimeLeft: STREETVIEW_COUNTDOWN_LENGTH
+			
+			})
+
+			.then(() => countdown.start()); 
 
 	}
 
@@ -1054,11 +1067,14 @@ class TwoBlocks extends React.Component {
 					blockLevelMap={ state.blockLevelMap }
 					boroughLevelMap={ state.boroughLevelMap }
 					cityLevelMap={ state.chooseLocationMap }
+					countdownTimeLeft={ state.countdownTimeLeft }
+					interchangeHidden={ state.interchangeHidden }
 					mapConfig={ state.mapConfig }
 					mapTwoBlocksClass={ props.mapTwoBlocksClass }
 					mapMarker={ state.chooseLocationMarker }
 					mapMarkerVisible={ state.mapMarkerVisible }
 					mapType={ state.mapType }
+					mobile={ state.mobile }
 					onMapMounted={ this.onMapMounted.bind(this) }
 					onPanoramaMounted={ this.onPanoramaMounted.bind(this) } 
 					panorama={ state.panorama } 

@@ -105,6 +105,16 @@ html, body {
 	font-size: 1.2em; 
 }
 
+.mobile .two-blocks-countdown {
+	position: absolute;
+	top: 10%; 
+	color: #fff; 
+	font-size: 1.5em;
+	font-weight: bold; 
+	text-shadow: 3px 3px 3px #000;  
+	z-index: 100; 
+}
+
 .mobile .borough-selection-button, 
 .mobile .two-blocks-submitter-button {
 	display: block; 
