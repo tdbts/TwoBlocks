@@ -12904,68 +12904,55 @@
 				var gameStage = _store$getState2.gameStage;
 
 
-				if ('pregame' === gameStage) return;
+				if ('pregame' === gameStage) return; // (For now) keypresses do not have any effect in the 'pregame' stage
 
 				var arrowKeyHoverMap = _constants.keyEventMaps.arrowKeyHoverMap;
 				var firstArrowKeyPressBoroughMap = _constants.keyEventMaps.firstArrowKeyPressBoroughMap;
 
 
-				if (!(0, _utils.isOneOf)(_constants.heardKeys, e.key)) return;
+				if (!(0, _utils.isOneOf)(_constants.heardKeys, e.key)) return; // Only react to key presses we're listening for
 
 				if ('map' !== view) return;
 
-				if (gameInstance.gameOver() && 'Enter' === e.key) {
+				if ('Enter' === e.key) {
 
-					gameInstance.emit(_constants.events.RESTART_GAME);
-				}
+					if (gameInstance.gameOver()) {
 
-				if (!hoveredBorough) {
+						gameInstance.emit(_constants.events.RESTART_GAME);
+					} else if (hoveredBorough) {
 
-					if ('Enter' === e.key && selectedBorough) {
+						var selectedFeature = this.getFeatureByBoroughName(hoveredBorough);
 
-						return this.evaluateFinalAnswer();
+						this.onSelectedBorough(selectedFeature);
+					} else if (selectedBorough) {
+
+						this.evaluateFinalAnswer();
 					}
+				} else {
 
-					var boroughList = firstArrowKeyPressBoroughMap[e.key];
+					var boroughList = null;
+
+					if (hoveredBorough) {
+
+						var hoveredBoroughArrowMap = arrowKeyHoverMap[hoveredBorough];
+
+						boroughList = hoveredBoroughArrowMap[e.key];
+					} else {
+
+						boroughList = firstArrowKeyPressBoroughMap[e.key];
+					}
 
 					if (!boroughList) return;
 
 					var randomIndex = Math.floor(Math.random() * boroughList.length);
+
 					var boroughName = boroughList[randomIndex];
+
+					if (boroughName === hoveredBorough) return;
 
 					var feature = this.getFeatureByBoroughName(boroughName);
 
 					this.onHoveredBorough(feature);
-				} else {
-
-					if ('Enter' === e.key && !gameInstance.gameOver()) {
-
-						var selectedFeature = this.getFeatureByBoroughName(hoveredBorough);
-
-						return this.onSelectedBorough(selectedFeature);
-					}
-
-					var hoveredBoroughArrowMap = arrowKeyHoverMap[hoveredBorough];
-
-					var _boroughList = hoveredBoroughArrowMap[e.key];
-
-					if (!_boroughList) return;
-
-					var _randomIndex = Math.floor(Math.random() * _boroughList.length);
-
-					var newHoveredBorough = _boroughList[_randomIndex];
-
-					if (newHoveredBorough === hoveredBorough) return;
-
-					var featureToUnhover = this.getFeatureByBoroughName(hoveredBorough);
-
-					var featureToHover = this.getFeatureByBoroughName(newHoveredBorough);
-
-					this.styleNonHoveredBorough(featureToUnhover);
-
-					this.updateHoveredBorough(featureToHover);
-
-					this.styleHoveredBorough(featureToHover);
 				}
 			}
 		}, {
@@ -13041,7 +13028,6 @@
 				var blockLevelMap = _state11.blockLevelMap;
 				var boroughLevelMap = _state11.boroughLevelMap;
 
-				// blockLevelMap.onRandomLocation()
 
 				blockLevelMap.panTo(randomLatLng);
 				boroughLevelMap.panTo(randomLatLng);

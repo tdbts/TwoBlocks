@@ -570,70 +570,59 @@ class TwoBlocks extends React.Component {
 
 		const { gameStage } = store.getState(); 
 
-		if ('pregame' === gameStage) return; 
+		if ('pregame' === gameStage) return;  // (For now) keypresses do not have any effect in the 'pregame' stage 
 
 		const { arrowKeyHoverMap, firstArrowKeyPressBoroughMap } = keyEventMaps; 
 
-		if (!(isOneOf(heardKeys, e.key))) return;  
+		if (!(isOneOf(heardKeys, e.key))) return;  // Only react to key presses we're listening for 
 
 		if ('map' !== view) return; 
 
-		if (gameInstance.gameOver() && ('Enter' === e.key)) {
+		if ('Enter' === e.key) {
 
-			gameInstance.emit(events.RESTART_GAME); 
+			if (gameInstance.gameOver()) {
 
-		}
+				gameInstance.emit(events.RESTART_GAME); 
 
-		if (!(hoveredBorough)) {
-
-			if (('Enter' === e.key) && selectedBorough) {
-
-				return this.evaluateFinalAnswer(); 
-
-			}
-
-			const boroughList = firstArrowKeyPressBoroughMap[e.key]; 
-
-			if (!(boroughList)) return; 
-
-			const randomIndex = Math.floor(Math.random() * boroughList.length);  
-			const boroughName = boroughList[randomIndex]; 
-
-			const feature = this.getFeatureByBoroughName(boroughName); 
-
-			this.onHoveredBorough(feature); 
-
-		} else {
-
-			if (('Enter' === e.key) && !(gameInstance.gameOver())) { 
+			} else if (hoveredBorough) {
 
 				const selectedFeature = this.getFeatureByBoroughName(hoveredBorough); 
 
-				return this.onSelectedBorough(selectedFeature); 
+				this.onSelectedBorough(selectedFeature); 		
+
+			} else if (selectedBorough) {
+
+				this.evaluateFinalAnswer(); 
 
 			}
 
-			const hoveredBoroughArrowMap = arrowKeyHoverMap[hoveredBorough]; 
+		} else {
 
-			const boroughList = hoveredBoroughArrowMap[e.key]; 
- 
+			let boroughList = null; 
+
+			if (hoveredBorough) {
+
+				const hoveredBoroughArrowMap = arrowKeyHoverMap[hoveredBorough]; 
+
+				boroughList = hoveredBoroughArrowMap[e.key]; 
+
+			} else {
+
+				boroughList = firstArrowKeyPressBoroughMap[e.key];
+
+			}
+
 			if (!(boroughList)) return; 
 
 			const randomIndex = Math.floor(Math.random() * boroughList.length); 
 
-			const newHoveredBorough = boroughList[randomIndex]; 
+			const boroughName = boroughList[randomIndex]; 
 
-			if (newHoveredBorough === hoveredBorough) return; 
-
-			const featureToUnhover = this.getFeatureByBoroughName(hoveredBorough); 
+			if (boroughName === hoveredBorough) return; 
 			
-			const featureToHover = this.getFeatureByBoroughName(newHoveredBorough); 
+			const feature = this.getFeatureByBoroughName(boroughName); 
 
-			this.styleNonHoveredBorough(featureToUnhover); 
-
-			this.updateHoveredBorough(featureToHover); 
-
-			this.styleHoveredBorough(featureToHover); 
+			this.onHoveredBorough(feature); 	
 
 		}
 
@@ -710,7 +699,6 @@ class TwoBlocks extends React.Component {
 
 		const { blockLevelMap, boroughLevelMap } = this.state; 
 
-		// blockLevelMap.onRandomLocation() 
 		blockLevelMap.panTo(randomLatLng); 
 		boroughLevelMap.panTo(randomLatLng); 
 
