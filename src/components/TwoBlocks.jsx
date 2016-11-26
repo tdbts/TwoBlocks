@@ -353,8 +353,6 @@ class TwoBlocks extends React.Component {
 
 		const showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng); 
 
-		window.console.log("showLocationMarkerPosition:", showLocationMarkerPosition); 
-
 		if (mobile) {
 
 			showLocationMarker.setOpacity(1); 
@@ -395,8 +393,9 @@ class TwoBlocks extends React.Component {
 				if (mobile) {
 					
 					boroughLevelMap.removeLayer(showLocationMarker);
-					// showLocationMarker.setOpacity(1); 
-					// showLocationMarker.setLatLng(showLocationMarkerPosition); 					 
+
+					showLocationMarker.setOpacity(1); 
+					showLocationMarker.setLatLng(showLocationMarkerPosition);
 					showLocationMarker.addTo(blockLevelMap); 
 
 				} else {
@@ -747,7 +746,7 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { chooseLocationMap, mobile } = this.state; 
+		const { blockLevelMap, chooseLocationMap, mobile, showLocationMarker } = this.state; 
 
 		const { gameInstance, locationData } = this.props; 
 
@@ -757,6 +756,10 @@ class TwoBlocks extends React.Component {
 
 			chooseLocationMap.onTurnComplete(); 
 		
+		} else {
+
+			blockLevelMap.removeLayer(showLocationMarker); 
+
 		}
 
 		chooseLocationMap.panTo(locationData.CENTER); 
@@ -947,8 +950,6 @@ class TwoBlocks extends React.Component {
 
 		countdown.on('tick', timeLeft => {
 
-			window.console.log("timeLeft:", timeLeft); 
-
 			this.setState({
 				countdownTimeLeft: timeLeft
 			}); 
@@ -956,8 +957,6 @@ class TwoBlocks extends React.Component {
 		}); 
 
 		countdown.on('end', () => gameInstance.emit(events.CHOOSING_LOCATION)); 
-
-		countdown.on('start', () => window.console.log("countdown start.")); 
 
 		return this.setState({
 				
