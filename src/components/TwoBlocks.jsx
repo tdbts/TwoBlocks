@@ -162,9 +162,20 @@ class TwoBlocks extends React.Component {
 		
 		const onKeyPress = debounce(this.onKeypress.bind(this), KEY_PRESS_DEBOUNCE_TIMEOUT); 
 
+		/*----------  Handle touchmove events  ----------*/
+		
+		const onTouchMove = e => e.preventDefault(); 
+
 		window.addEventListener('resize', onWindowResize); 
 
-		window.addEventListener('keydown', onKeyPress); 
+		window.addEventListener('keydown', onKeyPress);
+
+		if (this.state.mobile) {
+
+			// Prevent drags from moving the game view layers 
+			window.addEventListener('touchmove', onTouchMove); 
+
+		} 
 
 	}
 

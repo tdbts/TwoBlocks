@@ -12452,9 +12452,21 @@
 
 				var onKeyPress = (0, _utils.debounce)(this.onKeypress.bind(this), _constants.KEY_PRESS_DEBOUNCE_TIMEOUT);
 
+				/*----------  Handle touchmove events  ----------*/
+
+				var onTouchMove = function onTouchMove(e) {
+					return e.preventDefault();
+				};
+
 				window.addEventListener('resize', onWindowResize);
 
 				window.addEventListener('keydown', onKeyPress);
+
+				if (this.state.mobile) {
+
+					// Prevent drags from moving the game view layers
+					window.addEventListener('touchmove', onTouchMove);
+				}
 			}
 		}, {
 			key: 'addGameEventListeners',
