@@ -30,9 +30,7 @@ inherits(Countdown, EventEmitter);
 Object.assign(Countdown.prototype, {
 
 	_nextTick() {
-		window.console.log("_nextTick()"); 
-		window.console.log("this.stopped:", this.stopped); 
-		window.console.log("this.countdownLength:", this.countdownLength); 
+ 
 		if (this.stopped || this.countdownLength === 0) {
 
 			if (!(this.interval)) return; 

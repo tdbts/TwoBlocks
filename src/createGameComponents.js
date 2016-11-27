@@ -28,9 +28,10 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	const panorama = createPanorama(panoramaCanvas, { 
 		mode, 
+		fullscreenControl: false, 
 		position: null, 
 		visible: true, 
-		zoomControl: mobile
+		zoomControl: false
 	}); 
 
 	/*----------  Set up spinner  ----------*/

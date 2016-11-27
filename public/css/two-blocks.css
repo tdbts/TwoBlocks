@@ -142,12 +142,20 @@ html, body {
 	}
 
 	.mobile .two-blocks-prompt {
-		top: 5%; 
+		top: 0%; 
 	}
 
-	.mobile .two-blocks-submitter {
-		top: 40%; 
+	.mobile .two-blocks-prompt, 
+	.mobile .two-blocks-countdown {
+		left: 1%;
+	}
+
+	.mobile .two-blocks-submitter { 
 		position: relative;
+	}
+
+	.mobile .two-blocks-submitter-button {
+		margin-bottom: 25px; 
 	}	
 
 }

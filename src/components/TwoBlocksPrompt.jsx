@@ -16,7 +16,7 @@ const TwoBlocksPrompt = function TwoBlocksPrompt(props) {
 	return (
 
 		<div className={ twoBlocksClass }>
-			<h3>{ headerText }</h3>
+			<p>{ headerText }</p>
 		</div>
 	); 
 
