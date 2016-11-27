@@ -100,8 +100,6 @@ class TwoBlocks extends React.Component {
 
 		this.addChooseLocationMapEventListeners(prevState); 
 
-		this.showRandomPanorama(prevState); 
-
 	}
 
 	styleNonHoveredBorough(borough) {
@@ -705,7 +703,9 @@ class TwoBlocks extends React.Component {
 		return this.setState({ 
 			panoramaBorough: boroughName,  
 			panoramaLatLng: randomLatLng
-		});
+		})
+
+		.then(() => this.showRandomPanorama()); 
 
 	}
 
@@ -873,9 +873,7 @@ class TwoBlocks extends React.Component {
 
 	} 
 
-	showRandomPanorama(prevState) {
-
-		if (prevState.panoramaLatLng === this.state.panoramaLatLng) return;  // Don't show random panorama if the panoramaLatLng has not changed  
+	showRandomPanorama() {
 	
 		const { gameInstance, store } = this.props; 
 

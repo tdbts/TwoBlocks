@@ -12382,8 +12382,6 @@
 				}
 
 				this.addChooseLocationMapEventListeners(prevState);
-
-				this.showRandomPanorama(prevState);
 			}
 		}, {
 			key: 'styleNonHoveredBorough',
@@ -13022,6 +13020,8 @@
 		}, {
 			key: 'onRandomLocation',
 			value: function onRandomLocation(randomLocationDetails) {
+				var _this9 = this;
+
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
 				var _state11 = this.state;
@@ -13035,6 +13035,8 @@
 				return this.setState({
 					panoramaBorough: boroughName,
 					panoramaLatLng: randomLatLng
+				}).then(function () {
+					return _this9.showRandomPanorama();
 				});
 			}
 		}, {
@@ -13126,7 +13128,7 @@
 		}, {
 			key: 'requestGeoJSON',
 			value: function requestGeoJSON() {
-				var _this9 = this;
+				var _this10 = this;
 
 				var mobile = this.state.mobile;
 
@@ -13153,7 +13155,7 @@
 
 								if (_constants.workerMessages.SENDING_GEO_JSON === message) {
 
-									_this9.onGeoJSONReceived(payload);
+									_this10.onGeoJSONReceived(payload);
 
 									worker.removeEventListener('message', onGeoJSONSent);
 								}
@@ -13171,7 +13173,7 @@
 						})();
 					} else {
 
-						_this9.onGeoJSONReceived(gameInstance.locationData.featureCollection);
+						_this10.onGeoJSONReceived(gameInstance.locationData.featureCollection);
 					}
 				});
 			}
@@ -13206,10 +13208,8 @@
 			}
 		}, {
 			key: 'showRandomPanorama',
-			value: function showRandomPanorama(prevState) {
-				var _this10 = this;
-
-				if (prevState.panoramaLatLng === this.state.panoramaLatLng) return; // Don't show random panorama if the panoramaLatLng has not changed 
+			value: function showRandomPanorama() {
+				var _this11 = this;
 
 				var _props7 = this.props;
 				var gameInstance = _props7.gameInstance;
@@ -13228,32 +13228,32 @@
 				}).then(function () {
 					return gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
 				}).then(function () {
-					return _this10.setState({
+					return _this11.setState({
 
 						promptText: 'Look closely...which borough is this Street View from?'
 
 					});
 				}).then(function () {
-					return _this10.state.mobile ? (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY) : null;
+					return _this11.state.mobile ? (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY) : null;
 				}).then(function () {
 
-					if (_this10.shouldUseDeviceOrientation()) {
+					if (_this11.shouldUseDeviceOrientation()) {
 
-						_this10.startStreetviewCountdown();
+						_this11.startStreetviewCountdown();
 
-						_this10.setState({
+						_this11.setState({
 							interchangeHidden: true
 						});
 					} else {
 
-						_this10.showSpinner();
+						_this11.showSpinner();
 					}
 				});
 			}
 		}, {
 			key: 'showSpinner',
 			value: function showSpinner() {
-				var _this11 = this;
+				var _this12 = this;
 
 				var spinner = this.state.spinner;
 				var gameInstance = this.props.gameInstance;
@@ -13263,7 +13263,7 @@
 
 				spinner.once('revolution', function () {
 
-					_this11.onSpinnerRevolution();
+					_this12.onSpinnerRevolution();
 
 					gameInstance.emit(_constants.events.CHOOSING_LOCATION);
 				});
@@ -13271,7 +13271,7 @@
 		}, {
 			key: 'startStreetviewCountdown',
 			value: function startStreetviewCountdown() {
-				var _this12 = this;
+				var _this13 = this;
 
 				var gameInstance = this.props.gameInstance;
 
@@ -13280,7 +13280,7 @@
 
 				countdown.on('tick', function (timeLeft) {
 
-					_this12.setState({
+					_this13.setState({
 						countdownTimeLeft: timeLeft
 					});
 				});
@@ -13334,7 +13334,7 @@
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _this13 = this;
+				var _this14 = this;
 
 				var _state16 = this.state;
 				var chooseLocationMap = _state16.chooseLocationMap;
@@ -13357,7 +13357,7 @@
 				if (!featureCollection) return;
 
 				var unselectedBoroughs = featureCollection.filter(function (feature) {
-					return _this13.getBoroughName(feature) !== clickedBoroughName;
+					return _this14.getBoroughName(feature) !== clickedBoroughName;
 				});
 
 				unselectedBoroughs.forEach(function (feature) {
@@ -13400,7 +13400,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this14 = this;
+				var _this15 = this;
 
 				var props = this.props;
 				var state = this.state;
@@ -13439,10 +13439,10 @@
 						promptText: state.promptText,
 						promptTwoBlocksClass: props.promptTwoBlocksClass,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this14.evaluateFinalAnswer();
+							return _this15.evaluateFinalAnswer();
 						},
 						clearSelectedBorough: function clearSelectedBorough() {
-							return _this14.setState({ selectedBorough: null });
+							return _this15.setState({ selectedBorough: null });
 						},
 						selectedBorough: state.selectedBorough,
 						submitterTwoBlocksClass: props.submitterTwoBlocksClass,
@@ -13453,7 +13453,7 @@
 						replayButtonTwoBlocksClass: props.replayButtonTwoBlocksClass,
 						mobile: state.mobile,
 						onMobileBoroughSelection: function onMobileBoroughSelection(borough) {
-							return _this14.onMobileBoroughSelection(borough);
+							return _this15.onMobileBoroughSelection(borough);
 						}
 					})
 				);
