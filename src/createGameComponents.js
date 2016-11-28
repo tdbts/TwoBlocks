@@ -4,7 +4,7 @@ import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_Z
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
-import ChooseLocationMap from './ChooseLocationMap';  
+import CityMap from './CityMap';  
 
 let gameComponents = null; 
 
@@ -45,7 +45,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	spinner.on('revolution', () => window.console.log('revolution')); 
 	
-	/*----------  Set up chooseLocationMap  ----------*/
+	/*----------  Set up cityMap  ----------*/
 
 	const mapTypeId = mobile ? null : google.maps.MapTypeId.ROADMAP; 
 
@@ -61,9 +61,9 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	const mapType = mobile ? mapTypes.LEAFLET : mapTypes.GOOGLE;  
 
-	const chooseLocationMap = new ChooseLocationMap(map, mapType); 
+	const cityMap = new CityMap(map, mapType); 
 
-	window.console.log("chooseLocationMap:", chooseLocationMap); 
+	window.console.log("cityMap:", cityMap); 
 
 	/*----------  CITY_LEVEL_ZOOM, Create block-level map  ----------*/
 	
@@ -103,7 +103,7 @@ const createGameComponents = function createGameComponents(gameState) {
 			attribution: ATTRIBUTION
 		});
 
-		cityLevelTileLayer.addTo(chooseLocationMap.map); 
+		cityLevelTileLayer.addTo(cityMap.map); 
 		boroughLevelTileLayer.addTo(boroughLevelMap); 
 		blockLevelTileLayer.addTo(blockLevelMap);  
 
@@ -117,12 +117,12 @@ const createGameComponents = function createGameComponents(gameState) {
 	const markerOptions = {
 		animation: google.maps.Animation.BOUNCE, 
 		draggable: true, 
-		map: chooseLocationMap.map, 
+		map: cityMap.map, 
 		position: new google.maps.LatLng(markerLat, markerLng), 
 		visible: mapMarkerVisible
 	}; 
 
-	const chooseLocationMarker = mobile ? new L.Marker() : new google.maps.Marker(markerOptions); 
+	const cityMapMarker = mobile ? new L.Marker() : new google.maps.Marker(markerOptions); 
 
 	/*----------  Set up WebGl  ----------*/
 	
@@ -137,8 +137,8 @@ const createGameComponents = function createGameComponents(gameState) {
 	gameComponents = {
 		blockLevelMap, 
 		boroughLevelMap, 
-		chooseLocationMap, 
-		chooseLocationMarker, 
+		cityMap, 
+		cityMapMarker, 
 		panorama, 
 		spinner
 	}; 

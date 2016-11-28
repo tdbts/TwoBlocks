@@ -24,8 +24,8 @@ class TwoBlocks extends React.Component {
 			boroughLevelMap 		: null, 
 			blockLevelMapCanvas 	: null, 
 			boroughLevelMapCanvas 	: null, 
-			chooseLocationMap 		: null, 
-			chooseLocationMarker 	: null, 
+			cityMap 				: null, 
+			cityMapMarker 			: null, 
 			choosingLocation 		: false,
 			countdownTimeLeft 		: null,    
 			hoveredBorough 			: null,
@@ -98,7 +98,7 @@ class TwoBlocks extends React.Component {
 		
 		}
 
-		this.addChooseLocationMapEventListeners(prevState); 
+		this.addCityMapEventListeners(prevState); 
 
 	}
 
@@ -106,31 +106,31 @@ class TwoBlocks extends React.Component {
 
 		if (!(borough)) return; 
 
-		const { chooseLocationMap, mobile, selectedBorough } = this.state;
+		const { cityMap, mobile, selectedBorough } = this.state;
 
 		if (mobile) return; 
 
 		if (selectedBorough !== this.getBoroughName(borough)) {
 
-			chooseLocationMap.unselectBorough(borough); 
+			cityMap.unselectBorough(borough); 
 
 		}
 
 	}
 
-	addChooseLocationMapEventListeners(prevState) {
+	addCityMapEventListeners(prevState) {
 
-		const { chooseLocationMap, mobile } = this.state; 
+		const { cityMap, mobile } = this.state; 
 
 		if (mobile) return;  // Event listeners below only apply to desktop game instances  
 
-		// If we have already added listeners to the choose location map, 
-		// or the choose location map does not yet exist, exit. 
-		if (prevState.chooseLocationMap || !(chooseLocationMap)) return;
+		// If we have already added listeners to the city map, 
+		// or the city map does not yet exist, exit. 
+		if (prevState.cityMap || !(cityMap)) return;
 
-		chooseLocationMap.map.data.addListener('mouseover', event => this.onHoveredBorough(event.feature));
+		cityMap.map.data.addListener('mouseover', event => this.onHoveredBorough(event.feature));
 
-		chooseLocationMap.map.data.addListener('mouseout', event => {
+		cityMap.map.data.addListener('mouseout', event => {
 
 			this.updateHoveredBorough('');
 
@@ -138,7 +138,7 @@ class TwoBlocks extends React.Component {
 
 		}); 	
 
-		chooseLocationMap.map.data.addListener('click', event => {
+		cityMap.map.data.addListener('click', event => {
 
 			const { gameInstance } = this.props; 
 
@@ -426,13 +426,13 @@ class TwoBlocks extends React.Component {
 
 	onChoosingLocation() {
 
-		const { chooseLocationMap, mobile } = this.state; 
+		const { cityMap, mobile } = this.state; 
 
 		const { store } = this.props; 
 
 		if (!(mobile)) {
 
-			chooseLocationMap.onChoosingLocation(); 
+			cityMap.onChoosingLocation(); 
 		
 		}
 
@@ -464,7 +464,7 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({
 			...gameComponents, 
-			showLocationMarker: gameComponents.chooseLocationMarker
+			showLocationMarker: gameComponents.cityMapMarker
 		});
 	}
 
@@ -501,14 +501,14 @@ class TwoBlocks extends React.Component {
 
 	onGeoJSONReceived(geoJSON) {
 
-		const { chooseLocationMap, mobile } = this.state; 
+		const { cityMap, mobile } = this.state; 
 
 		const { gameInstance, locationData } = this.props;  
 
-		// Race condition circumvention: If the chooseLocationMap does not 
+		// Race condition circumvention: If the cityMap does not 
 		// yet exist, wait until the 'GAME_COMPONENTS' event fires to execute 
 		// the rest of the method body.  
-		if (!(chooseLocationMap)) {
+		if (!(cityMap)) {
 			
 			gameInstance.once(events.GAME_COMPONENTS, () => this.onGeoJSONReceived(geoJSON)); 
 
@@ -516,9 +516,9 @@ class TwoBlocks extends React.Component {
 
 			if (!(mobile)) {
 
-				// Add GeoJSON to the chooseLocationMap if not on mobile.  The 'addGeoJson()' method 
+				// Add GeoJSON to the cityMap if not on mobile.  The 'addGeoJson()' method 
 				// returns the feature collection.  Each borough is a feature.  
-				const featureCollection = chooseLocationMap.onGeoJSONReceived(geoJSON); 
+				const featureCollection = cityMap.onGeoJSONReceived(geoJSON); 
 
 				locationData.featureCollection = featureCollection; 
 
@@ -568,13 +568,13 @@ class TwoBlocks extends React.Component {
 
 		const { gameStage } = store.getState(); 
 
-		if ('pregame' === gameStage) return;  // (For now) keypresses do not have any effect in the 'pregame' stage 
+		if ('pregame' === gameStage) return;  // (For now) keypresses do not have any effect in the 'pregame' stage.  
 
 		const { arrowKeyHoverMap, firstArrowKeyPressBoroughMap } = keyEventMaps; 
 
-		if (!(isOneOf(heardKeys, e.key))) return;  // Only react to key presses we're listening for 
+		if (!(isOneOf(heardKeys, e.key))) return;  // Only react to key presses we're listening for. 
 
-		if ('map' !== view) return; 
+		if ('map' !== view) return;  // Don't react to key presses if the map is not showing (for now). 
 
 		if ('Enter' === e.key) {
 
@@ -727,11 +727,11 @@ class TwoBlocks extends React.Component {
 
 	onShowingPanorama() {
 
-		const { chooseLocationMap, mobile } = this.state; 
+		const { cityMap, mobile } = this.state; 
 
 		if (mobile) return; 
 
-		chooseLocationMap.onShowingPanorama();  
+		cityMap.onShowingPanorama();  
 
 	}
 
@@ -745,7 +745,7 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { blockLevelMap, chooseLocationMap, mobile, showLocationMarker } = this.state; 
+		const { blockLevelMap, cityMap, mobile, showLocationMarker } = this.state; 
 
 		const { gameInstance, locationData } = this.props; 
 
@@ -753,7 +753,7 @@ class TwoBlocks extends React.Component {
 
 		if (!(mobile)) {
 
-			chooseLocationMap.onTurnComplete(); 
+			cityMap.onTurnComplete(); 
 		
 		} else {
 
@@ -761,8 +761,8 @@ class TwoBlocks extends React.Component {
 
 		}
 
-		chooseLocationMap.panTo(locationData.CENTER); 
-		chooseLocationMap.setZoom(DEFAULT_MAP_ZOOM); 		
+		cityMap.panTo(locationData.CENTER); 
+		cityMap.setZoom(DEFAULT_MAP_ZOOM); 		
 
 		this.setState({
 			
@@ -776,7 +776,7 @@ class TwoBlocks extends React.Component {
 
 	onWindowResize() {
 
-		const { chooseLocationMap } = this.state;
+		const { cityMap } = this.state;
 
 		const { locationData } = this.props; 
 
@@ -784,7 +784,7 @@ class TwoBlocks extends React.Component {
 
 		const centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng); 		
 
-		chooseLocationMap.setCenter(centerLatLng);
+		cityMap.setCenter(centerLatLng);
 
 		this.setState({
 			mobile: this.isMobile()
@@ -792,7 +792,10 @@ class TwoBlocks extends React.Component {
 
 	}
 
-
+	// If on desktop, request the GeoJSON data from the web worker in order to 
+	// show the borough boundaries on the map.  Add a listener to handle the 
+	// data once the worker has sent it, and then make the request for the data.  
+	// If there is no worker, move on using the GeoJSON member of th game instance.  
 	requestGeoJSON() {
 
 		const { mobile } = this.state; 
@@ -801,7 +804,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, worker } = this.props; 
 
-		gameInstance.geoJSONLoaded() 
+		return gameInstance.geoJSONLoaded() 
 
 			.then(() => {
 
@@ -813,13 +816,11 @@ class TwoBlocks extends React.Component {
 
 						const { message, payload } = event.data; 
 
-						if (workerMessages.SENDING_GEO_JSON === message) {
+						if (workerMessages.SENDING_GEO_JSON !== message) return; 
 
-							this.onGeoJSONReceived(payload);  
+						this.onGeoJSONReceived(payload);  
 
-							worker.removeEventListener('message', onGeoJSONSent); 
-
-						}
+						worker.removeEventListener('message', onGeoJSONSent); 
 
 					}; 
 
@@ -888,22 +889,21 @@ class TwoBlocks extends React.Component {
 				}); 
 
 				gameInstance.emit(events.SHOWING_PANORAMA); 
+				gameInstance.emit(events.VIEW_CHANGE, { view }); 
+
+				return this.setState({
+			
+					promptText: 'Look closely...which borough is this Street View from?' 
+				
+				}); 
 
 			})
-
-			.then(() => gameInstance.emit(events.VIEW_CHANGE, { view }))
-
-			.then(() => this.setState({
-			
-				promptText: 'Look closely...which borough is this Street View from?' 
-			
-			}))
 
 			.then(() => (this.state.mobile) ? createPromiseTimeout(PANORAMA_LOAD_DELAY) : null)
 
 			.then(() => {
 
-				if (this.shouldUseDeviceOrientation()) {
+				if (this.isMobile()) {
 
 					this.startStreetviewCountdown();  					
 
@@ -967,7 +967,7 @@ class TwoBlocks extends React.Component {
 
 	styleHoveredBorough(borough) {
 
-		const { chooseLocationMap, mobile, selectedBorough } = this.state; 
+		const { cityMap, mobile, selectedBorough } = this.state; 
 
 		if (mobile) return; 
 
@@ -975,7 +975,7 @@ class TwoBlocks extends React.Component {
 		// borough is the selected borough. 
 		if (selectedBorough !== this.getBoroughName(borough)) {
 
-			chooseLocationMap.onHoveredBorough(borough, {
+			cityMap.onHoveredBorough(borough, {
 				fillColor: HOVERED_BOROUGH_FILL_COLOR
 			}); 
 
@@ -985,11 +985,11 @@ class TwoBlocks extends React.Component {
 
 	styleSelectedBorough(borough) {
 
-		const { chooseLocationMap, mobile } = this.state; 
+		const { cityMap, mobile } = this.state; 
 
 		if (mobile) return; 
 
-		chooseLocationMap.onSelectedBorough(borough, {
+		cityMap.onSelectedBorough(borough, {
 			fillColor: SELECTED_BOROUGH_FILL_COLOR
 		}); 
 
@@ -997,7 +997,7 @@ class TwoBlocks extends React.Component {
 
 	styleUnselectedBoroughs(borough) {
 			
-		const { chooseLocationMap, mobile, selectedBorough } = this.state; 
+		const { cityMap, mobile, selectedBorough } = this.state; 
 
 		if (mobile) return; 
 
@@ -1013,13 +1013,13 @@ class TwoBlocks extends React.Component {
 
 		const unselectedBoroughs = featureCollection.filter(feature => this.getBoroughName(feature) !== clickedBoroughName); 
  
-		unselectedBoroughs.forEach(feature => chooseLocationMap.unselectBorough(feature)); 
+		unselectedBoroughs.forEach(feature => cityMap.unselectBorough(feature)); 
 
 	}
 
 	updateHoveredBorough(feature) {
 
-		if (!(feature)) {
+		if (!(feature)) {  // No borough is currently hovered.  Modify state to reflect this. 
 
 			return this.setState({
 				hoveredBorough: ''
@@ -1029,9 +1029,9 @@ class TwoBlocks extends React.Component {
 
 		const boroughName = this.getBoroughName(feature); 
 
-		if (this.state.hoveredBorough === boroughName) return; 
+		if (this.state.hoveredBorough === boroughName) return;  // Don't change state if the hovered borough has not changed. 
 
-		this.setState({
+		return this.setState({
 			hoveredBorough: boroughName
 		}); 
 
@@ -1062,12 +1062,12 @@ class TwoBlocks extends React.Component {
 				<TwoBlocksView 
 					blockLevelMap={ state.blockLevelMap }
 					boroughLevelMap={ state.boroughLevelMap }
-					cityLevelMap={ state.chooseLocationMap }
+					cityLevelMap={ state.cityMap }
 					countdownTimeLeft={ state.countdownTimeLeft }
 					interchangeHidden={ state.interchangeHidden }
 					mapConfig={ state.mapConfig }
 					mapTwoBlocksClass={ props.mapTwoBlocksClass }
-					mapMarker={ state.chooseLocationMarker }
+					mapMarker={ state.cityMapMarker }
 					mapMarkerVisible={ state.mapMarkerVisible }
 					mapType={ state.mapType }
 					mobile={ state.mobile }

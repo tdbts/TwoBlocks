@@ -1,13 +1,13 @@
 import { mapTypes } from './constants/constants'; 
 
-const ChooseLocationMap = function ChooseLocationMap(map, mapType) {
+const CityMap = function CityMap(map, mapType) {
 
 	this.map = map; 
 	this.mapType = mapType; 
 
 }; 
 
-ChooseLocationMap.prototype = {
+CityMap.prototype = {
 
 	onChoosingLocation() {
 
@@ -110,4 +110,4 @@ ChooseLocationMap.prototype = {
 
 }; 
 
-export default ChooseLocationMap; 
+export default CityMap; 

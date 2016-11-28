@@ -12307,8 +12307,8 @@
 				boroughLevelMap: null,
 				blockLevelMapCanvas: null,
 				boroughLevelMapCanvas: null,
-				chooseLocationMap: null,
-				chooseLocationMarker: null,
+				cityMap: null,
+				cityMapMarker: null,
 				choosingLocation: false,
 				countdownTimeLeft: null,
 				hoveredBorough: null,
@@ -12381,7 +12381,7 @@
 					this.initializeTwoBlocks();
 				}
 
-				this.addChooseLocationMapEventListeners(prevState);
+				this.addCityMapEventListeners(prevState);
 			}
 		}, {
 			key: 'styleNonHoveredBorough',
@@ -12390,7 +12390,7 @@
 				if (!borough) return;
 
 				var _state = this.state;
-				var chooseLocationMap = _state.chooseLocationMap;
+				var cityMap = _state.cityMap;
 				var mobile = _state.mobile;
 				var selectedBorough = _state.selectedBorough;
 
@@ -12399,37 +12399,37 @@
 
 				if (selectedBorough !== this.getBoroughName(borough)) {
 
-					chooseLocationMap.unselectBorough(borough);
+					cityMap.unselectBorough(borough);
 				}
 			}
 		}, {
-			key: 'addChooseLocationMapEventListeners',
-			value: function addChooseLocationMapEventListeners(prevState) {
+			key: 'addCityMapEventListeners',
+			value: function addCityMapEventListeners(prevState) {
 				var _this2 = this;
 
 				var _state2 = this.state;
-				var chooseLocationMap = _state2.chooseLocationMap;
+				var cityMap = _state2.cityMap;
 				var mobile = _state2.mobile;
 
 
 				if (mobile) return; // Event listeners below only apply to desktop game instances 
 
-				// If we have already added listeners to the choose location map,
-				// or the choose location map does not yet exist, exit.
-				if (prevState.chooseLocationMap || !chooseLocationMap) return;
+				// If we have already added listeners to the city map,
+				// or the city map does not yet exist, exit.
+				if (prevState.cityMap || !cityMap) return;
 
-				chooseLocationMap.map.data.addListener('mouseover', function (event) {
+				cityMap.map.data.addListener('mouseover', function (event) {
 					return _this2.onHoveredBorough(event.feature);
 				});
 
-				chooseLocationMap.map.data.addListener('mouseout', function (event) {
+				cityMap.map.data.addListener('mouseout', function (event) {
 
 					_this2.updateHoveredBorough('');
 
 					_this2.styleNonHoveredBorough(event.feature);
 				});
 
-				chooseLocationMap.map.data.addListener('click', function (event) {
+				cityMap.map.data.addListener('click', function (event) {
 					var gameInstance = _this2.props.gameInstance;
 
 
@@ -12745,14 +12745,14 @@
 				var _this7 = this;
 
 				var _state6 = this.state;
-				var chooseLocationMap = _state6.chooseLocationMap;
+				var cityMap = _state6.cityMap;
 				var mobile = _state6.mobile;
 				var store = this.props.store;
 
 
 				if (!mobile) {
 
-					chooseLocationMap.onChoosingLocation();
+					cityMap.onChoosingLocation();
 				}
 
 				store.dispatch({
@@ -12782,7 +12782,7 @@
 			value: function onGameComponents(gameComponents) {
 
 				return this.setState(_extends({}, gameComponents, {
-					showLocationMarker: gameComponents.chooseLocationMarker
+					showLocationMarker: gameComponents.cityMapMarker
 				}));
 			}
 		}, {
@@ -12821,17 +12821,17 @@
 				var _this8 = this;
 
 				var _state8 = this.state;
-				var chooseLocationMap = _state8.chooseLocationMap;
+				var cityMap = _state8.cityMap;
 				var mobile = _state8.mobile;
 				var _props2 = this.props;
 				var gameInstance = _props2.gameInstance;
 				var locationData = _props2.locationData;
 
-				// Race condition circumvention: If the chooseLocationMap does not
+				// Race condition circumvention: If the cityMap does not
 				// yet exist, wait until the 'GAME_COMPONENTS' event fires to execute
 				// the rest of the method body. 
 
-				if (!chooseLocationMap) {
+				if (!cityMap) {
 
 					gameInstance.once(_constants.events.GAME_COMPONENTS, function () {
 						return _this8.onGeoJSONReceived(geoJSON);
@@ -12840,9 +12840,9 @@
 
 					if (!mobile) {
 
-						// Add GeoJSON to the chooseLocationMap if not on mobile.  The 'addGeoJson()' method
+						// Add GeoJSON to the cityMap if not on mobile.  The 'addGeoJson()' method
 						// returns the feature collection.  Each borough is a feature. 
-						var featureCollection = chooseLocationMap.onGeoJSONReceived(geoJSON);
+						var featureCollection = cityMap.onGeoJSONReceived(geoJSON);
 
 						locationData.featureCollection = featureCollection;
 					}
@@ -12902,15 +12902,15 @@
 				var gameStage = _store$getState2.gameStage;
 
 
-				if ('pregame' === gameStage) return; // (For now) keypresses do not have any effect in the 'pregame' stage
+				if ('pregame' === gameStage) return; // (For now) keypresses do not have any effect in the 'pregame' stage. 
 
 				var arrowKeyHoverMap = _constants.keyEventMaps.arrowKeyHoverMap;
 				var firstArrowKeyPressBoroughMap = _constants.keyEventMaps.firstArrowKeyPressBoroughMap;
 
 
-				if (!(0, _utils.isOneOf)(_constants.heardKeys, e.key)) return; // Only react to key presses we're listening for
+				if (!(0, _utils.isOneOf)(_constants.heardKeys, e.key)) return; // Only react to key presses we're listening for.
 
-				if ('map' !== view) return;
+				if ('map' !== view) return; // Don't react to key presses if the map is not showing (for now).
 
 				if ('Enter' === e.key) {
 
@@ -13059,13 +13059,13 @@
 			key: 'onShowingPanorama',
 			value: function onShowingPanorama() {
 				var _state12 = this.state;
-				var chooseLocationMap = _state12.chooseLocationMap;
+				var cityMap = _state12.cityMap;
 				var mobile = _state12.mobile;
 
 
 				if (mobile) return;
 
-				chooseLocationMap.onShowingPanorama();
+				cityMap.onShowingPanorama();
 			}
 		}, {
 			key: 'onSpinnerRevolution',
@@ -13080,7 +13080,7 @@
 			value: function onTurnComplete() {
 				var _state13 = this.state;
 				var blockLevelMap = _state13.blockLevelMap;
-				var chooseLocationMap = _state13.chooseLocationMap;
+				var cityMap = _state13.cityMap;
 				var mobile = _state13.mobile;
 				var showLocationMarker = _state13.showLocationMarker;
 				var _props4 = this.props;
@@ -13092,14 +13092,14 @@
 
 				if (!mobile) {
 
-					chooseLocationMap.onTurnComplete();
+					cityMap.onTurnComplete();
 				} else {
 
 					blockLevelMap.removeLayer(showLocationMarker);
 				}
 
-				chooseLocationMap.panTo(locationData.CENTER);
-				chooseLocationMap.setZoom(_constants.DEFAULT_MAP_ZOOM);
+				cityMap.panTo(locationData.CENTER);
+				cityMap.setZoom(_constants.DEFAULT_MAP_ZOOM);
 
 				this.setState({
 
@@ -13112,19 +13112,25 @@
 		}, {
 			key: 'onWindowResize',
 			value: function onWindowResize() {
-				var chooseLocationMap = this.state.chooseLocationMap;
+				var cityMap = this.state.cityMap;
 				var locationData = this.props.locationData;
 				var CENTER = locationData.CENTER;
 
 
 				var centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng);
 
-				chooseLocationMap.setCenter(centerLatLng);
+				cityMap.setCenter(centerLatLng);
 
 				this.setState({
 					mobile: this.isMobile()
 				});
 			}
+
+			// If on desktop, request the GeoJSON data from the web worker in order to
+			// show the borough boundaries on the map.  Add a listener to handle the
+			// data once the worker has sent it, and then make the request for the data. 
+			// If there is no worker, move on using the GeoJSON member of th game instance. 
+
 		}, {
 			key: 'requestGeoJSON',
 			value: function requestGeoJSON() {
@@ -13140,7 +13146,7 @@
 				var worker = _props5.worker;
 
 
-				gameInstance.geoJSONLoaded().then(function () {
+				return gameInstance.geoJSONLoaded().then(function () {
 
 					if (worker) {
 						(function () {
@@ -13153,12 +13159,11 @@
 								var payload = _event$data.payload;
 
 
-								if (_constants.workerMessages.SENDING_GEO_JSON === message) {
+								if (_constants.workerMessages.SENDING_GEO_JSON !== message) return;
 
-									_this10.onGeoJSONReceived(payload);
+								_this10.onGeoJSONReceived(payload);
 
-									worker.removeEventListener('message', onGeoJSONSent);
-								}
+								worker.removeEventListener('message', onGeoJSONSent);
 							};
 
 							// Assign the event listener before posting message
@@ -13225,9 +13230,8 @@
 					});
 
 					gameInstance.emit(_constants.events.SHOWING_PANORAMA);
-				}).then(function () {
-					return gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
-				}).then(function () {
+					gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
+
 					return _this11.setState({
 
 						promptText: 'Look closely...which borough is this Street View from?'
@@ -13237,7 +13241,7 @@
 					return _this11.state.mobile ? (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY) : null;
 				}).then(function () {
 
-					if (_this11.shouldUseDeviceOrientation()) {
+					if (_this11.isMobile()) {
 
 						_this11.startStreetviewCountdown();
 
@@ -13301,7 +13305,7 @@
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
 				var _state14 = this.state;
-				var chooseLocationMap = _state14.chooseLocationMap;
+				var cityMap = _state14.cityMap;
 				var mobile = _state14.mobile;
 				var selectedBorough = _state14.selectedBorough;
 
@@ -13312,7 +13316,7 @@
 				// borough is the selected borough.
 				if (selectedBorough !== this.getBoroughName(borough)) {
 
-					chooseLocationMap.onHoveredBorough(borough, {
+					cityMap.onHoveredBorough(borough, {
 						fillColor: _constants.HOVERED_BOROUGH_FILL_COLOR
 					});
 				}
@@ -13321,13 +13325,13 @@
 			key: 'styleSelectedBorough',
 			value: function styleSelectedBorough(borough) {
 				var _state15 = this.state;
-				var chooseLocationMap = _state15.chooseLocationMap;
+				var cityMap = _state15.cityMap;
 				var mobile = _state15.mobile;
 
 
 				if (mobile) return;
 
-				chooseLocationMap.onSelectedBorough(borough, {
+				cityMap.onSelectedBorough(borough, {
 					fillColor: _constants.SELECTED_BOROUGH_FILL_COLOR
 				});
 			}
@@ -13337,7 +13341,7 @@
 				var _this14 = this;
 
 				var _state16 = this.state;
-				var chooseLocationMap = _state16.chooseLocationMap;
+				var cityMap = _state16.cityMap;
 				var mobile = _state16.mobile;
 				var selectedBorough = _state16.selectedBorough;
 
@@ -13361,7 +13365,7 @@
 				});
 
 				unselectedBoroughs.forEach(function (feature) {
-					return chooseLocationMap.unselectBorough(feature);
+					return cityMap.unselectBorough(feature);
 				});
 			}
 		}, {
@@ -13369,6 +13373,7 @@
 			value: function updateHoveredBorough(feature) {
 
 				if (!feature) {
+					// No borough is currently hovered.  Modify state to reflect this.
 
 					return this.setState({
 						hoveredBorough: ''
@@ -13377,9 +13382,9 @@
 
 				var boroughName = this.getBoroughName(feature);
 
-				if (this.state.hoveredBorough === boroughName) return;
+				if (this.state.hoveredBorough === boroughName) return; // Don't change state if the hovered borough has not changed.
 
-				this.setState({
+				return this.setState({
 					hoveredBorough: boroughName
 				});
 			}
@@ -13413,12 +13418,12 @@
 					_react2.default.createElement(_TwoBlocksView2.default, {
 						blockLevelMap: state.blockLevelMap,
 						boroughLevelMap: state.boroughLevelMap,
-						cityLevelMap: state.chooseLocationMap,
+						cityLevelMap: state.cityMap,
 						countdownTimeLeft: state.countdownTimeLeft,
 						interchangeHidden: state.interchangeHidden,
 						mapConfig: state.mapConfig,
 						mapTwoBlocksClass: props.mapTwoBlocksClass,
-						mapMarker: state.chooseLocationMarker,
+						mapMarker: state.cityMapMarker,
 						mapMarkerVisible: state.mapMarkerVisible,
 						mapType: state.mapType,
 						mobile: state.mobile,
@@ -14885,9 +14890,9 @@
 
 	var _createWebGlManager2 = _interopRequireDefault(_createWebGlManager);
 
-	var _ChooseLocationMap = __webpack_require__(409);
+	var _CityMap = __webpack_require__(409);
 
-	var _ChooseLocationMap2 = _interopRequireDefault(_ChooseLocationMap);
+	var _CityMap2 = _interopRequireDefault(_CityMap);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14938,7 +14943,7 @@
 			return window.console.log('revolution');
 		});
 
-		/*----------  Set up chooseLocationMap  ----------*/
+		/*----------  Set up cityMap  ----------*/
 
 		var mapTypeId = mobile ? null : google.maps.MapTypeId.ROADMAP;
 
@@ -14957,9 +14962,9 @@
 
 		var mapType = mobile ? _constants.mapTypes.LEAFLET : _constants.mapTypes.GOOGLE;
 
-		var chooseLocationMap = new _ChooseLocationMap2.default(map, mapType);
+		var cityMap = new _CityMap2.default(map, mapType);
 
-		window.console.log("chooseLocationMap:", chooseLocationMap);
+		window.console.log("cityMap:", cityMap);
 
 		/*----------  CITY_LEVEL_ZOOM, Create block-level map  ----------*/
 
@@ -15001,7 +15006,7 @@
 				attribution: ATTRIBUTION
 			});
 
-			cityLevelTileLayer.addTo(chooseLocationMap.map);
+			cityLevelTileLayer.addTo(cityMap.map);
 			boroughLevelTileLayer.addTo(boroughLevelMap);
 			blockLevelTileLayer.addTo(blockLevelMap);
 		}
@@ -15017,12 +15022,12 @@
 		var markerOptions = {
 			animation: google.maps.Animation.BOUNCE,
 			draggable: true,
-			map: chooseLocationMap.map,
+			map: cityMap.map,
 			position: new google.maps.LatLng(markerLat, markerLng),
 			visible: mapMarkerVisible
 		};
 
-		var chooseLocationMarker = mobile ? new L.Marker() : new google.maps.Marker(markerOptions);
+		var cityMapMarker = mobile ? new L.Marker() : new google.maps.Marker(markerOptions);
 
 		/*----------  Set up WebGl  ----------*/
 
@@ -15038,8 +15043,8 @@
 		gameComponents = {
 			blockLevelMap: blockLevelMap,
 			boroughLevelMap: boroughLevelMap,
-			chooseLocationMap: chooseLocationMap,
-			chooseLocationMarker: chooseLocationMarker,
+			cityMap: cityMap,
+			cityMapMarker: cityMapMarker,
 			panorama: panorama,
 			spinner: spinner
 		};
@@ -17926,13 +17931,13 @@
 
 	var _constants = __webpack_require__(348);
 
-	var ChooseLocationMap = function ChooseLocationMap(map, mapType) {
+	var CityMap = function CityMap(map, mapType) {
 
 		this.map = map;
 		this.mapType = mapType;
 	};
 
-	ChooseLocationMap.prototype = {
+	CityMap.prototype = {
 		onChoosingLocation: function onChoosingLocation() {
 
 			if (_constants.mapTypes.GOOGLE === this.mapType) {
@@ -18005,7 +18010,7 @@
 		}
 	};
 
-		exports.default = ChooseLocationMap;
+		exports.default = CityMap;
 
 /***/ },
 /* 410 */
