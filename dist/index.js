@@ -12303,20 +12303,15 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocks).call(this, props));
 
 			_this.state = {
-				blockLevelMap: null,
-				boroughLevelMap: null,
-				blockLevelMapCanvas: null,
-				boroughLevelMapCanvas: null,
-				cityMap: null,
 				cityMapMarker: null,
 				choosingLocation: false,
 				countdownTimeLeft: null,
 				hoveredBorough: null,
 				initialized: false,
 				interchangeHidden: false,
-				mapCanvas: null,
 				mapConfig: null,
 				mapMarkerVisible: false,
+				maps: null,
 				mapType: 'city-level',
 				mobile: null,
 				panorama: null,
@@ -12352,12 +12347,24 @@
 
 				var mobile = this.isMobile();
 
+				var mapCache = {
+					element: null,
+					instance: null,
+					options: null
+				};
+
+				var maps = {
+					city: _extends({}, mapCache),
+					borough: _extends({}, mapCache),
+					block: _extends({}, mapCache)
+				};
+
 				if (mobile) {
 
 					this.onMobileDeviceDetected();
 				}
 
-				this.setState({ mobile: mobile });
+				this.setState({ maps: maps, mobile: mobile });
 			}
 		}, {
 			key: 'componentDidMount',
@@ -12380,8 +12387,6 @@
 
 					this.initializeTwoBlocks();
 				}
-
-				this.addCityMapEventListeners(prevState);
 			}
 		}, {
 			key: 'styleNonHoveredBorough',
@@ -12390,7 +12395,7 @@
 				if (!borough) return;
 
 				var _state = this.state;
-				var cityMap = _state.cityMap;
+				var maps = _state.maps;
 				var mobile = _state.mobile;
 				var selectedBorough = _state.selectedBorough;
 
@@ -12399,37 +12404,31 @@
 
 				if (selectedBorough !== this.getBoroughName(borough)) {
 
-					cityMap.unselectBorough(borough);
+					maps.city.instance.unselectBorough(borough);
 				}
 			}
 		}, {
 			key: 'addCityMapEventListeners',
-			value: function addCityMapEventListeners(prevState) {
+			value: function addCityMapEventListeners(mapInstance) {
 				var _this2 = this;
 
-				var _state2 = this.state;
-				var cityMap = _state2.cityMap;
-				var mobile = _state2.mobile;
+				var mobile = this.state.mobile;
 
 
-				if (mobile) return; // Event listeners below only apply to desktop game instances 
+				if (!mapInstance || mobile) return; // Event listeners below only apply to desktop game instances 
 
-				// If we have already added listeners to the city map,
-				// or the city map does not yet exist, exit.
-				if (prevState.cityMap || !cityMap) return;
-
-				cityMap.map.data.addListener('mouseover', function (event) {
+				mapInstance.map.data.addListener('mouseover', function (event) {
 					return _this2.onHoveredBorough(event.feature);
 				});
 
-				cityMap.map.data.addListener('mouseout', function (event) {
+				mapInstance.map.data.addListener('mouseout', function (event) {
 
 					_this2.updateHoveredBorough('');
 
 					_this2.styleNonHoveredBorough(event.feature);
 				});
 
-				cityMap.map.data.addListener('click', function (event) {
+				mapInstance.map.data.addListener('click', function (event) {
 					var gameInstance = _this2.props.gameInstance;
 
 
@@ -12534,9 +12533,9 @@
 
 				if (!this.state.choosingLocation) return;
 
-				var _state3 = this.state;
-				var panoramaBorough = _state3.panoramaBorough;
-				var selectedBorough = _state3.selectedBorough;
+				var _state2 = this.state;
+				var panoramaBorough = _state2.panoramaBorough;
+				var selectedBorough = _state2.selectedBorough;
 				var gameInstance = this.props.gameInstance;
 
 
@@ -12587,12 +12586,10 @@
 
 				if (this.state.initialized) return; // Game already initialized
 
-				var _state4 = this.state;
-				var blockLevelMapCanvas = _state4.blockLevelMapCanvas;
-				var boroughLevelMapCanvas = _state4.boroughLevelMapCanvas;
-				var mapCanvas = _state4.mapCanvas;
-				var mobile = _state4.mobile;
-				var panoramaCanvas = _state4.panoramaCanvas;
+				var _state3 = this.state;
+				var maps = _state3.maps;
+				var mobile = _state3.mobile;
+				var panoramaCanvas = _state3.panoramaCanvas;
 				var _props = this.props;
 				var gameInstance = _props.gameInstance;
 				var locationData = _props.locationData;
@@ -12608,23 +12605,21 @@
 					});
 				}
 
-				if (!blockLevelMapCanvas || !boroughLevelMapCanvas || !mapCanvas || !panoramaCanvas) return; // DOM elements must exist before the game instance can be initialized
+				if (!maps.block.element || !maps.borough.element || !maps.city.element || !panoramaCanvas) return; // DOM elements must exist before the game instance can be initialized
 
-				[mapCanvas, panoramaCanvas].forEach(function (canvas) {
+				[maps.city.element, panoramaCanvas].forEach(function (element) {
 
-					if (!canvas) {
+					if (!element) {
 
-						throw new Error('No element with selector \'.' + _this5.props[mapCanvas === canvas ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass"] + '\' could be found on the page.');
+						throw new Error('No element with selector \'.' + _this5.props[maps.city.element === element ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass"] + '\' could be found on the page.');
 					}
 				});
 
 				/*----------  Create Game Components  ----------*/
 
 				var gameComponents = (0, _createGameComponents2.default)({
-					blockLevelMapCanvas: blockLevelMapCanvas,
-					boroughLevelMapCanvas: boroughLevelMapCanvas,
+					maps: maps,
 					locationData: locationData,
-					mapCanvas: mapCanvas,
 					mobile: mobile,
 					panoramaCanvas: panoramaCanvas,
 					mapMarkerVisible: false
@@ -12655,6 +12650,8 @@
 				return this.setState(nextState).then(function () {
 					return _this5.addGameComponentEventListeners();
 				}).then(function () {
+					return _this5.addCityMapEventListeners(_this5.state.maps.city.instance);
+				}).then(function () {
 					return gameInstance.emit(_constants.events.GAME_COMPONENTS, gameComponents);
 				}).then(function () {
 
@@ -12680,11 +12677,10 @@
 					lng: answerDetails.randomLatLng.lng
 				};
 
-				var _state5 = this.state;
-				var boroughLevelMap = _state5.boroughLevelMap;
-				var blockLevelMap = _state5.blockLevelMap;
-				var showLocationMarker = _state5.showLocationMarker;
-				var mobile = _state5.mobile;
+				var _state4 = this.state;
+				var maps = _state4.maps;
+				var showLocationMarker = _state4.showLocationMarker;
+				var mobile = _state4.mobile;
 
 
 				var showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng);
@@ -12693,12 +12689,12 @@
 
 					showLocationMarker.setOpacity(1);
 					showLocationMarker.setLatLng(showLocationMarkerPosition);
-					showLocationMarker.addTo(boroughLevelMap);
+					showLocationMarker.addTo(maps.borough.instance);
 				} else {
 
 					showLocationMarker.setVisible(true);
 					showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);
-					showLocationMarker.setMap(boroughLevelMap);
+					showLocationMarker.setMap(maps.borough.instance);
 					showLocationMarker.setPosition(showLocationMarkerPosition);
 				}
 
@@ -12721,14 +12717,14 @@
 
 					if (mobile) {
 
-						boroughLevelMap.removeLayer(showLocationMarker);
+						maps.borough.instance.removeLayer(showLocationMarker);
 
 						showLocationMarker.setOpacity(1);
 						showLocationMarker.setLatLng(showLocationMarkerPosition);
-						showLocationMarker.addTo(blockLevelMap);
+						showLocationMarker.addTo(maps.block.instance);
 					} else {
 
-						showLocationMarker.setMap(blockLevelMap);
+						showLocationMarker.setMap(maps.block.instance);
 						showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); // Need to reset animation animation if map changes
 					}
 				}).then(function () {
@@ -12742,17 +12738,15 @@
 		}, {
 			key: 'onChoosingLocation',
 			value: function onChoosingLocation() {
-				var _this7 = this;
-
-				var _state6 = this.state;
-				var cityMap = _state6.cityMap;
-				var mobile = _state6.mobile;
+				var _state5 = this.state;
+				var maps = _state5.maps;
+				var mobile = _state5.mobile;
 				var store = this.props.store;
 
 
 				if (!mobile) {
 
-					cityMap.onChoosingLocation();
+					maps.city.instance.onChoosingLocation();
 				}
 
 				store.dispatch({
@@ -12766,7 +12760,7 @@
 					mapMarkerVisible: false, // Set to true for location guessing 
 					promptText: "In which borough was the last panorama located?"
 				}).then(function () {
-					return _this7.state.mapCanvas.blur();
+					return maps.city.element.blur();
 				});
 			}
 		}, {
@@ -12792,9 +12786,9 @@
 				window.console.log("GAME OVER.");
 
 				var gameInstance = this.props.gameInstance;
-				var _state7 = this.state;
-				var mobile = _state7.mobile;
-				var showLocationMarker = _state7.showLocationMarker;
+				var _state6 = this.state;
+				var mobile = _state6.mobile;
+				var showLocationMarker = _state6.showLocationMarker;
 
 
 				var totalCorrect = gameInstance.totalCorrectAnswers();
@@ -12818,11 +12812,11 @@
 		}, {
 			key: 'onGeoJSONReceived',
 			value: function onGeoJSONReceived(geoJSON) {
-				var _this8 = this;
+				var _this7 = this;
 
-				var _state8 = this.state;
-				var cityMap = _state8.cityMap;
-				var mobile = _state8.mobile;
+				var _state7 = this.state;
+				var maps = _state7.maps;
+				var mobile = _state7.mobile;
 				var _props2 = this.props;
 				var gameInstance = _props2.gameInstance;
 				var locationData = _props2.locationData;
@@ -12831,10 +12825,10 @@
 				// yet exist, wait until the 'GAME_COMPONENTS' event fires to execute
 				// the rest of the method body. 
 
-				if (!cityMap) {
+				if (!maps.city.instance) {
 
 					gameInstance.once(_constants.events.GAME_COMPONENTS, function () {
-						return _this8.onGeoJSONReceived(geoJSON);
+						return _this7.onGeoJSONReceived(geoJSON);
 					});
 				} else {
 
@@ -12842,7 +12836,7 @@
 
 						// Add GeoJSON to the cityMap if not on mobile.  The 'addGeoJson()' method
 						// returns the feature collection.  Each borough is a feature. 
-						var featureCollection = cityMap.onGeoJSONReceived(geoJSON);
+						var featureCollection = maps.city.instance.onGeoJSONReceived(geoJSON);
 
 						locationData.featureCollection = featureCollection;
 					}
@@ -12881,10 +12875,10 @@
 
 				e.preventDefault(); // Prevent arrows from scrolling page
 
-				var _state9 = this.state;
-				var hoveredBorough = _state9.hoveredBorough;
-				var mobile = _state9.mobile;
-				var selectedBorough = _state9.selectedBorough;
+				var _state8 = this.state;
+				var hoveredBorough = _state8.hoveredBorough;
+				var mobile = _state8.mobile;
+				var selectedBorough = _state8.selectedBorough;
 
 
 				if (mobile) return; // Keypresses only apply to desktop
@@ -12956,17 +12950,22 @@
 		}, {
 			key: 'onMapMounted',
 			value: function onMapMounted(mapType, mapCanvas) {
+				var maps = this.state.maps;
+
 
 				var mapTypeToStatePropMap = {
-					'block-level': 'blockLevelMapCanvas',
-					'borough-level': 'boroughLevelMapCanvas',
-					'city-level': 'mapCanvas'
+					'block-level': 'block',
+					'borough-level': 'borough',
+					'city-level': 'city'
 				};
 
-				var newState = {};
+				var newState = {
+					maps: _extends({}, maps)
+				};
+
 				var prop = mapTypeToStatePropMap[mapType];
 
-				newState[prop] = mapCanvas;
+				newState.maps[prop].element = mapCanvas;
 
 				this.setState(newState);
 			}
@@ -12989,9 +12988,9 @@
 		}, {
 			key: 'onNextTurn',
 			value: function onNextTurn() {
-				var _state10 = this.state;
-				var mobile = _state10.mobile;
-				var showLocationMarker = _state10.showLocationMarker;
+				var _state9 = this.state;
+				var mobile = _state9.mobile;
+				var showLocationMarker = _state9.showLocationMarker;
 
 
 				if (showLocationMarker) {
@@ -13020,23 +13019,21 @@
 		}, {
 			key: 'onRandomLocation',
 			value: function onRandomLocation(randomLocationDetails) {
-				var _this9 = this;
+				var _this8 = this;
 
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
-				var _state11 = this.state;
-				var blockLevelMap = _state11.blockLevelMap;
-				var boroughLevelMap = _state11.boroughLevelMap;
+				var maps = this.state.maps;
 
 
-				blockLevelMap.panTo(randomLatLng);
-				boroughLevelMap.panTo(randomLatLng);
+				maps.block.instance.panTo(randomLatLng);
+				maps.borough.instance.panTo(randomLatLng);
 
 				return this.setState({
 					panoramaBorough: boroughName,
 					panoramaLatLng: randomLatLng
 				}).then(function () {
-					return _this9.showRandomPanorama();
+					return _this8.showRandomPanorama();
 				});
 			}
 		}, {
@@ -13058,14 +13055,14 @@
 		}, {
 			key: 'onShowingPanorama',
 			value: function onShowingPanorama() {
-				var _state12 = this.state;
-				var cityMap = _state12.cityMap;
-				var mobile = _state12.mobile;
+				var _state10 = this.state;
+				var maps = _state10.maps;
+				var mobile = _state10.mobile;
 
 
 				if (mobile) return;
 
-				cityMap.onShowingPanorama();
+				maps.city.instance.onShowingPanorama();
 			}
 		}, {
 			key: 'onSpinnerRevolution',
@@ -13078,11 +13075,10 @@
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _state13 = this.state;
-				var blockLevelMap = _state13.blockLevelMap;
-				var cityMap = _state13.cityMap;
-				var mobile = _state13.mobile;
-				var showLocationMarker = _state13.showLocationMarker;
+				var _state11 = this.state;
+				var maps = _state11.maps;
+				var mobile = _state11.mobile;
+				var showLocationMarker = _state11.showLocationMarker;
 				var _props4 = this.props;
 				var gameInstance = _props4.gameInstance;
 				var locationData = _props4.locationData;
@@ -13092,14 +13088,14 @@
 
 				if (!mobile) {
 
-					cityMap.onTurnComplete();
+					maps.city.instance.onTurnComplete();
 				} else {
 
-					blockLevelMap.removeLayer(showLocationMarker);
+					maps.block.instance.removeLayer(showLocationMarker);
 				}
 
-				cityMap.panTo(locationData.CENTER);
-				cityMap.setZoom(_constants.DEFAULT_MAP_ZOOM);
+				maps.city.instance.panTo(locationData.CENTER);
+				maps.city.instance.setZoom(_constants.DEFAULT_MAP_ZOOM);
 
 				this.setState({
 
@@ -13112,14 +13108,14 @@
 		}, {
 			key: 'onWindowResize',
 			value: function onWindowResize() {
-				var cityMap = this.state.cityMap;
+				var maps = this.state.maps;
 				var locationData = this.props.locationData;
 				var CENTER = locationData.CENTER;
 
 
 				var centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng);
 
-				cityMap.setCenter(centerLatLng);
+				maps.city.instance.setCenter(centerLatLng);
 
 				this.setState({
 					mobile: this.isMobile()
@@ -13134,7 +13130,7 @@
 		}, {
 			key: 'requestGeoJSON',
 			value: function requestGeoJSON() {
-				var _this10 = this;
+				var _this9 = this;
 
 				var mobile = this.state.mobile;
 
@@ -13161,7 +13157,7 @@
 
 								if (_constants.workerMessages.SENDING_GEO_JSON !== message) return;
 
-								_this10.onGeoJSONReceived(payload);
+								_this9.onGeoJSONReceived(payload);
 
 								worker.removeEventListener('message', onGeoJSONSent);
 							};
@@ -13178,7 +13174,7 @@
 						})();
 					} else {
 
-						_this10.onGeoJSONReceived(gameInstance.locationData.featureCollection);
+						_this9.onGeoJSONReceived(gameInstance.locationData.featureCollection);
 					}
 				});
 			}
@@ -13214,7 +13210,7 @@
 		}, {
 			key: 'showRandomPanorama',
 			value: function showRandomPanorama() {
-				var _this11 = this;
+				var _this10 = this;
 
 				var _props7 = this.props;
 				var gameInstance = _props7.gameInstance;
@@ -13232,32 +13228,32 @@
 					gameInstance.emit(_constants.events.SHOWING_PANORAMA);
 					gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
 
-					return _this11.setState({
+					return _this10.setState({
 
 						promptText: 'Look closely...which borough is this Street View from?'
 
 					});
 				}).then(function () {
-					return _this11.state.mobile ? (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY) : null;
+					return _this10.state.mobile ? (0, _createPromiseTimeout2.default)(_constants.PANORAMA_LOAD_DELAY) : null;
 				}).then(function () {
 
-					if (_this11.isMobile()) {
+					if (_this10.isMobile()) {
 
-						_this11.startStreetviewCountdown();
+						_this10.startStreetviewCountdown();
 
-						_this11.setState({
+						_this10.setState({
 							interchangeHidden: true
 						});
 					} else {
 
-						_this11.showSpinner();
+						_this10.showSpinner();
 					}
 				});
 			}
 		}, {
 			key: 'showSpinner',
 			value: function showSpinner() {
-				var _this12 = this;
+				var _this11 = this;
 
 				var spinner = this.state.spinner;
 				var gameInstance = this.props.gameInstance;
@@ -13267,7 +13263,7 @@
 
 				spinner.once('revolution', function () {
 
-					_this12.onSpinnerRevolution();
+					_this11.onSpinnerRevolution();
 
 					gameInstance.emit(_constants.events.CHOOSING_LOCATION);
 				});
@@ -13275,7 +13271,7 @@
 		}, {
 			key: 'startStreetviewCountdown',
 			value: function startStreetviewCountdown() {
-				var _this13 = this;
+				var _this12 = this;
 
 				var gameInstance = this.props.gameInstance;
 
@@ -13284,7 +13280,7 @@
 
 				countdown.on('tick', function (timeLeft) {
 
-					_this13.setState({
+					_this12.setState({
 						countdownTimeLeft: timeLeft
 					});
 				});
@@ -13304,10 +13300,10 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state14 = this.state;
-				var cityMap = _state14.cityMap;
-				var mobile = _state14.mobile;
-				var selectedBorough = _state14.selectedBorough;
+				var _state12 = this.state;
+				var maps = _state12.maps;
+				var mobile = _state12.mobile;
+				var selectedBorough = _state12.selectedBorough;
 
 
 				if (mobile) return;
@@ -13316,7 +13312,7 @@
 				// borough is the selected borough.
 				if (selectedBorough !== this.getBoroughName(borough)) {
 
-					cityMap.onHoveredBorough(borough, {
+					maps.city.instance.onHoveredBorough(borough, {
 						fillColor: _constants.HOVERED_BOROUGH_FILL_COLOR
 					});
 				}
@@ -13324,26 +13320,26 @@
 		}, {
 			key: 'styleSelectedBorough',
 			value: function styleSelectedBorough(borough) {
-				var _state15 = this.state;
-				var cityMap = _state15.cityMap;
-				var mobile = _state15.mobile;
+				var _state13 = this.state;
+				var maps = _state13.maps;
+				var mobile = _state13.mobile;
 
 
 				if (mobile) return;
 
-				cityMap.onSelectedBorough(borough, {
+				maps.city.instance.onSelectedBorough(borough, {
 					fillColor: _constants.SELECTED_BOROUGH_FILL_COLOR
 				});
 			}
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _this14 = this;
+				var _this13 = this;
 
-				var _state16 = this.state;
-				var cityMap = _state16.cityMap;
-				var mobile = _state16.mobile;
-				var selectedBorough = _state16.selectedBorough;
+				var _state14 = this.state;
+				var maps = _state14.maps;
+				var mobile = _state14.mobile;
+				var selectedBorough = _state14.selectedBorough;
 
 
 				if (mobile) return;
@@ -13361,11 +13357,11 @@
 				if (!featureCollection) return;
 
 				var unselectedBoroughs = featureCollection.filter(function (feature) {
-					return _this14.getBoroughName(feature) !== clickedBoroughName;
+					return _this13.getBoroughName(feature) !== clickedBoroughName;
 				});
 
 				unselectedBoroughs.forEach(function (feature) {
-					return cityMap.unselectBorough(feature);
+					return maps.city.instance.unselectBorough(feature);
 				});
 			}
 		}, {
@@ -13405,7 +13401,7 @@
 		}, {
 			key: 'render',
 			value: function render() {
-				var _this15 = this;
+				var _this14 = this;
 
 				var props = this.props;
 				var state = this.state;
@@ -13416,9 +13412,9 @@
 					'div',
 					{ className: [props.gameTwoBlocksClass, this.getDeviceClass()].join(' ') },
 					_react2.default.createElement(_TwoBlocksView2.default, {
-						blockLevelMap: state.blockLevelMap,
-						boroughLevelMap: state.boroughLevelMap,
-						cityLevelMap: state.cityMap,
+						blockLevelMap: state.maps.block.instance,
+						boroughLevelMap: state.maps.borough.instance,
+						cityLevelMap: state.maps.city.instance,
 						countdownTimeLeft: state.countdownTimeLeft,
 						interchangeHidden: state.interchangeHidden,
 						mapConfig: state.mapConfig,
@@ -13444,10 +13440,10 @@
 						promptText: state.promptText,
 						promptTwoBlocksClass: props.promptTwoBlocksClass,
 						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this15.evaluateFinalAnswer();
+							return _this14.evaluateFinalAnswer();
 						},
 						clearSelectedBorough: function clearSelectedBorough() {
-							return _this15.setState({ selectedBorough: null });
+							return _this14.setState({ selectedBorough: null });
 						},
 						selectedBorough: state.selectedBorough,
 						submitterTwoBlocksClass: props.submitterTwoBlocksClass,
@@ -13458,7 +13454,7 @@
 						replayButtonTwoBlocksClass: props.replayButtonTwoBlocksClass,
 						mobile: state.mobile,
 						onMobileBoroughSelection: function onMobileBoroughSelection(borough) {
-							return _this15.onMobileBoroughSelection(borough);
+							return _this14.onMobileBoroughSelection(borough);
 						}
 					})
 				);
@@ -14907,10 +14903,8 @@
 			throw new Error("The Google Maps Javascript API or one of the required libraries are not loaded on the page.");
 		}
 
-		var blockLevelMapCanvas = gameState.blockLevelMapCanvas;
-		var boroughLevelMapCanvas = gameState.boroughLevelMapCanvas;
+		var maps = gameState.maps;
 		var locationData = gameState.locationData;
-		var mapCanvas = gameState.mapCanvas;
 		var mapMarkerVisible = gameState.mapMarkerVisible;
 		var mobile = gameState.mobile;
 		var panoramaCanvas = gameState.panoramaCanvas;
@@ -14958,13 +14952,13 @@
 			zoom: _constants.CITY_LEVEL_ZOOM
 		});
 
-		var map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(mapCanvas, mapOptions);
+		var map = mobile ? new L.Map(maps.city.element, mapOptions) : new google.maps.Map(maps.city.element, mapOptions);
 
 		var mapType = mobile ? _constants.mapTypes.LEAFLET : _constants.mapTypes.GOOGLE;
 
-		var cityMap = new _CityMap2.default(map, mapType);
+		maps.city.instance = new _CityMap2.default(map, mapType);
 
-		window.console.log("cityMap:", cityMap);
+		window.console.log("maps.city.instance:", maps.city.instance);
 
 		/*----------  CITY_LEVEL_ZOOM, Create block-level map  ----------*/
 
@@ -14973,7 +14967,7 @@
 			zoom: mobile ? _constants.BLOCK_LEVEL_ZOOM + 1 : _constants.BLOCK_LEVEL_ZOOM
 		});
 
-		var blockLevelMap = mobile ? L.map(blockLevelMapCanvas, blockLevelMapOptions) : new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions);
+		maps.block.instance = mobile ? L.map(maps.block.element, blockLevelMapOptions) : new google.maps.Map(maps.block.element, blockLevelMapOptions);
 
 		/*----------  Create borough-level map  ----------*/
 
@@ -14982,7 +14976,7 @@
 			zoom: mobile ? _constants.BOROUGH_LEVEL_ZOOM + 1 : _constants.BOROUGH_LEVEL_ZOOM
 		});
 
-		var boroughLevelMap = mobile ? L.map(boroughLevelMapCanvas, boroughLevelMapOptions) : new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions);
+		maps.borough.instance = mobile ? L.map(maps.borough.element, boroughLevelMapOptions) : new google.maps.Map(maps.borough.element, boroughLevelMapOptions);
 
 		/*----------  Add tile layer to mobile maps  ----------*/
 
@@ -15006,9 +15000,9 @@
 				attribution: ATTRIBUTION
 			});
 
-			cityLevelTileLayer.addTo(cityMap.map);
-			boroughLevelTileLayer.addTo(boroughLevelMap);
-			blockLevelTileLayer.addTo(blockLevelMap);
+			cityLevelTileLayer.addTo(maps.city.instance.map);
+			boroughLevelTileLayer.addTo(maps.borough.instance);
+			blockLevelTileLayer.addTo(maps.block.instance);
 		}
 
 		/*----------  Set up marker  ----------*/
@@ -15022,7 +15016,7 @@
 		var markerOptions = {
 			animation: google.maps.Animation.BOUNCE,
 			draggable: true,
-			map: cityMap.map,
+			map: maps.city.instance.map,
 			position: new google.maps.LatLng(markerLat, markerLng),
 			visible: mapMarkerVisible
 		};
@@ -15041,9 +15035,10 @@
 		// Assign game components to variable so we can just return
 		// the already-created components if we start a new game
 		gameComponents = {
-			blockLevelMap: blockLevelMap,
-			boroughLevelMap: boroughLevelMap,
-			cityMap: cityMap,
+			// blockLevelMap,
+			// boroughLevelMap,
+			// cityMap,
+			maps: maps,
 			cityMapMarker: cityMapMarker,
 			panorama: panorama,
 			spinner: spinner

@@ -20,20 +20,15 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = { 
-			blockLevelMap 			: null, 
-			boroughLevelMap 		: null, 
-			blockLevelMapCanvas 	: null, 
-			boroughLevelMapCanvas 	: null, 
-			cityMap 				: null, 
 			cityMapMarker 			: null, 
 			choosingLocation 		: false,
 			countdownTimeLeft 		: null,    
 			hoveredBorough 			: null,
 			initialized 			: false,  
 			interchangeHidden 		: false, 
-			mapCanvas 				: null, 
 			mapConfig 				: null, 
 			mapMarkerVisible 		: false,
+			maps 					: null, 
 			mapType 				: 'city-level',   
 			mobile 					: null, 
 			panorama 				: null, 
@@ -68,13 +63,25 @@ class TwoBlocks extends React.Component {
 
 		const mobile = this.isMobile(); 
 
+		const mapCache = {
+			element: null, 
+			instance: null, 
+			options: null
+		}; 
+
+		const maps = {
+			city: Object.assign({}, mapCache), 
+			borough: Object.assign({}, mapCache), 
+			block: Object.assign({}, mapCache)
+		}; 
+
 		if (mobile) {
 
 			this.onMobileDeviceDetected(); 
 
 		}
 
-		this.setState({ mobile }); 
+		this.setState({ maps, mobile }); 
 
 	}
 
@@ -96,9 +103,7 @@ class TwoBlocks extends React.Component {
 
 			this.initializeTwoBlocks(); 
 		
-		}
-
-		this.addCityMapEventListeners(prevState); 
+		} 
 
 	}
 
@@ -106,31 +111,27 @@ class TwoBlocks extends React.Component {
 
 		if (!(borough)) return; 
 
-		const { cityMap, mobile, selectedBorough } = this.state;
+		const { maps, mobile, selectedBorough } = this.state;
 
 		if (mobile) return; 
 
 		if (selectedBorough !== this.getBoroughName(borough)) {
 
-			cityMap.unselectBorough(borough); 
+			maps.city.instance.unselectBorough(borough); 
 
 		}
 
 	}
 
-	addCityMapEventListeners(prevState) {
+	addCityMapEventListeners(mapInstance) {
 
-		const { cityMap, mobile } = this.state; 
+		const { mobile } = this.state; 
 
-		if (mobile) return;  // Event listeners below only apply to desktop game instances  
+		if (!(mapInstance) || mobile) return;  // Event listeners below only apply to desktop game instances  
+ 
+		mapInstance.map.data.addListener('mouseover', event => this.onHoveredBorough(event.feature));
 
-		// If we have already added listeners to the city map, 
-		// or the city map does not yet exist, exit. 
-		if (prevState.cityMap || !(cityMap)) return;
-
-		cityMap.map.data.addListener('mouseover', event => this.onHoveredBorough(event.feature));
-
-		cityMap.map.data.addListener('mouseout', event => {
+		mapInstance.map.data.addListener('mouseout', event => {
 
 			this.updateHoveredBorough('');
 
@@ -138,7 +139,7 @@ class TwoBlocks extends React.Component {
 
 		}); 	
 
-		cityMap.map.data.addListener('click', event => {
+		mapInstance.map.data.addListener('click', event => {
 
 			const { gameInstance } = this.props; 
 
@@ -267,7 +268,7 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.initialized) return;  // Game already initialized 
 
-		const { blockLevelMapCanvas, boroughLevelMapCanvas, mapCanvas, mobile, panoramaCanvas } = this.state;  
+		const { maps, mobile, panoramaCanvas } = this.state;  
 
 		const { gameInstance, locationData, service, store } = this.props; 
 
@@ -280,13 +281,13 @@ class TwoBlocks extends React.Component {
 
 		}
 
-		if (!(blockLevelMapCanvas) || !(boroughLevelMapCanvas) || !(mapCanvas) || !(panoramaCanvas)) return;  // DOM elements must exist before the game instance can be initialized 
+		if (!(maps.block.element) || !(maps.borough.element) || !(maps.city.element) || !(panoramaCanvas)) return;  // DOM elements must exist before the game instance can be initialized 
 
-		[ mapCanvas, panoramaCanvas ].forEach(canvas => {
+		[ maps.city.element, panoramaCanvas ].forEach(element => {
 
-			if (!(canvas)) {
+			if (!(element)) {
 
-				throw new Error(`No element with selector '.${this.props[ mapCanvas === canvas ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass" ]}' could be found on the page.`); 
+				throw new Error(`No element with selector '.${this.props[ maps.city.element === element ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass" ]}' could be found on the page.`); 
 
 			}
 
@@ -295,10 +296,8 @@ class TwoBlocks extends React.Component {
 		/*----------  Create Game Components  ----------*/
 						
 		const gameComponents = createGameComponents({
-			blockLevelMapCanvas, 
-			boroughLevelMapCanvas, 
+			maps,  
 			locationData, 
-			mapCanvas, 
 			mobile,  
 			panoramaCanvas,	
 			mapMarkerVisible: false 
@@ -331,6 +330,8 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.addGameComponentEventListeners())
 
+			.then(() => this.addCityMapEventListeners(this.state.maps.city.instance))
+
 			.then(() => gameInstance.emit(events.GAME_COMPONENTS, gameComponents))
 
 			.then(() => {
@@ -358,7 +359,7 @@ class TwoBlocks extends React.Component {
 			lng: answerDetails.randomLatLng.lng
 		}; 
 
-		const { boroughLevelMap, blockLevelMap, showLocationMarker, mobile } = this.state; 
+		const { maps, showLocationMarker, mobile } = this.state; 
 
 		const showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng); 
 
@@ -366,13 +367,13 @@ class TwoBlocks extends React.Component {
 
 			showLocationMarker.setOpacity(1); 
 			showLocationMarker.setLatLng(showLocationMarkerPosition); 
-			showLocationMarker.addTo(boroughLevelMap); 
+			showLocationMarker.addTo(maps.borough.instance); 
 
 		} else {
 
 			showLocationMarker.setVisible(true); 
 			showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); 
-			showLocationMarker.setMap(boroughLevelMap); 
+			showLocationMarker.setMap(maps.borough.instance); 
 			showLocationMarker.setPosition(showLocationMarkerPosition); 
 		
 		}
@@ -401,15 +402,15 @@ class TwoBlocks extends React.Component {
 
 				if (mobile) {
 					
-					boroughLevelMap.removeLayer(showLocationMarker);
+					maps.borough.instance.removeLayer(showLocationMarker);
 
 					showLocationMarker.setOpacity(1); 
 					showLocationMarker.setLatLng(showLocationMarkerPosition);
-					showLocationMarker.addTo(blockLevelMap); 
+					showLocationMarker.addTo(maps.block.instance); 
 
 				} else {
 
-					showLocationMarker.setMap(blockLevelMap);
+					showLocationMarker.setMap(maps.block.instance);
 					showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
 				
 				}
@@ -426,13 +427,13 @@ class TwoBlocks extends React.Component {
 
 	onChoosingLocation() {
 
-		const { cityMap, mobile } = this.state; 
+		const { maps, mobile } = this.state; 
 
 		const { store } = this.props; 
 
 		if (!(mobile)) {
 
-			cityMap.onChoosingLocation(); 
+			maps.city.instance.onChoosingLocation(); 
 		
 		}
 
@@ -448,7 +449,7 @@ class TwoBlocks extends React.Component {
 			promptText: "In which borough was the last panorama located?"
 		})
 
-		.then(() => this.state.mapCanvas.blur()); 
+		.then(() => maps.city.element.blur()); 
 
 	}
 
@@ -501,14 +502,14 @@ class TwoBlocks extends React.Component {
 
 	onGeoJSONReceived(geoJSON) {
 
-		const { cityMap, mobile } = this.state; 
+		const { maps, mobile } = this.state; 
 
 		const { gameInstance, locationData } = this.props;  
 
 		// Race condition circumvention: If the cityMap does not 
 		// yet exist, wait until the 'GAME_COMPONENTS' event fires to execute 
 		// the rest of the method body.  
-		if (!(cityMap)) {
+		if (!(maps.city.instance)) {
 			
 			gameInstance.once(events.GAME_COMPONENTS, () => this.onGeoJSONReceived(geoJSON)); 
 
@@ -518,7 +519,7 @@ class TwoBlocks extends React.Component {
 
 				// Add GeoJSON to the cityMap if not on mobile.  The 'addGeoJson()' method 
 				// returns the feature collection.  Each borough is a feature.  
-				const featureCollection = cityMap.onGeoJSONReceived(geoJSON); 
+				const featureCollection = maps.city.instance.onGeoJSONReceived(geoJSON); 
 
 				locationData.featureCollection = featureCollection; 
 
@@ -628,16 +629,21 @@ class TwoBlocks extends React.Component {
 
 	onMapMounted(mapType, mapCanvas) {
 
+		const { maps } = this.state; 
+
 		const mapTypeToStatePropMap = {
-			'block-level': 'blockLevelMapCanvas', 
-			'borough-level': 'boroughLevelMapCanvas', 
-			'city-level': 'mapCanvas'
+			'block-level': 'block', 
+			'borough-level': 'borough', 
+			'city-level': 'city'
 		}; 
 
-		const newState = {}; 
+		const newState = {
+			maps: Object.assign({}, maps)
+		}; 
+
 		const prop = mapTypeToStatePropMap[mapType]; 
 
-		newState[prop] = mapCanvas; 
+		newState.maps[prop].element = mapCanvas; 
 
 		this.setState(newState); 
 
@@ -695,10 +701,10 @@ class TwoBlocks extends React.Component {
 
 		const { boroughName, randomLatLng } = randomLocationDetails; 
 
-		const { blockLevelMap, boroughLevelMap } = this.state; 
+		const { maps } = this.state; 
 
-		blockLevelMap.panTo(randomLatLng); 
-		boroughLevelMap.panTo(randomLatLng); 
+		maps.block.instance.panTo(randomLatLng); 
+		maps.borough.instance.panTo(randomLatLng); 
 
 		return this.setState({ 
 			panoramaBorough: boroughName,  
@@ -727,11 +733,11 @@ class TwoBlocks extends React.Component {
 
 	onShowingPanorama() {
 
-		const { cityMap, mobile } = this.state; 
+		const { maps, mobile } = this.state; 
 
 		if (mobile) return; 
 
-		cityMap.onShowingPanorama();  
+		maps.city.instance.onShowingPanorama();  
 
 	}
 
@@ -745,7 +751,7 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { blockLevelMap, cityMap, mobile, showLocationMarker } = this.state; 
+		const { maps, mobile, showLocationMarker } = this.state; 
 
 		const { gameInstance, locationData } = this.props; 
 
@@ -753,16 +759,16 @@ class TwoBlocks extends React.Component {
 
 		if (!(mobile)) {
 
-			cityMap.onTurnComplete(); 
+			maps.city.instance.onTurnComplete(); 
 		
 		} else {
 
-			blockLevelMap.removeLayer(showLocationMarker); 
+			maps.block.instance.removeLayer(showLocationMarker); 
 
 		}
 
-		cityMap.panTo(locationData.CENTER); 
-		cityMap.setZoom(DEFAULT_MAP_ZOOM); 		
+		maps.city.instance.panTo(locationData.CENTER); 
+		maps.city.instance.setZoom(DEFAULT_MAP_ZOOM); 		
 
 		this.setState({
 			
@@ -776,7 +782,7 @@ class TwoBlocks extends React.Component {
 
 	onWindowResize() {
 
-		const { cityMap } = this.state;
+		const { maps } = this.state;
 
 		const { locationData } = this.props; 
 
@@ -784,7 +790,7 @@ class TwoBlocks extends React.Component {
 
 		const centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng); 		
 
-		cityMap.setCenter(centerLatLng);
+		maps.city.instance.setCenter(centerLatLng);
 
 		this.setState({
 			mobile: this.isMobile()
@@ -967,7 +973,7 @@ class TwoBlocks extends React.Component {
 
 	styleHoveredBorough(borough) {
 
-		const { cityMap, mobile, selectedBorough } = this.state; 
+		const { maps, mobile, selectedBorough } = this.state; 
 
 		if (mobile) return; 
 
@@ -975,7 +981,7 @@ class TwoBlocks extends React.Component {
 		// borough is the selected borough. 
 		if (selectedBorough !== this.getBoroughName(borough)) {
 
-			cityMap.onHoveredBorough(borough, {
+			maps.city.instance.onHoveredBorough(borough, {
 				fillColor: HOVERED_BOROUGH_FILL_COLOR
 			}); 
 
@@ -985,11 +991,11 @@ class TwoBlocks extends React.Component {
 
 	styleSelectedBorough(borough) {
 
-		const { cityMap, mobile } = this.state; 
+		const { maps, mobile } = this.state; 
 
 		if (mobile) return; 
 
-		cityMap.onSelectedBorough(borough, {
+		maps.city.instance.onSelectedBorough(borough, {
 			fillColor: SELECTED_BOROUGH_FILL_COLOR
 		}); 
 
@@ -997,7 +1003,7 @@ class TwoBlocks extends React.Component {
 
 	styleUnselectedBoroughs(borough) {
 			
-		const { cityMap, mobile, selectedBorough } = this.state; 
+		const { maps, mobile, selectedBorough } = this.state; 
 
 		if (mobile) return; 
 
@@ -1013,7 +1019,7 @@ class TwoBlocks extends React.Component {
 
 		const unselectedBoroughs = featureCollection.filter(feature => this.getBoroughName(feature) !== clickedBoroughName); 
  
-		unselectedBoroughs.forEach(feature => cityMap.unselectBorough(feature)); 
+		unselectedBoroughs.forEach(feature => maps.city.instance.unselectBorough(feature)); 
 
 	}
 
@@ -1060,9 +1066,9 @@ class TwoBlocks extends React.Component {
 	
 			<div className={ [ props.gameTwoBlocksClass, this.getDeviceClass() ].join(' ') }>
 				<TwoBlocksView 
-					blockLevelMap={ state.blockLevelMap }
-					boroughLevelMap={ state.boroughLevelMap }
-					cityLevelMap={ state.cityMap }
+					blockLevelMap={ state.maps.block.instance }
+					boroughLevelMap={ state.maps.borough.instance }
+					cityLevelMap={ state.maps.city.instance }
 					countdownTimeLeft={ state.countdownTimeLeft }
 					interchangeHidden={ state.interchangeHidden }
 					mapConfig={ state.mapConfig }

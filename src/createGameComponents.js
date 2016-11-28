@@ -18,7 +18,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { blockLevelMapCanvas, boroughLevelMapCanvas, locationData, mapCanvas, mapMarkerVisible, mobile, panoramaCanvas } = gameState; 
+	const { maps, locationData, mapMarkerVisible, mobile, panoramaCanvas } = gameState; 
 	
 	const webGlManager = createWebGlManager(panoramaCanvas); 
 	
@@ -57,13 +57,13 @@ const createGameComponents = function createGameComponents(gameState) {
 		zoom: CITY_LEVEL_ZOOM
 	});
 
-	const map = mobile ? new L.Map(mapCanvas, mapOptions) : new google.maps.Map(mapCanvas, mapOptions); 
+	const map = mobile ? new L.Map(maps.city.element, mapOptions) : new google.maps.Map(maps.city.element, mapOptions); 
 
 	const mapType = mobile ? mapTypes.LEAFLET : mapTypes.GOOGLE;  
 
-	const cityMap = new CityMap(map, mapType); 
+	maps.city.instance = new CityMap(map, mapType); 
 
-	window.console.log("cityMap:", cityMap); 
+	window.console.log("maps.city.instance:", maps.city.instance); 
 
 	/*----------  CITY_LEVEL_ZOOM, Create block-level map  ----------*/
 	
@@ -72,7 +72,7 @@ const createGameComponents = function createGameComponents(gameState) {
 		zoom: mobile ? BLOCK_LEVEL_ZOOM + 1 : BLOCK_LEVEL_ZOOM 
 	}); 
 
-	const blockLevelMap = mobile ? L.map(blockLevelMapCanvas, blockLevelMapOptions) : new google.maps.Map(blockLevelMapCanvas, blockLevelMapOptions); 
+	maps.block.instance = mobile ? L.map(maps.block.element, blockLevelMapOptions) : new google.maps.Map(maps.block.element, blockLevelMapOptions); 
 
 	/*----------  Create borough-level map  ----------*/
 	
@@ -81,7 +81,7 @@ const createGameComponents = function createGameComponents(gameState) {
 		zoom: mobile ? BOROUGH_LEVEL_ZOOM + 1 : BOROUGH_LEVEL_ZOOM
 	}); 
 
-	const boroughLevelMap = mobile ? L.map(boroughLevelMapCanvas, boroughLevelMapOptions) : new google.maps.Map(boroughLevelMapCanvas, boroughLevelMapOptions); 			
+	maps.borough.instance = mobile ? L.map(maps.borough.element, boroughLevelMapOptions) : new google.maps.Map(maps.borough.element, boroughLevelMapOptions); 			
 
 	/*----------  Add tile layer to mobile maps  ----------*/
 	
@@ -103,9 +103,9 @@ const createGameComponents = function createGameComponents(gameState) {
 			attribution: ATTRIBUTION
 		});
 
-		cityLevelTileLayer.addTo(cityMap.map); 
-		boroughLevelTileLayer.addTo(boroughLevelMap); 
-		blockLevelTileLayer.addTo(blockLevelMap);  
+		cityLevelTileLayer.addTo(maps.city.instance.map); 
+		boroughLevelTileLayer.addTo(maps.borough.instance); 
+		blockLevelTileLayer.addTo(maps.block.instance);  
 
 	}
 
@@ -117,7 +117,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	const markerOptions = {
 		animation: google.maps.Animation.BOUNCE, 
 		draggable: true, 
-		map: cityMap.map, 
+		map: maps.city.instance.map, 
 		position: new google.maps.LatLng(markerLat, markerLng), 
 		visible: mapMarkerVisible
 	}; 
@@ -135,9 +135,10 @@ const createGameComponents = function createGameComponents(gameState) {
 	// Assign game components to variable so we can just return 
 	// the already-created components if we start a new game 
 	gameComponents = {
-		blockLevelMap, 
-		boroughLevelMap, 
-		cityMap, 
+		// blockLevelMap, 
+		// boroughLevelMap, 
+		// cityMap, 
+		maps, 
 		cityMapMarker, 
 		panorama, 
 		spinner
