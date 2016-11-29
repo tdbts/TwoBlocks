@@ -23,6 +23,8 @@ class TwoBlocks extends React.Component {
 			cityMapMarker 			: null, 
 			choosingLocation 		: false,
 			countdownTimeLeft 		: null,    
+			displayedBorough 		: null, 
+			displayedLatLng 		: null, 
 			hoveredBorough 			: null,
 			initialized 			: false,  
 			interchangeHidden 		: false, 
@@ -32,9 +34,7 @@ class TwoBlocks extends React.Component {
 			mapType 				: 'city-level',   
 			mobile 					: null, 
 			panorama 				: null, 
-			panoramaBorough 		: null, 
 			panoramaCanvas 			: null, 
-			panoramaLatLng 			: null, 
 			promptText 				: "Loading new TwoBlocks game...",
 			selectedBorough 		: null, 
 			showLocationMarker 		: null, 
@@ -219,11 +219,11 @@ class TwoBlocks extends React.Component {
  
 		if (!(this.state.choosingLocation)) return; 
 
-		const { panoramaBorough, selectedBorough } = this.state; 
+		const { displayedBorough, selectedBorough } = this.state; 
 
 		const { gameInstance } = this.props; 
 
-		gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough); 
+		gameInstance.evaluateFinalAnswer(displayedBorough, selectedBorough); 
 
 	}
 
@@ -706,8 +706,8 @@ class TwoBlocks extends React.Component {
 		maps.borough.instance.panTo(randomLatLng); 
 
 		return this.setState({ 
-			panoramaBorough: boroughName,  
-			panoramaLatLng: randomLatLng
+			displayedBorough: boroughName,  
+			displayedLatLng: randomLatLng
 		})
 
 		.then(() => this.showRandomPanorama()); 
@@ -1079,7 +1079,7 @@ class TwoBlocks extends React.Component {
 					onMapMounted={ this.onMapMounted.bind(this) }
 					onPanoramaMounted={ this.onPanoramaMounted.bind(this) } 
 					panorama={ state.panorama } 
-					panoramaLatLng={ state.panoramaLatLng } 
+					displayedLatLng={ state.displayedLatLng } 
 					panoramaTwoBlocksClass={ props.panoramaTwoBlocksClass }
 					twoBlocksClass={ props.viewTwoBlocksClass }
 					view={ store ? store.getState().view : 'map' } 

@@ -34,7 +34,7 @@ class TwoBlocksView extends React.Component {
 					view={ view }
 				/>			
 				<TwoBlocksPanorama 
-					latLng={ this.props.panoramaLatLng }
+					latLng={ this.props.displayedLatLng }
 					onPanoramaMounted={ this.props.onPanoramaMounted } 
 					panorama={ this.props.panorama }
 					twoBlocksClass={ this.props.panoramaTwoBlocksClass } 
@@ -71,7 +71,7 @@ TwoBlocksView.propTypes = {
 	onPanoramaMounted 		: React.PropTypes.func.isRequired, 
 	panorama 				: React.PropTypes.object, 
 	panoramaTwoBlocksClass 	: React.PropTypes.string, 
-	panoramaLatLng 			: React.PropTypes.object,	
+	displayedLatLng 			: React.PropTypes.object,	
 	twoBlocksClass 			: React.PropTypes.string.isRequired, 
 	view 					: React.PropTypes.string.isRequired
 

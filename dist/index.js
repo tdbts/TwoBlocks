@@ -12306,6 +12306,8 @@
 				cityMapMarker: null,
 				choosingLocation: false,
 				countdownTimeLeft: null,
+				displayedBorough: null,
+				displayedLatLng: null,
 				hoveredBorough: null,
 				initialized: false,
 				interchangeHidden: false,
@@ -12315,9 +12317,7 @@
 				mapType: 'city-level',
 				mobile: null,
 				panorama: null,
-				panoramaBorough: null,
 				panoramaCanvas: null,
-				panoramaLatLng: null,
 				promptText: "Loading new TwoBlocks game...",
 				selectedBorough: null,
 				showLocationMarker: null,
@@ -12533,12 +12533,12 @@
 				if (!this.state.choosingLocation) return;
 
 				var _state2 = this.state;
-				var panoramaBorough = _state2.panoramaBorough;
+				var displayedBorough = _state2.displayedBorough;
 				var selectedBorough = _state2.selectedBorough;
 				var gameInstance = this.props.gameInstance;
 
 
-				gameInstance.evaluateFinalAnswer(panoramaBorough, selectedBorough);
+				gameInstance.evaluateFinalAnswer(displayedBorough, selectedBorough);
 			}
 		}, {
 			key: 'getBoroughName',
@@ -13029,8 +13029,8 @@
 				maps.borough.instance.panTo(randomLatLng);
 
 				return this.setState({
-					panoramaBorough: boroughName,
-					panoramaLatLng: randomLatLng
+					displayedBorough: boroughName,
+					displayedLatLng: randomLatLng
 				}).then(function () {
 					return _this8.showRandomPanorama();
 				});
@@ -13425,7 +13425,7 @@
 						onMapMounted: this.onMapMounted.bind(this),
 						onPanoramaMounted: this.onPanoramaMounted.bind(this),
 						panorama: state.panorama,
-						panoramaLatLng: state.panoramaLatLng,
+						displayedLatLng: state.displayedLatLng,
 						panoramaTwoBlocksClass: props.panoramaTwoBlocksClass,
 						twoBlocksClass: props.viewTwoBlocksClass,
 						view: store ? store.getState().view : 'map'
@@ -13573,7 +13573,7 @@
 						view: view
 					}),
 					_react2.default.createElement(_TwoBlocksPanorama2.default, {
-						latLng: this.props.panoramaLatLng,
+						latLng: this.props.displayedLatLng,
 						onPanoramaMounted: this.props.onPanoramaMounted,
 						panorama: this.props.panorama,
 						twoBlocksClass: this.props.panoramaTwoBlocksClass,
@@ -13609,7 +13609,7 @@
 		onPanoramaMounted: _react2.default.PropTypes.func.isRequired,
 		panorama: _react2.default.PropTypes.object,
 		panoramaTwoBlocksClass: _react2.default.PropTypes.string,
-		panoramaLatLng: _react2.default.PropTypes.object,
+		displayedLatLng: _react2.default.PropTypes.object,
 		twoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		view: _react2.default.PropTypes.string.isRequired
 
