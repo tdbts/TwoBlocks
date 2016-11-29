@@ -128,9 +128,9 @@ class TwoBlocks extends React.Component {
 
 		if (!(mapInstance) || mobile) return;  // Event listeners below only apply to desktop game instances  
  
-		mapInstance.map.data.addListener('mouseover', event => this.onHoveredBorough(event.feature));
+		mapInstance.addListener('mouseover', event => this.onHoveredBorough(event.feature));
 
-		mapInstance.map.data.addListener('mouseout', event => {
+		mapInstance.addListener('mouseout', event => {
 
 			this.updateHoveredBorough('');
 
@@ -138,7 +138,7 @@ class TwoBlocks extends React.Component {
 
 		}); 	
 
-		mapInstance.map.data.addListener('click', event => {
+		mapInstance.addListener('click', event => {
 
 			const { gameInstance } = this.props; 
 

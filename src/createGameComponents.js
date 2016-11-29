@@ -10,7 +10,7 @@ let gameComponents = null;
 
 const createGameComponents = function createGameComponents(gameState) {
 
-	if (gameComponents) return gameComponents; 
+	if (gameComponents) return gameComponents;  // Create game components only once, and return them ever afterward 
 
 	if (!('google' in window) || !('maps' in window.google)) {
 

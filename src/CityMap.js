@@ -9,6 +9,20 @@ const CityMap = function CityMap(map, mapType) {
 
 CityMap.prototype = {
 
+	addListener(event, listener) {
+
+		if (!(event) || ('string' !== typeof event)) return; 
+
+		if (!(listener) || ('function' !== typeof listener)) return; 
+
+		if (mapTypes.GOOGLE === this.mapType) {
+
+			this.map.data.addListener(event, listener); 
+
+		}
+
+	}, 
+
 	onChoosingLocation() {
 
 		if (mapTypes.GOOGLE === this.mapType) {

@@ -12416,18 +12416,18 @@
 
 				if (!mapInstance || mobile) return; // Event listeners below only apply to desktop game instances 
 
-				mapInstance.map.data.addListener('mouseover', function (event) {
+				mapInstance.addListener('mouseover', function (event) {
 					return _this2.onHoveredBorough(event.feature);
 				});
 
-				mapInstance.map.data.addListener('mouseout', function (event) {
+				mapInstance.addListener('mouseout', function (event) {
 
 					_this2.updateHoveredBorough('');
 
 					_this2.styleNonHoveredBorough(event.feature);
 				});
 
-				mapInstance.map.data.addListener('click', function (event) {
+				mapInstance.addListener('click', function (event) {
 					var gameInstance = _this2.props.gameInstance;
 
 
@@ -14895,7 +14895,7 @@
 
 	var createGameComponents = function createGameComponents(gameState) {
 
-		if (gameComponents) return gameComponents;
+		if (gameComponents) return gameComponents; // Create game components only once, and return them ever afterward
 
 		if (!('google' in window) || !('maps' in window.google)) {
 
@@ -17932,6 +17932,17 @@
 	};
 
 	CityMap.prototype = {
+		addListener: function addListener(event, listener) {
+
+			if (!event || 'string' !== typeof event) return;
+
+			if (!listener || 'function' !== typeof listener) return;
+
+			if (_constants.mapTypes.GOOGLE === this.mapType) {
+
+				this.map.data.addListener(event, listener);
+			}
+		},
 		onChoosingLocation: function onChoosingLocation() {
 
 			if (_constants.mapTypes.GOOGLE === this.mapType) {
