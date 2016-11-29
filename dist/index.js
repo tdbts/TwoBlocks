@@ -12349,8 +12349,7 @@
 
 				var mapCache = {
 					element: null,
-					instance: null,
-					options: null
+					instance: null
 				};
 
 				var maps = {

@@ -65,8 +65,7 @@ class TwoBlocks extends React.Component {
 
 		const mapCache = {
 			element: null, 
-			instance: null, 
-			options: null
+			instance: null
 		}; 
 
 		const maps = {
