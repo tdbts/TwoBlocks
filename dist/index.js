@@ -12446,7 +12446,7 @@
 
 				/*----------  Handle key presses  ----------*/
 
-				var onKeyPress = (0, _utils.debounce)(this.onKeypress.bind(this), _constants.KEY_PRESS_DEBOUNCE_TIMEOUT);
+				var onKeydown = (0, _utils.debounce)(this.onKeydown.bind(this), _constants.KEY_PRESS_DEBOUNCE_TIMEOUT);
 
 				/*----------  Handle touchmove events  ----------*/
 
@@ -12456,7 +12456,7 @@
 
 				window.addEventListener('resize', onWindowResize);
 
-				window.addEventListener('keydown', onKeyPress);
+				window.addEventListener('keydown', onKeydown);
 
 				if (this.state.mobile) {
 
@@ -12869,8 +12869,8 @@
 				});
 			}
 		}, {
-			key: 'onKeypress',
-			value: function onKeypress(e) {
+			key: 'onKeydown',
+			value: function onKeydown(e) {
 
 				e.preventDefault(); // Prevent arrows from scrolling page
 

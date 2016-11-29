@@ -158,7 +158,7 @@ class TwoBlocks extends React.Component {
 
 		/*----------  Handle key presses  ----------*/
 		
-		const onKeyPress = debounce(this.onKeypress.bind(this), KEY_PRESS_DEBOUNCE_TIMEOUT); 
+		const onKeydown = debounce(this.onKeydown.bind(this), KEY_PRESS_DEBOUNCE_TIMEOUT); 
 
 		/*----------  Handle touchmove events  ----------*/
 		
@@ -166,7 +166,7 @@ class TwoBlocks extends React.Component {
 
 		window.addEventListener('resize', onWindowResize); 
 
-		window.addEventListener('keydown', onKeyPress);
+		window.addEventListener('keydown', onKeydown);
 
 		if (this.state.mobile) {
 
@@ -554,7 +554,7 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onKeypress(e) {
+	onKeydown(e) {
 
 		e.preventDefault();  // Prevent arrows from scrolling page 
 
