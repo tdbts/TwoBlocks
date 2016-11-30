@@ -23,8 +23,6 @@ class TwoBlocks extends React.Component {
 			cityMapMarker 			: null, 
 			choosingLocation 		: false,
 			countdownTimeLeft 		: null,    
-			displayedBorough 		: null, 
-			displayedLatLng 		: null, 
 			hoveredBorough 			: null,
 			initialized 			: false,  
 			interchangeHidden 		: false, 
@@ -33,12 +31,10 @@ class TwoBlocks extends React.Component {
 			maps 					: null, 
 			mapType 				: 'city-level',   
 			mobile 					: null, 
-			panorama 				: null, 
-			panoramaCanvas 			: null, 
+			panorama 				: null,   
 			promptText 				: "Loading new TwoBlocks game...",
 			selectedBorough 		: null, 
-			showLocationMarker 		: null, 
-			spinner 				: null
+			showLocationMarker 		: null
 		}; 
 
 		/*----------  Save reference to original setState() method  ----------*/
@@ -74,13 +70,21 @@ class TwoBlocks extends React.Component {
 			block: Object.assign({}, mapCache)
 		}; 
 
+		const panorama = {
+			borough: null, 
+			element: null, 
+			instance: null, 
+			latLng: null, 
+			spinner: null
+		}; 
+
 		if (mobile) {
 
 			this.onMobileDeviceDetected(); 
 
 		}
 
-		this.setState({ maps, mobile }); 
+		this.setState({ maps, mobile, panorama }); 
 
 	}
 
@@ -179,8 +183,6 @@ class TwoBlocks extends React.Component {
 
 	addGameEventListeners(twoBlocks) {
 
-		// twoBlocks.once(events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONReceived(geoJSON)); 
-
 		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.onGameComponents(gameComponents)); 
 
 		twoBlocks.on(events.NEXT_TURN, () => this.onNextTurn()); 
@@ -211,7 +213,7 @@ class TwoBlocks extends React.Component {
 
 		/*----------  Add listeners to panorama  ----------*/
 		
-		google.maps.event.addListener(panorama, 'pano_changed', () => removeStreetNameAnnotations(panorama)); 
+		google.maps.event.addListener(panorama.instance, 'pano_changed', () => removeStreetNameAnnotations(panorama.instance)); 
 
 	}
 
@@ -219,11 +221,11 @@ class TwoBlocks extends React.Component {
  
 		if (!(this.state.choosingLocation)) return; 
 
-		const { displayedBorough, selectedBorough } = this.state; 
+		const { panorama, selectedBorough } = this.state; 
 
 		const { gameInstance } = this.props; 
 
-		gameInstance.evaluateFinalAnswer(displayedBorough, selectedBorough); 
+		gameInstance.evaluateFinalAnswer(panorama.borough, selectedBorough); 
 
 	}
 
@@ -267,7 +269,7 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.initialized) return;  // Game already initialized 
 
-		const { maps, mobile, panoramaCanvas } = this.state;  
+		const { maps, mobile, panorama } = this.state;  
 
 		const { gameInstance, locationData, service, store } = this.props; 
 
@@ -280,9 +282,9 @@ class TwoBlocks extends React.Component {
 
 		}
 
-		if (!(maps.block.element) || !(maps.borough.element) || !(maps.city.element) || !(panoramaCanvas)) return;  // DOM elements must exist before the game instance can be initialized 
+		if (!(maps.block.element) || !(maps.borough.element) || !(maps.city.element) || !(panorama.element)) return;  // DOM elements must exist before the game instance can be initialized 
 
-		[ maps.city.element, panoramaCanvas ].forEach(element => {
+		[ maps.city.element, panorama.element ].forEach(element => {
 
 			if (!(element)) {
 
@@ -298,7 +300,7 @@ class TwoBlocks extends React.Component {
 			maps,  
 			locationData, 
 			mobile,  
-			panoramaCanvas,	
+			panorama,	
 			mapMarkerVisible: false 
 		}); 		
 
@@ -362,6 +364,7 @@ class TwoBlocks extends React.Component {
 
 		const showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng); 
 
+		// showLocationMarker.placeOnBoroughMap() 
 		if (mobile) {
 
 			showLocationMarker.setOpacity(1); 
@@ -402,7 +405,8 @@ class TwoBlocks extends React.Component {
 				if (mobile) {
 					
 					maps.borough.instance.removeLayer(showLocationMarker);
-
+					
+					// showLocationMarker.placeOnBlockMap() 
 					showLocationMarker.setOpacity(1); 
 					showLocationMarker.setLatLng(showLocationMarkerPosition);
 					showLocationMarker.addTo(maps.block.instance); 
@@ -478,6 +482,7 @@ class TwoBlocks extends React.Component {
  
 		const totalCorrect = gameInstance.totalCorrectAnswers(); 
 
+		showLocationMarker.hide(); 
 		if (showLocationMarker) {
 
 			if (mobile) {
@@ -667,7 +672,8 @@ class TwoBlocks extends React.Component {
 	onNextTurn() {
 
 		const { mobile, showLocationMarker } = this.state; 
-
+		
+		// showLocationMarker.hide() 
 		if (showLocationMarker) {
 
 			if (mobile) {
@@ -690,9 +696,13 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onPanoramaMounted(panoramaCanvas) {
+	onPanoramaMounted(element) {
 
-		this.setState({ panoramaCanvas }); 
+		const { panorama } = this.state; 
+
+		this.setState({ 
+			panorama: Object.assign({}, panorama, { element })
+		}); 
 
 	}
 
@@ -700,14 +710,16 @@ class TwoBlocks extends React.Component {
 
 		const { boroughName, randomLatLng } = randomLocationDetails; 
 
-		const { maps } = this.state; 
+		const { maps, panorama } = this.state; 
 
 		maps.block.instance.panTo(randomLatLng); 
 		maps.borough.instance.panTo(randomLatLng); 
 
 		return this.setState({ 
-			displayedBorough: boroughName,  
-			displayedLatLng: randomLatLng
+			panorama: Object.assign({}, panorama, { 
+				borough: boroughName, 
+				latLng: randomLatLng 
+			}) 
 		})
 
 		.then(() => this.showRandomPanorama()); 
@@ -742,9 +754,9 @@ class TwoBlocks extends React.Component {
 
 	onSpinnerRevolution() {
 
-		const { spinner } = this.state; 
+		const { panorama } = this.state; 
 
-		spinner.stop(); 
+		panorama.spinner.stop(); 
 
 	}
 
@@ -928,13 +940,13 @@ class TwoBlocks extends React.Component {
 
 	showSpinner() {
 
-		const { spinner } = this.state; 
+		const { panorama } = this.state; 
 
 		const { gameInstance } = this.props; 
 
-		spinner.start(); 
+		panorama.spinner.start(); 
 
-		spinner.once('revolution', () => {
+		panorama.spinner.once('revolution', () => {
 
 			this.onSpinnerRevolution(); 
 		
@@ -1077,30 +1089,29 @@ class TwoBlocks extends React.Component {
 					mapType={ state.mapType }
 					mobile={ state.mobile }
 					onMapMounted={ this.onMapMounted.bind(this) }
-					onPanoramaMounted={ this.onPanoramaMounted.bind(this) } 
-					panorama={ state.panorama } 
-					displayedLatLng={ state.displayedLatLng } 
+					onPanoramaMounted={ this.onPanoramaMounted.bind(this) }  
+					panorama={ state.panorama }
 					panoramaTwoBlocksClass={ props.panoramaTwoBlocksClass }
 					twoBlocksClass={ props.viewTwoBlocksClass }
 					view={ store ? store.getState().view : 'map' } 
 				/>
 				<TwoBlocksInterchange 
 					choosingLocation={ state.choosingLocation }
+					clearSelectedBorough={ () => this.setState({ selectedBorough: null }) }
+					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
 					gameOver={ props.gameInstance && props.gameInstance.gameOver() }
 					hidden={ state.interchangeHidden }
-					hoveredBorough={ state.hoveredBorough }
-					twoBlocksClass={ props.promptTwoBlocksClass }
-					promptText={ state.promptText }
-					promptTwoBlocksClass={ props.promptTwoBlocksClass }
-					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
-					clearSelectedBorough={ () => this.setState({ selectedBorough: null }) }
-					selectedBorough={ state.selectedBorough }
-					submitterTwoBlocksClass={ props.submitterTwoBlocksClass }
 					hideReplayButton={ !(store) || !(store.getState().gameOver) }
-					restart={ () => props.gameInstance.emit(events.RESTART_GAME) }
-					replayButtonTwoBlocksClass={ props.replayButtonTwoBlocksClass }
+					hoveredBorough={ state.hoveredBorough }
 					mobile={ state.mobile }
 					onMobileBoroughSelection={ borough => this.onMobileBoroughSelection(borough) }
+					promptText={ state.promptText }
+					promptTwoBlocksClass={ props.promptTwoBlocksClass }
+					selectedBorough={ state.selectedBorough }
+					submitterTwoBlocksClass={ props.submitterTwoBlocksClass }
+					replayButtonTwoBlocksClass={ props.replayButtonTwoBlocksClass }
+					restart={ () => props.gameInstance.emit(events.RESTART_GAME) }
+					twoBlocksClass={ props.promptTwoBlocksClass }
 				/>
 			</div>
 	

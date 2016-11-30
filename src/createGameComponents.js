@@ -18,15 +18,15 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { maps, locationData, mapMarkerVisible, mobile, panoramaCanvas } = gameState; 
+	const { maps, locationData, mapMarkerVisible, mobile, panorama } = gameState; 
 	
-	const webGlManager = createWebGlManager(panoramaCanvas); 
+	const webGlManager = createWebGlManager(panorama.element); 
 	
 	const mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
 
 	/*----------  Set up panorama  ----------*/
 
-	const panorama = createPanorama(panoramaCanvas, { 
+	panorama.instance = createPanorama(panorama.element, { 
 		mode, 
 		fullscreenControl: false, 
 		position: null, 
@@ -36,14 +36,14 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	/*----------  Set up spinner  ----------*/
 	
-	const spinner = createSpinner(panorama, {
+	panorama.spinner = createSpinner(panorama.instance, {
 		punctuate: {
 			segments: 4, 
 			delay: 2000
 		}
 	}); 	
 
-	spinner.on('revolution', () => window.console.log('revolution')); 
+	panorama.spinner.on('revolution', () => window.console.log('revolution')); 
 	
 	/*----------  Set up cityMap  ----------*/
 
@@ -140,8 +140,7 @@ const createGameComponents = function createGameComponents(gameState) {
 		// cityMap, 
 		maps, 
 		cityMapMarker, 
-		panorama, 
-		spinner
+		panorama
 	}; 
 
 	return gameComponents; 

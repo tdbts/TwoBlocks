@@ -12306,8 +12306,6 @@
 				cityMapMarker: null,
 				choosingLocation: false,
 				countdownTimeLeft: null,
-				displayedBorough: null,
-				displayedLatLng: null,
 				hoveredBorough: null,
 				initialized: false,
 				interchangeHidden: false,
@@ -12317,11 +12315,9 @@
 				mapType: 'city-level',
 				mobile: null,
 				panorama: null,
-				panoramaCanvas: null,
 				promptText: "Loading new TwoBlocks game...",
 				selectedBorough: null,
-				showLocationMarker: null,
-				spinner: null
+				showLocationMarker: null
 			};
 
 			/*----------  Save reference to original setState() method  ----------*/
@@ -12358,12 +12354,20 @@
 					block: _extends({}, mapCache)
 				};
 
+				var panorama = {
+					borough: null,
+					element: null,
+					instance: null,
+					latLng: null,
+					spinner: null
+				};
+
 				if (mobile) {
 
 					this.onMobileDeviceDetected();
 				}
 
-				this.setState({ maps: maps, mobile: mobile });
+				this.setState({ maps: maps, mobile: mobile, panorama: panorama });
 			}
 		}, {
 			key: 'componentDidMount',
@@ -12469,8 +12473,6 @@
 			value: function addGameEventListeners(twoBlocks) {
 				var _this3 = this;
 
-				// twoBlocks.once(events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONReceived(geoJSON));
-
 				twoBlocks.once(_constants.events.GAME_COMPONENTS, function (gameComponents) {
 					return _this3.onGameComponents(gameComponents);
 				});
@@ -12522,8 +12524,8 @@
 
 				/*----------  Add listeners to panorama  ----------*/
 
-				google.maps.event.addListener(panorama, 'pano_changed', function () {
-					return (0, _removeStreetNameAnnotations2.default)(panorama);
+				google.maps.event.addListener(panorama.instance, 'pano_changed', function () {
+					return (0, _removeStreetNameAnnotations2.default)(panorama.instance);
 				});
 			}
 		}, {
@@ -12533,12 +12535,12 @@
 				if (!this.state.choosingLocation) return;
 
 				var _state2 = this.state;
-				var displayedBorough = _state2.displayedBorough;
+				var panorama = _state2.panorama;
 				var selectedBorough = _state2.selectedBorough;
 				var gameInstance = this.props.gameInstance;
 
 
-				gameInstance.evaluateFinalAnswer(displayedBorough, selectedBorough);
+				gameInstance.evaluateFinalAnswer(panorama.borough, selectedBorough);
 			}
 		}, {
 			key: 'getBoroughName',
@@ -12588,7 +12590,7 @@
 				var _state3 = this.state;
 				var maps = _state3.maps;
 				var mobile = _state3.mobile;
-				var panoramaCanvas = _state3.panoramaCanvas;
+				var panorama = _state3.panorama;
 				var _props = this.props;
 				var gameInstance = _props.gameInstance;
 				var locationData = _props.locationData;
@@ -12604,9 +12606,9 @@
 					});
 				}
 
-				if (!maps.block.element || !maps.borough.element || !maps.city.element || !panoramaCanvas) return; // DOM elements must exist before the game instance can be initialized
+				if (!maps.block.element || !maps.borough.element || !maps.city.element || !panorama.element) return; // DOM elements must exist before the game instance can be initialized
 
-				[maps.city.element, panoramaCanvas].forEach(function (element) {
+				[maps.city.element, panorama.element].forEach(function (element) {
 
 					if (!element) {
 
@@ -12620,7 +12622,7 @@
 					maps: maps,
 					locationData: locationData,
 					mobile: mobile,
-					panoramaCanvas: panoramaCanvas,
+					panorama: panorama,
 					mapMarkerVisible: false
 				});
 
@@ -12684,6 +12686,7 @@
 
 				var showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng);
 
+				// showLocationMarker.placeOnBoroughMap()
 				if (mobile) {
 
 					showLocationMarker.setOpacity(1);
@@ -12718,6 +12721,7 @@
 
 						maps.borough.instance.removeLayer(showLocationMarker);
 
+						// showLocationMarker.placeOnBlockMap()
 						showLocationMarker.setOpacity(1);
 						showLocationMarker.setLatLng(showLocationMarkerPosition);
 						showLocationMarker.addTo(maps.block.instance);
@@ -12792,6 +12796,7 @@
 
 				var totalCorrect = gameInstance.totalCorrectAnswers();
 
+				showLocationMarker.hide();
 				if (showLocationMarker) {
 
 					if (mobile) {
@@ -12991,6 +12996,7 @@
 				var mobile = _state9.mobile;
 				var showLocationMarker = _state9.showLocationMarker;
 
+				// showLocationMarker.hide()
 
 				if (showLocationMarker) {
 
@@ -13011,9 +13017,13 @@
 			}
 		}, {
 			key: 'onPanoramaMounted',
-			value: function onPanoramaMounted(panoramaCanvas) {
+			value: function onPanoramaMounted(element) {
+				var panorama = this.state.panorama;
 
-				this.setState({ panoramaCanvas: panoramaCanvas });
+
+				this.setState({
+					panorama: _extends({}, panorama, { element: element })
+				});
 			}
 		}, {
 			key: 'onRandomLocation',
@@ -13022,15 +13032,19 @@
 
 				var boroughName = randomLocationDetails.boroughName;
 				var randomLatLng = randomLocationDetails.randomLatLng;
-				var maps = this.state.maps;
+				var _state10 = this.state;
+				var maps = _state10.maps;
+				var panorama = _state10.panorama;
 
 
 				maps.block.instance.panTo(randomLatLng);
 				maps.borough.instance.panTo(randomLatLng);
 
 				return this.setState({
-					displayedBorough: boroughName,
-					displayedLatLng: randomLatLng
+					panorama: _extends({}, panorama, {
+						borough: boroughName,
+						latLng: randomLatLng
+					})
 				}).then(function () {
 					return _this8.showRandomPanorama();
 				});
@@ -13054,9 +13068,9 @@
 		}, {
 			key: 'onShowingPanorama',
 			value: function onShowingPanorama() {
-				var _state10 = this.state;
-				var maps = _state10.maps;
-				var mobile = _state10.mobile;
+				var _state11 = this.state;
+				var maps = _state11.maps;
+				var mobile = _state11.mobile;
 
 
 				if (mobile) return;
@@ -13066,18 +13080,18 @@
 		}, {
 			key: 'onSpinnerRevolution',
 			value: function onSpinnerRevolution() {
-				var spinner = this.state.spinner;
+				var panorama = this.state.panorama;
 
 
-				spinner.stop();
+				panorama.spinner.stop();
 			}
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
-				var _state11 = this.state;
-				var maps = _state11.maps;
-				var mobile = _state11.mobile;
-				var showLocationMarker = _state11.showLocationMarker;
+				var _state12 = this.state;
+				var maps = _state12.maps;
+				var mobile = _state12.mobile;
+				var showLocationMarker = _state12.showLocationMarker;
 				var _props4 = this.props;
 				var gameInstance = _props4.gameInstance;
 				var locationData = _props4.locationData;
@@ -13254,13 +13268,13 @@
 			value: function showSpinner() {
 				var _this11 = this;
 
-				var spinner = this.state.spinner;
+				var panorama = this.state.panorama;
 				var gameInstance = this.props.gameInstance;
 
 
-				spinner.start();
+				panorama.spinner.start();
 
-				spinner.once('revolution', function () {
+				panorama.spinner.once('revolution', function () {
 
 					_this11.onSpinnerRevolution();
 
@@ -13299,10 +13313,10 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state12 = this.state;
-				var maps = _state12.maps;
-				var mobile = _state12.mobile;
-				var selectedBorough = _state12.selectedBorough;
+				var _state13 = this.state;
+				var maps = _state13.maps;
+				var mobile = _state13.mobile;
+				var selectedBorough = _state13.selectedBorough;
 
 
 				if (mobile) return;
@@ -13319,9 +13333,9 @@
 		}, {
 			key: 'styleSelectedBorough',
 			value: function styleSelectedBorough(borough) {
-				var _state13 = this.state;
-				var maps = _state13.maps;
-				var mobile = _state13.mobile;
+				var _state14 = this.state;
+				var maps = _state14.maps;
+				var mobile = _state14.mobile;
 
 
 				if (mobile) return;
@@ -13335,10 +13349,10 @@
 			value: function styleUnselectedBoroughs(borough) {
 				var _this13 = this;
 
-				var _state14 = this.state;
-				var maps = _state14.maps;
-				var mobile = _state14.mobile;
-				var selectedBorough = _state14.selectedBorough;
+				var _state15 = this.state;
+				var maps = _state15.maps;
+				var mobile = _state15.mobile;
+				var selectedBorough = _state15.selectedBorough;
 
 
 				if (mobile) return;
@@ -13425,36 +13439,35 @@
 						onMapMounted: this.onMapMounted.bind(this),
 						onPanoramaMounted: this.onPanoramaMounted.bind(this),
 						panorama: state.panorama,
-						displayedLatLng: state.displayedLatLng,
 						panoramaTwoBlocksClass: props.panoramaTwoBlocksClass,
 						twoBlocksClass: props.viewTwoBlocksClass,
 						view: store ? store.getState().view : 'map'
 					}),
 					_react2.default.createElement(_TwoBlocksInterchange2.default, {
 						choosingLocation: state.choosingLocation,
-						gameOver: props.gameInstance && props.gameInstance.gameOver(),
-						hidden: state.interchangeHidden,
-						hoveredBorough: state.hoveredBorough,
-						twoBlocksClass: props.promptTwoBlocksClass,
-						promptText: state.promptText,
-						promptTwoBlocksClass: props.promptTwoBlocksClass,
-						evaluateFinalAnswer: function evaluateFinalAnswer() {
-							return _this14.evaluateFinalAnswer();
-						},
 						clearSelectedBorough: function clearSelectedBorough() {
 							return _this14.setState({ selectedBorough: null });
 						},
-						selectedBorough: state.selectedBorough,
-						submitterTwoBlocksClass: props.submitterTwoBlocksClass,
-						hideReplayButton: !store || !store.getState().gameOver,
-						restart: function restart() {
-							return props.gameInstance.emit(_constants.events.RESTART_GAME);
+						evaluateFinalAnswer: function evaluateFinalAnswer() {
+							return _this14.evaluateFinalAnswer();
 						},
-						replayButtonTwoBlocksClass: props.replayButtonTwoBlocksClass,
+						gameOver: props.gameInstance && props.gameInstance.gameOver(),
+						hidden: state.interchangeHidden,
+						hideReplayButton: !store || !store.getState().gameOver,
+						hoveredBorough: state.hoveredBorough,
 						mobile: state.mobile,
 						onMobileBoroughSelection: function onMobileBoroughSelection(borough) {
 							return _this14.onMobileBoroughSelection(borough);
-						}
+						},
+						promptText: state.promptText,
+						promptTwoBlocksClass: props.promptTwoBlocksClass,
+						selectedBorough: state.selectedBorough,
+						submitterTwoBlocksClass: props.submitterTwoBlocksClass,
+						replayButtonTwoBlocksClass: props.replayButtonTwoBlocksClass,
+						restart: function restart() {
+							return props.gameInstance.emit(_constants.events.RESTART_GAME);
+						},
+						twoBlocksClass: props.promptTwoBlocksClass
 					})
 				);
 			}
@@ -13556,6 +13569,7 @@
 				var mapTwoBlocksClass = _props.mapTwoBlocksClass;
 				var mapType = _props.mapType;
 				var mobile = _props.mobile;
+				var panorama = _props.panorama;
 				var view = _props.view;
 
 
@@ -13573,9 +13587,9 @@
 						view: view
 					}),
 					_react2.default.createElement(_TwoBlocksPanorama2.default, {
-						latLng: this.props.displayedLatLng,
+						latLng: panorama.latLng,
 						onPanoramaMounted: this.props.onPanoramaMounted,
-						panorama: this.props.panorama,
+						panorama: panorama.instance,
 						twoBlocksClass: this.props.panoramaTwoBlocksClass,
 						visible: 'panorama' === this.props.view
 					}),
@@ -14906,16 +14920,16 @@
 		var locationData = gameState.locationData;
 		var mapMarkerVisible = gameState.mapMarkerVisible;
 		var mobile = gameState.mobile;
-		var panoramaCanvas = gameState.panoramaCanvas;
+		var panorama = gameState.panorama;
 
 
-		var webGlManager = (0, _createWebGlManager2.default)(panoramaCanvas);
+		var webGlManager = (0, _createWebGlManager2.default)(panorama.element);
 
 		var mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
 
 		/*----------  Set up panorama  ----------*/
 
-		var panorama = (0, _createPanorama2.default)(panoramaCanvas, {
+		panorama.instance = (0, _createPanorama2.default)(panorama.element, {
 			mode: mode,
 			fullscreenControl: false,
 			position: null,
@@ -14925,14 +14939,14 @@
 
 		/*----------  Set up spinner  ----------*/
 
-		var spinner = (0, _createSpinner2.default)(panorama, {
+		panorama.spinner = (0, _createSpinner2.default)(panorama.instance, {
 			punctuate: {
 				segments: 4,
 				delay: 2000
 			}
 		});
 
-		spinner.on('revolution', function () {
+		panorama.spinner.on('revolution', function () {
 			return window.console.log('revolution');
 		});
 
@@ -15039,8 +15053,7 @@
 			// cityMap,
 			maps: maps,
 			cityMapMarker: cityMapMarker,
-			panorama: panorama,
-			spinner: spinner
+			panorama: panorama
 		};
 
 		return gameComponents;
