@@ -26,7 +26,6 @@ class TwoBlocks extends React.Component {
 			hoveredBorough 			: null,
 			initialized 			: false,  
 			interchangeHidden 		: false, 
-			mapConfig 				: null, 
 			mapMarkerVisible 		: false,
 			maps 					: null, 
 			mapType 				: 'city-level',   
@@ -1082,7 +1081,6 @@ class TwoBlocks extends React.Component {
 					cityLevelMap={ state.maps.city.instance }
 					countdownTimeLeft={ state.countdownTimeLeft }
 					interchangeHidden={ state.interchangeHidden }
-					mapConfig={ state.mapConfig }
 					mapMarker={ state.cityMapMarker }
 					mapMarkerVisible={ state.mapMarkerVisible }
 					maps={ state.maps }

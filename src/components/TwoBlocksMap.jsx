@@ -12,19 +12,19 @@ class TwoBlocksMap extends React.Component {
 
 	shouldComponentUpdate(prevProps) {
 
-		const { config, mapType } = prevProps; 
+		const { config, mapType } = this.props; 
 
-		return (this.props.config !== config) || (this.props.mapType !== mapType);  // Only the 'config' and 'mapType' props ever change for the child component maps.  Only update if one of them has changed.  
+		return (config !== prevProps.config) || (mapType !== prevProps.mapType);  // Only the 'config' and 'mapType' props ever change for the child component maps.  Only update if one of them has changed.  
 
 	}
 	
 	render() {
 
-		const { blockLevelMap, boroughLevelMap, cityLevelMap, config, onMapMounted, mapType, twoBlocksClass, view } = this.props; 
+		const { blockLevelMap, boroughLevelMap, cityLevelMap, config, onMapMounted, mapType, twoBlocksClass, visible } = this.props; 
 
 		return (
 
-			<div className={ getClassName(twoBlocksClass, view) }>
+			<div className={ getClassName(twoBlocksClass, visible) }>
 				<GoogleMap 
 					className={ [ "two-blocks-city-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'city-level')) ].join(' ') }
 					config={ config ? config.cityLevelMap : null }
@@ -59,9 +59,9 @@ class TwoBlocksMap extends React.Component {
 
 /*----------  getClassName()  ----------*/
 
-	const getClassName = function getClassName(twoBlocksClass, view) {
+	const getClassName = function getClassName(twoBlocksClass, visible) {
 
-		const visibilityClass = 'map' === view ? 'visible' : 'offscreen'; 
+		const visibilityClass = visible ? 'visible' : 'offscreen'; 
 
 		return [
 		

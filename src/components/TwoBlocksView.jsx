@@ -18,7 +18,7 @@ class TwoBlocksView extends React.Component {
 
 	render() {
 
-		const { countdownTimeLeft, interchangeHidden, onMapMounted, mapConfig, maps, mapTwoBlocksClass, mapType, mobile, panorama, view } = this.props;		
+		const { countdownTimeLeft, interchangeHidden, onMapMounted, maps, mapTwoBlocksClass, mapType, mobile, panorama, view } = this.props;		
 
 		return (
 
@@ -27,18 +27,17 @@ class TwoBlocksView extends React.Component {
 					blockLevelMap={ maps.block.instance }
 					boroughLevelMap={ maps.borough.instance }
 					cityLevelMap={ maps.city.instance }
-					config={ mapConfig }
 					onMapMounted={ onMapMounted }
 					mapType={ mapType }
 					twoBlocksClass={ mapTwoBlocksClass }
-					view={ view }
+					visible={ 'map' === view }
 				/>			
 				<TwoBlocksPanorama 
 					latLng={ panorama.latLng }
 					onPanoramaMounted={ this.props.onPanoramaMounted } 
 					panorama={ panorama.instance }
 					twoBlocksClass={ this.props.panoramaTwoBlocksClass } 
-					visible={ 'panorama' === this.props.view } 
+					visible={ 'panorama' === view } 
 				/>
 				<TwoBlocksCountdown 
 					interchangeHidden={ interchangeHidden }
@@ -55,15 +54,10 @@ class TwoBlocksView extends React.Component {
 
 TwoBlocksView.propTypes = {
 	
-	blockLevelMap 			: React.PropTypes.object, 
-	boroughLevelMap 		: React.PropTypes.object, 
-	cityLevelMap 			: React.PropTypes.object, 
 	countdownTimeLeft 		: React.PropTypes.number, 
 	interchangeHidden 		: React.PropTypes.bool, 
 	mapCanvasClassName 		: React.PropTypes.string, 
-	mapConfig 				: React.PropTypes.object, 
-	mapMarker 				: React.PropTypes.object, 
-	mapMarkerVisible 		: React.PropTypes.bool, 
+	maps 					: React.PropTypes.object, 
 	mapTwoBlocksClass 		: React.PropTypes.string.isRequired, 
 	mapType 				: React.PropTypes.string, 
 	mobile 					: React.PropTypes.bool.isRequired, 
@@ -71,7 +65,6 @@ TwoBlocksView.propTypes = {
 	onPanoramaMounted 		: React.PropTypes.func.isRequired, 
 	panorama 				: React.PropTypes.object, 
 	panoramaTwoBlocksClass 	: React.PropTypes.string, 
-	displayedLatLng 			: React.PropTypes.object,	
 	twoBlocksClass 			: React.PropTypes.string.isRequired, 
 	view 					: React.PropTypes.string.isRequired
 

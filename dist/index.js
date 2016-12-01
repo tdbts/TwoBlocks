@@ -12309,7 +12309,6 @@
 				hoveredBorough: null,
 				initialized: false,
 				interchangeHidden: false,
-				mapConfig: null,
 				mapMarkerVisible: false,
 				maps: null,
 				mapType: 'city-level',
@@ -13430,7 +13429,6 @@
 						cityLevelMap: state.maps.city.instance,
 						countdownTimeLeft: state.countdownTimeLeft,
 						interchangeHidden: state.interchangeHidden,
-						mapConfig: state.mapConfig,
 						mapMarker: state.cityMapMarker,
 						mapMarkerVisible: state.mapMarkerVisible,
 						maps: state.maps,
@@ -13563,7 +13561,6 @@
 				var countdownTimeLeft = _props.countdownTimeLeft;
 				var interchangeHidden = _props.interchangeHidden;
 				var onMapMounted = _props.onMapMounted;
-				var mapConfig = _props.mapConfig;
 				var maps = _props.maps;
 				var mapTwoBlocksClass = _props.mapTwoBlocksClass;
 				var mapType = _props.mapType;
@@ -13579,18 +13576,17 @@
 						blockLevelMap: maps.block.instance,
 						boroughLevelMap: maps.borough.instance,
 						cityLevelMap: maps.city.instance,
-						config: mapConfig,
 						onMapMounted: onMapMounted,
 						mapType: mapType,
 						twoBlocksClass: mapTwoBlocksClass,
-						view: view
+						visible: 'map' === view
 					}),
 					_react2.default.createElement(_TwoBlocksPanorama2.default, {
 						latLng: panorama.latLng,
 						onPanoramaMounted: this.props.onPanoramaMounted,
 						panorama: panorama.instance,
 						twoBlocksClass: this.props.panoramaTwoBlocksClass,
-						visible: 'panorama' === this.props.view
+						visible: 'panorama' === view
 					}),
 					_react2.default.createElement(_TwoBlocksCountdown2.default, {
 						interchangeHidden: interchangeHidden,
@@ -13606,15 +13602,10 @@
 
 	TwoBlocksView.propTypes = {
 
-		blockLevelMap: _react2.default.PropTypes.object,
-		boroughLevelMap: _react2.default.PropTypes.object,
-		cityLevelMap: _react2.default.PropTypes.object,
 		countdownTimeLeft: _react2.default.PropTypes.number,
 		interchangeHidden: _react2.default.PropTypes.bool,
 		mapCanvasClassName: _react2.default.PropTypes.string,
-		mapConfig: _react2.default.PropTypes.object,
-		mapMarker: _react2.default.PropTypes.object,
-		mapMarkerVisible: _react2.default.PropTypes.bool,
+		maps: _react2.default.PropTypes.object,
 		mapTwoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		mapType: _react2.default.PropTypes.string,
 		mobile: _react2.default.PropTypes.bool.isRequired,
@@ -13622,7 +13613,6 @@
 		onPanoramaMounted: _react2.default.PropTypes.func.isRequired,
 		panorama: _react2.default.PropTypes.object,
 		panoramaTwoBlocksClass: _react2.default.PropTypes.string,
-		displayedLatLng: _react2.default.PropTypes.object,
 		twoBlocksClass: _react2.default.PropTypes.string.isRequired,
 		view: _react2.default.PropTypes.string.isRequired
 
@@ -13678,29 +13668,30 @@
 		_createClass(TwoBlocksMap, [{
 			key: 'shouldComponentUpdate',
 			value: function shouldComponentUpdate(prevProps) {
-				var config = prevProps.config;
-				var mapType = prevProps.mapType;
+				var _props = this.props;
+				var config = _props.config;
+				var mapType = _props.mapType;
 
 
-				return this.props.config !== config || this.props.mapType !== mapType; // Only the 'config' and 'mapType' props ever change for the child component maps.  Only update if one of them has changed.
+				return config !== prevProps.config || mapType !== prevProps.mapType; // Only the 'config' and 'mapType' props ever change for the child component maps.  Only update if one of them has changed.
 			}
 		}, {
 			key: 'render',
 			value: function render() {
-				var _props = this.props;
-				var blockLevelMap = _props.blockLevelMap;
-				var boroughLevelMap = _props.boroughLevelMap;
-				var cityLevelMap = _props.cityLevelMap;
-				var config = _props.config;
-				var onMapMounted = _props.onMapMounted;
-				var mapType = _props.mapType;
-				var twoBlocksClass = _props.twoBlocksClass;
-				var view = _props.view;
+				var _props2 = this.props;
+				var blockLevelMap = _props2.blockLevelMap;
+				var boroughLevelMap = _props2.boroughLevelMap;
+				var cityLevelMap = _props2.cityLevelMap;
+				var config = _props2.config;
+				var onMapMounted = _props2.onMapMounted;
+				var mapType = _props2.mapType;
+				var twoBlocksClass = _props2.twoBlocksClass;
+				var visible = _props2.visible;
 
 
 				return _react2.default.createElement(
 					'div',
-					{ className: getClassName(twoBlocksClass, view) },
+					{ className: getClassName(twoBlocksClass, visible) },
 					_react2.default.createElement(_GoogleMap2.default, {
 						className: ["two-blocks-city-level-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'city-level')].join(' '),
 						config: config ? config.cityLevelMap : null,
@@ -13734,9 +13725,9 @@
 
 	/*----------  getClassName()  ----------*/
 
-	var getClassName = function getClassName(twoBlocksClass, view) {
+	var getClassName = function getClassName(twoBlocksClass, visible) {
 
-		var visibilityClass = 'map' === view ? 'visible' : 'offscreen';
+		var visibilityClass = visible ? 'visible' : 'offscreen';
 
 		return [twoBlocksClass, "full-dimensions", visibilityClass].join(" ");
 	};
