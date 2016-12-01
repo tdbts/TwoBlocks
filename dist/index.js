@@ -13431,9 +13431,10 @@
 						countdownTimeLeft: state.countdownTimeLeft,
 						interchangeHidden: state.interchangeHidden,
 						mapConfig: state.mapConfig,
-						mapTwoBlocksClass: props.mapTwoBlocksClass,
 						mapMarker: state.cityMapMarker,
 						mapMarkerVisible: state.mapMarkerVisible,
+						maps: state.maps,
+						mapTwoBlocksClass: props.mapTwoBlocksClass,
 						mapType: state.mapType,
 						mobile: state.mobile,
 						onMapMounted: this.onMapMounted.bind(this),
@@ -13559,13 +13560,11 @@
 			key: 'render',
 			value: function render() {
 				var _props = this.props;
-				var blockLevelMap = _props.blockLevelMap;
-				var boroughLevelMap = _props.boroughLevelMap;
-				var cityLevelMap = _props.cityLevelMap;
 				var countdownTimeLeft = _props.countdownTimeLeft;
 				var interchangeHidden = _props.interchangeHidden;
 				var onMapMounted = _props.onMapMounted;
 				var mapConfig = _props.mapConfig;
+				var maps = _props.maps;
 				var mapTwoBlocksClass = _props.mapTwoBlocksClass;
 				var mapType = _props.mapType;
 				var mobile = _props.mobile;
@@ -13577,9 +13576,9 @@
 					'div',
 					{ className: this.getClassName() },
 					_react2.default.createElement(_TwoBlocksMap2.default, {
-						blockLevelMap: blockLevelMap,
-						boroughLevelMap: boroughLevelMap,
-						cityLevelMap: cityLevelMap,
+						blockLevelMap: maps.block.instance,
+						boroughLevelMap: maps.borough.instance,
+						cityLevelMap: maps.city.instance,
 						config: mapConfig,
 						onMapMounted: onMapMounted,
 						mapType: mapType,

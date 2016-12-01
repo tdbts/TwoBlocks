@@ -1083,9 +1083,10 @@ class TwoBlocks extends React.Component {
 					countdownTimeLeft={ state.countdownTimeLeft }
 					interchangeHidden={ state.interchangeHidden }
 					mapConfig={ state.mapConfig }
-					mapTwoBlocksClass={ props.mapTwoBlocksClass }
 					mapMarker={ state.cityMapMarker }
 					mapMarkerVisible={ state.mapMarkerVisible }
+					maps={ state.maps }
+					mapTwoBlocksClass={ props.mapTwoBlocksClass }
 					mapType={ state.mapType }
 					mobile={ state.mobile }
 					onMapMounted={ this.onMapMounted.bind(this) }

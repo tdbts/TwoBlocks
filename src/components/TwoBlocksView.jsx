@@ -18,15 +18,15 @@ class TwoBlocksView extends React.Component {
 
 	render() {
 
-		const { blockLevelMap, boroughLevelMap, cityLevelMap, countdownTimeLeft, interchangeHidden, onMapMounted, mapConfig, mapTwoBlocksClass, mapType, mobile, panorama, view } = this.props;		
+		const { countdownTimeLeft, interchangeHidden, onMapMounted, mapConfig, maps, mapTwoBlocksClass, mapType, mobile, panorama, view } = this.props;		
 
 		return (
 
 			<div className={ this.getClassName() }>
 				<TwoBlocksMap 
-					blockLevelMap={ blockLevelMap }
-					boroughLevelMap={ boroughLevelMap }
-					cityLevelMap={ cityLevelMap }
+					blockLevelMap={ maps.block.instance }
+					boroughLevelMap={ maps.borough.instance }
+					cityLevelMap={ maps.city.instance }
 					config={ mapConfig }
 					onMapMounted={ onMapMounted }
 					mapType={ mapType }
