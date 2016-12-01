@@ -54,6 +54,8 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	/*----------  React Component Lifecycle Methods  ----------*/
+	
 	componentWillMount() {
 
 		const mobile = this.isMobile(); 
@@ -109,19 +111,23 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	styleNonHoveredBorough(borough) {
+	/*----------  Custom Component Methods  ----------*/
+	
+	activateSpinner() {
 
-		if (!(borough)) return; 
+		const { panorama } = this.state; 
 
-		const { maps, mobile, selectedBorough } = this.state;
+		const { gameInstance } = this.props; 
 
-		if (mobile) return; 
+		panorama.spinner.start(); 
 
-		if (selectedBorough !== this.getBoroughName(borough)) {
+		panorama.spinner.once('revolution', () => {
 
-			maps.city.instance.unselectBorough(borough); 
+			this.onSpinnerRevolution(); 
+		
+			gameInstance.emit(events.CHOOSING_LOCATION); 
 
-		}
+		}); 
 
 	}
 
@@ -283,16 +289,6 @@ class TwoBlocks extends React.Component {
 
 		if (!(maps.block.element) || !(maps.borough.element) || !(maps.city.element) || !(panorama.element)) return;  // DOM elements must exist before the game instance can be initialized 
 
-		[ maps.city.element, panorama.element ].forEach(element => {
-
-			if (!(element)) {
-
-				throw new Error(`No element with selector '.${this.props[ maps.city.element === element ? "mapTwoBlocksClass" : "panoramaTwoBlocksClass" ]}' could be found on the page.`); 
-
-			}
-
-		}); 
-
 		/*----------  Create Game Components  ----------*/
 						
 		const gameComponents = createGameComponents({
@@ -301,7 +297,7 @@ class TwoBlocks extends React.Component {
 			mobile,  
 			panorama,	
 			mapMarkerVisible: false 
-		}); 		
+		}); 
 
 		window.console.log("gameComponents:", gameComponents); 
 
@@ -929,29 +925,11 @@ class TwoBlocks extends React.Component {
 
 				} else {
 
-					this.showSpinner(); 
+					this.activateSpinner(); 
 
 				}
 
 			}); 		
-
-	}
-
-	showSpinner() {
-
-		const { panorama } = this.state; 
-
-		const { gameInstance } = this.props; 
-
-		panorama.spinner.start(); 
-
-		panorama.spinner.once('revolution', () => {
-
-			this.onSpinnerRevolution(); 
-		
-			gameInstance.emit(events.CHOOSING_LOCATION); 
-
-		}); 
 
 	}
 
@@ -997,6 +975,22 @@ class TwoBlocks extends React.Component {
 
 		}
 	
+	}
+
+	styleNonHoveredBorough(borough) {
+
+		if (!(borough)) return; 
+
+		const { maps, mobile, selectedBorough } = this.state;
+
+		if (mobile) return; 
+
+		if (selectedBorough !== this.getBoroughName(borough)) {
+
+			maps.city.instance.unselectBorough(borough); 
+
+		}
+
 	}
 
 	styleSelectedBorough(borough) {

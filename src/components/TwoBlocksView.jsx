@@ -18,7 +18,7 @@ class TwoBlocksView extends React.Component {
 
 	render() {
 
-		const { countdownTimeLeft, interchangeHidden, onMapMounted, maps, mapTwoBlocksClass, mapType, mobile, panorama, view } = this.props;		
+		const { countdownTimeLeft, interchangeHidden, onMapMounted, maps, mapTwoBlocksClass, mapType, mobile, onPanoramaMounted, panorama, panoramaTwoBlocksClass, view } = this.props;		
 
 		return (
 
@@ -34,9 +34,9 @@ class TwoBlocksView extends React.Component {
 				/>			
 				<TwoBlocksPanorama 
 					latLng={ panorama.latLng }
-					onPanoramaMounted={ this.props.onPanoramaMounted } 
+					onPanoramaMounted={ onPanoramaMounted } 
 					panorama={ panorama.instance }
-					twoBlocksClass={ this.props.panoramaTwoBlocksClass } 
+					twoBlocksClass={ panoramaTwoBlocksClass } 
 					visible={ 'panorama' === view } 
 				/>
 				<TwoBlocksCountdown 
