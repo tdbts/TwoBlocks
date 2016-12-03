@@ -69,7 +69,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 
 		mapTypeId,
-		zoom: mobile ? BLOCK_LEVEL_ZOOM + 1 : BLOCK_LEVEL_ZOOM 
+		zoom: mobile ? BLOCK_LEVEL_ZOOM - 1 : BLOCK_LEVEL_ZOOM 
 	}); 
 
 	maps.block.instance = mobile ? L.map(maps.block.element, blockLevelMapOptions) : new google.maps.Map(maps.block.element, blockLevelMapOptions); 
@@ -78,7 +78,7 @@ const createGameComponents = function createGameComponents(gameState) {
 	
 	const boroughLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, {
 		mapTypeId, 
-		zoom: mobile ? BOROUGH_LEVEL_ZOOM + 1 : BOROUGH_LEVEL_ZOOM
+		zoom: mobile ? BOROUGH_LEVEL_ZOOM - 1 : BOROUGH_LEVEL_ZOOM
 	}); 
 
 	maps.borough.instance = mobile ? L.map(maps.borough.element, boroughLevelMapOptions) : new google.maps.Map(maps.borough.element, boroughLevelMapOptions); 			
