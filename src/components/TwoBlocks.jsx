@@ -1,4 +1,4 @@
-/* global document, google, window, L */
+/* global document, google, window */
 
 import React from 'react'; 
 import TwoBlocksView from './TwoBlocksView';
@@ -20,13 +20,11 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = { 
-			cityMapMarker 			: null, 
 			choosingLocation 		: false,
 			countdownTimeLeft 		: null,    
 			hoveredBorough 			: null,
 			initialized 			: false,  
 			interchangeHidden 		: false, 
-			mapMarkerVisible 		: false,
 			maps 					: null, 
 			mapType 				: 'city-level',   
 			mobile 					: null, 
@@ -295,8 +293,7 @@ class TwoBlocks extends React.Component {
 			maps,  
 			locationData, 
 			mobile,  
-			panorama,	
-			mapMarkerVisible: false 
+			panorama 
 		}); 
 
 		window.console.log("gameComponents:", gameComponents); 
@@ -350,30 +347,33 @@ class TwoBlocks extends React.Component {
 
 	onAnswerEvaluated(answerDetails) {
 
-		const actualLocationLatLng = {
-			lat: answerDetails.randomLatLng.lat, 
-			lng: answerDetails.randomLatLng.lng
-		}; 
+		// const actualLocationLatLng = {
+		// 	lat: answerDetails.randomLatLng.lat, 
+		// 	lng: answerDetails.randomLatLng.lng
+		// }; 
+
+		const { lat, lng } = answerDetails.randomLatLng; 
 
 		const { maps, showLocationMarker, mobile } = this.state; 
 
-		const showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng); 
-
+		// const showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng); 
+		showLocationMarker.setLocation(lat, lng); 
+		showLocationMarker.placeOnMap(maps.borough.instance); 
 		// showLocationMarker.placeOnBoroughMap() 
-		if (mobile) {
+		// if (mobile) {
 
-			showLocationMarker.setOpacity(1); 
-			showLocationMarker.setLatLng(showLocationMarkerPosition); 
-			showLocationMarker.addTo(maps.borough.instance); 
+		// 	showLocationMarker.setOpacity(1); 
+		// 	showLocationMarker.setLatLng(showLocationMarkerPosition); 
+		// 	showLocationMarker.addTo(maps.borough.instance); 
 
-		} else {
+		// } else {
 
-			showLocationMarker.setVisible(true); 
-			showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); 
-			showLocationMarker.setMap(maps.borough.instance); 
-			showLocationMarker.setPosition(showLocationMarkerPosition); 
+		// 	showLocationMarker.setVisible(true); 
+		// 	showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); 
+		// 	showLocationMarker.setMap(maps.borough.instance); 
+		// 	showLocationMarker.setPosition(showLocationMarkerPosition); 
 		
-		}
+		// }
 
 		return Promise.resolve()
 
@@ -399,19 +399,21 @@ class TwoBlocks extends React.Component {
 
 				if (mobile) {
 					
-					maps.borough.instance.removeLayer(showLocationMarker);
+					maps.borough.instance.removeLayer(showLocationMarker.marker);
 					
 					// showLocationMarker.placeOnBlockMap() 
-					showLocationMarker.setOpacity(1); 
-					showLocationMarker.setLatLng(showLocationMarkerPosition);
-					showLocationMarker.addTo(maps.block.instance); 
+					// showLocationMarker.setOpacity(1); 
+					// showLocationMarker.setLatLng(showLocationMarkerPosition);
+					// showLocationMarker.addTo(maps.block.instance); 
 
-				} else {
+				} 
+				// else {
 
-					showLocationMarker.setMap(maps.block.instance);
-					showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
+				// 	showLocationMarker.setMap(maps.block.instance);
+				// 	showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
 				
-				}
+				// }
+				showLocationMarker.placeOnMap(maps.block.instance); 
 
 			})
 
@@ -442,8 +444,7 @@ class TwoBlocks extends React.Component {
 		return this.setState({
 			choosingLocation: true, 
 			hoveredBorough: '', 
-			interchangeHidden: false, 
-			mapMarkerVisible: false,  // Set to true for location guessing  
+			interchangeHidden: false,  
 			promptText: "In which borough was the last panorama located?"
 		})
 
@@ -463,7 +464,7 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({
 			...gameComponents, 
-			showLocationMarker: gameComponents.cityMapMarker
+			showLocationMarker: gameComponents.mapMarker
 		});
 	}
 
@@ -473,24 +474,24 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance } = this.props; 
 
-		const { mobile, showLocationMarker } = this.state; 
+		const { showLocationMarker } = this.state; 
  
 		const totalCorrect = gameInstance.totalCorrectAnswers(); 
 
 		showLocationMarker.hide(); 
-		if (showLocationMarker) {
+		// if (showLocationMarker) {
 
-			if (mobile) {
+		// 	if (mobile) {
 
-				showLocationMarker.setOpacity(0); 
+		// 		showLocationMarker.setOpacity(0); 
 
-			} else {
+		// 	} else {
 
-				showLocationMarker.setMap(null); 
+		// 		showLocationMarker.setMap(null); 
 			
-			}
+		// 	}
 
-		}
+		// }
 
 		return this.setState({
 			mapType: 'city-level', 
@@ -666,22 +667,22 @@ class TwoBlocks extends React.Component {
 
 	onNextTurn() {
 
-		const { mobile, showLocationMarker } = this.state; 
+		const { showLocationMarker } = this.state; 
 		
-		// showLocationMarker.hide() 
-		if (showLocationMarker) {
+		showLocationMarker.hide();
+		// if (showLocationMarker) {
 
-			if (mobile) {
+		// 	if (mobile) {
 
-				showLocationMarker.setOpacity(0); 
+		// 		showLocationMarker.setOpacity(0); 
 
-			} else {
+		// 	} else {
 
-				showLocationMarker.setMap(null); 
+		// 		showLocationMarker.setMap(null); 
 			
-			}
+		// 	}
 			
-		}
+		// }
 
 		this.setState({
 
@@ -769,7 +770,7 @@ class TwoBlocks extends React.Component {
 		
 		} else {
 
-			maps.block.instance.removeLayer(showLocationMarker); 
+			maps.block.instance.removeLayer(showLocationMarker.marker); 
 
 		}
 
@@ -1075,8 +1076,6 @@ class TwoBlocks extends React.Component {
 					cityLevelMap={ state.maps.city.instance }
 					countdownTimeLeft={ state.countdownTimeLeft }
 					interchangeHidden={ state.interchangeHidden }
-					mapMarker={ state.cityMapMarker }
-					mapMarkerVisible={ state.mapMarkerVisible }
 					maps={ state.maps }
 					mapTwoBlocksClass={ props.mapTwoBlocksClass }
 					mapType={ state.mapType }

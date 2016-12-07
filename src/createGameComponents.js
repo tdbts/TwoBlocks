@@ -5,6 +5,7 @@ import createPanorama from './createPanorama';
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 
 import CityMap from './CityMap';  
+import ShowLocationMarker from './ShowLocationMarker'; 
 
 let gameComponents = null; 
 
@@ -18,7 +19,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { maps, locationData, mapMarkerVisible, mobile, panorama } = gameState; 
+	const { maps, locationData, mobile, panorama } = gameState; 
 	
 	const webGlManager = createWebGlManager(panorama.element); 
 	
@@ -109,20 +110,26 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	/*----------  Set up marker  ----------*/
+	/*----------  Set up marker  ----------*/ 
 
-	// Outside the polygon boundaries, in the Atlantic Ocean 
-	const { lat: markerLat, lng: markerLng } = locationData.MARKER_PLACEMENT; 
+	const markerOptions = {}; 
 
-	const markerOptions = {
-		animation: google.maps.Animation.BOUNCE, 
-		draggable: true, 
-		map: maps.city.instance.map, 
-		position: new google.maps.LatLng(markerLat, markerLng), 
-		visible: mapMarkerVisible
-	}; 
+	if (mobile) {
 
-	const cityMapMarker = mobile ? new L.Marker() : new google.maps.Marker(markerOptions); 
+		markerOptions.dragging = false; 
+
+	} else {
+
+		markerOptions.draggable = false; 
+		markerOptions.animation = google.maps.Animation.BOUNCE; 
+
+	}
+
+	const mapMarker = new ShowLocationMarker(markerOptions, {
+		mobile, 
+		blockLevelMap: maps.block.instance, 
+		boroughLevelMap: maps.borough.instance
+	}); 
 
 	/*----------  Set up WebGl  ----------*/
 	
@@ -134,12 +141,9 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	// Assign game components to variable so we can just return 
 	// the already-created components if we start a new game 
-	gameComponents = {
-		// blockLevelMap, 
-		// boroughLevelMap, 
-		// cityMap, 
+	gameComponents = { 
 		maps, 
-		cityMapMarker, 
+		mapMarker, 
 		panorama
 	}; 
 

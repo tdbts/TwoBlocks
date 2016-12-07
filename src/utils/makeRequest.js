@@ -62,6 +62,7 @@ const makeRequest = function makeRequest(url) {
 		
 		}; 
 
+		xhr.onerror = e => reject(e); 
 		xhr.onreadystatechange = ensureReadiness(xhr); 
 
 		/*----------  Make Request  ----------*/

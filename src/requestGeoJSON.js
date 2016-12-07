@@ -11,15 +11,19 @@ const requestGeoJSON = function requestGeoJSON(url, worker) {
 	
 	if (worker) {
 
-		result = new Promise(resolve => {
+		result = new Promise((resolve, reject) => {
 
 			worker.addEventListener('message', event => {
 
-				const { message } = event.data; 
+				const { message, payload } = event.data; 
 
 				if (workerMessages.GEO_JSON_LOADED === message) {
 
 					resolve(); 
+
+				} else if (workerMessages.GEO_JSON_REQUEST_FAILURE === message) {
+
+					reject(new Error("Failure to load GeoJSON data.  Check your internet connection.")); 
 
 				}
 

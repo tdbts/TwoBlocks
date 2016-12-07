@@ -68,7 +68,9 @@ service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start l
 		// loaded, inform the game instance and pass the JSON to it for reference.
 		gameInstance.emit(events.GEO_JSON_LOADED, payload); 
 
-	}); 	
+	})
+
+	.catch(e => window.console.error(e)); 
 
 /*----------  Add Google Maps Script  ----------*/
 

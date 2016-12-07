@@ -1,6 +1,7 @@
 const workerMessages = {
 
 	GEO_JSON_LOADED: 'GEO_JSON_LOADED',  // worker to main thread 
+	GEO_JSON_REQUEST_FAILURE: 'GEO_JSON_REQUEST_FAILURE', 
 	GET_RANDOM_LOCATION: 'GET_RANDOM_LOCATION', // main thread to worker...in payload, need to indicate when it is a new turn so a new location generator can be instantiated  
 	LOAD_GEO_JSON: 'LOAD_GEO_JSON', // main thread to worker 
 	RANDOM_LOCATION_CHOSEN: 'RANDOM_LOCATION_CHOSEN', // worker to main thread 
