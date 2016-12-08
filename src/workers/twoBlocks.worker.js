@@ -1,11 +1,9 @@
 /* global self */
 
 import 'babel-polyfill'; 
-import { makeRequest, tryAtMost } from '../utils/utils'; 
-import { workerMessages } from '../constants/constants'; 
-import createPromiseTimeout from '../createPromiseTimeout'; 
- 
-import RandomLocationGenerator from '../RandomLocationGenerator'; 
+import { createPromiseTimeout, makeRequest, tryAtMost } from '../utils/utils'; 
+import { workerMessages } from '../constants/constants';  
+import RandomLocationGenerator from '../random-location-generator/RandomLocationGenerator'; 
 
 let generator = null; 
 let geoJSON = null; 

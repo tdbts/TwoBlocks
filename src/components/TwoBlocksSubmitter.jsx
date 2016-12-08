@@ -1,5 +1,5 @@
 import React from 'react'; 
-import stylizeBoroughName from '../stylizeBoroughName';
+import stylizeBoroughName from './component-utils/stylizeBoroughName';
 import SubmitterDesktop from './SubmitterDesktop';  
 import SubmitterMobile from './SubmitterMobile'; 
 import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 

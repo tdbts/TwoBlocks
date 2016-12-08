@@ -1,7 +1,7 @@
 /* global window */
 
 import { EventEmitter } from 'events'; 
-import { isOneOf } from './utils/utils'; 
+import { isOneOf } from '../utils/utils'; 
 import { inherits } from 'util'; 
 
 /*=====================================

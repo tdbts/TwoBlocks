@@ -8,7 +8,7 @@ const RandomLocationGenerator = function RandomLocationGenerator(featureCollecti
 
 	this.featureCollection = featureCollection; 	
 
-	this.latLngMaxMin = null;; 
+	this.latLngMaxMin = null; 
 	this.selectedBorough = null;
 	this.selectedLinearRing = null;  
 

@@ -1,6 +1,6 @@
 /* global google, L */
 
-import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, DEFAULT_MAP_OPTIONS } from './constants/constants'; 
+import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, DEFAULT_MAP_OPTIONS } from '../constants/constants'; 
 import createPanorama from './createPanorama'; 
 import createSpinner from './createSpinner'; 
 import createWebGlManager from './createWebGlManager'; 

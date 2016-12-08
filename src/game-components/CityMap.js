@@ -1,4 +1,4 @@
-import { mapTypes } from './constants/constants'; 
+import { mapTypes } from '../constants/constants'; 
 
 const CityMap = function CityMap(map, mapType) {
 

@@ -2,6 +2,7 @@ import applyToAllOwnProps from './applyToAllOwnProps';
 import applyToOwnProp from './applyToOwnProp';  
 import capitalize from './capitalize'; 
 import clone from './clone';  
+import createPromiseTimeout from './createPromiseTimeout'; 
 import debounce from './debounce'; 
 import emptyFunction from './emptyFunction'; 
 import extend from './extend'; 
@@ -44,6 +45,7 @@ export {
 	applyToOwnProp, 
 	capitalize, 
 	clone, 
+	createPromiseTimeout, 
 	debounce, 
 	emptyFunction, 
 	extend,

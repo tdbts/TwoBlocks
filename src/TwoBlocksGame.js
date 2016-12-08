@@ -1,20 +1,17 @@
 /* global window */
-
-import calculateDistanceFromMarkerToLocation from './calculateDistanceFromMarkerToLocation'; 
-import createPromiseTimeout from './createPromiseTimeout';  
-import getRandomPanoramaLocation from './getRandomPanoramaLocation';   
-import request from 'superagent'; 
+   
 import actions from './actions/actions'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
-import { events, nycCoordinates, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
+import { createPromiseTimeout } from './utils/utils'; 
+import { events, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
 
-const TwoBlocksGame = function TwoBlocksGame(store, worker) {
+const TwoBlocksGame = function TwoBlocksGame(store, worker, service) {
 
 	this.store = store;   
-  
+	this.worker = worker; 
+	this.service = service; 
 	this.locationData = {}; 
-	this.worker = worker
 
 	this._geoJSONLoaded = new Promise(resolve => this.once(events.GEO_JSON_LOADED, resolve)); 
 
@@ -56,7 +53,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				selectedBorough, 
 				type: actions.BOROUGH_SELECTED
 			}); 
-
+			window.console.log("createPromiseTimeout:", createPromiseTimeout); 
 			createPromiseTimeout(ANSWER_EVALUATION_DELAY) 
 
 				.then(() => this.emit(events.TURN_COMPLETE));
@@ -67,10 +64,10 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		
 			this.store.dispatch({
 				type: actions.INCREMENT_TOTAL_ROUNDS
-			})
+			}); 
 
 			this.addTurnToGameHistory();
-		 
+
 			this.store.dispatch({
 				type: actions.CLEAR_CURRENT_TURN
 			}); 
@@ -98,7 +95,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			this.store.dispatch({
 				stage, 
 				type: actions.SET_GAME_STAGE
-			})	
+			}); 
 
 			this.emit(events.GAME_STAGE, stage); 
 		
@@ -167,9 +164,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	getRandomPanoramaLocation(attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS, featureCollection) {
+	getRandomPanoramaLocation(featureCollection, attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS) {
 		
-		return getRandomPanoramaLocation(this.worker, featureCollection) 
+		return this.service.getRandomPanoramaLocation(featureCollection) 
 
 			.catch(() => {
 
@@ -183,7 +180,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 				window.console.log(`Failure to request nearest panorama.  ${attemptsLeft} more attempts left.`); 
 
-				return getRandomPanoramaLocation(this.worker, featureCollection); 
+				return this.getRandomPanoramaLocation(featureCollection, attemptsLeft); 
 
 			}) 						
 
@@ -215,7 +212,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			type: actions.CAN_EVALUATE_ANSWER
 		}); 
 
-		return this.getRandomPanoramaLocation(this.worker, featureCollection) 
+		return this.getRandomPanoramaLocation(featureCollection) 
 
 			.then(locationData => {  // boroughName, randomLatLng
 

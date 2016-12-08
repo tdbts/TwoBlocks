@@ -1,10 +1,10 @@
-/* google, L */
+/* global google, L */
 
 /*----------  Constructor  ----------*/
 
 const ShowLocationMarker = function ShowLocationMarker(options, gameComponents) {
 
-	const { mobile, blockLevelMap, boroughLevelMap } = gameComponents; 
+	const { mobile } = gameComponents; 
 
 	this.marker = mobile ? new L.Marker(options) : new google.maps.Marker(options); 
 	this.mobile = mobile; 

@@ -3,13 +3,12 @@
 import React from 'react'; 
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksInterchange from './TwoBlocksInterchange'; 
-import stylizeBoroughName from '../stylizeBoroughName';
-import createGameComponents from '../createGameComponents'; 
-import createPromiseTimeout from '../createPromiseTimeout';  
-import Countdown from '../Countdown';
-import removeStreetNameAnnotations from '../removeStreetNameAnnotations';  
+import stylizeBoroughName from './component-utils/stylizeBoroughName';
+import createGameComponents from '../game-components/createGameComponents'; 
+import Countdown from './component-utils/Countdown';
+import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
 import { events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
-import { debounce, isOneOf, isType } from '../utils/utils';  
+import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
 class TwoBlocks extends React.Component {

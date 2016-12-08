@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util'; 
-import { isType } from './utils/utils';
-import { MILLISECONDS_IN_A_SECOND } from './constants/constants'; 
+import { isType } from '../../utils/utils';
+import { MILLISECONDS_IN_A_SECOND } from '../../constants/constants'; 
 
 const Countdown = function Countdown(countdownLength) {
 

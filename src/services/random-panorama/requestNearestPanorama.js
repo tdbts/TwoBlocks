@@ -1,15 +1,13 @@
 /* global google, window */
 
 const requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
-	window.console.log("requestNearestPanorama()");
-	window.console.log("randomLatLng:", randomLatLng);  
+
 	return new Promise((resolve, reject) => {
 
 		const streetViewService = new google.maps.StreetViewService(); 
 
 		const { coordinates } = randomLatLng.geometry; 
-		window.console.log("coordinates:", coordinates); 
-		// const [ lat, lng ] = coordinates; 
+ 
 		const [ lng, lat ] = coordinates; 
 
 		const location = { lat, lng };  
@@ -29,7 +27,7 @@ const requestNearestPanorama = function requestNearestPanorama(randomLatLng) {
 				resolve({ panoData, status });
 
 			} else {
-				window.console.log("requestNearestPanorama() -- Rejecting...")
+
 				reject({ panoData, status }); 
 			
 			} 

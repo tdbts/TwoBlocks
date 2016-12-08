@@ -4,7 +4,7 @@ import 'babel-polyfill';
 import React from 'react'; 
 import TwoBlocks from '../src/components/TwoBlocks';
 import TwoBlocksGame from '../src/TwoBlocksGame';
-import TwoBlocksService from '../src/TwoBlocksService';   
+import TwoBlocksService from '../src/services/TwoBlocksService';   
 import TwoBlocksWorker from '../src/workers/twoBlocks.worker.js';
 import twoBlocks from '../src/reducers/twoBlocks';
 
@@ -32,9 +32,15 @@ const store = createStore(...createStoreArgs);
 
 const worker = window.Worker ? new TwoBlocksWorker() : null;
 
+/*----------  Create service for data requests  ----------*/
+
+const service = new TwoBlocksService(worker); 
+
+window.console.log("service:", service); 
+
 /*----------  Create TwoBlocks Game Instance  ----------*/
 
-const gameInstance = new TwoBlocksGame(store, worker); 
+const gameInstance = new TwoBlocksGame(store, worker, service); 
 
 window.console.log("gameInstance:", gameInstance); 
 
@@ -50,11 +56,6 @@ if (worker) {
 
 }
 
-/*----------  Create service for data requests  ----------*/
-
-const service = new TwoBlocksService(worker); 
-
-window.console.log("service:", service); 
 
 service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start loading it as soon as possible 
 

@@ -1,5 +1,3 @@
-/* global google */
-
 import turf from '@turf/turf';
 import getRandomCoords from './getRandomCoords'; 
 

@@ -1,7 +1,7 @@
 /* global window */
 
 import request from 'superagent'; 
-import { workerMessages } from './constants/constants'; 
+import { workerMessages } from '../constants/constants'; 
 
 const requestGeoJSON = function requestGeoJSON(url, worker) {
 
@@ -15,7 +15,7 @@ const requestGeoJSON = function requestGeoJSON(url, worker) {
 
 			worker.addEventListener('message', event => {
 
-				const { message, payload } = event.data; 
+				const { message } = event.data; 
 
 				if (workerMessages.GEO_JSON_LOADED === message) {
 

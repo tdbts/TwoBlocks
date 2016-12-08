@@ -1,4 +1,4 @@
-import { workerMessages } from './constants/constants'; 
+import { workerMessages } from '../../constants/constants'; 
 
 const getRandomLocationListener = (worker, resolve) => {
 
@@ -11,7 +11,7 @@ const getRandomLocationListener = (worker, resolve) => {
 		if (workerMessages.RANDOM_LOCATION_CHOSEN === message) {
 
 			worker.removeEventListener('message', onWorkerEvent); 
-			window.console.log("From Worker: random location -- payload:", payload); 
+
 			resolve(payload); 
 
 		}
@@ -21,7 +21,7 @@ const getRandomLocationListener = (worker, resolve) => {
 }; 
 
 const getRandomLocationFromWorker = function getRandomLocationFromWorker(worker, newTurn = false) {
-	window.console.log("getRandomLocationFromWorker()"); 
+
 	return new Promise(resolve => {
 
 		const randomLocationListener = getRandomLocationListener(worker, resolve); 
