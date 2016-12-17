@@ -152,7 +152,7 @@ class TwoBlocks extends React.Component {
 
 			this.onSelectedBorough(event.feature);  
 
-		}); 
+		});  
 
 	}
 
@@ -512,21 +512,21 @@ class TwoBlocks extends React.Component {
 			
 			gameInstance.once(events.GAME_COMPONENTS, () => this.onGeoJSONReceived(geoJSON)); 
 
-		} else {
+			return; 
 
-			if (!(mobile)) {
+		} 
 
-				// Add GeoJSON to the cityMap if not on mobile.  The 'addGeoJson()' method 
-				// returns the feature collection.  Each borough is a feature.  
-				const featureCollection = maps.city.instance.onGeoJSONReceived(geoJSON); 
+		if (!(mobile)) {
 
-				locationData.featureCollection = featureCollection; 
+			// Add GeoJSON to the cityMap if not on mobile.  The 'addGeoJson()' method 
+			// returns the feature collection.  Each borough is a feature.  
+			const featureCollection = maps.city.instance.onGeoJSONReceived(geoJSON); 
 
-			}
+			locationData.featureCollection = featureCollection; 
 
-			gameInstance.emit(events.VIEW_READY); 
-			
 		}
+
+		gameInstance.emit(events.VIEW_READY); 
 
 	}
 
@@ -541,7 +541,7 @@ class TwoBlocks extends React.Component {
 		this.updateHoveredBorough(feature); 
 		
 		this.styleHoveredBorough(feature); 
-	
+
 	}
 
 	onIncorrectBorough(selectionDetails) {
@@ -773,8 +773,10 @@ class TwoBlocks extends React.Component {
 
 		}
 
-		maps.city.instance.panTo(locationData.CENTER); 
-		maps.city.instance.setZoom(DEFAULT_MAP_ZOOM); 		
+ 		window.console.log("locationData.CENTER:", locationData.CENTER); 
+ 		window.console.log("DEFAULT_MAP_ZOOM:", DEFAULT_MAP_ZOOM); 
+		// maps.city.instance.panTo(locationData.CENTER); 
+		// maps.city.instance.setZoom(DEFAULT_MAP_ZOOM); 		
 
 		this.setState({
 			

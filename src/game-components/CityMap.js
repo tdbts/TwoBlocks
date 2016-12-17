@@ -55,6 +55,8 @@ CityMap.prototype = {
 
 	onSelectedBorough(borough, options) {
 
+		if (!(borough)) return; 
+
 		if (mapTypes.GOOGLE === this.mapType) {
 
 			this.map.data.overrideStyle(borough, options); 
@@ -113,6 +115,8 @@ CityMap.prototype = {
 	}, 
 
 	unselectBorough(borough) {
+
+		if (!(borough)) return;  // Don't want to revert style for entire map 
 
 		if (mapTypes.GOOGLE === this.mapType) {
 

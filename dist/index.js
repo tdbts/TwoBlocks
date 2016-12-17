@@ -12833,19 +12833,20 @@
 					gameInstance.once(_constants.events.GAME_COMPONENTS, function () {
 						return _this8.onGeoJSONReceived(geoJSON);
 					});
-				} else {
 
-					if (!mobile) {
-
-						// Add GeoJSON to the cityMap if not on mobile.  The 'addGeoJson()' method
-						// returns the feature collection.  Each borough is a feature. 
-						var featureCollection = maps.city.instance.onGeoJSONReceived(geoJSON);
-
-						locationData.featureCollection = featureCollection;
-					}
-
-					gameInstance.emit(_constants.events.VIEW_READY);
+					return;
 				}
+
+				if (!mobile) {
+
+					// Add GeoJSON to the cityMap if not on mobile.  The 'addGeoJson()' method
+					// returns the feature collection.  Each borough is a feature. 
+					var featureCollection = maps.city.instance.onGeoJSONReceived(geoJSON);
+
+					locationData.featureCollection = featureCollection;
+				}
+
+				gameInstance.emit(_constants.events.VIEW_READY);
 			}
 		}, {
 			key: 'onHoveredBorough',
@@ -13107,8 +13108,10 @@
 					maps.block.instance.removeLayer(showLocationMarker.marker);
 				}
 
-				maps.city.instance.panTo(locationData.CENTER);
-				maps.city.instance.setZoom(_constants.DEFAULT_MAP_ZOOM);
+				window.console.log("locationData.CENTER:", locationData.CENTER);
+				window.console.log("DEFAULT_MAP_ZOOM:", _constants.DEFAULT_MAP_ZOOM);
+				// maps.city.instance.panTo(locationData.CENTER);
+				// maps.city.instance.setZoom(DEFAULT_MAP_ZOOM); 		
 
 				this.setState({
 
@@ -18004,6 +18007,8 @@
 		},
 		onSelectedBorough: function onSelectedBorough(borough, options) {
 
+			if (!borough) return;
+
 			if (_constants.mapTypes.GOOGLE === this.mapType) {
 
 				this.map.data.overrideStyle(borough, options);
@@ -18045,6 +18050,8 @@
 			}
 		},
 		unselectBorough: function unselectBorough(borough) {
+
+			if (!borough) return; // Don't want to revert style for entire map
 
 			if (_constants.mapTypes.GOOGLE === this.mapType) {
 
@@ -18366,6 +18373,7 @@
 	var TwoBlocksGame = function TwoBlocksGame(store, worker, service) {
 		var _this = this;
 
+		this.events = _constants.events;
 		this.store = store;
 		this.worker = worker;
 		this.service = service;
@@ -18374,6 +18382,23 @@
 		this._geoJSONLoaded = new Promise(function (resolve) {
 			return _this.once(_constants.events.GEO_JSON_LOADED, resolve);
 		});
+
+		/*=================================
+	 =            DEBUGGING            =
+	 =================================*/
+
+		var _loop = function _loop(event) {
+
+			_this.on(event, function () {
+				return window.console.log("event:", event);
+			});
+		};
+
+		for (var event in this.events) {
+			_loop(event);
+		}
+
+		/*=====  End of DEBUGGING  ======*/
 	};
 
 	/*----------  Inherit from EventEmitter  ----------*/
@@ -18386,27 +18411,27 @@
 		addEventListeners: function addEventListeners() {
 			var _this2 = this;
 
-			this.on(_constants.events.GAME_COMPONENTS, function () {
+			this.on(this.events.GAME_COMPONENTS, function () {
 				return _this2.onGameComponents();
 			});
 
-			this.on(_constants.events.GEO_JSON_LOADED, function (geoJSON) {
+			this.on(this.events.GEO_JSON_LOADED, function (geoJSON) {
 				return _this2.onGeoJSONLoaded(geoJSON);
 			});
 
-			this.on(_constants.events.GAME_STAGE, function (gameStage) {
+			this.on(this.events.GAME_STAGE, function (gameStage) {
 
 				if ('gameplay' === gameStage) {
 
-					_this2.emit(_constants.events.NEXT_TURN);
+					_this2.emit(_this2.events.NEXT_TURN);
 				}
 			});
 
-			this.on(_constants.events.NEXT_TURN, function () {
+			this.on(this.events.NEXT_TURN, function () {
 				return _this2.nextTurn();
 			});
 
-			this.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
+			this.on(this.events.ANSWER_EVALUATED, function (answerDetails) {
 
 				window.console.log("answerDetails:", answerDetails);
 
@@ -18419,11 +18444,11 @@
 				});
 				window.console.log("createPromiseTimeout:", _utils.createPromiseTimeout);
 				(0, _utils.createPromiseTimeout)(_constants.ANSWER_EVALUATION_DELAY).then(function () {
-					return _this2.emit(_constants.events.TURN_COMPLETE);
+					return _this2.emit(_this2.events.TURN_COMPLETE);
 				});
 			});
 
-			this.on(_constants.events.TURN_COMPLETE, function () {
+			this.on(this.events.TURN_COMPLETE, function () {
 
 				_this2.store.dispatch({
 					type: _actions2.default.INCREMENT_TOTAL_ROUNDS
@@ -18441,14 +18466,14 @@
 						type: _actions2.default.GAME_OVER
 					});
 
-					_this2.emit(_constants.events.GAME_OVER);
+					_this2.emit(_this2.events.GAME_OVER);
 				} else {
 
-					_this2.emit(_constants.events.NEXT_TURN);
+					_this2.emit(_this2.events.NEXT_TURN);
 				}
 			});
 
-			this.on(_constants.events.GAME_OVER, function () {
+			this.on(this.events.GAME_OVER, function () {
 
 				var stage = 'postgame';
 
@@ -18457,10 +18482,10 @@
 					type: _actions2.default.SET_GAME_STAGE
 				});
 
-				_this2.emit(_constants.events.GAME_STAGE, stage);
+				_this2.emit(_this2.events.GAME_STAGE, stage);
 			});
 
-			this.on(_constants.events.RESTART_GAME, function () {
+			this.on(this.events.RESTART_GAME, function () {
 				return _this2.restart();
 			});
 		},
@@ -18491,16 +18516,16 @@
 
 			if (selectedBorough === correctBorough) {
 
-				this.emit(_constants.events.CORRECT_BOROUGH, correctBorough);
+				this.emit(this.events.CORRECT_BOROUGH, correctBorough);
 			} else {
 
-				this.emit(_constants.events.INCORRECT_BOROUGH, { correctBorough: correctBorough, selectedBorough: selectedBorough });
+				this.emit(this.events.INCORRECT_BOROUGH, { correctBorough: correctBorough, selectedBorough: selectedBorough });
 			}
 
 			var randomLatLng = this.store.getState().currentTurn.randomLatLng;
 
 
-			this.emit(_constants.events.ANSWER_EVALUATED, { correctBorough: correctBorough, randomLatLng: randomLatLng, selectedBorough: selectedBorough });
+			this.emit(this.events.ANSWER_EVALUATED, { correctBorough: correctBorough, randomLatLng: randomLatLng, selectedBorough: selectedBorough });
 		},
 		gameOver: function gameOver() {
 
@@ -18574,7 +18599,7 @@
 
 				return locationData;
 			}).then(function (locationData) {
-				return _this5.emit(_constants.events.RANDOM_LOCATION, locationData);
+				return _this5.emit(_this5.events.RANDOM_LOCATION, locationData);
 			});
 		},
 		onCityLocationDataReceived: function onCityLocationDataReceived(locationData) {
@@ -18583,7 +18608,7 @@
 
 			this.locationData = locationData;
 
-			this.emit(_constants.events.HOST_LOCATION_DATA, locationData);
+			this.emit(this.events.HOST_LOCATION_DATA, locationData);
 		},
 		onGameComponents: function onGameComponents() {},
 		onGeoJSONLoaded: function onGeoJSONLoaded(geoJSON) {
@@ -18598,7 +18623,7 @@
 
 			var viewReady = new Promise(function (resolve) {
 
-				_this6.on(_constants.events.VIEW_READY, resolve);
+				_this6.on(_this6.events.VIEW_READY, resolve);
 			});
 
 			var prerequisites = [this.geoJSONLoaded(), viewReady];
@@ -18616,7 +18641,7 @@
 		start: function start() {
 			var _this7 = this;
 
-			this.emit(_constants.events.GAME_STAGE, 'pregame');
+			this.emit(this.events.GAME_STAGE, 'pregame');
 
 			this.addEventListeners();
 
@@ -18637,7 +18662,7 @@
 				type: _actions2.default.SET_GAME_STAGE
 			});
 
-			this.emit(_constants.events.GAME_STAGE, stage);
+			this.emit(this.events.GAME_STAGE, stage);
 		},
 		totalCorrectAnswers: function totalCorrectAnswers() {
 			var _store$getState4 = this.store.getState();
