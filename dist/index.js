@@ -18442,7 +18442,7 @@
 					selectedBorough: selectedBorough,
 					type: _actions2.default.BOROUGH_SELECTED
 				});
-				window.console.log("createPromiseTimeout:", _utils.createPromiseTimeout);
+
 				(0, _utils.createPromiseTimeout)(_constants.ANSWER_EVALUATION_DELAY).then(function () {
 					return _this2.emit(_this2.events.TURN_COMPLETE);
 				});
