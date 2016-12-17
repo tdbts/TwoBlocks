@@ -103,7 +103,7 @@ const createSpinner = (panorma, options = {}) => {
 		// If the heading is evenly divisible by the number of degrees 
 		// in each segment, the spinning has completed one partial 
 		// rotation, and it is time to pause the movement.  
-		if ((heading % (DEGREES_IN_A_CIRCLE / segments)) === 0) {
+		if ((Math.round(heading) % (DEGREES_IN_A_CIRCLE / segments)) === 0) {
 
 			_paused = true;  
 
@@ -197,15 +197,13 @@ const createSpinner = (panorma, options = {}) => {
 
 		spin() {
 
-			// window.console.log('spin()'); 
-
 			try {
 
 				const pov = incrementHeading(panorma.getPov(), increment); 
 
 				panorma.setPov(pov); 
-				
-				if ((pov.heading % DEGREES_IN_A_CIRCLE) === _startHeading) {
+
+				if ((Math.round(pov.heading) % DEGREES_IN_A_CIRCLE) === _startHeading) {
 
 					spinner.emit('revolution'); 
 
@@ -231,14 +229,12 @@ const createSpinner = (panorma, options = {}) => {
 			
 			_paused = false; 
 
-			// window.console.log('spinner start()'); 
-
 			if (!(_started)) {
 
 				_started = true;  
 
-				_startHeading = panorma.getPov().heading; 
-			
+				_startHeading = Math.round(panorma.getPov().heading); 
+
 			}
  
 			if (!(timer)) {

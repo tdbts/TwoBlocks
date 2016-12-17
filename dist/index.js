@@ -14976,7 +14976,7 @@
 
 		var blockLevelMapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, {
 			mapTypeId: mapTypeId,
-			zoom: mobile ? _constants.BLOCK_LEVEL_ZOOM + 1 : _constants.BLOCK_LEVEL_ZOOM
+			zoom: mobile ? _constants.BLOCK_LEVEL_ZOOM - 1 : _constants.BLOCK_LEVEL_ZOOM
 		});
 
 		maps.block.instance = mobile ? L.map(maps.block.element, blockLevelMapOptions) : new google.maps.Map(maps.block.element, blockLevelMapOptions);
@@ -14985,7 +14985,7 @@
 
 		var boroughLevelMapOptions = _extends({}, _constants.DEFAULT_MAP_OPTIONS, {
 			mapTypeId: mapTypeId,
-			zoom: mobile ? _constants.BOROUGH_LEVEL_ZOOM + 1 : _constants.BOROUGH_LEVEL_ZOOM
+			zoom: mobile ? _constants.BOROUGH_LEVEL_ZOOM - 1 : _constants.BOROUGH_LEVEL_ZOOM
 		});
 
 		maps.borough.instance = mobile ? L.map(maps.borough.element, boroughLevelMapOptions) : new google.maps.Map(maps.borough.element, boroughLevelMapOptions);
@@ -15246,7 +15246,7 @@
 			// in each segment, the spinning has completed one partial
 			// rotation, and it is time to pause the movement. 
 
-			if (heading % (DEGREES_IN_A_CIRCLE / segments) === 0) {
+			if (Math.round(heading) % (DEGREES_IN_A_CIRCLE / segments) === 0) {
 
 				_paused = true;
 
@@ -15330,15 +15330,13 @@
 		var api = {
 			spin: function spin() {
 
-				// window.console.log('spin()');
-
 				try {
 
 					var pov = incrementHeading(panorma.getPov(), increment);
 
 					panorma.setPov(pov);
 
-					if (pov.heading % DEGREES_IN_A_CIRCLE === _startHeading) {
+					if (Math.round(pov.heading) % DEGREES_IN_A_CIRCLE === _startHeading) {
 
 						spinner.emit('revolution');
 					}
@@ -15358,13 +15356,11 @@
 
 				_paused = false;
 
-				// window.console.log('spinner start()');
-
 				if (!_started) {
 
 					_started = true;
 
-					_startHeading = panorma.getPov().heading;
+					_startHeading = Math.round(panorma.getPov().heading);
 				}
 
 				if (!timer) {
