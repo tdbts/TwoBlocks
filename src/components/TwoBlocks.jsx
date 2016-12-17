@@ -773,8 +773,8 @@ class TwoBlocks extends React.Component {
 
 		}
 
- 		window.console.log("locationData.CENTER:", locationData.CENTER); 
- 		window.console.log("DEFAULT_MAP_ZOOM:", DEFAULT_MAP_ZOOM); 
+		window.console.log("locationData.CENTER:", locationData.CENTER); 
+		window.console.log("DEFAULT_MAP_ZOOM:", DEFAULT_MAP_ZOOM); 
 		// maps.city.instance.panTo(locationData.CENTER); 
 		// maps.city.instance.setZoom(DEFAULT_MAP_ZOOM); 		
 

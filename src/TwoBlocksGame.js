@@ -66,7 +66,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 				selectedBorough, 
 				type: actions.BOROUGH_SELECTED
 			}); 
-			window.console.log("createPromiseTimeout:", createPromiseTimeout); 
+
 			createPromiseTimeout(ANSWER_EVALUATION_DELAY) 
 
 				.then(() => this.emit(this.events.TURN_COMPLETE));
