@@ -13217,7 +13217,7 @@
 			key: 'shouldUseDeviceOrientation',
 			value: function shouldUseDeviceOrientation() {
 
-				var conditions = [!!window.DeviceOrientationEvent || !!window.DeviceMotionEvent, window.screen.width < _constants.MINIMUM_SPINNER_SCREEN_WIDTH];
+				var conditions = [!!window.DeviceOrientationEvent || !!window.DeviceMotionEvent, window.screen.width < _constants.MINIMUM_SPINNER_SCREEN_WIDTH || /iPad/g.test(window.navigator.userAgent)];
 
 				return conditions.every(function (condition) {
 					return !!condition;

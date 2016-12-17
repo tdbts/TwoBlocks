@@ -880,7 +880,7 @@ class TwoBlocks extends React.Component {
 		const conditions = [
 
 			!!(window.DeviceOrientationEvent) || !!(window.DeviceMotionEvent), 
-			window.screen.width < MINIMUM_SPINNER_SCREEN_WIDTH
+			(window.screen.width < MINIMUM_SPINNER_SCREEN_WIDTH) || /iPad/g.test(window.navigator.userAgent)
 
 		]; 
 
