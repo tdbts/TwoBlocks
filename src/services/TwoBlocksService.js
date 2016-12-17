@@ -1,10 +1,7 @@
-/* global google */
-
 import requestGeoJSON from './requestGeoJSON'; 
 import injectGapiScript from './injectGapiScript';
 import loadLeaflet from './loadLeaflet';  
-import { poll } from './utils/utils'; 
-import { workerMessages } from './constants/constants'; 
+import getRandomPanoramaLocation from './getRandomPanoramaLocation'; 
 
 /*----------  Constructor  ----------*/
 
@@ -17,6 +14,12 @@ const TwoBlocksService = function TwoBlocksService(worker) {
 /*----------  Prototype  ----------*/
 
 TwoBlocksService.prototype = {
+
+	getRandomPanoramaLocation(featureCollection) {
+
+		return getRandomPanoramaLocation(this.worker, featureCollection); 
+
+	}, 
 
 	loadCityLocationData(url) {
 

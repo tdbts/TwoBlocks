@@ -1,9 +1,9 @@
-import requestNearestPanorama from './requestNearestPanorama';  
-import pointToLatLngLiteral from './pointToLatLngLiteral'; 
-import RandomLocationGenerator from './RandomLocationGenerator'; 
-import getRandomLocationFromWorker from './getRandomLocationFromWorker'; 
-import { tryAtMost } from './utils/utils';
-import { MAXIMUM_PANORAMA_REQUESTS } from './constants/constants';  
+import requestNearestPanorama from './random-panorama/requestNearestPanorama';  
+import pointToLatLngLiteral from './random-panorama/pointToLatLngLiteral'; 
+import RandomLocationGenerator from '../random-location-generator/RandomLocationGenerator'; 
+import getRandomLocationFromWorker from './random-panorama/getRandomLocationFromWorker'; 
+import { tryAtMost } from '../utils/utils';
+import { MAXIMUM_PANORAMA_REQUESTS } from '../constants/constants';  
 
 const getRandomPanoramaLocation = function getRandomPanoramaLocation(worker, featureCollection) {
 
@@ -40,7 +40,7 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(worker, fea
 
 			return getRandomLocationFromWorker(worker)
 
-				.then(locationData => (randomLatLng = locationData.latLng)) 	
+				.then(locationData => (randomLatLng = locationData.latLng)); 
 
 		})
 

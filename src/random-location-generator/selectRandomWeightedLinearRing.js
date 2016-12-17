@@ -13,7 +13,7 @@ const selectRandomWeightedLinearRing = function selectRandomWeightedLinearRing(f
 		.map(polygon => getGeometricConstituents('Polygon', polygon))
 
 		.map(linearRings => linearRings[0]); 
-	 
+
 	const linearRingPathLengths = linearRingCollection.map(linearRing => {
 
 		return linearRing.length;

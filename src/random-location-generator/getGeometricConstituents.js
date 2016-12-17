@@ -1,5 +1,4 @@
 import turf from '@turf/turf'; 
-import normalizeLinearRings from './normalizeLinearRings'; 
 
 /**
  *

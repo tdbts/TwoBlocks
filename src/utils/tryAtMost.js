@@ -1,10 +1,8 @@
-const tryAtMost = function tryAtMost(thenable, maxTries, onCaught = function () {}) {
+const tryAtMost = function tryAtMost(thenable, maxTries, onCaught = (...args) => Promise.resolve({ args })) {
 
 	return thenable()
 
 		.catch((...args) => {
-
-			window.console.log("Caught tryAtMost()..."); 
 
 			maxTries -= 1; 
 

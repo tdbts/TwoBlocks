@@ -18,27 +18,26 @@ class TwoBlocksView extends React.Component {
 
 	render() {
 
-		const { blockLevelMap, boroughLevelMap, cityLevelMap, countdownTimeLeft, interchangeHidden, onMapMounted, mapConfig, mapTwoBlocksClass, mapType, mobile, view } = this.props;		
+		const { countdownTimeLeft, interchangeHidden, onMapMounted, maps, mapTwoBlocksClass, mapType, mobile, onPanoramaMounted, panorama, panoramaTwoBlocksClass, view } = this.props;		
 
 		return (
 
 			<div className={ this.getClassName() }>
 				<TwoBlocksMap 
-					blockLevelMap={ blockLevelMap }
-					boroughLevelMap={ boroughLevelMap }
-					cityLevelMap={ cityLevelMap }
-					config={ mapConfig }
+					blockLevelMap={ maps.block.instance }
+					boroughLevelMap={ maps.borough.instance }
+					cityLevelMap={ maps.city.instance }
 					onMapMounted={ onMapMounted }
 					mapType={ mapType }
 					twoBlocksClass={ mapTwoBlocksClass }
-					view={ view }
+					visible={ 'map' === view }
 				/>			
 				<TwoBlocksPanorama 
-					latLng={ this.props.panoramaLatLng }
-					onPanoramaMounted={ this.props.onPanoramaMounted } 
-					panorama={ this.props.panorama }
-					twoBlocksClass={ this.props.panoramaTwoBlocksClass } 
-					visible={ 'panorama' === this.props.view } 
+					latLng={ panorama.latLng }
+					onPanoramaMounted={ onPanoramaMounted } 
+					panorama={ panorama.instance }
+					twoBlocksClass={ panoramaTwoBlocksClass } 
+					visible={ 'panorama' === view } 
 				/>
 				<TwoBlocksCountdown 
 					interchangeHidden={ interchangeHidden }
@@ -55,15 +54,10 @@ class TwoBlocksView extends React.Component {
 
 TwoBlocksView.propTypes = {
 	
-	blockLevelMap 			: React.PropTypes.object, 
-	boroughLevelMap 		: React.PropTypes.object, 
-	cityLevelMap 			: React.PropTypes.object, 
 	countdownTimeLeft 		: React.PropTypes.number, 
 	interchangeHidden 		: React.PropTypes.bool, 
 	mapCanvasClassName 		: React.PropTypes.string, 
-	mapConfig 				: React.PropTypes.object, 
-	mapMarker 				: React.PropTypes.object, 
-	mapMarkerVisible 		: React.PropTypes.bool, 
+	maps 					: React.PropTypes.object, 
 	mapTwoBlocksClass 		: React.PropTypes.string.isRequired, 
 	mapType 				: React.PropTypes.string, 
 	mobile 					: React.PropTypes.bool.isRequired, 
@@ -71,7 +65,6 @@ TwoBlocksView.propTypes = {
 	onPanoramaMounted 		: React.PropTypes.func.isRequired, 
 	panorama 				: React.PropTypes.object, 
 	panoramaTwoBlocksClass 	: React.PropTypes.string, 
-	panoramaLatLng 			: React.PropTypes.object,	
 	twoBlocksClass 			: React.PropTypes.string.isRequired, 
 	view 					: React.PropTypes.string.isRequired
 

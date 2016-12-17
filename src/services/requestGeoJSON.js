@@ -1,7 +1,7 @@
 /* global window */
 
 import request from 'superagent'; 
-import { workerMessages } from './constants/constants'; 
+import { workerMessages } from '../constants/constants'; 
 
 const requestGeoJSON = function requestGeoJSON(url, worker) {
 
@@ -11,7 +11,7 @@ const requestGeoJSON = function requestGeoJSON(url, worker) {
 	
 	if (worker) {
 
-		result = new Promise(resolve => {
+		result = new Promise((resolve, reject) => {
 
 			worker.addEventListener('message', event => {
 
@@ -20,6 +20,10 @@ const requestGeoJSON = function requestGeoJSON(url, worker) {
 				if (workerMessages.GEO_JSON_LOADED === message) {
 
 					resolve(); 
+
+				} else if (workerMessages.GEO_JSON_REQUEST_FAILURE === message) {
+
+					reject(new Error("Failure to load GeoJSON data.  Check your internet connection.")); 
 
 				}
 

@@ -1,4 +1,4 @@
-import { mapTypes } from './constants/constants'; 
+import { mapTypes } from '../constants/constants'; 
 
 const CityMap = function CityMap(map, mapType) {
 
@@ -8,6 +8,20 @@ const CityMap = function CityMap(map, mapType) {
 }; 
 
 CityMap.prototype = {
+
+	addListener(event, listener) {
+
+		if (!(event) || ('string' !== typeof event)) return; 
+
+		if (!(listener) || ('function' !== typeof listener)) return; 
+
+		if (mapTypes.GOOGLE === this.mapType) {
+
+			this.map.data.addListener(event, listener); 
+
+		}
+
+	}, 
 
 	onChoosingLocation() {
 
@@ -40,6 +54,8 @@ CityMap.prototype = {
 	}, 
 
 	onSelectedBorough(borough, options) {
+
+		if (!(borough)) return; 
 
 		if (mapTypes.GOOGLE === this.mapType) {
 
@@ -99,6 +115,8 @@ CityMap.prototype = {
 	}, 
 
 	unselectBorough(borough) {
+
+		if (!(borough)) return;  // Don't want to revert style for entire map 
 
 		if (mapTypes.GOOGLE === this.mapType) {
 

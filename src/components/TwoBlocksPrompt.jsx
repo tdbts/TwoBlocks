@@ -1,5 +1,5 @@
 import React from 'react'; 
-import stylizeBoroughName from '../stylizeBoroughName'; 
+import stylizeBoroughName from './component-utils/stylizeBoroughName'; 
 
 /*----------  Component  ----------*/
 

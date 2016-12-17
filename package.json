@@ -7,7 +7,7 @@
     "test": "find . -name test -type d ! -path './node_modules/*' -exec mocha {} --compilers js:babel-core/register --recursive ';'",
     "build": "npm run lint && NODE_ENV=production webpack -p",
     "pack": "UV_THREADPOOL_SIZE=100 webpack",
-    "lint": "eslint src/**/* build/",
+    "lint": "eslint src/ src/**/* build/",
     "postlint": "echo 'Linting complete with no errors.'",
     "start": "nodemon --watch dist dist/server.js",
     "start-dev": "browser-sync start --serve-static 'dist' --no-open --server --index './build/index.dev.html' --files './dist/index.js, ./dist/index.min.js, ./build/*.html, ./build/*.js'",

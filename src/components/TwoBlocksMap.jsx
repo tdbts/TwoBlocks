@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React from 'react'; 
-import GoogleMap from './GoogleMap'; 
+import Map from './Map'; 
 import getViewLayerClassName from './component-utils/getViewLayerClassName'; 
 
 const MAP_CLASS_NAME = "two-blocks-map"; 
@@ -12,20 +12,20 @@ class TwoBlocksMap extends React.Component {
 
 	shouldComponentUpdate(prevProps) {
 
-		const { config, mapType } = prevProps; 
+		const { config, mapType } = this.props; 
 
-		return (this.props.config !== config) || (this.props.mapType !== mapType);  // Only the 'config' and 'mapType' props ever change for the child component maps.  Only update if one of them has changed.  
+		return (config !== prevProps.config) || (mapType !== prevProps.mapType);  // Only the 'config' and 'mapType' props ever change for the child component maps.  Only update if one of them has changed.  
 
 	}
 	
 	render() {
 
-		const { blockLevelMap, boroughLevelMap, cityLevelMap, config, onMapMounted, mapType, twoBlocksClass, view } = this.props; 
+		const { blockLevelMap, boroughLevelMap, cityLevelMap, config, onMapMounted, mapType, twoBlocksClass, visible } = this.props; 
 
 		return (
 
-			<div className={ getClassName(twoBlocksClass, view) }>
-				<GoogleMap 
+			<div className={ getClassName(twoBlocksClass, visible) }>
+				<Map 
 					className={ [ "two-blocks-city-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'city-level')) ].join(' ') }
 					config={ config ? config.cityLevelMap : null }
 					mapInstance={ cityLevelMap }
@@ -33,7 +33,7 @@ class TwoBlocksMap extends React.Component {
 					onRef={ onMapMounted }
 					visible={ mapType === 'city-level' }
 				/>
-				<GoogleMap 
+				<Map 
 					className={ [ "two-blocks-borough-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'borough-level')) ].join(' ') }
 					config={ config ? config.boroughLevelMap : null }
 					mapInstance={ boroughLevelMap }
@@ -41,7 +41,7 @@ class TwoBlocksMap extends React.Component {
 					onRef={ onMapMounted }
 					visible={ mapType === 'borough-level' }
 				/>
-				<GoogleMap 
+				<Map 
 					className={ [ "two-blocks-block-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'block-level')) ].join(' ') }
 					config={ config ? config.mapLevelMap : null }
 					mapInstance={ blockLevelMap }
@@ -59,9 +59,9 @@ class TwoBlocksMap extends React.Component {
 
 /*----------  getClassName()  ----------*/
 
-	const getClassName = function getClassName(twoBlocksClass, view) {
+	const getClassName = function getClassName(twoBlocksClass, visible) {
 
-		const visibilityClass = 'map' === view ? 'visible' : 'offscreen'; 
+		const visibilityClass = visible ? 'visible' : 'offscreen'; 
 
 		return [
 		

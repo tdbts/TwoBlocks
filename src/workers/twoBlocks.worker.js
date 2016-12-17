@@ -1,10 +1,9 @@
 /* global self */
 
 import 'babel-polyfill'; 
-import { makeRequest } from '../utils/utils'; 
-import { workerMessages } from '../constants/constants'; 
-// import pointToLatLngLiteral from '../pointToLatLngLiteral'; 
-import RandomLocationGenerator from '../RandomLocationGenerator'; 
+import { createPromiseTimeout, makeRequest, tryAtMost } from '../utils/utils'; 
+import { workerMessages } from '../constants/constants';  
+import RandomLocationGenerator from '../random-location-generator/RandomLocationGenerator'; 
 
 let generator = null; 
 let geoJSON = null; 
@@ -29,7 +28,10 @@ try {
 
 			self.postMessage("Loading GeoJSON..."); 
 
-			return makeRequest(payload)  // payload is GeoJSON source URL 
+			const MAX_LOAD_ATTEMPTS = 3; 
+			const RETRY_DELAY = 1000;  // millisecons 
+
+			return tryAtMost(() => makeRequest(payload), MAX_LOAD_ATTEMPTS, () => createPromiseTimeout(RETRY_DELAY))  // payload is GeoJSON source URL 
 
 				.then(response => {
 
@@ -37,6 +39,14 @@ try {
 
 					self.postMessage({
 						message: workerMessages.GEO_JSON_LOADED
+					}); 
+
+				})
+
+				.catch(() => {
+
+					self.postMessage({
+						message: workerMessages.GEO_JSON_REQUEST_FAILURE
 					}); 
 
 				}); 
@@ -71,7 +81,6 @@ try {
 				payload: {
 					selectedBorough, 
 					boroughName: selectedBorough.properties.boro_name,  
-					// latLng: pointToLatLngLiteral(randomLatLng)
 					latLng: randomLatLng
 				}
 			}); 

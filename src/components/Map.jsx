@@ -11,7 +11,7 @@ const updateConfig = function updateConfig(mapInstance, config) {
 
 /*----------  Component  ----------*/
 
-const GoogleMap = function Map(props) {
+const Map = function Map(props) {
 
 	const { className, config, mapInstance, mapType, onRef } = props; 
 
@@ -30,7 +30,7 @@ const GoogleMap = function Map(props) {
 
 /*----------  Props Validation  ----------*/
 
-GoogleMap.propTypes = {
+Map.propTypes = {
 
 	className: React.PropTypes.string.isRequired, 
 	config: React.PropTypes.object, 
@@ -40,4 +40,4 @@ GoogleMap.propTypes = {
 
 }; 
 
-export default GoogleMap; 
+export default Map; 

@@ -1,6 +1,6 @@
 /* global window */
 
-import { isType, poll, walkArray } from './utils/utils'; 
+import { isType, poll, walkArray } from '../../utils/utils'; 
 
 const overriddenMethods = []; 
 
@@ -54,7 +54,7 @@ const overrideCallback = function overrideCallback(overriddenMethods, panorama) 
 
 	let callbackOverridden = false; 
 
-	var googCallbacks = getGoogleCallbacks(); 
+	const googCallbacks = getGoogleCallbacks(); 
 
 	if (googCallbacks.length === 0) return; 
 
