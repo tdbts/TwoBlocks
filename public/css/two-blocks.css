@@ -113,6 +113,11 @@ html, body {
 	z-index: 100; 
 }
 
+.mobile .two-blocks-prompt, 
+.mobile .two-blocks-countdown {
+	margin: 10px;
+}
+
 .mobile .two-blocks-countdown .green {
 	color: #009E39;
 }

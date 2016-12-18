@@ -444,7 +444,7 @@ class TwoBlocks extends React.Component {
 			choosingLocation: true, 
 			hoveredBorough: '', 
 			interchangeHidden: false,  
-			promptText: "In which borough was the last panorama located?"
+			promptText: "Which borough was the last panorama from?"
 		})
 
 		.then(() => maps.city.element.blur()); 
