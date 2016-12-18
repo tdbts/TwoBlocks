@@ -3,13 +3,15 @@
 import React from 'react'; 
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksInterchange from './TwoBlocksInterchange'; 
-import stylizeBoroughName from './component-utils/stylizeBoroughName';
+import PromptTextManager from './component-utils/PromptTextManager'; 
 import createGameComponents from '../game-components/createGameComponents'; 
 import Countdown from './component-utils/Countdown';
 import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
 import { events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
+
+const promptTextManager = new PromptTextManager(); 
 
 class TwoBlocks extends React.Component {
 
@@ -28,7 +30,7 @@ class TwoBlocks extends React.Component {
 			mapType 				: 'city-level',   
 			mobile 					: null, 
 			panorama 				: null,   
-			promptText 				: "Loading new TwoBlocks game...",
+			promptText 				: null, 
 			selectedBorough 		: null, 
 			showLocationMarker 		: null
 		}; 
@@ -76,13 +78,20 @@ class TwoBlocks extends React.Component {
 			spinner: null
 		}; 
 
+		const promptText = promptTextManager.pregame(); 
+
 		if (mobile) {
 
 			this.onMobileDeviceDetected(); 
 
 		}
 
-		this.setState({ maps, mobile, panorama }); 
+		this.setState({ 
+			maps, 
+			mobile, 
+			panorama, 
+			promptText 
+		}); 
 
 	}
 
@@ -413,17 +422,17 @@ class TwoBlocks extends React.Component {
 			choosingLocation: true, 
 			hoveredBorough: '', 
 			interchangeHidden: false,  
-			promptText: "Which borough was the last panorama from?"
+			promptText: promptTextManager.choosingLocation()
 		})
 
 		.then(() => maps.city.element.blur()); 
 
 	}
 
-	onCorrectBorough(correctBoroughName) {
+	onCorrectBorough(boroughName) {
 
 		this.setState({
-			promptText: `Correct!  The Street View shown was from ${stylizeBoroughName(correctBoroughName)}.`
+			promptText: promptTextManager.correctBorough(boroughName)
 		}); 
 	
 	}
@@ -449,8 +458,8 @@ class TwoBlocks extends React.Component {
 		showLocationMarker.hide(); 
 
 		return this.setState({
-			mapType: 'city-level', 
-			promptText: `Game over.  You correctly guessed ${totalCorrect.toString()} / ${DEFAULT_MAXIMUM_ROUNDS.toString()} of the Street View locations.` 
+			mapType: 'city-level',
+			promptText: promptTextManager.gameOver(totalCorrect, DEFAULT_MAXIMUM_ROUNDS) 
 		}); 
 
 	}
@@ -505,7 +514,7 @@ class TwoBlocks extends React.Component {
 		const { correctBorough, selectedBorough } = selectionDetails; 
 
 		this.setState({
-			promptText: `Sorry, ${stylizeBoroughName(selectedBorough)} is incorrect.  The Street View shown was from ${stylizeBoroughName(correctBorough)}.`
+			promptText: promptTextManager.incorrectBorough(selectedBorough, correctBorough)
 		}); 
 
 	}
@@ -704,7 +713,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, locationData } = this.props; 
 
-		const promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : "Loading next panorama...";
+		const promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : promptTextManager.turnComplete(); 
 
 		if (!(mobile)) {
 
@@ -813,7 +822,7 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({  
 			selectedBorough: null, 
-			promptText: "Starting new game..."
+			promptText: promptTextManager.restart()
 		}); 
 
 	}
@@ -850,7 +859,7 @@ class TwoBlocks extends React.Component {
 
 				return this.setState({
 			
-					promptText: 'Look closely...which borough is this Street View from?' 
+					promptText: promptTextManager.showingPanorama()
 				
 				}); 
 
