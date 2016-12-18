@@ -1,22 +1,26 @@
 import React from 'react'; 
 import stylizeBoroughName from './component-utils/stylizeBoroughName'; 
 
+const PROMPT_TEXT_CLASS_NAME = "prompt-text"; 
+
 /*----------  Component  ----------*/
 
 const TwoBlocksPrompt = function TwoBlocksPrompt(props) {
 
-	const { gameOver, hoveredBorough, choosingLocation, text, twoBlocksClass } = props; 
+	const { gameOver, hoveredBorough, choosingLocation, promptText, twoBlocksClass } = props; 
 
 	const showTextAddition = shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough); 
 
-	const textAddition = getTextAddition(showTextAddition, hoveredBorough);
+	const textAddition = showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) }</span> : "";
 
-	const headerText = getHeaderText(text, textAddition); 
+	// const promptText = getPromptText(text, textAddition); 
 
 	return (
 
 		<div className={ twoBlocksClass }>
-			<p>{ headerText }</p>
+			<div className={ PROMPT_TEXT_CLASS_NAME }>
+				{ promptText } { textAddition }
+			</div>
 		</div>
 	); 
 
@@ -24,17 +28,17 @@ const TwoBlocksPrompt = function TwoBlocksPrompt(props) {
 
 /*----------  Helper Functions  ----------*/
 
-const getHeaderText = function getHeaderText(text, textAddition) {
+// const getPromptText = function getPromptText(text, textAddition) {
 
-	return [text, textAddition].join(' '); 
+// 	return [text, textAddition].join(' '); 
 
-}; 
+// }; 
 
-const getTextAddition = function getTextAddition(showTextAddition, hoveredBorough) {
+// const getTextAddition = function getTextAddition(hoveredBorough) {
 
-	return showTextAddition ? stylizeBoroughName(hoveredBorough) + "?" : ""; 
+// 	return showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) } + "?"</span> : null; 
 
-}; 
+// }; 
 
 const shouldShowTextAddition = function shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough) {
 
@@ -50,7 +54,7 @@ TwoBlocksPrompt.propTypes = {
 	gameOver 			: React.PropTypes.bool, 
 	hoveredBorough 		: React.PropTypes.string, 
 	twoBlocksClass 		: React.PropTypes.string.isRequired, 
-	text 				: React.PropTypes.string
+	promptText 			: React.PropTypes.object
 
 }; 
 

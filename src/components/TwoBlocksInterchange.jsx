@@ -21,7 +21,7 @@ class TwoBlocksInterchange extends React.Component {
 					gameOver={ gameOver }
 					hoveredBorough={ hoveredBorough }
 					twoBlocksClass={ [ "two-blocks-interchange-component", promptTwoBlocksClass ].join(' ') }
-					text={ promptText }
+					promptText={ promptText }
 				/>
 				<TwoBlocksSubmitter
 					choosingLocation={ choosingLocation } 
@@ -59,7 +59,7 @@ TwoBlocksInterchange.propTypes = {
 	mobile: React.PropTypes.bool,
 	onMobileBoroughSelection: React.PropTypes.func,  
 	promptTwoBlocksClass: React.PropTypes.string, 
-	promptText: React.PropTypes.string, 
+	promptText: React.PropTypes.object, 
 	selectedBorough: React.PropTypes.string, 
 	submitterTwoBlocksClass: React.PropTypes.string, 
 	restart: React.PropTypes.func, 

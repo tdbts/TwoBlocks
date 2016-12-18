@@ -13994,7 +13994,7 @@
 						gameOver: gameOver,
 						hoveredBorough: hoveredBorough,
 						twoBlocksClass: ["two-blocks-interchange-component", promptTwoBlocksClass].join(' '),
-						text: promptText
+						promptText: promptText
 					}),
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
 						choosingLocation: choosingLocation,
@@ -14031,7 +14031,7 @@
 		mobile: _react2.default.PropTypes.bool,
 		onMobileBoroughSelection: _react2.default.PropTypes.func,
 		promptTwoBlocksClass: _react2.default.PropTypes.string,
-		promptText: _react2.default.PropTypes.string,
+		promptText: _react2.default.PropTypes.object,
 		selectedBorough: _react2.default.PropTypes.string,
 		submitterTwoBlocksClass: _react2.default.PropTypes.string,
 		restart: _react2.default.PropTypes.func,
@@ -14060,44 +14060,54 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var PROMPT_TEXT_CLASS_NAME = "prompt-text";
+
 	/*----------  Component  ----------*/
 
 	var TwoBlocksPrompt = function TwoBlocksPrompt(props) {
 		var gameOver = props.gameOver;
 		var hoveredBorough = props.hoveredBorough;
 		var choosingLocation = props.choosingLocation;
-		var text = props.text;
+		var promptText = props.promptText;
 		var twoBlocksClass = props.twoBlocksClass;
 
 
 		var showTextAddition = shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough);
 
-		var textAddition = getTextAddition(showTextAddition, hoveredBorough);
+		var textAddition = showTextAddition ? _react2.default.createElement(
+			'span',
+			null,
+			(0, _stylizeBoroughName2.default)(hoveredBorough)
+		) : "";
 
-		var headerText = getHeaderText(text, textAddition);
+		// const promptText = getPromptText(text, textAddition);
 
 		return _react2.default.createElement(
 			'div',
 			{ className: twoBlocksClass },
 			_react2.default.createElement(
-				'p',
-				null,
-				headerText
+				'div',
+				{ className: PROMPT_TEXT_CLASS_NAME },
+				promptText,
+				' ',
+				textAddition
 			)
 		);
 	};
 
 	/*----------  Helper Functions  ----------*/
 
-	var getHeaderText = function getHeaderText(text, textAddition) {
+	// const getPromptText = function getPromptText(text, textAddition) {
 
-		return [text, textAddition].join(' ');
-	};
+	// 	return [text, textAddition].join(' ');
 
-	var getTextAddition = function getTextAddition(showTextAddition, hoveredBorough) {
+	// };
 
-		return showTextAddition ? (0, _stylizeBoroughName2.default)(hoveredBorough) + "?" : "";
-	};
+	// const getTextAddition = function getTextAddition(hoveredBorough) {
+
+	// 	return showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) } + "?"</span> : null;
+
+	// };
 
 	var shouldShowTextAddition = function shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough) {
 
@@ -14112,7 +14122,7 @@
 		gameOver: _react2.default.PropTypes.bool,
 		hoveredBorough: _react2.default.PropTypes.string,
 		twoBlocksClass: _react2.default.PropTypes.string.isRequired,
-		text: _react2.default.PropTypes.string
+		promptText: _react2.default.PropTypes.object
 
 	};
 
@@ -14844,11 +14854,15 @@
 /* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+
+	var _react = __webpack_require__(299);
+
+	var _react2 = _interopRequireDefault(_react);
 
 	var _stylizeBoroughName = __webpack_require__(344);
 
@@ -14865,35 +14879,104 @@
 	PromptTextManager.prototype = {
 		choosingLocation: function choosingLocation() {
 
-			return "Which borough was the last panorama from?";
+			return _react2.default.createElement(
+				'p',
+				null,
+				'Which borough was the last panorama from?'
+			);
 		},
 		correctBorough: function correctBorough(_correctBorough) {
 
-			return "Correct!  The Street View shown was from " + (0, _stylizeBoroughName2.default)(_correctBorough) + ".";
+			return _react2.default.createElement(
+				'p',
+				null,
+				'Correct!  The Street View shown was from ',
+				_react2.default.createElement(
+					'span',
+					{ className: 'correct-borough' },
+					(0, _stylizeBoroughName2.default)(_correctBorough)
+				),
+				'.'
+			);
 		},
 		gameOver: function gameOver(totalCorrect, totalRounds) {
 
-			return "Game over.  You correctly guessed " + totalCorrect.toString() + " / " + totalRounds.toString() + " of the Street View locations.";
+			var fractionClass = null;
+
+			var percentageCorrect = totalCorrect / totalRounds;
+
+			if (percentageCorrect > 0.66) {
+
+				fractionClass = "green";
+			} else if (percentageCorrect > 0.33) {
+
+				fractionClass = "yellow";
+			} else {
+
+				fractionClass = "red";
+			}
+
+			return _react2.default.createElement(
+				'p',
+				null,
+				'Game over.  You correctly guessed ',
+				_react2.default.createElement(
+					'span',
+					{ className: ["total-correct", fractionClass].join(" ") },
+					totalCorrect.toString(),
+					' / ',
+					totalRounds.toString()
+				),
+				' of the Street View locations.'
+			);
 		},
 		incorrectBorough: function incorrectBorough(selectedBorough, correctBorough) {
 
-			return "Sorry, " + (0, _stylizeBoroughName2.default)(selectedBorough) + " is incorrect.  The Street View shown was from " + (0, _stylizeBoroughName2.default)(correctBorough) + ".";
+			return _react2.default.createElement(
+				'p',
+				null,
+				'Sorry, ',
+				(0, _stylizeBoroughName2.default)(selectedBorough),
+				' is incorrect.  The Street View shown was from ',
+				_react2.default.createElement(
+					'span',
+					{ className: 'correct-borough' },
+					(0, _stylizeBoroughName2.default)(correctBorough)
+				),
+				'.'
+			);
 		},
 		pregame: function pregame() {
 
-			return "Loading new TwoBlocks game...";
+			return _react2.default.createElement(
+				'p',
+				null,
+				'Loading new TwoBlocks game...'
+			);
 		},
 		restart: function restart() {
 
-			return "Starting new game...";
+			return _react2.default.createElement(
+				'p',
+				null,
+				'Starting new game...'
+			);
 		},
 		showingPanorama: function showingPanorama() {
 
-			return "Look closely...which borough is this Street View from?";
+			return _react2.default.createElement(
+				'p',
+				null,
+				'Look closely...which borough is this Street View from?'
+			);
 		},
 		turnComplete: function turnComplete() {
 
-			return "Loading next panorama...";
+			return _react2.default.createElement(
+				'p',
+				null,
+				'Loading next panorama...'
+			);
 		}
 	};
 
@@ -47973,7 +48056,7 @@
 
 
 	// module
-	exports.push([module.id, "html, body {\n\theight: 100%; \n\tmargin: 0; \n\tpadding: 0;\n} \n\n.full-dimensions {\n\theight: 100%; \n\twidth: 100%; \n}\n\n.inherit-dimensions {\n\theight: inherit; \n\twidth: inherit; \n}\n\n.hidden {\n\tdisplay: none; \n}\n\n.offscreen {\n\tleft: -10000px;\n}\n\n/* Elements with '.visible' class are on top of the \n\tstack of maps / panoramas */\n.visible {\n\tz-index: 100; \n}\n\n.layered {\n\tposition: absolute; \n}\n\n/* ------ Components ------ */\n\n.two-blocks {\n\twidth: 100%; \n\theight: calc(100% - 150px);\n\tfont-family: \"Lucida Console\", Monaco, monospace; \n}\n\n.two-blocks-view {\n\tbox-shadow: 2px 2px 10px #000;\n}\n\n.two-blocks-view, \n.two-blocks-prompt {\n\tposition: relative;\n}\n\n.two-blocks-map {\n\tposition: absolute; \n}\n\n.two-blocks-submitter-borough-name {\n\tcolor: #D9285B;\n}\n\n.two-blocks-button {\n\tborder-radius: 10px;\n\theight: 2em;\n\tletter-spacing: 1px; \n}\n\n/* MOBILE CSS */\n\n.mobile.two-blocks {\n\theight: 100%; \n}\n\n.mobile .two-blocks-view, \n.mobile .two-blocks-prompt {\n\tposition: absolute; \n}\n\n.mobile .two-blocks-interchange {\n    position: absolute;\n    z-index: 100;\n\tbackground-color: #000;\n    opacity: 0.7;\n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-submitter-text {\n\tcolor: #fff;\n    font-size: 1.5em;\n    text-align: center;\n    top: 10%;\t\n}\n\n.mobile .two-blocks-submitter {\n\tposition: absolute; \n\twidth: 100%; \n\theight: 20%; \n\ttop: 35%; \n}\n\n.mobile .two-blocks-button {\n\tbackground-color: rgb(255, 255, 255);\t\n\tfont-size: 1.2em; \n\tmax-width: 250px; \n\tmin-height: 25px; \n}\n\n.mobile .two-blocks-countdown {\n\tposition: absolute;\n\ttop: 10%; \n\tcolor: #fff; \n\tfont-size: 1.5em;\n\tfont-weight: bold; \n\ttext-shadow: 3px 3px 3px #000;  \n\tz-index: 100; \n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-countdown {\n\tmargin: 10px;\n}\n\n.mobile .two-blocks-countdown .green {\n\tcolor: #009E39;\n}\n\n.mobile .two-blocks-countdown .yellow {\n\tcolor: #DFC00F;\n}\n\n.mobile .two-blocks-countdown .red {\n\tcolor: #D9285B;\n}\n\n.mobile .borough-selection-button, \n.mobile .two-blocks-submitter-button {\n\tdisplay: block; \n\twidth: 60%; \n\theight: 30%; \n\tmargin: 0px auto 35px auto;  \n}\n\n.mobile .two-blocks-replay-button {\n\tposition: absolute; \n\twidth: 60%; \n\theight: 5%; \n\tleft: 0; \n\tright: 0; \n\ttop: 50%; \n\tmargin: auto; \n}\n\n@media screen and (orientation: landscape) {\n\n\t.mobile .borough-selection-button {\n\t\tmargin-bottom: 15px; \n\t}\n\n\t.mobile .two-blocks-prompt {\n\t\ttop: 0%; \n\t}\n\n\t.mobile .two-blocks-prompt, \n\t.mobile .two-blocks-countdown {\n\t\tleft: 1%;\n\t}\n\n\t.mobile .two-blocks-submitter { \n\t\tposition: relative;\n\t}\n\n\t.mobile .two-blocks-submitter-button {\n\t\tmargin-bottom: 25px; \n\t}\t\n\n}", ""]);
+	exports.push([module.id, "html, body {\n\theight: 100%; \n\tmargin: 0; \n\tpadding: 0;\n} \n\n.full-dimensions {\n\theight: 100%; \n\twidth: 100%; \n}\n\n.inherit-dimensions {\n\theight: inherit; \n\twidth: inherit; \n}\n\n.hidden {\n\tdisplay: none; \n}\n\n.offscreen {\n\tleft: -10000px;\n}\n\n/* Elements with '.visible' class are on top of the \n\tstack of maps / panoramas */\n.visible {\n\tz-index: 100; \n}\n\n.layered {\n\tposition: absolute; \n}\n\n/* ------ Components ------ */\n\n.two-blocks {\n\twidth: 100%; \n\theight: calc(100% - 150px);\n\tfont-family: \"Lucida Console\", Monaco, monospace; \n}\n\n.two-blocks-view {\n\tbox-shadow: 2px 2px 10px #000;\n}\n\n.two-blocks-view, \n.two-blocks-prompt {\n\tposition: relative;\n}\n\n.two-blocks-map {\n\tposition: absolute; \n}\n\n.two-blocks-submitter-borough-name {\n\tcolor: #D9285B;\n}\n\n.two-blocks-button {\n\tborder-radius: 10px;\n\theight: 2em;\n\tletter-spacing: 1px; \n}\n\n/* MOBILE CSS */\n\n.mobile.two-blocks {\n\theight: 100%; \n}\n\n.mobile .two-blocks-view, \n.mobile .two-blocks-prompt {\n\tposition: absolute; \n}\n\n.mobile .two-blocks-interchange {\n    position: absolute;\n    z-index: 100;\n\tbackground-color: #000;\n    opacity: 0.7;\n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-submitter-text {\n\tcolor: #fff;\n    font-size: 1.5em;\n    text-align: center;\n    top: 10%;\t\n}\n\n.mobile .two-blocks-submitter {\n\tposition: absolute; \n\twidth: 100%; \n\theight: 20%; \n\ttop: 35%; \n}\n\n.mobile .two-blocks-button {\n\tbackground-color: rgb(255, 255, 255);\t\n\tfont-size: 1.2em; \n\tmax-width: 250px; \n\tmin-height: 25px; \n}\n\n.mobile .two-blocks-countdown {\n\tposition: absolute;\n\ttop: 10%; \n\tcolor: #fff; \n\tfont-size: 1.5em;\n\tfont-weight: bold; \n\ttext-shadow: 3px 3px 3px #000;  \n\tz-index: 100; \n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-countdown {\n\tmargin: 10px;\n}\n\n.two-blocks-prompt .green, \n.mobile .two-blocks-countdown .green {\n\tcolor: #009E39;\n}\n\n.two-blocks-prompt .yellow, \n.mobile .two-blocks-countdown .yellow {\n\tcolor: #DFC00F;\n}\n\n.two-blocks-prompt .red, \n.mobile .two-blocks-countdown .red {\n\tcolor: #D9285B;\n}\n\n.two-blocks-prompt .correct-borough, \n.two-blocks-prompt .total-correct {\n\tfont-weight: bold; \n}\n\n.mobile .borough-selection-button, \n.mobile .two-blocks-submitter-button {\n\tdisplay: block; \n\twidth: 60%; \n\theight: 30%; \n\tmargin: 0px auto 35px auto;  \n}\n\n.mobile .two-blocks-replay-button {\n\tposition: absolute; \n\twidth: 60%; \n\theight: 5%; \n\tleft: 0; \n\tright: 0; \n\ttop: 50%; \n\tmargin: auto; \n}\n\n@media screen and (orientation: landscape) {\n\n\t.mobile .borough-selection-button {\n\t\tmargin-bottom: 15px; \n\t}\n\n\t.mobile .two-blocks-prompt {\n\t\ttop: 0%; \n\t}\n\n\t.mobile .two-blocks-prompt, \n\t.mobile .two-blocks-countdown {\n\t\tleft: 1%;\n\t}\n\n\t.mobile .two-blocks-submitter { \n\t\tposition: relative;\n\t}\n\n\t.mobile .two-blocks-submitter-button {\n\t\tmargin-bottom: 25px; \n\t}\t\n\n}", ""]);
 
 	// exports
 

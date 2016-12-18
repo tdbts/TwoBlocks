@@ -118,16 +118,24 @@ html, body {
 	margin: 10px;
 }
 
+.two-blocks-prompt .green, 
 .mobile .two-blocks-countdown .green {
 	color: #009E39;
 }
 
+.two-blocks-prompt .yellow, 
 .mobile .two-blocks-countdown .yellow {
 	color: #DFC00F;
 }
 
+.two-blocks-prompt .red, 
 .mobile .two-blocks-countdown .red {
 	color: #D9285B;
+}
+
+.two-blocks-prompt .correct-borough, 
+.two-blocks-prompt .total-correct {
+	font-weight: bold; 
 }
 
 .mobile .borough-selection-button, 
