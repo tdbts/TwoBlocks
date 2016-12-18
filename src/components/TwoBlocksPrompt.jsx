@@ -13,8 +13,6 @@ const TwoBlocksPrompt = function TwoBlocksPrompt(props) {
 
 	const textAddition = showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) }</span> : "";
 
-	// const promptText = getPromptText(text, textAddition); 
-
 	return (
 
 		<div className={ twoBlocksClass }>
@@ -27,18 +25,6 @@ const TwoBlocksPrompt = function TwoBlocksPrompt(props) {
 }; 
 
 /*----------  Helper Functions  ----------*/
-
-// const getPromptText = function getPromptText(text, textAddition) {
-
-// 	return [text, textAddition].join(' '); 
-
-// }; 
-
-// const getTextAddition = function getTextAddition(hoveredBorough) {
-
-// 	return showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) } + "?"</span> : null; 
-
-// }; 
 
 const shouldShowTextAddition = function shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough) {
 

@@ -14080,8 +14080,6 @@
 			(0, _stylizeBoroughName2.default)(hoveredBorough)
 		) : "";
 
-		// const promptText = getPromptText(text, textAddition);
-
 		return _react2.default.createElement(
 			'div',
 			{ className: twoBlocksClass },
@@ -14096,18 +14094,6 @@
 	};
 
 	/*----------  Helper Functions  ----------*/
-
-	// const getPromptText = function getPromptText(text, textAddition) {
-
-	// 	return [text, textAddition].join(' ');
-
-	// };
-
-	// const getTextAddition = function getTextAddition(hoveredBorough) {
-
-	// 	return showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) } + "?"</span> : null;
-
-	// };
 
 	var shouldShowTextAddition = function shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough) {
 
