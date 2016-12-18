@@ -12663,11 +12663,6 @@
 			value: function onAnswerEvaluated(answerDetails) {
 				var _this7 = this;
 
-				// const actualLocationLatLng = {
-				// 	lat: answerDetails.randomLatLng.lat,
-				// 	lng: answerDetails.randomLatLng.lng
-				// };
-
 				var _answerDetails$random = answerDetails.randomLatLng;
 				var lat = _answerDetails$random.lat;
 				var lng = _answerDetails$random.lng;
@@ -12676,25 +12671,9 @@
 				var showLocationMarker = _state3.showLocationMarker;
 				var mobile = _state3.mobile;
 
-				// const showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng);
 
 				showLocationMarker.setLocation(lat, lng);
 				showLocationMarker.placeOnMap(maps.borough.instance);
-				// showLocationMarker.placeOnBoroughMap()
-				// if (mobile) {
-
-				// 	showLocationMarker.setOpacity(1);
-				// 	showLocationMarker.setLatLng(showLocationMarkerPosition);
-				// 	showLocationMarker.addTo(maps.borough.instance);
-
-				// } else {
-
-				// 	showLocationMarker.setVisible(true);
-				// 	showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);
-				// 	showLocationMarker.setMap(maps.borough.instance);
-				// 	showLocationMarker.setPosition(showLocationMarkerPosition);
-
-				// }
 
 				return Promise.resolve().then(function () {
 
@@ -12716,18 +12695,8 @@
 					if (mobile) {
 
 						maps.borough.instance.removeLayer(showLocationMarker.marker);
-
-						// showLocationMarker.placeOnBlockMap()
-						// showLocationMarker.setOpacity(1);
-						// showLocationMarker.setLatLng(showLocationMarkerPosition);
-						// showLocationMarker.addTo(maps.block.instance);
 					}
-					// else {
 
-					// 	showLocationMarker.setMap(maps.block.instance);
-					// 	showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes
-
-					// }
 					showLocationMarker.placeOnMap(maps.block.instance);
 				}).then(function () {
 					return _this7.setState({
@@ -12793,19 +12762,6 @@
 				var totalCorrect = gameInstance.totalCorrectAnswers();
 
 				showLocationMarker.hide();
-				// if (showLocationMarker) {
-
-				// 	if (mobile) {
-
-				// 		showLocationMarker.setOpacity(0);
-
-				// 	} else {
-
-				// 		showLocationMarker.setMap(null);
-
-				// 	}
-
-				// }
 
 				return this.setState({
 					mapType: 'city-level',
@@ -12996,19 +12952,6 @@
 
 
 				showLocationMarker.hide();
-				// if (showLocationMarker) {
-
-				// 	if (mobile) {
-
-				// 		showLocationMarker.setOpacity(0);
-
-				// 	} else {
-
-				// 		showLocationMarker.setMap(null);
-
-				// 	}
-
-				// }
 
 				this.setState({
 

@@ -346,33 +346,12 @@ class TwoBlocks extends React.Component {
 
 	onAnswerEvaluated(answerDetails) {
 
-		// const actualLocationLatLng = {
-		// 	lat: answerDetails.randomLatLng.lat, 
-		// 	lng: answerDetails.randomLatLng.lng
-		// }; 
-
 		const { lat, lng } = answerDetails.randomLatLng; 
 
 		const { maps, showLocationMarker, mobile } = this.state; 
 
-		// const showLocationMarkerPosition = mobile ? L.latLng(actualLocationLatLng.lat, actualLocationLatLng.lng) : new google.maps.LatLng(actualLocationLatLng); 
 		showLocationMarker.setLocation(lat, lng); 
 		showLocationMarker.placeOnMap(maps.borough.instance); 
-		// showLocationMarker.placeOnBoroughMap() 
-		// if (mobile) {
-
-		// 	showLocationMarker.setOpacity(1); 
-		// 	showLocationMarker.setLatLng(showLocationMarkerPosition); 
-		// 	showLocationMarker.addTo(maps.borough.instance); 
-
-		// } else {
-
-		// 	showLocationMarker.setVisible(true); 
-		// 	showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE); 
-		// 	showLocationMarker.setMap(maps.borough.instance); 
-		// 	showLocationMarker.setPosition(showLocationMarkerPosition); 
-		
-		// }
 
 		return Promise.resolve()
 
@@ -400,18 +379,8 @@ class TwoBlocks extends React.Component {
 					
 					maps.borough.instance.removeLayer(showLocationMarker.marker);
 					
-					// showLocationMarker.placeOnBlockMap() 
-					// showLocationMarker.setOpacity(1); 
-					// showLocationMarker.setLatLng(showLocationMarkerPosition);
-					// showLocationMarker.addTo(maps.block.instance); 
-
 				} 
-				// else {
 
-				// 	showLocationMarker.setMap(maps.block.instance);
-				// 	showLocationMarker.setAnimation(mobile ? null : google.maps.Animation.BOUNCE);  // Need to reset animation animation if map changes 
-				
-				// }
 				showLocationMarker.placeOnMap(maps.block.instance); 
 
 			})
@@ -478,19 +447,6 @@ class TwoBlocks extends React.Component {
 		const totalCorrect = gameInstance.totalCorrectAnswers(); 
 
 		showLocationMarker.hide(); 
-		// if (showLocationMarker) {
-
-		// 	if (mobile) {
-
-		// 		showLocationMarker.setOpacity(0); 
-
-		// 	} else {
-
-		// 		showLocationMarker.setMap(null); 
-			
-		// 	}
-
-		// }
 
 		return this.setState({
 			mapType: 'city-level', 
@@ -669,19 +625,6 @@ class TwoBlocks extends React.Component {
 		const { showLocationMarker } = this.state; 
 		
 		showLocationMarker.hide();
-		// if (showLocationMarker) {
-
-		// 	if (mobile) {
-
-		// 		showLocationMarker.setOpacity(0); 
-
-		// 	} else {
-
-		// 		showLocationMarker.setMap(null); 
-			
-		// 	}
-			
-		// }
 
 		this.setState({
 
