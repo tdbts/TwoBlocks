@@ -58,11 +58,7 @@ html, body {
 }
 
 .two-blocks-button {
-/*	background: rgb(200, 200, 200);
-	background-image : -webkit-linear-gradient(rgb(224,224,224), rgb(160,160,160));
-	background-image : -o-linear-gradient(rgb(224,224,224), rgb(160,160,160));
-	background-image : linear-gradient(rgb(224,224,224), rgb(160,160,160));
-*/	border-radius: 10px;
+	border-radius: 10px;
 	height: 2em;
 	letter-spacing: 1px; 
 }
@@ -115,6 +111,18 @@ html, body {
 	font-weight: bold; 
 	text-shadow: 3px 3px 3px #000;  
 	z-index: 100; 
+}
+
+.mobile .two-blocks-countdown .green {
+	color: #009E39;
+}
+
+.mobile .two-blocks-countdown .yellow {
+	color: #DFC00F;
+}
+
+.mobile .two-blocks-countdown .red {
+	color: #D9285B;
 }
 
 .mobile .borough-selection-button, 

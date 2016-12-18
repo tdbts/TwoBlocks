@@ -13904,7 +13904,7 @@
 /* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -13924,14 +13924,33 @@
 
 		var text = "Time left:";
 
+		var timeClass = null;
+
+		if (timeLeft > 10) {
+
+			timeClass = "green";
+		} else if (timeLeft > 5) {
+
+			timeClass = "yellow";
+		} else {
+
+			timeClass = "red";
+		}
+
 		var visibilityClass = mobile && interchangeHidden && 'number' === typeof timeLeft && timeLeft > -1 ? '' : 'hidden';
 
 		var className = ["two-blocks-countdown", visibilityClass].join(' ').trim();
 
 		return _react2.default.createElement(
-			'div',
+			"div",
 			{ className: className },
-			text + ' ' + timeLeft
+			text,
+			" ",
+			_react2.default.createElement(
+				"span",
+				{ className: timeClass },
+				timeLeft
+			)
 		);
 	};
 
@@ -47943,7 +47962,7 @@
 
 
 	// module
-	exports.push([module.id, "html, body {\n\theight: 100%; \n\tmargin: 0; \n\tpadding: 0;\n} \n\n.full-dimensions {\n\theight: 100%; \n\twidth: 100%; \n}\n\n.inherit-dimensions {\n\theight: inherit; \n\twidth: inherit; \n}\n\n.hidden {\n\tdisplay: none; \n}\n\n.offscreen {\n\tleft: -10000px;\n}\n\n/* Elements with '.visible' class are on top of the \n\tstack of maps / panoramas */\n.visible {\n\tz-index: 100; \n}\n\n.layered {\n\tposition: absolute; \n}\n\n/* ------ Components ------ */\n\n.two-blocks {\n\twidth: 100%; \n\theight: calc(100% - 150px);\n\tfont-family: \"Lucida Console\", Monaco, monospace; \n}\n\n.two-blocks-view {\n\tbox-shadow: 2px 2px 10px #000;\n}\n\n.two-blocks-view, \n.two-blocks-prompt {\n\tposition: relative;\n}\n\n.two-blocks-map {\n\tposition: absolute; \n}\n\n.two-blocks-submitter-borough-name {\n\tcolor: #D9285B;\n}\n\n.two-blocks-button {\n/*\tbackground: rgb(200, 200, 200);\n\tbackground-image : -webkit-linear-gradient(rgb(224,224,224), rgb(160,160,160));\n\tbackground-image : -o-linear-gradient(rgb(224,224,224), rgb(160,160,160));\n\tbackground-image : linear-gradient(rgb(224,224,224), rgb(160,160,160));\n*/\tborder-radius: 10px;\n\theight: 2em;\n\tletter-spacing: 1px; \n}\n\n/* MOBILE CSS */\n\n.mobile.two-blocks {\n\theight: 100%; \n}\n\n.mobile .two-blocks-view, \n.mobile .two-blocks-prompt {\n\tposition: absolute; \n}\n\n.mobile .two-blocks-interchange {\n    position: absolute;\n    z-index: 100;\n\tbackground-color: #000;\n    opacity: 0.7;\n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-submitter-text {\n\tcolor: #fff;\n    font-size: 1.5em;\n    text-align: center;\n    top: 10%;\t\n}\n\n.mobile .two-blocks-submitter {\n\tposition: absolute; \n\twidth: 100%; \n\theight: 20%; \n\ttop: 35%; \n}\n\n.mobile .two-blocks-button {\n\tbackground-color: rgb(255, 255, 255);\t\n\tfont-size: 1.2em; \n\tmax-width: 250px; \n\tmin-height: 25px; \n}\n\n.mobile .two-blocks-countdown {\n\tposition: absolute;\n\ttop: 10%; \n\tcolor: #fff; \n\tfont-size: 1.5em;\n\tfont-weight: bold; \n\ttext-shadow: 3px 3px 3px #000;  \n\tz-index: 100; \n}\n\n.mobile .borough-selection-button, \n.mobile .two-blocks-submitter-button {\n\tdisplay: block; \n\twidth: 60%; \n\theight: 30%; \n\tmargin: 0px auto 35px auto;  \n}\n\n.mobile .two-blocks-replay-button {\n\tposition: absolute; \n\twidth: 60%; \n\theight: 5%; \n\tleft: 0; \n\tright: 0; \n\ttop: 50%; \n\tmargin: auto; \n}\n\n@media screen and (orientation: landscape) {\n\n\t.mobile .borough-selection-button {\n\t\tmargin-bottom: 15px; \n\t}\n\n\t.mobile .two-blocks-prompt {\n\t\ttop: 0%; \n\t}\n\n\t.mobile .two-blocks-prompt, \n\t.mobile .two-blocks-countdown {\n\t\tleft: 1%;\n\t}\n\n\t.mobile .two-blocks-submitter { \n\t\tposition: relative;\n\t}\n\n\t.mobile .two-blocks-submitter-button {\n\t\tmargin-bottom: 25px; \n\t}\t\n\n}", ""]);
+	exports.push([module.id, "html, body {\n\theight: 100%; \n\tmargin: 0; \n\tpadding: 0;\n} \n\n.full-dimensions {\n\theight: 100%; \n\twidth: 100%; \n}\n\n.inherit-dimensions {\n\theight: inherit; \n\twidth: inherit; \n}\n\n.hidden {\n\tdisplay: none; \n}\n\n.offscreen {\n\tleft: -10000px;\n}\n\n/* Elements with '.visible' class are on top of the \n\tstack of maps / panoramas */\n.visible {\n\tz-index: 100; \n}\n\n.layered {\n\tposition: absolute; \n}\n\n/* ------ Components ------ */\n\n.two-blocks {\n\twidth: 100%; \n\theight: calc(100% - 150px);\n\tfont-family: \"Lucida Console\", Monaco, monospace; \n}\n\n.two-blocks-view {\n\tbox-shadow: 2px 2px 10px #000;\n}\n\n.two-blocks-view, \n.two-blocks-prompt {\n\tposition: relative;\n}\n\n.two-blocks-map {\n\tposition: absolute; \n}\n\n.two-blocks-submitter-borough-name {\n\tcolor: #D9285B;\n}\n\n.two-blocks-button {\n\tborder-radius: 10px;\n\theight: 2em;\n\tletter-spacing: 1px; \n}\n\n/* MOBILE CSS */\n\n.mobile.two-blocks {\n\theight: 100%; \n}\n\n.mobile .two-blocks-view, \n.mobile .two-blocks-prompt {\n\tposition: absolute; \n}\n\n.mobile .two-blocks-interchange {\n    position: absolute;\n    z-index: 100;\n\tbackground-color: #000;\n    opacity: 0.7;\n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-submitter-text {\n\tcolor: #fff;\n    font-size: 1.5em;\n    text-align: center;\n    top: 10%;\t\n}\n\n.mobile .two-blocks-submitter {\n\tposition: absolute; \n\twidth: 100%; \n\theight: 20%; \n\ttop: 35%; \n}\n\n.mobile .two-blocks-button {\n\tbackground-color: rgb(255, 255, 255);\t\n\tfont-size: 1.2em; \n\tmax-width: 250px; \n\tmin-height: 25px; \n}\n\n.mobile .two-blocks-countdown {\n\tposition: absolute;\n\ttop: 10%; \n\tcolor: #fff; \n\tfont-size: 1.5em;\n\tfont-weight: bold; \n\ttext-shadow: 3px 3px 3px #000;  \n\tz-index: 100; \n}\n\n.mobile .two-blocks-countdown .green {\n\tcolor: #009E39;\n}\n\n.mobile .two-blocks-countdown .yellow {\n\tcolor: #DFC00F;\n}\n\n.mobile .two-blocks-countdown .red {\n\tcolor: #D9285B;\n}\n\n.mobile .borough-selection-button, \n.mobile .two-blocks-submitter-button {\n\tdisplay: block; \n\twidth: 60%; \n\theight: 30%; \n\tmargin: 0px auto 35px auto;  \n}\n\n.mobile .two-blocks-replay-button {\n\tposition: absolute; \n\twidth: 60%; \n\theight: 5%; \n\tleft: 0; \n\tright: 0; \n\ttop: 50%; \n\tmargin: auto; \n}\n\n@media screen and (orientation: landscape) {\n\n\t.mobile .borough-selection-button {\n\t\tmargin-bottom: 15px; \n\t}\n\n\t.mobile .two-blocks-prompt {\n\t\ttop: 0%; \n\t}\n\n\t.mobile .two-blocks-prompt, \n\t.mobile .two-blocks-countdown {\n\t\tleft: 1%;\n\t}\n\n\t.mobile .two-blocks-submitter { \n\t\tposition: relative;\n\t}\n\n\t.mobile .two-blocks-submitter-button {\n\t\tmargin-bottom: 25px; \n\t}\t\n\n}", ""]);
 
 	// exports
 
