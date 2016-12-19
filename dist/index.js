@@ -13062,10 +13062,10 @@
 					maps.block.instance.removeLayer(showLocationMarker.marker);
 				}
 
-				window.console.log("locationData.CENTER:", locationData.CENTER);
-				window.console.log("DEFAULT_MAP_ZOOM:", _constants.DEFAULT_MAP_ZOOM);
-				// maps.city.instance.panTo(locationData.CENTER);
-				// maps.city.instance.setZoom(DEFAULT_MAP_ZOOM); 		
+				var centerLatLng = new google.maps.LatLng(locationData.CENTER.lat, locationData.CENTER.lng);
+
+				// Re-center map in case player moved it
+				maps.city.instance.setCenter(centerLatLng);
 
 				this.setState({
 
@@ -18604,8 +18604,6 @@
 
 
 			if (!canEvaluateAnswer) return;
-
-			window.console.log("Evaluating final answer!");
 
 			this.store.dispatch({
 				type: _actions2.default.CANNOT_EVALUATE_ANSWER // Don't allow answer evaluation until the next turn

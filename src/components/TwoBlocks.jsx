@@ -7,7 +7,7 @@ import PromptTextManager from './component-utils/PromptTextManager';
 import createGameComponents from '../game-components/createGameComponents'; 
 import Countdown from './component-utils/Countdown';
 import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
-import { events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAP_ZOOM, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
@@ -725,10 +725,11 @@ class TwoBlocks extends React.Component {
 
 		}
 
-		window.console.log("locationData.CENTER:", locationData.CENTER); 
-		window.console.log("DEFAULT_MAP_ZOOM:", DEFAULT_MAP_ZOOM); 
-		// maps.city.instance.panTo(locationData.CENTER); 
-		// maps.city.instance.setZoom(DEFAULT_MAP_ZOOM); 		
+
+		const centerLatLng = new google.maps.LatLng(locationData.CENTER.lat, locationData.CENTER.lng); 		
+
+		// Re-center map in case player moved it 
+		maps.city.instance.setCenter(centerLatLng);
 
 		this.setState({
 			

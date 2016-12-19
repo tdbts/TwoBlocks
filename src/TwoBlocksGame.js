@@ -135,8 +135,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		if (!(canEvaluateAnswer)) return; 
 
-		window.console.log("Evaluating final answer!"); 
-
 		this.store.dispatch({
 			type: actions.CANNOT_EVALUATE_ANSWER  // Don't allow answer evaluation until the next turn
 		}); 
