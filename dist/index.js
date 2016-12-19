@@ -160,6 +160,8 @@
 		}),
 		// </Provider>,
 		document.getElementById('app-container'));
+	}).catch(function (e) {
+		return window.console.error(e);
 		});
 
 /***/ },
@@ -20494,15 +20496,15 @@
 	});
 	/* global document */
 
+	var GOOGLE_MAPS_API = "https://maps.googleapis.com/maps/api/js";
+
 	var injectGapiScript = function injectGapiScript(MAPS_API_KEY) {
 
-		window.console.log('Injecting GAPI script.');
-
-		return new Promise(function (resolve) {
+		return new Promise(function (resolve, reject) {
 
 			var script = document.createElement("script");
 
-			var source = "https://maps.googleapis.com/maps/api/js";
+			var source = GOOGLE_MAPS_API;
 
 			script.type = "text/javascript";
 
@@ -20511,10 +20513,9 @@
 				source += "?key=" + MAPS_API_KEY;
 			}
 
-			window.console.log("source:", source);
-
 			script.src = source;
 			script.onload = resolve;
+			script.onerror = reject;
 
 			document.body.appendChild(script);
 		});

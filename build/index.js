@@ -87,4 +87,6 @@ service.loadGoogleMaps(process.env.MAPS_API_KEY)
 				worker={ worker }
 			/>, 
 		// </Provider>, 
-		document.getElementById('app-container')));
+		document.getElementById('app-container')))
+
+	.catch(e => window.console.error(e)); 
