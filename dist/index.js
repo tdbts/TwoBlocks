@@ -14079,7 +14079,8 @@
 		var textAddition = showTextAddition ? _react2.default.createElement(
 			'span',
 			null,
-			(0, _stylizeBoroughName2.default)(hoveredBorough)
+			(0, _stylizeBoroughName2.default)(hoveredBorough),
+			'?'
 		) : "";
 
 		return _react2.default.createElement(
@@ -14088,9 +14089,13 @@
 			_react2.default.createElement(
 				'div',
 				{ className: PROMPT_TEXT_CLASS_NAME },
-				promptText,
-				' ',
-				textAddition
+				_react2.default.createElement(
+					'p',
+					null,
+					promptText,
+					' ',
+					textAddition
+				)
 			)
 		);
 	};
@@ -14868,7 +14873,7 @@
 		choosingLocation: function choosingLocation() {
 
 			return _react2.default.createElement(
-				'p',
+				'span',
 				null,
 				'Which borough was the last panorama from?'
 			);
@@ -14876,7 +14881,7 @@
 		correctBorough: function correctBorough(_correctBorough) {
 
 			return _react2.default.createElement(
-				'p',
+				'span',
 				null,
 				'Correct!  The Street View shown was from ',
 				_react2.default.createElement(
@@ -14905,7 +14910,7 @@
 			}
 
 			return _react2.default.createElement(
-				'p',
+				'span',
 				null,
 				'Game over.  You correctly guessed ',
 				_react2.default.createElement(
@@ -14921,7 +14926,7 @@
 		incorrectBorough: function incorrectBorough(selectedBorough, correctBorough) {
 
 			return _react2.default.createElement(
-				'p',
+				'span',
 				null,
 				'Sorry, ',
 				(0, _stylizeBoroughName2.default)(selectedBorough),
@@ -14937,7 +14942,7 @@
 		pregame: function pregame() {
 
 			return _react2.default.createElement(
-				'p',
+				'span',
 				null,
 				'Loading new TwoBlocks game...'
 			);
@@ -14945,7 +14950,7 @@
 		restart: function restart() {
 
 			return _react2.default.createElement(
-				'p',
+				'span',
 				null,
 				'Starting new game...'
 			);
@@ -14953,7 +14958,7 @@
 		showingPanorama: function showingPanorama() {
 
 			return _react2.default.createElement(
-				'p',
+				'span',
 				null,
 				'Look closely...which borough is this Street View from?'
 			);
@@ -14961,7 +14966,7 @@
 		turnComplete: function turnComplete() {
 
 			return _react2.default.createElement(
-				'p',
+				'span',
 				null,
 				'Loading next panorama...'
 			);
@@ -15070,8 +15075,6 @@
 		var mapType = mobile ? _constants.mapTypes.LEAFLET : _constants.mapTypes.GOOGLE;
 
 		maps.city.instance = new _CityMap2.default(map, mapType);
-
-		window.console.log("maps.city.instance:", maps.city.instance);
 
 		/*----------  CITY_LEVEL_ZOOM, Create block-level map  ----------*/
 

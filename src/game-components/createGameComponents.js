@@ -64,8 +64,6 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	maps.city.instance = new CityMap(map, mapType); 
 
-	window.console.log("maps.city.instance:", maps.city.instance); 
-
 	/*----------  CITY_LEVEL_ZOOM, Create block-level map  ----------*/
 	
 	const blockLevelMapOptions = Object.assign({}, DEFAULT_MAP_OPTIONS, { 

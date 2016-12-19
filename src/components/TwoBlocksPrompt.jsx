@@ -11,13 +11,13 @@ const TwoBlocksPrompt = function TwoBlocksPrompt(props) {
 
 	const showTextAddition = shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough); 
 
-	const textAddition = showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) }</span> : "";
+	const textAddition = showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) }?</span> : "";
 
 	return (
 
 		<div className={ twoBlocksClass }>
 			<div className={ PROMPT_TEXT_CLASS_NAME }>
-				{ promptText } { textAddition }
+				<p>{ promptText } { textAddition }</p>
 			</div>
 		</div>
 	); 

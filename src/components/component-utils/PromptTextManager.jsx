@@ -11,13 +11,13 @@ PromptTextManager.prototype = {
 
 	choosingLocation() {
 
-		return <p>Which borough was the last panorama from?</p>; 
+		return <span>Which borough was the last panorama from?</span>; 
 
 	}, 
 
 	correctBorough(correctBorough) {
 
-		return <p>Correct!  The Street View shown was from <span className="correct-borough">{ stylizeBoroughName(correctBorough) }</span>.</p>; 
+		return <span>Correct!  The Street View shown was from <span className="correct-borough">{ stylizeBoroughName(correctBorough) }</span>.</span>; 
 
 	},
 
@@ -41,37 +41,37 @@ PromptTextManager.prototype = {
 
 		}
 
-		return <p>Game over.  You correctly guessed <span className={ ["total-correct", fractionClass ].join(" ") }>{ totalCorrect.toString() } / { totalRounds.toString() }</span> of the Street View locations.</p>
+		return <span>Game over.  You correctly guessed <span className={ ["total-correct", fractionClass ].join(" ") }>{ totalCorrect.toString() } / { totalRounds.toString() }</span> of the Street View locations.</span>
 	
 	}, 
 
 	incorrectBorough(selectedBorough, correctBorough) {
 
-		return <p>Sorry, { stylizeBoroughName(selectedBorough) } is incorrect.  The Street View shown was from <span className="correct-borough">{ stylizeBoroughName(correctBorough) }</span>.</p>; 
+		return <span>Sorry, { stylizeBoroughName(selectedBorough) } is incorrect.  The Street View shown was from <span className="correct-borough">{ stylizeBoroughName(correctBorough) }</span>.</span>; 
 
 	}, 
 
 	pregame() {
 
-		return <p>Loading new TwoBlocks game...</p>; 
+		return <span>Loading new TwoBlocks game...</span>; 
 
 	}, 
 
 	restart() {
 
-		return <p>Starting new game...</p>; 
+		return <span>Starting new game...</span>; 
 
 	},
 
 	showingPanorama() {
 
-		return <p>Look closely...which borough is this Street View from?</p>; 
+		return <span>Look closely...which borough is this Street View from?</span>; 
 
 	}, 
 
 	turnComplete() {
 
-		return <p>Loading next panorama...</p>; 
+		return <span>Loading next panorama...</span>; 
 
 	}
 
