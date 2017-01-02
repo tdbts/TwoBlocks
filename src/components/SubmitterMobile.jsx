@@ -1,4 +1,5 @@
 import React from 'react'; 
+import FinalAnswerCheckMobile from './FinalAnswerCheckMobile'; 
 
 const SubmitterMobile = function SubmitterMobile(props) {
 
@@ -10,15 +11,21 @@ const SubmitterMobile = function SubmitterMobile(props) {
 
 	const clearSelectedBoroughClassName = [ "two-blocks-clear-selected-borough-button", buttonClassName ].join(' ');  
 
+	const finalAnswerCheckVisibilityClass = borough ? '' : 'hidden';
+
 	const markup = borough 
 
-		? ( <div className={ [twoBlocksClass, borough ? '' : 'hidden'].join(' ') }>
-				<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
-				<button className={ finalAnswerClassName } onClick={ () => onSubmissionButtonClick() }>{ submissionButtonLabel }</button>
-				<button className={ clearSelectedBoroughClassName } onClick={ () => onClearSelectedButtonClick() }>{ clearSelectedButtonLabel }</button>
-			</div>
-
-		  )  // eslint-disable-line no-mixed-spaces-and-tabs
+		? ( <FinalAnswerCheckMobile 
+			borough={ borough }
+			classList={ [ twoBlocksClass, finalAnswerCheckVisibilityClass ].join(' ') }
+			clearSelectedBoroughClassName={ clearSelectedBoroughClassName }
+			clearSelectedButtonLabel={ clearSelectedButtonLabel }
+			finalAnswerClassName={ finalAnswerClassName }
+			onClearSelectedButtonClick={ () => onClearSelectedButtonClick() }
+			onSubmissionButtonClick={ () => onSubmissionButtonClick() }
+			submissionButtonLabel={ submissionButtonLabel }
+			text={ text }
+		  /> )
 
 		: (	<div className={ twoBlocksClass }>
 				<button className={ boroughButtonClassName } onClick={ () => onTouchend('Bronx') }>The Bronx</button>
