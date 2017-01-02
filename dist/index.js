@@ -12311,7 +12311,7 @@
 				initialized: false,
 				interchangeHidden: false,
 				maps: null,
-				mapType: 'city-level',
+				mapType: 'city',
 				mobile: null,
 				panorama: null,
 				promptText: null,
@@ -12696,7 +12696,7 @@
 
 						interchangeHidden: mobile,
 						choosingLocation: false,
-						mapType: 'borough-level'
+						mapType: 'borough'
 
 					});
 				}).then(function () {
@@ -12712,7 +12712,7 @@
 				}).then(function () {
 					return _this7.setState({
 
-						mapType: 'block-level'
+						mapType: 'block'
 
 					});
 				});
@@ -12775,7 +12775,7 @@
 				showLocationMarker.hide();
 
 				return this.setState({
-					mapType: 'city-level',
+					mapType: 'city',
 					promptText: promptTextManager.gameOver(totalCorrect, _constants.DEFAULT_MAXIMUM_ROUNDS)
 				});
 			}
@@ -12924,19 +12924,11 @@
 				var maps = this.state.maps;
 
 
-				var mapTypeToStatePropMap = {
-					'block-level': 'block',
-					'borough-level': 'borough',
-					'city-level': 'city'
-				};
-
 				var newState = {
 					maps: _extends({}, maps)
 				};
 
-				var prop = mapTypeToStatePropMap[mapType];
-
-				newState.maps[prop].element = mapCanvas;
+				newState.maps[mapType].element = mapCanvas;
 
 				this.setState(newState);
 			}
@@ -12966,7 +12958,7 @@
 
 				this.setState({
 
-					mapType: 'city-level'
+					mapType: 'city'
 
 				});
 			}
@@ -13652,28 +13644,28 @@
 					'div',
 					{ className: getClassName(twoBlocksClass, visible) },
 					_react2.default.createElement(_Map2.default, {
-						className: ["two-blocks-city-level-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'city-level')].join(' '),
+						className: ["two-blocks-city-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'city')].join(' '),
 						config: config ? config.cityLevelMap : null,
 						mapInstance: cityLevelMap,
-						mapType: 'city-level',
+						mapType: 'city',
 						onRef: onMapMounted,
-						visible: mapType === 'city-level'
+						visible: mapType === 'city'
 					}),
 					_react2.default.createElement(_Map2.default, {
-						className: ["two-blocks-borough-level-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'borough-level')].join(' '),
+						className: ["two-blocks-borough-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'borough')].join(' '),
 						config: config ? config.boroughLevelMap : null,
 						mapInstance: boroughLevelMap,
-						mapType: 'borough-level',
+						mapType: 'borough',
 						onRef: onMapMounted,
-						visible: mapType === 'borough-level'
+						visible: mapType === 'borough'
 					}),
 					_react2.default.createElement(_Map2.default, {
-						className: ["two-blocks-block-level-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'block-level')].join(' '),
+						className: ["two-blocks-block-map", (0, _getViewLayerClassName2.default)(MAP_CLASS_NAME, mapType === 'block')].join(' '),
 						config: config ? config.mapLevelMap : null,
 						mapInstance: blockLevelMap,
-						mapType: 'block-level',
+						mapType: 'block',
 						onRef: onMapMounted,
-						visible: mapType === 'block-level'
+						visible: mapType === 'block'
 					})
 				);
 			}

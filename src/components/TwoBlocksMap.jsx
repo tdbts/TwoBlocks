@@ -26,28 +26,28 @@ class TwoBlocksMap extends React.Component {
 
 			<div className={ getClassName(twoBlocksClass, visible) }>
 				<Map 
-					className={ [ "two-blocks-city-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'city-level')) ].join(' ') }
+					className={ [ "two-blocks-city-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'city')) ].join(' ') }
 					config={ config ? config.cityLevelMap : null }
 					mapInstance={ cityLevelMap }
-					mapType={ 'city-level' }
+					mapType={ 'city' }
 					onRef={ onMapMounted }
-					visible={ mapType === 'city-level' }
+					visible={ mapType === 'city' }
 				/>
 				<Map 
-					className={ [ "two-blocks-borough-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'borough-level')) ].join(' ') }
+					className={ [ "two-blocks-borough-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'borough')) ].join(' ') }
 					config={ config ? config.boroughLevelMap : null }
 					mapInstance={ boroughLevelMap }
-					mapType={ 'borough-level' }
+					mapType={ 'borough' }
 					onRef={ onMapMounted }
-					visible={ mapType === 'borough-level' }
+					visible={ mapType === 'borough' }
 				/>
 				<Map 
-					className={ [ "two-blocks-block-level-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'block-level')) ].join(' ') }
+					className={ [ "two-blocks-block-map", getViewLayerClassName(MAP_CLASS_NAME, (mapType === 'block')) ].join(' ') }
 					config={ config ? config.mapLevelMap : null }
 					mapInstance={ blockLevelMap }
-					mapType={ 'block-level' }
+					mapType={ 'block' }
 					onRef={ onMapMounted }
-					visible={ mapType === 'block-level' }
+					visible={ mapType === 'block' }
 				/>
 			</div>
 

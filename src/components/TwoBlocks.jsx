@@ -27,7 +27,7 @@ class TwoBlocks extends React.Component {
 			initialized 			: false,  
 			interchangeHidden 		: false, 
 			maps 					: null, 
-			mapType 				: 'city-level',   
+			mapType 				: 'city',   
 			mobile 					: null, 
 			panorama 				: null,   
 			promptText 				: null, 
@@ -376,7 +376,7 @@ class TwoBlocks extends React.Component {
 
 				interchangeHidden: mobile, 
 				choosingLocation: false, 
-				mapType: 'borough-level'
+				mapType: 'borough'
 
 			}))
 
@@ -396,7 +396,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.setState( { 
 			
-				mapType: 'block-level' 
+				mapType: 'block' 
 			
 			})); 
 
@@ -458,7 +458,7 @@ class TwoBlocks extends React.Component {
 		showLocationMarker.hide(); 
 
 		return this.setState({
-			mapType: 'city-level',
+			mapType: 'city',
 			promptText: promptTextManager.gameOver(totalCorrect, DEFAULT_MAXIMUM_ROUNDS) 
 		}); 
 
@@ -595,19 +595,11 @@ class TwoBlocks extends React.Component {
 
 		const { maps } = this.state; 
 
-		const mapTypeToStatePropMap = {
-			'block-level': 'block', 
-			'borough-level': 'borough', 
-			'city-level': 'city'
-		}; 
-
 		const newState = {
 			maps: Object.assign({}, maps)
 		}; 
 
-		const prop = mapTypeToStatePropMap[mapType]; 
-
-		newState.maps[prop].element = mapCanvas; 
+		newState.maps[mapType].element = mapCanvas; 
 
 		this.setState(newState); 
 
@@ -637,7 +629,7 @@ class TwoBlocks extends React.Component {
 
 		this.setState({
 
-			mapType: 'city-level'
+			mapType: 'city'
 		
 		});
 
