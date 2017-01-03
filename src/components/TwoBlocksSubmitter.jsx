@@ -18,20 +18,20 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const submissionButtonLabel = "Final answer?"; 
 
-	const clearSelectedButtonLabel = "Go back."; 
+	const goBackButtonLabel = "Go back."; 
 
 	const displayedComponent = (mobile && choosingLocation) 
 
 		? <SubmitterMobile 
-			buttonClassName={ calculatedClassName }
-			twoBlocksClass={ twoBlocksClass }
-			onTouchend={ onTouchend }
 			borough={ borough }
+			buttonClassName={ calculatedClassName }
+			goBackButtonLabel={ goBackButtonLabel }
+			onTouchend={ onTouchend }
 			submissionButtonLabel={ submissionButtonLabel }
-			clearSelectedButtonLabel={ clearSelectedButtonLabel }
 			text={ text }
+			onGoBackButtonClick={ () => clearSelectedBorough() }
 			onSubmissionButtonClick={ () => evaluateFinalAnswer() }
-			onClearSelectedButtonClick={ () => clearSelectedBorough() }
+			twoBlocksClass={ twoBlocksClass }
 		  />  // eslint-disable-line no-mixed-spaces-and-tabs
 
 		: <SubmitterDesktop 
