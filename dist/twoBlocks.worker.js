@@ -8875,7 +8875,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var ANSWER_EVALUATION_DELAY = 8000; // milliseconds
+	var ANSWER_EVALUATION_DELAY = 7000; // milliseconds
 	var BLOCK_LEVEL_ZOOM = 16;
 	var BOROUGH_LEVEL_ZOOM = 12;
 	var CITY_LEVEL_ZOOM = 10;
