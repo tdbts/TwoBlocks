@@ -4,13 +4,15 @@ import React from 'react';
 
 const SubmitterDesktop = function SubmitterDesktop(props) {
 
-	const { borough, buttonClassName, submissionButtonLabel, text, twoBlocksClass, onSubmissionButtonClick } = props; 
+	const BOROUGH_SUBMISSION = 'BOROUGH_SUBMISSION'; 
+
+	const { borough, buttonClassName, onButtonClick, submissionButtonLabel, text, twoBlocksClass } = props; 
 
 	return (
 		
 		<div className={ [twoBlocksClass, borough ? '' : 'hidden'].join(' ') }>
 			<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
-			<button className={ buttonClassName } onClick={ () => onSubmissionButtonClick() }>{ submissionButtonLabel }</button>
+			<button className={ buttonClassName } onClick={ () => onButtonClick(BOROUGH_SUBMISSION) }>{ submissionButtonLabel }</button>
 		</div>
 
 	);
@@ -23,10 +25,10 @@ SubmitterDesktop.propTypes = {
 
 	borough: React.PropTypes.string, 
 	buttonClassName: React.PropTypes.string, 
+	onButtonClick: React.PropTypes.func.isRequired, 
 	submissionButtonLabel: React.PropTypes.string, 
 	text: React.PropTypes.string, 
-	twoBlocksClass: React.PropTypes.string, 
-	onSubmissionButtonClick: React.PropTypes.func
+	twoBlocksClass: React.PropTypes.string
 
 }; 
 

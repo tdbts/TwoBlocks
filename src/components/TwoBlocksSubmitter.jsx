@@ -3,12 +3,13 @@ import stylizeBoroughName from './component-utils/stylizeBoroughName';
 import SubmitterDesktop from './SubmitterDesktop';  
 import SubmitterMobile from './SubmitterMobile'; 
 import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
+const TWO_BLOCKS_CLASS = 'two-blocks-submitter'; 
 
 /*----------  Component  ----------*/
 
 const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
-	const { choosingLocation, evaluateFinalAnswer, clearSelectedBorough, mobile, onTouchend, selectedBorough, twoBlocksClass } = props; 	
+	const { choosingLocation, mobile, onButtonClick, selectedBorough, wrapperClass } = props; 	
 
 	const calculatedClassName = getClassName(selectedBorough); 
 
@@ -18,29 +19,26 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const submissionButtonLabel = "Final answer?"; 
 
-	const goBackButtonLabel = "Go back."; 
+	const twoBlocksClass = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
 
 	const displayedComponent = (mobile && choosingLocation) 
 
 		? <SubmitterMobile 
 			borough={ borough }
 			buttonClassName={ calculatedClassName }
-			goBackButtonLabel={ goBackButtonLabel }
-			onTouchend={ onTouchend }
 			submissionButtonLabel={ submissionButtonLabel }
 			text={ text }
-			onGoBackButtonClick={ () => clearSelectedBorough() }
-			onSubmissionButtonClick={ () => evaluateFinalAnswer() }
+			onButtonClick={ onButtonClick }
 			twoBlocksClass={ twoBlocksClass }
 		  />  // eslint-disable-line no-mixed-spaces-and-tabs
 
 		: <SubmitterDesktop 
 			borough={ borough }
 			buttonClassName={ calculatedClassName }
+			onButtonClick={ onButtonClick }
 			submissionButtonLabel={ submissionButtonLabel }
 			text={ text }
 			twoBlocksClass={ twoBlocksClass }
-			onSubmissionButtonClick={ () => evaluateFinalAnswer() }
 		  />;  // eslint-disable-line no-mixed-spaces-and-tabs 
 
 	return displayedComponent;  
@@ -76,10 +74,8 @@ const getText = function getText(selectedBorough) {
 /*----------  Define PropTypes  ----------*/
 
 TwoBlocksSubmitter.propTypes = {
-
-	evaluateFinalAnswer 	: React.PropTypes.func.isRequired, 
-	selectedBorough 		: React.PropTypes.string, 
-	twoBlocksClass 			: React.PropTypes.string.isRequired
+ 
+	selectedBorough: React.PropTypes.string
 
 }; 
 

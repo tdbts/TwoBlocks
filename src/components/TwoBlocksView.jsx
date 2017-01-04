@@ -3,13 +3,15 @@ import TwoBlocksMap from './TwoBlocksMap';
 import TwoBlocksPanorama from './TwoBlocksPanorama'; 
 import TwoBlocksCountdown from './TwoBlocksCountdown'; 
 
+const TWO_BLOCKS_CLASS = "two-blocks-view"; 
+
 class TwoBlocksView extends React.Component {
 
 	getClassName() {
 
 		return [
 		
-			this.props.twoBlocksClass, 
+			TWO_BLOCKS_CLASS, 
 			"full-dimensions"
 
 		].join(" "); 
@@ -18,7 +20,7 @@ class TwoBlocksView extends React.Component {
 
 	render() {
 
-		const { countdownTimeLeft, interchangeHidden, onMapMounted, maps, mapTwoBlocksClass, mapType, mobile, onPanoramaMounted, panorama, panoramaTwoBlocksClass, view } = this.props;		
+		const { countdownTimeLeft, interchangeHidden, onMapMounted, maps, mapType, mobile, onPanoramaMounted, panorama, view } = this.props;		
 
 		return (
 
@@ -29,15 +31,13 @@ class TwoBlocksView extends React.Component {
 					cityLevelMap={ maps.city.instance }
 					onMapMounted={ onMapMounted }
 					mapType={ mapType }
-					twoBlocksClass={ mapTwoBlocksClass }
 					visible={ 'map' === view }
 				/>			
 				<TwoBlocksPanorama 
 					latLng={ panorama.latLng }
 					onPanoramaMounted={ onPanoramaMounted } 
-					panorama={ panorama.instance }
-					twoBlocksClass={ panoramaTwoBlocksClass } 
-					visible={ 'panorama' === view } 
+					panorama={ panorama.instance } 
+				visible={ 'panorama' === view } 
 				/>
 				<TwoBlocksCountdown 
 					interchangeHidden={ interchangeHidden }
@@ -58,14 +58,11 @@ TwoBlocksView.propTypes = {
 	interchangeHidden 		: React.PropTypes.bool, 
 	mapCanvasClassName 		: React.PropTypes.string, 
 	maps 					: React.PropTypes.object, 
-	mapTwoBlocksClass 		: React.PropTypes.string.isRequired, 
 	mapType 				: React.PropTypes.string, 
 	mobile 					: React.PropTypes.bool.isRequired, 
 	onMapMounted 			: React.PropTypes.func.isRequired, 
 	onPanoramaMounted 		: React.PropTypes.func.isRequired, 
-	panorama 				: React.PropTypes.object, 
-	panoramaTwoBlocksClass 	: React.PropTypes.string, 
-	twoBlocksClass 			: React.PropTypes.string.isRequired, 
+	panorama 				: React.PropTypes.object,  
 	view 					: React.PropTypes.string.isRequired
 
 }; 

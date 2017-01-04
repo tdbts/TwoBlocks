@@ -7,7 +7,7 @@ import PromptTextManager from './component-utils/PromptTextManager';
 import createGameComponents from '../game-components/createGameComponents'; 
 import Countdown from './component-utils/Countdown';
 import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
-import { events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { boroughNames, events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
@@ -399,6 +399,30 @@ class TwoBlocks extends React.Component {
 				mapType: 'block' 
 			
 			})); 
+
+	}
+
+	onButtonClick(type) {
+
+		const { props } = this; 
+
+		if ('BOROUGH_SUBMISSION' === type) {
+
+			this.evaluateFinalAnswer(); 
+
+		} else if ('GO_BACK' === type) {
+
+			this.setState({ selectedBorough: null }); 
+
+		} else if ('RESTART' === type) {
+
+			props.gameInstance.emit(events.RESTART_GAME); 
+
+		} else if (isOneOf(boroughNames, type)) {
+
+			this.onMobileBoroughSelection(type); 
+
+		}
 
 	}
 
@@ -1015,7 +1039,7 @@ class TwoBlocks extends React.Component {
  
 		return (
 	
-			<div className={ [ props.gameTwoBlocksClass, this.getDeviceClass() ].join(' ') }>
+			<div className={ [ props.TWO_BLOCKS_CLASS, this.getDeviceClass() ].join(' ') }>
 				<TwoBlocksView 
 					blockLevelMap={ state.maps.block.instance }
 					boroughLevelMap={ state.maps.borough.instance }
@@ -1023,32 +1047,23 @@ class TwoBlocks extends React.Component {
 					countdownTimeLeft={ state.countdownTimeLeft }
 					interchangeHidden={ state.interchangeHidden }
 					maps={ state.maps }
-					mapTwoBlocksClass={ props.mapTwoBlocksClass }
 					mapType={ state.mapType }
 					mobile={ state.mobile }
 					onMapMounted={ this.onMapMounted.bind(this) }
 					onPanoramaMounted={ this.onPanoramaMounted.bind(this) }  
 					panorama={ state.panorama }
-					panoramaTwoBlocksClass={ props.panoramaTwoBlocksClass }
-					twoBlocksClass={ props.viewTwoBlocksClass }
 					view={ store ? store.getState().view : 'map' } 
 				/>
 				<TwoBlocksInterchange 
 					choosingLocation={ state.choosingLocation }
-					clearSelectedBorough={ () => this.setState({ selectedBorough: null }) }
-					evaluateFinalAnswer={ () => this.evaluateFinalAnswer() }
 					gameOver={ props.gameInstance && props.gameInstance.gameOver() }
 					hidden={ state.interchangeHidden }
 					hideReplayButton={ !(store) || !(store.getState().gameOver) }
 					hoveredBorough={ state.hoveredBorough }
 					mobile={ state.mobile }
-					onMobileBoroughSelection={ borough => this.onMobileBoroughSelection(borough) }
+					onButtonClick={ this.onButtonClick.bind(this) }
 					promptText={ state.promptText }
-					promptTwoBlocksClass={ props.promptTwoBlocksClass }
 					selectedBorough={ state.selectedBorough }
-					submitterTwoBlocksClass={ props.submitterTwoBlocksClass }
-					replayButtonTwoBlocksClass={ props.replayButtonTwoBlocksClass }
-					restart={ () => props.gameInstance.emit(events.RESTART_GAME) }
 					twoBlocksClass={ props.promptTwoBlocksClass }
 				/>
 			</div>
@@ -1060,29 +1075,17 @@ class TwoBlocks extends React.Component {
 }
 
 TwoBlocks.propTypes = {
+	TWO_BLOCKS_CLASS 			: React.PropTypes.string.isRequired, 	
 	service 					: React.PropTypes.object.isRequired, 
 	store 						: React.PropTypes.object.isRequired, 
 	worker 						: React.PropTypes.object, 
 	gameInstance 				: React.PropTypes.object.isRequired, 
-	locationData 				: React.PropTypes.object.isRequired, 
-	gameTwoBlocksClass 			: React.PropTypes.string.isRequired, 	
-	mapTwoBlocksClass 			: React.PropTypes.string.isRequired, 
-	panoramaTwoBlocksClass 		: React.PropTypes.string.isRequired, 
-	promptTwoBlocksClass 		: React.PropTypes.string.isRequired,
-	replayButtonTwoBlocksClass 	: React.PropTypes.string.isRequired,
-	submitterTwoBlocksClass 	: React.PropTypes.string.isRequired,
-	viewTwoBlocksClass 			: React.PropTypes.string.isRequired
+	locationData 				: React.PropTypes.object.isRequired
 }; 
 
 // Assign default props to the constructor 
 TwoBlocks.defaultProps = { 
-	gameTwoBlocksClass 			: "two-blocks", 
-	mapTwoBlocksClass 			: "two-blocks-map", 
-	panoramaTwoBlocksClass 		: "two-blocks-panorama", 
-	promptTwoBlocksClass 		: "two-blocks-prompt", 
-	replayButtonTwoBlocksClass 	: "two-blocks-replay-button", 
-	submitterTwoBlocksClass 	: "two-blocks-submitter", 
-	viewTwoBlocksClass 			: "two-blocks-view"
+	TWO_BLOCKS_CLASS: "two-blocks" 
 }; 
 
 export default TwoBlocks; 

@@ -1,16 +1,21 @@
 import React from 'react'; 
 import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
+const TWO_BLOCKS_CLASS = "two-blocks-replay-button"; 
 
 /*----------  Component  ----------*/
 
 const TwoBlocksReplayButton = function TwoBlocksReplayButton(props) {
 
-	const { hidden, restart, twoBlocksClass } = props; 
+	const BUTTON_TYPE = 'RESTART'; 
+
+	const { hidden, onButtonClick, wrapperClass } = props; 
 
 	const calculatedClassName = getClassName(twoBlocksClass, hidden); 
 
+	const twoBlocksClass = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
+
 	return (
-		<button className={ calculatedClassName } onClick={ () => onReplayButtonClick(restart) }>Play again?</button>
+		<button className={ calculatedClassName } onClick={ () => onButtonClick(BUTTON_TYPE) }>Play again?</button>
 	);
 	
 }; 
@@ -29,20 +34,13 @@ const getClassName = function getClassName(twoBlocksClass, hidden) {
 
 }; 
 
-const onReplayButtonClick = function onReplayButtonClick(restart) {
-	window.console.log("onReplayButtonClick()"); 
-	window.console.log("restart:", restart); 
-	return restart(); 
-
-}; 
-
 /*----------  Define PropTypes  ----------*/
 
 TwoBlocksReplayButton.propTypes = {
 	
 	hidden: React.PropTypes.bool.isRequired, 
-	restart: React.PropTypes.func.isRequired, 
-	twoBlocksClass: React.PropTypes.string.isRequired
+	onButtonClick: React.PropTypes.func.isRequired, 
+	wrapperClass: React.PropTypes.string
 
 }; 
 

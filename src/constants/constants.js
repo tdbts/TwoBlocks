@@ -1,3 +1,4 @@
+import boroughNames from './boroughNames'; 
 import events from './events'; 
 import heardKeys from './heardKeys'; 
 import keyEventMaps from './keyEventMaps';
@@ -27,6 +28,7 @@ const TWO_BLOCKS_BUTTON_CLASS 			= "two-blocks-button";
 const WINDOW_RESIZE_DEBOUNCE_TIMEOUT 	= 100;
 
 export { 
+	boroughNames, 
 	events, 
 	heardKeys, 
 	keyEventMaps, 
