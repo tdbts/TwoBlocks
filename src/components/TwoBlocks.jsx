@@ -104,16 +104,28 @@ class TwoBlocks extends React.Component {
 
 	componentDidUpdate(prevProps, prevState) {  // eslint-disable-line no-unused-vars
 
+		if (this.state.initialized) return; 
+
+		const { service } = this.props; 
+		const { mobile } = this.state; 
+
 		// Child <TwoBlocksMap /> and <TwoBlocksPanorama /> 
 		// components will call methods which update this 
 		// component's state with the child components' 
 		// respective DOM elements.  Once both elements 
 		// exist in state, initialize TwoBlocks.  
-		if (!(this.state.initialized)) {
+		// If on mobile device, wait for Leaflet library to load 
+		if (mobile && !(window.L)) {
+
+			service.loadLeaflet()
+
+				.then(() => this.initializeTwoBlocks()); 
+
+		} else {
 
 			this.initializeTwoBlocks(); 
-		
-		} 
+			
+		}	
 
 	}
 
@@ -282,16 +294,7 @@ class TwoBlocks extends React.Component {
 
 		const { maps, mobile, panorama } = this.state;  
 
-		const { gameInstance, locationData, service, store } = this.props; 
-
-		// If on mobile device, wait for Leaflet library to load 
-		if (mobile && !(window.L)) {
-
-			return service.loadLeaflet()
-
-				.then(() => this.initializeTwoBlocks()); 
-
-		}
+		const { gameInstance, locationData, store } = this.props; 
 
 		if (!(maps.block.element) || !(maps.borough.element) || !(maps.city.element) || !(panorama.element)) return;  // DOM elements must exist before the game instance can be initialized 
 
