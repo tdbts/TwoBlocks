@@ -2,8 +2,8 @@
 
 import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, DEFAULT_MAP_OPTIONS } from '../constants/constants'; 
 import createPanorama from './createPanorama'; 
-import createSpinner from './createSpinner'; 
-import createWebGlManager from './createWebGlManager'; 
+import createWebGlManager from './createWebGlManager';
+import Spinner from './Spinner';  
 import CityMap from './CityMap';  
 import ShowLocationMarker from './ShowLocationMarker'; 
 
@@ -37,7 +37,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	/*----------  Set up spinner  ----------*/
 	
-	panorama.spinner = createSpinner(panorama.instance, {
+	panorama.spinner = new Spinner(panorama.instance, {
 		punctuate: {
 			segments: 4, 
 			delay: 2000
