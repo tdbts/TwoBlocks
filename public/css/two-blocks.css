@@ -180,3 +180,61 @@ html, body {
 	}	
 
 }
+
+/* React CSS Transiton testing */
+
+.mobile .pregame-prompt-enter {
+  opacity: 0.01;
+}
+
+.mobile .pregame-prompt-enter.pregame-prompt-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.mobile .pregame-prompt-leave {
+  opacity: 1;
+}
+
+.mobile .pregame-prompt-leave.pregame-prompt-leave-active {
+  opacity: 0.01;
+  transition: opacity 1000ms ease-in;
+}
+
+.mobile .pregame-prompt-appear {
+  opacity: 0.01;
+  transition: opacity 1.5s ease-in;
+}
+
+.mobile .pregame-prompt-appear.pregame-prompt-appear-active {
+  opacity: 1;
+}
+
+/* .showing-panorama-prompt */
+
+.mobile .showing-panorama-prompt-enter {
+  opacity: 0.01;
+}
+
+.mobile .showing-panorama-prompt-enter.showing-panorama-prompt-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.mobile .showing-panorama-prompt-leave {
+  opacity: 1;
+}
+
+.mobile .showing-panorama-prompt-leave.showing-panorama-prompt-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
+
+.mobile .showing-panorama-prompt-appear {
+  opacity: 0.01;
+}
+
+.mobile .showing-panorama-prompt-appear.showing-panorama-prompt-appear-active {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}

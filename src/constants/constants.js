@@ -4,6 +4,7 @@ import heardKeys from './heardKeys';
 import keyEventMaps from './keyEventMaps';
 import mapTypes from './mapTypes';  
 import nycCoordinates from './nycCoordinates';
+import promptTypes from './promptTypes'; 
 import tileLayer from './tileLayer';
 import workerMessages from './workerMessages'; 
 import ALL_TYPES from './ALL_TYPES'; 
@@ -34,6 +35,7 @@ export {
 	keyEventMaps, 
 	mapTypes, 
 	nycCoordinates,
+	promptTypes, 
 	tileLayer,  
 	workerMessages, 
 	ALL_TYPES,

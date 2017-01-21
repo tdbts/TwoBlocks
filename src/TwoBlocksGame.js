@@ -40,8 +40,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	addEventListeners() {
 
-		this.on(this.events.GAME_COMPONENTS, () => this.onGameComponents()); 
-
 		this.on(this.events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONLoaded(geoJSON)); 
 
 		this.on(this.events.GAME_STAGE, gameStage => {
@@ -250,12 +248,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.locationData = locationData; 
 		
 		this.emit(this.events.HOST_LOCATION_DATA, locationData); 
-
-	}, 
-
-	onGameComponents() {
-
-
 
 	}, 
 

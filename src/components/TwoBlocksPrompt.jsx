@@ -1,5 +1,8 @@
 import React from 'react'; 
-import stylizeBoroughName from './component-utils/stylizeBoroughName'; 
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import ReactTransitionGroup from 'react-addons-transition-group';
+import { createPromiseTimeout } from '../utils/utils';
+
 
 const PROMPT_TEXT_CLASS_NAME = "prompt-text"; 
 
@@ -7,43 +10,90 @@ const TWO_BLOCKS_CLASS = "two-blocks-prompt";
 
 /*----------  Component  ----------*/
 
-const TwoBlocksPrompt = function TwoBlocksPrompt(props) {
+class TwoBlocksPrompt extends React.Component {
 
-	const { gameOver, hoveredBorough, choosingLocation, promptText, wrapperClass } = props; 
+	constructor(props) {
 
-	const showTextAddition = shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough); 
+		super(props); 
 
-	const textAddition = showTextAddition ? <span>{ stylizeBoroughName(hoveredBorough) }?</span> : "";
+		this.state = {
 
-	const className = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
+			transitioningBetweenPrompts: false, 
+			transitioningOutPrompt: null
 
-	return (
+		}; 
 
-		<div className={ className }>
-			<div className={ PROMPT_TEXT_CLASS_NAME }>
-				<p>{ promptText } { textAddition }</p>
+		/*----------  Save reference to original setState() method  ----------*/
+		
+		this._superSetState = this.setState.bind(this); 
+
+		/*----------  Override setState() to be promisified  ----------*/
+		
+		this.setState = nextState => {
+
+			return new Promise(resolve => {
+
+				this._superSetState(nextState, resolve); 
+
+			}); 
+
+		}; 		
+
+	}
+
+	componentDidUpdate(prevProps) {
+
+		if (prevProps.prompt === this.props.prompt) return; 
+
+		this.setState({
+
+			transitioningBetweenPrompts: true, 
+			transitioningOutPrompt: prevProps.prompt
+
+		})
+
+		.then(() => createPromiseTimeout(1000))
+
+		.then(() => this.setState({
+
+			transitioningBetweenPrompts: false, 
+			transitioningOutPrompt: null 
+
+		})); 
+
+	}
+
+	render() {
+
+		const { prompt, wrapperClass } = this.props; 
+
+		const { transitioningBetweenPrompts, transitioningOutPrompt } = this.state; 
+
+		const { content } = transitioningBetweenPrompts ? transitioningOutPrompt : prompt;  
+
+		const className = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
+
+		return (
+
+			<div className={ className }>
+				<div className={ PROMPT_TEXT_CLASS_NAME }>
+					<ReactTransitionGroup>
+						{ content }
+					</ReactTransitionGroup>				
+				</div>
 			</div>
-		</div>
-	); 
+		
+		); 
 
-}; 
+	}
 
-/*----------  Helper Functions  ----------*/
-
-const shouldShowTextAddition = function shouldShowTextAddition(gameOver, choosingLocation, hoveredBorough) {
-
-	return !(gameOver) && choosingLocation && hoveredBorough; 
-
-}; 
+}
 
 /*----------  Define Proptypes  ----------*/
 
 TwoBlocksPrompt.propTypes = {
-	
-	choosingLocation 	: React.PropTypes.bool.isRequired, 
-	gameOver 			: React.PropTypes.bool, 
-	hoveredBorough 		: React.PropTypes.string,  
-	promptText 			: React.PropTypes.object, 
+
+	prompt  			: React.PropTypes.object, 
 	wrapperClass 		: React.PropTypes.string
 
 }; 

@@ -33,21 +33,21 @@ CityMap.prototype = {
 
 	}, 
 
-	onGeoJSONReceived(geoJSON) {
+	onConsideredBorough(borough, options) {
 
 		if (mapTypes.GOOGLE === this.mapType) {
 
-			return this.map.data.addGeoJson(geoJSON);
+			this.map.data.overrideStyle(borough, options); 
 
 		}
 
 	}, 
 
-	onHoveredBorough(borough, options) {
+	onGeoJSONReceived(geoJSON) {
 
 		if (mapTypes.GOOGLE === this.mapType) {
 
-			this.map.data.overrideStyle(borough, options); 
+			return this.map.data.addGeoJson(geoJSON);
 
 		}
 

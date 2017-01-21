@@ -39,6 +39,12 @@ TwoBlocksService.prototype = {
 
 	}, 
 
+	mobileMapLibraryLoaded() {
+
+		return !!(window.L); 
+
+	}, 
+
 	usingWorker() {
 
 		return !!(this.worker); 

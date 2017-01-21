@@ -3,7 +3,7 @@
 import React from 'react'; 
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksInterchange from './TwoBlocksInterchange'; 
-import PromptTextManager from './component-utils/PromptTextManager'; 
+import PromptManager from './component-utils/PromptManager'; 
 import createGameComponents from '../game-components/createGameComponents'; 
 import Countdown from './component-utils/Countdown';
 import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
@@ -11,7 +11,7 @@ import { boroughNames, events, heardKeys, keyEventMaps, workerMessages, ANSWER_E
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
-const promptTextManager = new PromptTextManager(); 
+const promptManager = new PromptManager(); 
 
 class TwoBlocks extends React.Component {
 
@@ -30,7 +30,7 @@ class TwoBlocks extends React.Component {
 			mapType 				: 'city',   
 			mobile 					: null, 
 			panorama 				: null,   
-			promptText 				: null, 
+			prompt 					: null, 
 			selectedBorough 		: null, 
 			showLocationMarker 		: null
 		}; 
@@ -57,8 +57,6 @@ class TwoBlocks extends React.Component {
 	
 	componentWillMount() {
 
-		const mobile = this.isMobile(); 
-
 		const mapCache = {
 			element: null, 
 			instance: null
@@ -78,7 +76,9 @@ class TwoBlocks extends React.Component {
 			spinner: null
 		}; 
 
-		const promptText = promptTextManager.pregame(); 
+		const prompt = promptManager.pregame(); 
+		
+		const mobile = this.isMobile(); 
 
 		if (mobile) {
 
@@ -90,7 +90,7 @@ class TwoBlocks extends React.Component {
 			maps, 
 			mobile, 
 			panorama, 
-			promptText 
+			prompt 
 		}); 
 
 	}
@@ -115,7 +115,7 @@ class TwoBlocks extends React.Component {
 		// respective DOM elements.  Once both elements 
 		// exist in state, initialize TwoBlocks.  
 		// If on mobile device, wait for Leaflet library to load 
-		if (mobile && !(window.L)) {
+		if (mobile && !(service.mobileMapLibraryLoaded())) {
 
 			service.loadLeaflet()
 
@@ -135,17 +135,9 @@ class TwoBlocks extends React.Component {
 
 		const { panorama } = this.state; 
 
-		const { gameInstance } = this.props; 
-
 		panorama.spinner.start(); 
 
-		panorama.spinner.once('revolution', () => {
-
-			this.onSpinnerRevolution(); 
-		
-			gameInstance.emit(events.CHOOSING_LOCATION); 
-
-		}); 
+		panorama.spinner.once('revolution', () => this.onSpinnerRevolution()); 
 
 	}
 
@@ -155,25 +147,11 @@ class TwoBlocks extends React.Component {
 
 		if (!(mapInstance) || mobile) return;  // Event listeners below only apply to desktop game instances  
  
-		mapInstance.addListener('mouseover', event => this.onHoveredBorough(event.feature));
+		mapInstance.addListener('mouseover', event => this.onCityMapMouseover(event));
 
-		mapInstance.addListener('mouseout', event => {
+		mapInstance.addListener('mouseout', event => this.onCityMapMouseout(event)); 	
 
-			this.updateHoveredBorough('');
-
-			this.styleNonHoveredBorough(event.feature); 
-
-		}); 	
-
-		mapInstance.addListener('click', event => {
-
-			const { gameInstance } = this.props; 
-
-			if (gameInstance.gameOver()) return; 
-
-			this.onSelectedBorough(event.feature);  
-
-		});  
+		mapInstance.addListener('click', event => this.onCityMapClick(event));  
 
 	}
 
@@ -296,7 +274,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, locationData, store } = this.props; 
 
-		if (!(maps.block.element) || !(maps.borough.element) || !(maps.city.element) || !(panorama.element)) return;  // DOM elements must exist before the game instance can be initialized 
+		if (!(this.requiredDOMElementsExist())) return;  // DOM elements must exist before the game instance can be initialized 
 
 		/*----------  Create Game Components  ----------*/
 						
@@ -449,17 +427,80 @@ class TwoBlocks extends React.Component {
 			choosingLocation: true, 
 			hoveredBorough: '', 
 			interchangeHidden: false,  
-			promptText: promptTextManager.choosingLocation()
+			prompt: promptManager.choosingLocation()
 		})
 
 		.then(() => maps.city.element.blur()); 
 
 	}
 
+	onCityMapClick(event) {
+
+		const { gameInstance } = this.props; 
+
+		if (gameInstance.gameOver()) return; 
+
+		this.onSelectedBorough(event.feature);  
+	
+	}
+
+	onCityMapMouseout(event) {
+			
+		const { choosingLocation, gameOver } = this.state; 
+
+		this.updateHoveredBorough('');
+
+		this.styleNonHoveredBorough(event.feature); 
+
+		if (!(gameOver) && choosingLocation) {
+
+			this.setState({
+
+				prompt: promptManager.choosingLocation() 
+
+			}); 
+
+		}
+
+	}
+
+	onCityMapMouseover(event) {
+
+		this.onConsideredBorough(event.feature); 
+
+	}
+
+	onConsideredBorough(feature) {
+
+		const { choosingLocation, gameOver, hoveredBorough } = this.state; 
+
+		// Unhover the currently-hovered borough 
+		const featureToUnhover = this.getFeatureByBoroughName(hoveredBorough); 
+		
+		this.styleNonHoveredBorough(featureToUnhover);
+			
+		this.updateHoveredBorough(feature); 
+		
+		this.styleHoveredBorough(feature); 
+
+		if (!(gameOver) && choosingLocation) {
+
+			const consideredBorough = this.getBoroughName(feature); 
+
+			this.setState({
+
+				prompt: promptManager.choosingLocation(consideredBorough)
+			
+			}); 
+
+		}
+
+	}
+
 	onCorrectBorough(boroughName) {
 
 		this.setState({
-			promptText: promptTextManager.correctBorough(boroughName)
+			prompt: promptManager.correctBorough(boroughName)
 		}); 
 	
 	}
@@ -486,7 +527,7 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({
 			mapType: 'city',
-			promptText: promptTextManager.gameOver(totalCorrect, DEFAULT_MAXIMUM_ROUNDS) 
+			prompt: promptManager.gameOver(totalCorrect, DEFAULT_MAXIMUM_ROUNDS) 
 		}); 
 
 	}
@@ -522,26 +563,12 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onHoveredBorough(feature) {
-
-		const { hoveredBorough } = this.state; 
-
-		const featureToUnhover = this.getFeatureByBoroughName(hoveredBorough); 
-		
-		this.styleNonHoveredBorough(featureToUnhover);
-			
-		this.updateHoveredBorough(feature); 
-		
-		this.styleHoveredBorough(feature); 
-
-	}
-
 	onIncorrectBorough(selectionDetails) {
 
 		const { correctBorough, selectedBorough } = selectionDetails; 
 
 		this.setState({
-			promptText: promptTextManager.incorrectBorough(selectedBorough, correctBorough)
+			prompt: promptManager.incorrectBorough(selectedBorough, correctBorough)
 		}); 
 
 	}
@@ -612,7 +639,7 @@ class TwoBlocks extends React.Component {
 			
 			const feature = this.getFeatureByBoroughName(boroughName); 
 
-			this.onHoveredBorough(feature); 	
+			this.onConsideredBorough(feature); 	
 
 		}
 
@@ -722,7 +749,11 @@ class TwoBlocks extends React.Component {
 
 		const { panorama } = this.state; 
 
+		const { gameInstance } = this.props; 
+
 		panorama.spinner.stop(); 
+
+		gameInstance.emit(events.CHOOSING_LOCATION); 
 
 	}
 
@@ -732,7 +763,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, locationData } = this.props; 
 
-		const promptText = gameInstance.maximumRoundsPlayed() ? this.state.promptText : promptTextManager.turnComplete(); 
+		const prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.turnComplete(); 
 
 		if (!(mobile)) {
 
@@ -752,7 +783,7 @@ class TwoBlocks extends React.Component {
 
 		this.setState({
 			
-			promptText, 
+			prompt, 
 			interchangeHidden: false, 
 			selectedBorough: null
 		
@@ -830,6 +861,14 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	requiredDOMElementsExist() {
+
+		const { maps, panorama } = this.state; 
+
+		return maps.block.element && maps.borough.element && maps.city.element && panorama.element; 		
+
+	}
+
 	restart() {
 
 		const { gameInstance, store } = this.props; 
@@ -842,7 +881,7 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({  
 			selectedBorough: null, 
-			promptText: promptTextManager.restart()
+			prompt: promptManager.restart()
 		}); 
 
 	}
@@ -879,7 +918,7 @@ class TwoBlocks extends React.Component {
 
 				return this.setState({
 			
-					promptText: promptTextManager.showingPanorama()
+					prompt: promptManager.showingPanorama()
 				
 				}); 
 
@@ -943,7 +982,7 @@ class TwoBlocks extends React.Component {
 		// borough is the selected borough. 
 		if (selectedBorough !== this.getBoroughName(borough)) {
 
-			maps.city.instance.onHoveredBorough(borough, {
+			maps.city.instance.onConsideredBorough(borough, {
 				fillColor: HOVERED_BOROUGH_FILL_COLOR
 			}); 
 
@@ -1065,7 +1104,7 @@ class TwoBlocks extends React.Component {
 					hoveredBorough={ state.hoveredBorough }
 					mobile={ state.mobile }
 					onButtonClick={ this.onButtonClick.bind(this) }
-					promptText={ state.promptText }
+					prompt={ state.prompt }
 					selectedBorough={ state.selectedBorough }
 					twoBlocksClass={ props.promptTwoBlocksClass }
 				/>
