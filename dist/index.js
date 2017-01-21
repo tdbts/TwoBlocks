@@ -38619,11 +38619,7 @@
 			});
 
 			this.on(this.events.GAME_STAGE, function (gameStage) {
-
-				if ('gameplay' === gameStage) {
-
-					_this2.emit(_this2.events.NEXT_TURN);
-				}
+				return _this2.onGameStage(gameStage);
 			});
 
 			this.on(this.events.NEXT_TURN, function () {
@@ -38635,57 +38631,15 @@
 			});
 
 			this.on(this.events.ANSWER_EVALUATED, function (answerDetails) {
-
-				window.console.log("answerDetails:", answerDetails);
-
-				var selectedBorough = answerDetails.selectedBorough;
-
-
-				_this2.store.dispatch({
-					selectedBorough: selectedBorough,
-					type: _actions2.default.BOROUGH_SELECTED
-				});
-
-				(0, _utils.createPromiseTimeout)(_constants.ANSWER_EVALUATION_DELAY).then(function () {
-					return _this2.emit(_this2.events.TURN_COMPLETE);
-				});
+				return _this2.onAnswerEvaluated(answerDetails);
 			});
 
 			this.on(this.events.TURN_COMPLETE, function () {
-
-				_this2.store.dispatch({
-					type: _actions2.default.INCREMENT_TOTAL_ROUNDS
-				});
-
-				_this2.addTurnToGameHistory();
-
-				_this2.store.dispatch({
-					type: _actions2.default.CLEAR_CURRENT_TURN
-				});
-
-				if (_this2.maximumRoundsPlayed()) {
-
-					_this2.store.dispatch({
-						type: _actions2.default.GAME_OVER
-					});
-
-					_this2.emit(_this2.events.GAME_OVER);
-				} else {
-
-					_this2.emit(_this2.events.NEXT_TURN);
-				}
+				return _this2.onTurnComplete();
 			});
 
 			this.on(this.events.GAME_OVER, function () {
-
-				var stage = 'postgame';
-
-				_this2.store.dispatch({
-					stage: stage,
-					type: _actions2.default.SET_GAME_STAGE
-				});
-
-				_this2.emit(_this2.events.GAME_STAGE, stage);
+				return _this2.onGameOver();
 			});
 
 			this.on(this.events.RESTART_GAME, function () {
@@ -38845,6 +38799,23 @@
 
 			return this.loadPanorama();
 		},
+		onAnswerEvaluated: function onAnswerEvaluated(answerDetails) {
+			var _this7 = this;
+
+			window.console.log("answerDetails:", answerDetails);
+
+			var selectedBorough = answerDetails.selectedBorough;
+
+
+			this.store.dispatch({
+				selectedBorough: selectedBorough,
+				type: _actions2.default.BOROUGH_SELECTED
+			});
+
+			(0, _utils.createPromiseTimeout)(_constants.ANSWER_EVALUATION_DELAY).then(function () {
+				return _this7.emit(_this7.events.TURN_COMPLETE);
+			});
+		},
 		onCityLocationDataReceived: function onCityLocationDataReceived(locationData) {
 
 			window.console.log("locationData:", locationData);
@@ -38852,6 +38823,24 @@
 			this.locationData = locationData;
 
 			this.emit(this.events.HOST_LOCATION_DATA, locationData);
+		},
+		onGameOver: function onGameOver() {
+
+			var stage = 'postgame';
+
+			this.store.dispatch({
+				stage: stage,
+				type: _actions2.default.SET_GAME_STAGE
+			});
+
+			this.emit(this.events.GAME_STAGE, stage);
+		},
+		onGameStage: function onGameStage(gameStage) {
+
+			if ('gameplay' === gameStage) {
+
+				this.emit(this.events.NEXT_TURN);
+			}
 		},
 		onGeoJSONLoaded: function onGeoJSONLoaded(geoJSON) {
 
@@ -38866,12 +38855,36 @@
 				type: _actions2.default.CAN_EVALUATE_ANSWER
 			});
 		},
+		onTurnComplete: function onTurnComplete() {
+
+			this.store.dispatch({
+				type: _actions2.default.INCREMENT_TOTAL_ROUNDS
+			});
+
+			this.addTurnToGameHistory();
+
+			this.store.dispatch({
+				type: _actions2.default.CLEAR_CURRENT_TURN
+			});
+
+			if (this.maximumRoundsPlayed()) {
+
+				this.store.dispatch({
+					type: _actions2.default.GAME_OVER
+				});
+
+				this.emit(this.events.GAME_OVER);
+			} else {
+
+				this.emit(this.events.NEXT_TURN);
+			}
+		},
 		readyForGameplay: function readyForGameplay() {
-			var _this7 = this;
+			var _this8 = this;
 
 			var viewReady = new Promise(function (resolve) {
 
-				_this7.on(_this7.events.VIEW_READY, resolve);
+				_this8.on(_this8.events.VIEW_READY, resolve);
 			});
 
 			var prerequisites = [this.geoJSONLoaded(), viewReady];

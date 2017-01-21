@@ -42,77 +42,17 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(this.events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONLoaded(geoJSON)); 
 
-		this.on(this.events.GAME_STAGE, gameStage => {
-
-			if ('gameplay' === gameStage) {
-
-				this.emit(this.events.NEXT_TURN); 
-
-			}
-
-		}); 
+		this.on(this.events.GAME_STAGE, gameStage => this.onGameStage(gameStage)); 
 
 		this.on(this.events.NEXT_TURN, () => this.nextTurn()); 
 
 		this.on(this.events.GUESSING_LOCATION, () => this.onGuessingLocation()); 
 
-		this.on(this.events.ANSWER_EVALUATED, answerDetails => {
+		this.on(this.events.ANSWER_EVALUATED, answerDetails => this.onAnswerEvaluated(answerDetails)); 
 
-			window.console.log("answerDetails:", answerDetails); 
- 
-			const { selectedBorough } = answerDetails; 
+		this.on(this.events.TURN_COMPLETE, () => this.onTurnComplete()); 
 
-			this.store.dispatch({
-				selectedBorough, 
-				type: actions.BOROUGH_SELECTED
-			}); 
-
-			createPromiseTimeout(ANSWER_EVALUATION_DELAY) 
-
-				.then(() => this.emit(this.events.TURN_COMPLETE));
-
-		}); 
-
-		this.on(this.events.TURN_COMPLETE, () => {
-		
-			this.store.dispatch({
-				type: actions.INCREMENT_TOTAL_ROUNDS
-			}); 
-
-			this.addTurnToGameHistory();
-
-			this.store.dispatch({
-				type: actions.CLEAR_CURRENT_TURN
-			}); 
-
-			if (this.maximumRoundsPlayed()) {
-
-				this.store.dispatch({
-					type: actions.GAME_OVER
-				}); 
-
-				this.emit(this.events.GAME_OVER); 
-
-			} else {
-
-				this.emit(this.events.NEXT_TURN); 
-
-			}
-
-		}); 
-
-		this.on(this.events.GAME_OVER, () => {
-		
-			const stage = 'postgame'; 
-
-			this.store.dispatch({
-				stage, 
-				type: actions.SET_GAME_STAGE
-			}); 
-
-			this.emit(this.events.GAME_STAGE, stage); 
-		
-		}); 
+		this.on(this.events.GAME_OVER, () => this.onGameOver()); 
 
 		this.on(this.events.RESTART_GAME, () => this.restart()); 
 
@@ -291,6 +231,23 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	onAnswerEvaluated(answerDetails) {
+
+		window.console.log("answerDetails:", answerDetails); 
+
+		const { selectedBorough } = answerDetails; 
+
+		this.store.dispatch({
+			selectedBorough, 
+			type: actions.BOROUGH_SELECTED
+		}); 
+
+		createPromiseTimeout(ANSWER_EVALUATION_DELAY) 
+
+			.then(() => this.emit(this.events.TURN_COMPLETE));
+
+	}, 
+
 	onCityLocationDataReceived(locationData) {
 
 		window.console.log("locationData:", locationData); 
@@ -298,6 +255,29 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.locationData = locationData; 
 		
 		this.emit(this.events.HOST_LOCATION_DATA, locationData); 
+
+	}, 
+
+	onGameOver() {
+		
+		const stage = 'postgame'; 
+
+		this.store.dispatch({
+			stage, 
+			type: actions.SET_GAME_STAGE
+		}); 
+
+		this.emit(this.events.GAME_STAGE, stage); 
+	
+	}, 
+
+	onGameStage(gameStage) {
+
+		if ('gameplay' === gameStage) {
+
+			this.emit(this.events.NEXT_TURN); 
+
+		}
 
 	}, 
 
@@ -316,6 +296,34 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.store.dispatch({
 			type: actions.CAN_EVALUATE_ANSWER
 		}); 
+
+	}, 
+
+	onTurnComplete() {
+		
+		this.store.dispatch({
+			type: actions.INCREMENT_TOTAL_ROUNDS
+		}); 
+
+		this.addTurnToGameHistory();
+
+		this.store.dispatch({
+			type: actions.CLEAR_CURRENT_TURN
+		}); 
+
+		if (this.maximumRoundsPlayed()) {
+
+			this.store.dispatch({
+				type: actions.GAME_OVER
+			}); 
+
+			this.emit(this.events.GAME_OVER); 
+
+		} else {
+
+			this.emit(this.events.NEXT_TURN); 
+
+		}
 
 	}, 
 
