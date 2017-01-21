@@ -38791,8 +38791,6 @@
 				});
 
 				return locationData;
-			}).then(function () {
-				return _this6.emit(_this6.events.RANDOM_LOCATION);
 			});
 		},
 		maximumRoundsPlayed: function maximumRoundsPlayed() {
@@ -38804,11 +38802,14 @@
 			return totalRounds === _constants.DEFAULT_MAXIMUM_ROUNDS;
 		},
 		nextTurn: function nextTurn() {
+			var _this7 = this;
 
-			return this.loadPanorama();
+			return this.loadPanorama().then(function () {
+				return _this7.showPanorama();
+			});
 		},
 		onAnswerEvaluated: function onAnswerEvaluated(answerDetails) {
-			var _this7 = this;
+			var _this8 = this;
 
 			window.console.log("answerDetails:", answerDetails);
 
@@ -38821,7 +38822,7 @@
 			});
 
 			(0, _utils.createPromiseTimeout)(_constants.ANSWER_EVALUATION_DELAY).then(function () {
-				return _this7.emit(_this7.events.TURN_COMPLETE);
+				return _this8.emit(_this8.events.TURN_COMPLETE);
 			});
 		},
 		onCityLocationDataReceived: function onCityLocationDataReceived(locationData) {
@@ -38888,11 +38889,11 @@
 			}
 		},
 		readyForGameplay: function readyForGameplay() {
-			var _this8 = this;
+			var _this9 = this;
 
 			var viewReady = new Promise(function (resolve) {
 
-				_this8.on(_this8.events.VIEW_READY, resolve);
+				_this9.on(_this9.events.VIEW_READY, resolve);
 			});
 
 			var prerequisites = [this.geoJSONLoaded(), viewReady];
@@ -38902,6 +38903,10 @@
 		restart: function restart() {
 
 			return this.start();
+		},
+		showPanorama: function showPanorama() {
+
+			this.emit(this.events.RANDOM_LOCATION);
 		},
 		start: function start() {
 

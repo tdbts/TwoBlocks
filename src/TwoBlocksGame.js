@@ -220,9 +220,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 				return locationData; 
 
-			})
-
-			.then(() => this.emit(this.events.RANDOM_LOCATION)); 
+			});
 
 	}, 
 
@@ -236,7 +234,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	nextTurn() {
 
-		return this.loadPanorama(); 
+		return this.loadPanorama()
+
+			.then(() => this.showPanorama());  
 
 	}, 
 
@@ -358,6 +358,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	restart() {
 
 		return this.start(); 
+
+	}, 
+
+	showPanorama() {
+
+		this.emit(this.events.RANDOM_LOCATION); 
 
 	}, 
 
