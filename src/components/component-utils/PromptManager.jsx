@@ -12,9 +12,9 @@ const PromptManager = function PromptManager() {};
 
 PromptManager.prototype = {
 
-	choosingLocation(consideredBorough) {
+	guessingLocation(consideredBorough) {
 
-		const type = 'choosing-location-prompt'; 
+		const type = 'guessing-location-prompt'; 
 
 		const message = []; 
 

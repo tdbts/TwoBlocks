@@ -23,7 +23,7 @@ CityMap.prototype = {
 
 	}, 
 
-	onChoosingLocation() {
+	onGuessingLocation() {
 
 		if (mapTypes.GOOGLE === this.mapType) {
 

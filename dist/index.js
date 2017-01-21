@@ -12125,7 +12125,7 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TwoBlocks).call(this, props));
 
 			_this.state = {
-				choosingLocation: false,
+				guessingLocation: false,
 				countdownTimeLeft: null,
 				hoveredBorough: null,
 				initialized: false,
@@ -12322,7 +12322,7 @@
 				});
 
 				twoBlocks.on(_constants.events.CHOOSING_LOCATION, function () {
-					return _this5.onChoosingLocation();
+					return _this5.onGuessingLocation();
 				});
 
 				twoBlocks.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
@@ -12364,7 +12364,7 @@
 			key: 'evaluateFinalAnswer',
 			value: function evaluateFinalAnswer() {
 
-				if (!this.state.choosingLocation) return;
+				if (!this.state.guessingLocation) return;
 
 				var _state = this.state;
 				var panorama = _state.panorama;
@@ -12508,7 +12508,7 @@
 					return _this8.setState({
 
 						interchangeHidden: mobile,
-						choosingLocation: false,
+						guessingLocation: false,
 						mapType: 'borough'
 
 					});
@@ -12551,8 +12551,8 @@
 				}
 			}
 		}, {
-			key: 'onChoosingLocation',
-			value: function onChoosingLocation() {
+			key: 'onGuessingLocation',
+			value: function onGuessingLocation() {
 				var _state4 = this.state;
 				var maps = _state4.maps;
 				var mobile = _state4.mobile;
@@ -12561,7 +12561,7 @@
 
 				if (!mobile) {
 
-					maps.city.instance.onChoosingLocation();
+					maps.city.instance.onGuessingLocation();
 				}
 
 				store.dispatch({
@@ -12569,10 +12569,10 @@
 				});
 
 				return this.setState({
-					choosingLocation: true,
+					guessingLocation: true,
 					hoveredBorough: '',
 					interchangeHidden: false,
-					prompt: promptManager.choosingLocation()
+					prompt: promptManager.guessingLocation()
 				}).then(function () {
 					return maps.city.element.blur();
 				});
@@ -12591,7 +12591,7 @@
 			key: 'onCityMapMouseout',
 			value: function onCityMapMouseout(event) {
 				var _state5 = this.state;
-				var choosingLocation = _state5.choosingLocation;
+				var guessingLocation = _state5.guessingLocation;
 				var gameOver = _state5.gameOver;
 
 
@@ -12599,11 +12599,11 @@
 
 				this.styleNonHoveredBorough(event.feature);
 
-				if (!gameOver && choosingLocation) {
+				if (!gameOver && guessingLocation) {
 
 					this.setState({
 
-						prompt: promptManager.choosingLocation()
+						prompt: promptManager.guessingLocation()
 
 					});
 				}
@@ -12618,7 +12618,7 @@
 			key: 'onConsideredBorough',
 			value: function onConsideredBorough(feature) {
 				var _state6 = this.state;
-				var choosingLocation = _state6.choosingLocation;
+				var guessingLocation = _state6.guessingLocation;
 				var gameOver = _state6.gameOver;
 				var hoveredBorough = _state6.hoveredBorough;
 
@@ -12632,13 +12632,13 @@
 
 				this.styleHoveredBorough(feature);
 
-				if (!gameOver && choosingLocation) {
+				if (!gameOver && guessingLocation) {
 
 					var consideredBorough = this.getBoroughName(feature);
 
 					this.setState({
 
-						prompt: promptManager.choosingLocation(consideredBorough)
+						prompt: promptManager.guessingLocation(consideredBorough)
 
 					});
 				}
@@ -12884,10 +12884,10 @@
 		}, {
 			key: 'onSelectedBorough',
 			value: function onSelectedBorough(feature) {
-				var choosingLocation = this.state.choosingLocation;
+				var guessingLocation = this.state.guessingLocation;
 
 
-				if (!choosingLocation) return;
+				if (!guessingLocation) return;
 
 				this.styleUnselectedBoroughs(feature);
 
@@ -13285,7 +13285,7 @@
 						view: store ? store.getState().view : 'map'
 					}),
 					_react2.default.createElement(_TwoBlocksInterchange2.default, {
-						choosingLocation: state.choosingLocation,
+						guessingLocation: state.guessingLocation,
 						gameOver: props.gameInstance && props.gameInstance.gameOver(),
 						hidden: state.interchangeHidden,
 						hideReplayButton: !store || !store.getState().gameOver,
@@ -13825,7 +13825,7 @@
 			key: 'render',
 			value: function render() {
 				var _props = this.props;
-				var choosingLocation = _props.choosingLocation;
+				var guessingLocation = _props.guessingLocation;
 				var gameOver = _props.gameOver;
 				var hidden = _props.hidden;
 				var hoveredBorough = _props.hoveredBorough;
@@ -13840,14 +13840,14 @@
 					'div',
 					{ className: [INTERCHANGE_WRAPPER_CLASS_NAME, mobile ? 'full-dimensions' : '', hidden ? 'offscreen' : ''].join(' ').trim() },
 					_react2.default.createElement(_TwoBlocksPrompt2.default, {
-						choosingLocation: choosingLocation,
+						guessingLocation: guessingLocation,
 						gameOver: gameOver,
 						hoveredBorough: hoveredBorough,
 						prompt: prompt,
 						wrapperClass: "two-blocks-interchange-component"
 					}),
 					_react2.default.createElement(_TwoBlocksSubmitter2.default, {
-						choosingLocation: choosingLocation,
+						guessingLocation: guessingLocation,
 						hoveredBorough: hoveredBorough,
 						mobile: mobile,
 						onButtonClick: onButtonClick,
@@ -13869,7 +13869,7 @@
 	/*----------  Define PropTypes  ----------*/
 
 	TwoBlocksInterchange.propTypes = {
-		choosingLocation: _react2.default.PropTypes.bool,
+		guessingLocation: _react2.default.PropTypes.bool,
 		gameOver: _react2.default.PropTypes.bool,
 		hidden: _react2.default.PropTypes.bool,
 		hideReplayButton: _react2.default.PropTypes.bool,
@@ -35106,7 +35106,7 @@
 	/*----------  Component  ----------*/
 
 	var TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
-		var choosingLocation = props.choosingLocation;
+		var guessingLocation = props.guessingLocation;
 		var mobile = props.mobile;
 		var onButtonClick = props.onButtonClick;
 		var selectedBorough = props.selectedBorough;
@@ -35123,7 +35123,7 @@
 
 		var twoBlocksClass = [wrapperClass, TWO_BLOCKS_CLASS].join(" ");
 
-		var displayedComponent = mobile && choosingLocation ? _react2.default.createElement(_SubmitterMobile2.default, {
+		var displayedComponent = mobile && guessingLocation ? _react2.default.createElement(_SubmitterMobile2.default, {
 			borough: borough,
 			buttonClassName: calculatedClassName,
 			submissionButtonLabel: submissionButtonLabel,
@@ -35572,9 +35572,9 @@
 	/*----------  Define Prototype  ----------*/
 
 	PromptManager.prototype = {
-		choosingLocation: function choosingLocation(consideredBorough) {
+		guessingLocation: function guessingLocation(consideredBorough) {
 
-			var type = 'choosing-location-prompt';
+			var type = 'guessing-location-prompt';
 
 			var message = [];
 
@@ -36507,7 +36507,7 @@
 
 				return this.setState({
 
-					animationClass: 'choosing-location-prompt-appear'
+					animationClass: 'guessing-location-prompt-appear'
 
 				}).then(function () {
 					return (0, _utils.createPromiseTimeout)(1000);
@@ -36526,7 +36526,7 @@
 
 					_this2.setState({
 
-						animationClass: [animationClass, 'choosing-location-prompt-appear-active'].join(" ").trim()
+						animationClass: [animationClass, 'guessing-location-prompt-appear-active'].join(" ").trim()
 
 					});
 				});
@@ -36539,7 +36539,7 @@
 
 				return this.setState({
 
-					animationClass: 'choosing-location-prompt-enter'
+					animationClass: 'guessing-location-prompt-enter'
 
 				}).then(function () {
 					return (0, _utils.createPromiseTimeout)(1000);
@@ -36555,7 +36555,7 @@
 
 				return this.setState({
 
-					animationClass: [animationClass, 'choosing-location-prompt-enter-active'].join(" ").trim()
+					animationClass: [animationClass, 'guessing-location-prompt-enter-active'].join(" ").trim()
 
 				});
 
@@ -36567,7 +36567,7 @@
 
 				return this.setState({
 
-					animationClass: 'choosing-location-prompt-leave-active'
+					animationClass: 'guessing-location-prompt-leave-active'
 
 				}).then(function () {
 					return (0, _utils.createPromiseTimeout)(300);
@@ -38187,7 +38187,7 @@
 				this.map.data.addListener(event, listener);
 			}
 		},
-		onChoosingLocation: function onChoosingLocation() {
+		onGuessingLocation: function onGuessingLocation() {
 
 			if (_constants.mapTypes.GOOGLE === this.mapType) {
 

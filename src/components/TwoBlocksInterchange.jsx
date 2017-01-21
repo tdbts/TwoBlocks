@@ -11,20 +11,20 @@ class TwoBlocksInterchange extends React.Component {
 
 	render() {
 
-		const { choosingLocation, gameOver, hidden, hoveredBorough, mobile, prompt, selectedBorough, hideReplayButton, onButtonClick } = this.props; 
+		const { guessingLocation, gameOver, hidden, hoveredBorough, mobile, prompt, selectedBorough, hideReplayButton, onButtonClick } = this.props; 
 
 		return (
 			
 			<div className={ [ INTERCHANGE_WRAPPER_CLASS_NAME, (mobile ? 'full-dimensions' : ''), (hidden ? 'offscreen' : '') ].join(' ').trim() }>
 				<TwoBlocksPrompt 
-					choosingLocation={ choosingLocation }
+					guessingLocation={ guessingLocation }
 					gameOver={ gameOver }
 					hoveredBorough={ hoveredBorough }
 					prompt={ prompt }
 					wrapperClass={ "two-blocks-interchange-component" }
 				/>
 				<TwoBlocksSubmitter
-					choosingLocation={ choosingLocation } 
+					guessingLocation={ guessingLocation } 
 					hoveredBorough={ hoveredBorough }
 					mobile={ mobile }
 					onButtonClick={ onButtonClick }
@@ -47,7 +47,7 @@ class TwoBlocksInterchange extends React.Component {
 /*----------  Define PropTypes  ----------*/
 
 TwoBlocksInterchange.propTypes = {
-	choosingLocation: React.PropTypes.bool,  
+	guessingLocation: React.PropTypes.bool,  
 	gameOver: React.PropTypes.bool,
 	hidden: React.PropTypes.bool,  
 	hideReplayButton: React.PropTypes.bool, 

@@ -21,7 +21,7 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = { 
-			choosingLocation 		: false,
+			guessingLocation 		: false,
 			countdownTimeLeft 		: null,    
 			hoveredBorough 			: null,
 			initialized 			: false,  
@@ -192,7 +192,7 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on(events.SHOWING_PANORAMA, () => this.onShowingPanorama()); 
 
-		twoBlocks.on(events.CHOOSING_LOCATION, () => this.onChoosingLocation()); 
+		twoBlocks.on(events.CHOOSING_LOCATION, () => this.onGuessingLocation()); 
 
 		twoBlocks.on(events.ANSWER_EVALUATED, answerDetails => this.onAnswerEvaluated(answerDetails)); 
 
@@ -220,7 +220,7 @@ class TwoBlocks extends React.Component {
 
 	evaluateFinalAnswer() {
  
-		if (!(this.state.choosingLocation)) return; 
+		if (!(this.state.guessingLocation)) return; 
 
 		const { panorama, selectedBorough } = this.state; 
 
@@ -356,7 +356,7 @@ class TwoBlocks extends React.Component {
 			.then(() => this.setState({
 
 				interchangeHidden: mobile, 
-				choosingLocation: false, 
+				guessingLocation: false, 
 				mapType: 'borough'
 
 			}))
@@ -407,7 +407,7 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onChoosingLocation() {
+	onGuessingLocation() {
 
 		const { maps, mobile } = this.state; 
 
@@ -415,7 +415,7 @@ class TwoBlocks extends React.Component {
 
 		if (!(mobile)) {
 
-			maps.city.instance.onChoosingLocation(); 
+			maps.city.instance.onGuessingLocation(); 
 		
 		}
 
@@ -424,10 +424,10 @@ class TwoBlocks extends React.Component {
 		}); 
 
 		return this.setState({
-			choosingLocation: true, 
+			guessingLocation: true, 
 			hoveredBorough: '', 
 			interchangeHidden: false,  
-			prompt: promptManager.choosingLocation()
+			prompt: promptManager.guessingLocation()
 		})
 
 		.then(() => maps.city.element.blur()); 
@@ -446,17 +446,17 @@ class TwoBlocks extends React.Component {
 
 	onCityMapMouseout(event) {
 			
-		const { choosingLocation, gameOver } = this.state; 
+		const { guessingLocation, gameOver } = this.state; 
 
 		this.updateHoveredBorough('');
 
 		this.styleNonHoveredBorough(event.feature); 
 
-		if (!(gameOver) && choosingLocation) {
+		if (!(gameOver) && guessingLocation) {
 
 			this.setState({
 
-				prompt: promptManager.choosingLocation() 
+				prompt: promptManager.guessingLocation() 
 
 			}); 
 
@@ -472,7 +472,7 @@ class TwoBlocks extends React.Component {
 
 	onConsideredBorough(feature) {
 
-		const { choosingLocation, gameOver, hoveredBorough } = this.state; 
+		const { guessingLocation, gameOver, hoveredBorough } = this.state; 
 
 		// Unhover the currently-hovered borough 
 		const featureToUnhover = this.getFeatureByBoroughName(hoveredBorough); 
@@ -483,13 +483,13 @@ class TwoBlocks extends React.Component {
 		
 		this.styleHoveredBorough(feature); 
 
-		if (!(gameOver) && choosingLocation) {
+		if (!(gameOver) && guessingLocation) {
 
 			const consideredBorough = this.getBoroughName(feature); 
 
 			this.setState({
 
-				prompt: promptManager.choosingLocation(consideredBorough)
+				prompt: promptManager.guessingLocation(consideredBorough)
 			
 			}); 
 
@@ -721,9 +721,9 @@ class TwoBlocks extends React.Component {
 
 	onSelectedBorough(feature) {
 
-		const { choosingLocation } = this.state; 
+		const { guessingLocation } = this.state; 
 
-		if (!(choosingLocation)) return; 
+		if (!(guessingLocation)) return; 
 
 		this.styleUnselectedBoroughs(feature); 
 		
@@ -1097,7 +1097,7 @@ class TwoBlocks extends React.Component {
 					view={ store ? store.getState().view : 'map' } 
 				/>
 				<TwoBlocksInterchange 
-					choosingLocation={ state.choosingLocation }
+					guessingLocation={ state.guessingLocation }
 					gameOver={ props.gameInstance && props.gameInstance.gameOver() }
 					hidden={ state.interchangeHidden }
 					hideReplayButton={ !(store) || !(store.getState().gameOver) }

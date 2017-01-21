@@ -36,7 +36,7 @@ class ShowingPanoramaPrompt extends React.Component {
 
 		return this.setState({
 
-			animationClass: 'choosing-location-prompt-appear'
+			animationClass: 'guessing-location-prompt-appear'
 
 		})
 
@@ -58,7 +58,7 @@ class ShowingPanoramaPrompt extends React.Component {
 
 				this.setState({
 
-					animationClass: [ animationClass, 'choosing-location-prompt-appear-active' ].join(" ").trim()
+					animationClass: [ animationClass, 'guessing-location-prompt-appear-active' ].join(" ").trim()
 
 				}); 
 
@@ -71,7 +71,7 @@ class ShowingPanoramaPrompt extends React.Component {
 
 		return this.setState({
 
-			animationClass: 'choosing-location-prompt-enter'
+			animationClass: 'guessing-location-prompt-enter'
 
 		})
 
@@ -89,7 +89,7 @@ class ShowingPanoramaPrompt extends React.Component {
 
 		return this.setState({
 	
-			animationClass: [ animationClass, 'choosing-location-prompt-enter-active' ].join(" ").trim()
+			animationClass: [ animationClass, 'guessing-location-prompt-enter-active' ].join(" ").trim()
 
 		}); 
 
@@ -100,7 +100,7 @@ class ShowingPanoramaPrompt extends React.Component {
 
 		return this.setState({
 
-			animationClass: 'choosing-location-prompt-leave-active'
+			animationClass: 'guessing-location-prompt-leave-active'
 
 		})
 

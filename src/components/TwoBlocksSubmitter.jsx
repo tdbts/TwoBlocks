@@ -9,7 +9,7 @@ const TWO_BLOCKS_CLASS = 'two-blocks-submitter';
 
 const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
-	const { choosingLocation, mobile, onButtonClick, selectedBorough, wrapperClass } = props; 	
+	const { guessingLocation, mobile, onButtonClick, selectedBorough, wrapperClass } = props; 	
 
 	const calculatedClassName = getClassName(selectedBorough); 
 
@@ -21,7 +21,7 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const twoBlocksClass = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
 
-	const displayedComponent = (mobile && choosingLocation) 
+	const displayedComponent = (mobile && guessingLocation) 
 
 		? <SubmitterMobile 
 			borough={ borough }
