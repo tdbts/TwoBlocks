@@ -222,7 +222,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			})
 
-			.then(locationData => this.emit(this.events.RANDOM_LOCATION, locationData)); 
+			.then(() => this.emit(this.events.RANDOM_LOCATION)); 
 
 	}, 
 

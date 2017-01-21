@@ -12859,14 +12859,16 @@
 			}
 		}, {
 			key: 'onRandomLocation',
-			value: function onRandomLocation(randomLocationDetails) {
+			value: function onRandomLocation() {
 				var _this10 = this;
 
-				var boroughName = randomLocationDetails.boroughName;
-				var randomLatLng = randomLocationDetails.randomLatLng;
 				var _state9 = this.state;
 				var maps = _state9.maps;
 				var panorama = _state9.panorama;
+				var store = this.props.store;
+				var _store$getState$curre = store.getState().currentTurn;
+				var boroughName = _store$getState$curre.boroughName;
+				var randomLatLng = _store$getState$curre.randomLatLng;
 
 
 				maps.block.instance.panTo(randomLatLng);
@@ -35496,12 +35498,9 @@
 
 		var hidden = props.hidden;
 		var onButtonClick = props.onButtonClick;
-		var wrapperClass = props.wrapperClass;
 
 
-		var calculatedClassName = getClassName(twoBlocksClass, hidden);
-
-		var twoBlocksClass = [wrapperClass, TWO_BLOCKS_CLASS].join(" ");
+		var calculatedClassName = getClassName(TWO_BLOCKS_CLASS, hidden);
 
 		return _react2.default.createElement(
 			'button',
@@ -35524,8 +35523,7 @@
 	TwoBlocksReplayButton.propTypes = {
 
 		hidden: _react2.default.PropTypes.bool.isRequired,
-		onButtonClick: _react2.default.PropTypes.func.isRequired,
-		wrapperClass: _react2.default.PropTypes.string
+		onButtonClick: _react2.default.PropTypes.func.isRequired
 
 	};
 
@@ -38793,8 +38791,8 @@
 				});
 
 				return locationData;
-			}).then(function (locationData) {
-				return _this6.emit(_this6.events.RANDOM_LOCATION, locationData);
+			}).then(function () {
+				return _this6.emit(_this6.events.RANDOM_LOCATION);
 			});
 		},
 		maximumRoundsPlayed: function maximumRoundsPlayed() {

@@ -699,11 +699,13 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onRandomLocation(randomLocationDetails) {
-
-		const { boroughName, randomLatLng } = randomLocationDetails; 
+	onRandomLocation() {
 
 		const { maps, panorama } = this.state; 
+		
+		const { store } = this.props; 
+
+		const { boroughName, randomLatLng } = store.getState().currentTurn; 
 
 		maps.block.instance.panTo(randomLatLng); 
 		maps.borough.instance.panTo(randomLatLng); 

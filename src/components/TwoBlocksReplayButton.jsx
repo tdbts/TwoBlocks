@@ -8,11 +8,9 @@ const TwoBlocksReplayButton = function TwoBlocksReplayButton(props) {
 
 	const BUTTON_TYPE = 'RESTART'; 
 
-	const { hidden, onButtonClick, wrapperClass } = props; 
+	const { hidden, onButtonClick } = props; 
 
-	const calculatedClassName = getClassName(twoBlocksClass, hidden); 
-
-	const twoBlocksClass = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
+	const calculatedClassName = getClassName(TWO_BLOCKS_CLASS, hidden); 
 
 	return (
 		<button className={ calculatedClassName } onClick={ () => onButtonClick(BUTTON_TYPE) }>Play again?</button>
@@ -39,8 +37,7 @@ const getClassName = function getClassName(twoBlocksClass, hidden) {
 TwoBlocksReplayButton.propTypes = {
 	
 	hidden: React.PropTypes.bool.isRequired, 
-	onButtonClick: React.PropTypes.func.isRequired, 
-	wrapperClass: React.PropTypes.string
+	onButtonClick: React.PropTypes.func.isRequired
 
 }; 
 
