@@ -17,6 +17,10 @@ const currentTurn = function currentTurn(state = DEFAULT_STATE, action) {
 
 		nextState = turn; 
 
+	} else if (actions.SET_TURN_LOCATION_DATA === type) {
+
+		nextState = turn; 
+
 	} else if (actions.BOROUGH_SELECTED === type) {
 
 		if (isType('object', nextState)) {

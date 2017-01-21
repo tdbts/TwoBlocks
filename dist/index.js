@@ -38541,6 +38541,7 @@
 		SAVE_TURN: 'SAVE_TURN',
 		SET_GAME_STAGE: 'SET_GAME_STAGE',
 		SET_LOAD_STATE: 'SET_LOAD_STATE',
+		SET_TURN_LOCATION_DATA: 'SET_TURN_LOCATION_DATA',
 		SHOW_MAP: 'SHOW_MAP',
 		SHOW_PANORAMA: 'SHOW_PANORAMA',
 		START_GAME: 'START_GAME'
@@ -38772,11 +38773,20 @@
 			var featureCollection = this.locationData.featureCollection;
 
 
+			this.store.dispatch({
+				type: _actions2.default.NEXT_TURN,
+				turn: {
+					boroughName: null,
+					randomLatLng: null,
+					selectedBorough: null
+				}
+			});
+
 			return this.getRandomPanoramaLocation(featureCollection).then(function (locationData) {
 				// boroughName, randomLatLng
 
 				_this6.store.dispatch({
-					type: _actions2.default.NEXT_TURN,
+					type: _actions2.default.SET_TURN_LOCATION_DATA,
 					turn: _extends({}, locationData, {
 						selectedBorough: null
 					})
@@ -51819,6 +51829,9 @@
 
 			nextState = null;
 		} else if (_actions2.default.NEXT_TURN === type) {
+
+			nextState = turn;
+		} else if (_actions2.default.SET_TURN_LOCATION_DATA === type) {
 
 			nextState = turn;
 		} else if (_actions2.default.BOROUGH_SELECTED === type) {
