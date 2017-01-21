@@ -192,7 +192,7 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on(events.SHOWING_PANORAMA, () => this.onShowingPanorama()); 
 
-		twoBlocks.on(events.CHOOSING_LOCATION, () => this.onGuessingLocation()); 
+		twoBlocks.on(events.GUESSING_LOCATION, () => this.onGuessingLocation()); 
 
 		twoBlocks.on(events.ANSWER_EVALUATED, answerDetails => this.onAnswerEvaluated(answerDetails)); 
 
@@ -753,7 +753,7 @@ class TwoBlocks extends React.Component {
 
 		panorama.spinner.stop(); 
 
-		gameInstance.emit(events.CHOOSING_LOCATION); 
+		gameInstance.emit(events.GUESSING_LOCATION); 
 
 	}
 
@@ -960,7 +960,7 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
-		countdown.on('end', () => gameInstance.emit(events.CHOOSING_LOCATION)); 
+		countdown.on('end', () => gameInstance.emit(events.GUESSING_LOCATION)); 
 
 		return this.setState({
 				
