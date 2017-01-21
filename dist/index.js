@@ -74,17 +74,17 @@
 
 	var _redux = __webpack_require__(692);
 
-	var _reactDom = __webpack_require__(713);
+	var _reactDom = __webpack_require__(714);
 
 	var _constants = __webpack_require__(510);
 
-	var _reduxDevtoolsExtension = __webpack_require__(714);
+	var _reduxDevtoolsExtension = __webpack_require__(715);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	// import { Provider } from 'react-redux';
 
-	__webpack_require__(715); // Use Webpack loaders to add CSS
+	__webpack_require__(716); // Use Webpack loaders to add CSS
 
 	/*----------  Create Redux Store  ----------*/
 
@@ -50822,15 +50822,19 @@
 
 	var _gameStage2 = _interopRequireDefault(_gameStage);
 
-	var _loading = __webpack_require__(710);
+	var _hasStarted = __webpack_require__(710);
+
+	var _hasStarted2 = _interopRequireDefault(_hasStarted);
+
+	var _loading = __webpack_require__(711);
 
 	var _loading2 = _interopRequireDefault(_loading);
 
-	var _totalRounds = __webpack_require__(711);
+	var _totalRounds = __webpack_require__(712);
 
 	var _totalRounds2 = _interopRequireDefault(_totalRounds);
 
-	var _view = __webpack_require__(712);
+	var _view = __webpack_require__(713);
 
 	var _view2 = _interopRequireDefault(_view);
 
@@ -50842,6 +50846,7 @@
 		gameHistory: _gameHistory2.default,
 		gameOver: _gameOver2.default,
 		gameStage: _gameStage2.default,
+		hasStarted: _hasStarted2.default,
 		loading: _loading2.default,
 		totalRounds: _totalRounds2.default,
 		view: _view2.default
@@ -51926,6 +51931,42 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var hasStarted = function hasStarted() {
+		var state = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+		var action = arguments[1];
+
+
+		var nextState = state;
+
+		var type = action.type;
+
+
+		if (_actions2.default.START_GAME === type) {
+
+			nextState = true;
+		}
+
+		return nextState;
+	};
+
+	exports.default = hasStarted;
+
+/***/ },
+/* 711 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _actions = __webpack_require__(579);
+
+	var _actions2 = _interopRequireDefault(_actions);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	var loading = function loading() {
 		var state = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 		var action = arguments[1];
@@ -51948,7 +51989,7 @@
 	exports.default = loading;
 
 /***/ },
-/* 711 */
+/* 712 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51989,7 +52030,7 @@
 	exports.default = totalRounds;
 
 /***/ },
-/* 712 */
+/* 713 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52031,7 +52072,7 @@
 	exports.default = view;
 
 /***/ },
-/* 713 */
+/* 714 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -52040,7 +52081,7 @@
 
 
 /***/ },
-/* 714 */
+/* 715 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -52059,16 +52100,16 @@
 
 
 /***/ },
-/* 715 */
+/* 716 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(716);
+	var content = __webpack_require__(717);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(718)(content, {});
+	var update = __webpack_require__(719)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -52085,10 +52126,10 @@
 	}
 
 /***/ },
-/* 716 */
+/* 717 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(717)();
+	exports = module.exports = __webpack_require__(718)();
 	// imports
 
 
@@ -52099,7 +52140,7 @@
 
 
 /***/ },
-/* 717 */
+/* 718 */
 /***/ function(module, exports) {
 
 	/*
@@ -52155,7 +52196,7 @@
 
 
 /***/ },
-/* 718 */
+/* 719 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*

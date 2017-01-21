@@ -4,6 +4,7 @@ import currentTurn from './currentTurn';
 import gameHistory from './gameHistory';
 import gameOver from './gameOver';   
 import gameStage from './gameStage';  
+import hasStarted from './hasStarted'; 
 import loading from './loading'; 
 import totalRounds from './totalRounds';  
 import view from './view'; 
@@ -14,6 +15,7 @@ const twoBlocks = combineReducers({
 	gameHistory,  
 	gameOver, 
 	gameStage, 
+	hasStarted, 
 	loading, 
 	totalRounds,  
 	view
