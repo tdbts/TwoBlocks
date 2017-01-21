@@ -251,21 +251,9 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
-	maximumRoundsPlayed() {
-
-		const { totalRounds } = this.store.getState(); 
-
-		return totalRounds === DEFAULT_MAXIMUM_ROUNDS; 
-
-	}, 
-
-	nextTurn() {
+	loadPanorama() {
 
 		const { featureCollection } = this.locationData;  
-
-		this.store.dispatch({
-			type: actions.CAN_EVALUATE_ANSWER
-		}); 
 
 		return this.getRandomPanoramaLocation(featureCollection) 
 
@@ -284,6 +272,24 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			})
 
 			.then(locationData => this.emit(this.events.RANDOM_LOCATION, locationData)); 
+
+	}, 
+
+	maximumRoundsPlayed() {
+
+		const { totalRounds } = this.store.getState(); 
+
+		return totalRounds === DEFAULT_MAXIMUM_ROUNDS; 
+
+	}, 
+
+	nextTurn() {
+
+		this.store.dispatch({
+			type: actions.CAN_EVALUATE_ANSWER
+		}); 
+
+		return this.loadPanorama(); 
 
 	}, 
 

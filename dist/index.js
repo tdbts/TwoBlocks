@@ -38808,23 +38808,11 @@
 
 			return this.startGamePlay();
 		},
-		maximumRoundsPlayed: function maximumRoundsPlayed() {
-			var _store$getState4 = this.store.getState();
-
-			var totalRounds = _store$getState4.totalRounds;
-
-
-			return totalRounds === _constants.DEFAULT_MAXIMUM_ROUNDS;
-		},
-		nextTurn: function nextTurn() {
+		loadPanorama: function loadPanorama() {
 			var _this6 = this;
 
 			var featureCollection = this.locationData.featureCollection;
 
-
-			this.store.dispatch({
-				type: _actions2.default.CAN_EVALUATE_ANSWER
-			});
 
 			return this.getRandomPanoramaLocation(featureCollection).then(function (locationData) {
 				// boroughName, randomLatLng
@@ -38840,6 +38828,22 @@
 			}).then(function (locationData) {
 				return _this6.emit(_this6.events.RANDOM_LOCATION, locationData);
 			});
+		},
+		maximumRoundsPlayed: function maximumRoundsPlayed() {
+			var _store$getState4 = this.store.getState();
+
+			var totalRounds = _store$getState4.totalRounds;
+
+
+			return totalRounds === _constants.DEFAULT_MAXIMUM_ROUNDS;
+		},
+		nextTurn: function nextTurn() {
+
+			this.store.dispatch({
+				type: _actions2.default.CAN_EVALUATE_ANSWER
+			});
+
+			return this.loadPanorama();
 		},
 		onCityLocationDataReceived: function onCityLocationDataReceived(locationData) {
 
