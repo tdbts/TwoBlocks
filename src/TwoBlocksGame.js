@@ -205,6 +205,52 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	loadFirstGame() {
+
+		this.emit(this.events.GAME_STAGE, 'pregame'); 
+
+		this.addEventListeners(); 
+
+		this.store.dispatch({
+			type: actions.START_GAME
+		}); 
+
+		return this.readyForGameplay()
+
+			.then(() => this.startGamePlay()); 		
+
+	}, 
+
+	loadGame() {
+
+		let loadProcess = null; 
+
+		const { hasStarted } = this.store.getState(); 
+
+		if (hasStarted) {
+
+			loadProcess = this.loadNewGame(); 
+
+		} else {
+
+			loadProcess = this.loadFirstGame(); 
+
+		}
+
+		return loadProcess; 
+
+	}, 
+
+	loadNewGame() {
+
+		this.store.dispatch({
+			type: actions.RESTART_GAME
+		}); 
+
+		return this.startGamePlay(); 
+
+	}, 
+
 	maximumRoundsPlayed() {
 
 		const { totalRounds } = this.store.getState(); 
@@ -282,27 +328,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	restart() {
 
-		this.store.dispatch({
-			type: actions.RESTART_GAME
-		}); 
-
-		this.startGamePlay(); 
+		return this.start(); 
 
 	}, 
 
 	start() {
 
-		this.emit(this.events.GAME_STAGE, 'pregame'); 
-
-		this.addEventListeners(); 
-
-		this.store.dispatch({
-			type: actions.START_GAME
-		}); 
-
-		this.readyForGameplay()
-
-			.then(() => this.startGamePlay()); 
+		return this.loadGame(); 
 
 	}, 
 

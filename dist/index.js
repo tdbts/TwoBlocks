@@ -38766,16 +38766,58 @@
 				return randomLocationDetails;
 			});
 		},
-		maximumRoundsPlayed: function maximumRoundsPlayed() {
+		loadFirstGame: function loadFirstGame() {
+			var _this5 = this;
+
+			this.emit(this.events.GAME_STAGE, 'pregame');
+
+			this.addEventListeners();
+
+			this.store.dispatch({
+				type: _actions2.default.START_GAME
+			});
+
+			return this.readyForGameplay().then(function () {
+				return _this5.startGamePlay();
+			});
+		},
+		loadGame: function loadGame() {
+
+			var loadProcess = null;
+
 			var _store$getState3 = this.store.getState();
 
-			var totalRounds = _store$getState3.totalRounds;
+			var hasStarted = _store$getState3.hasStarted;
+
+
+			if (hasStarted) {
+
+				loadProcess = this.loadNewGame();
+			} else {
+
+				loadProcess = this.loadFirstGame();
+			}
+
+			return loadProcess;
+		},
+		loadNewGame: function loadNewGame() {
+
+			this.store.dispatch({
+				type: _actions2.default.RESTART_GAME
+			});
+
+			return this.startGamePlay();
+		},
+		maximumRoundsPlayed: function maximumRoundsPlayed() {
+			var _store$getState4 = this.store.getState();
+
+			var totalRounds = _store$getState4.totalRounds;
 
 
 			return totalRounds === _constants.DEFAULT_MAXIMUM_ROUNDS;
 		},
 		nextTurn: function nextTurn() {
-			var _this5 = this;
+			var _this6 = this;
 
 			var featureCollection = this.locationData.featureCollection;
 
@@ -38787,7 +38829,7 @@
 			return this.getRandomPanoramaLocation(featureCollection).then(function (locationData) {
 				// boroughName, randomLatLng
 
-				_this5.store.dispatch({
+				_this6.store.dispatch({
 					type: _actions2.default.NEW_CURRENT_TURN,
 					turn: _extends({}, locationData, {
 						selectedBorough: null
@@ -38796,7 +38838,7 @@
 
 				return locationData;
 			}).then(function (locationData) {
-				return _this5.emit(_this5.events.RANDOM_LOCATION, locationData);
+				return _this6.emit(_this6.events.RANDOM_LOCATION, locationData);
 			});
 		},
 		onCityLocationDataReceived: function onCityLocationDataReceived(locationData) {
@@ -38815,11 +38857,11 @@
 			}
 		},
 		readyForGameplay: function readyForGameplay() {
-			var _this6 = this;
+			var _this7 = this;
 
 			var viewReady = new Promise(function (resolve) {
 
-				_this6.on(_this6.events.VIEW_READY, resolve);
+				_this7.on(_this7.events.VIEW_READY, resolve);
 			});
 
 			var prerequisites = [this.geoJSONLoaded(), viewReady];
@@ -38828,26 +38870,11 @@
 		},
 		restart: function restart() {
 
-			this.store.dispatch({
-				type: _actions2.default.RESTART_GAME
-			});
-
-			this.startGamePlay();
+			return this.start();
 		},
 		start: function start() {
-			var _this7 = this;
 
-			this.emit(this.events.GAME_STAGE, 'pregame');
-
-			this.addEventListeners();
-
-			this.store.dispatch({
-				type: _actions2.default.START_GAME
-			});
-
-			this.readyForGameplay().then(function () {
-				return _this7.startGamePlay();
-			});
+			return this.loadGame();
 		},
 		startGamePlay: function startGamePlay() {
 
@@ -38861,9 +38888,9 @@
 			this.emit(this.events.GAME_STAGE, stage);
 		},
 		totalCorrectAnswers: function totalCorrectAnswers() {
-			var _store$getState4 = this.store.getState();
+			var _store$getState5 = this.store.getState();
 
-			var gameHistory = _store$getState4.gameHistory;
+			var gameHistory = _store$getState5.gameHistory;
 
 
 			return gameHistory.filter(function (turnHistory) {
