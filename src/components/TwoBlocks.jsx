@@ -715,7 +715,7 @@ class TwoBlocks extends React.Component {
 			}) 
 		})
 
-		.then(() => this.showRandomPanorama()); 
+		.then(() => this.showPanorama()); 
 
 	}
 
@@ -899,7 +899,7 @@ class TwoBlocks extends React.Component {
 
 	} 
 
-	showRandomPanorama() {
+	showPanorama() {
 	
 		const { gameInstance, store } = this.props; 
 

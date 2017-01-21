@@ -12878,7 +12878,7 @@
 						latLng: randomLatLng
 					})
 				}).then(function () {
-					return _this10.showRandomPanorama();
+					return _this10.showPanorama();
 				});
 			}
 		}, {
@@ -13068,8 +13068,8 @@
 				});
 			}
 		}, {
-			key: 'showRandomPanorama',
-			value: function showRandomPanorama() {
+			key: 'showPanorama',
+			value: function showPanorama() {
 				var _this12 = this;
 
 				var _props7 = this.props;
