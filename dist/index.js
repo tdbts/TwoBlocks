@@ -38536,7 +38536,7 @@
 		CLEAR_CURRENT_TURN: 'CLEAR_CURRENT_TURN',
 		GAME_OVER: 'GAME_OVER',
 		INCREMENT_TOTAL_ROUNDS: 'INCREMENT_TOTAL_ROUNDS',
-		NEW_CURRENT_TURN: 'NEW_CURRENT_TURN',
+		NEXT_TURN: 'NEXT_TURN',
 		RESTART_GAME: 'RESTART_GAME',
 		SAVE_TURN: 'SAVE_TURN',
 		SET_GAME_STAGE: 'SET_GAME_STAGE',
@@ -38628,6 +38628,10 @@
 
 			this.on(this.events.NEXT_TURN, function () {
 				return _this2.nextTurn();
+			});
+
+			this.on(this.events.GUESSING_LOCATION, function () {
+				return _this2.onGuessingLocation();
 			});
 
 			this.on(this.events.ANSWER_EVALUATED, function (answerDetails) {
@@ -38818,7 +38822,7 @@
 				// boroughName, randomLatLng
 
 				_this6.store.dispatch({
-					type: _actions2.default.NEW_CURRENT_TURN,
+					type: _actions2.default.NEXT_TURN,
 					turn: _extends({}, locationData, {
 						selectedBorough: null
 					})
@@ -38839,10 +38843,6 @@
 		},
 		nextTurn: function nextTurn() {
 
-			this.store.dispatch({
-				type: _actions2.default.CAN_EVALUATE_ANSWER
-			});
-
 			return this.loadPanorama();
 		},
 		onCityLocationDataReceived: function onCityLocationDataReceived(locationData) {
@@ -38859,6 +38859,12 @@
 
 				this.locationData.featureCollection = geoJSON;
 			}
+		},
+		onGuessingLocation: function onGuessingLocation() {
+
+			this.store.dispatch({
+				type: _actions2.default.CAN_EVALUATE_ANSWER
+			});
 		},
 		readyForGameplay: function readyForGameplay() {
 			var _this7 = this;
@@ -51799,7 +51805,7 @@
 		if (_actions2.default.CLEAR_CURRENT_TURN === type) {
 
 			nextState = null;
-		} else if (_actions2.default.NEW_CURRENT_TURN === type) {
+		} else if (_actions2.default.NEXT_TURN === type) {
 
 			nextState = turn;
 		} else if (_actions2.default.BOROUGH_SELECTED === type) {

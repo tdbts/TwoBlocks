@@ -54,6 +54,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(this.events.NEXT_TURN, () => this.nextTurn()); 
 
+		this.on(this.events.GUESSING_LOCATION, () => this.onGuessingLocation()); 
+
 		this.on(this.events.ANSWER_EVALUATED, answerDetails => {
 
 			window.console.log("answerDetails:", answerDetails); 
@@ -260,7 +262,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			.then(locationData => {  // boroughName, randomLatLng
 
 				this.store.dispatch({
-					type: actions.NEW_CURRENT_TURN, 
+					type: actions.NEXT_TURN, 
 					turn: {
 						...locationData, 
 						selectedBorough: null
@@ -285,10 +287,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	nextTurn() {
 
-		this.store.dispatch({
-			type: actions.CAN_EVALUATE_ANSWER
-		}); 
-
 		return this.loadPanorama(); 
 
 	}, 
@@ -310,6 +308,14 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 			this.locationData.featureCollection = geoJSON; 
 
 		}
+
+	}, 
+
+	onGuessingLocation() {
+
+		this.store.dispatch({
+			type: actions.CAN_EVALUATE_ANSWER
+		}); 
 
 	}, 
 

@@ -13,7 +13,7 @@ const currentTurn = function currentTurn(state = DEFAULT_STATE, action) {
 
 		nextState = null; 
 
-	} else if (actions.NEW_CURRENT_TURN === type) {
+	} else if (actions.NEXT_TURN === type) {
 
 		nextState = turn; 
 
