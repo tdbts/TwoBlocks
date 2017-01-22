@@ -7,7 +7,7 @@ import PromptManager from './component-utils/PromptManager';
 import createGameComponents from '../game-components/createGameComponents'; 
 import Countdown from './component-utils/Countdown';
 import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
-import { boroughNames, events, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { boroughNames, events, gameStages, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
@@ -587,7 +587,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameStage } = store.getState(); 
 
-		if ('pregame' === gameStage) return;  // (For now) keypresses do not have any effect in the 'pregame' stage.  
+		if (gameStages.PREGAME === gameStage) return;  // (For now) keypresses do not have any effect in the 'pregame' stage.  
 
 		const { arrowKeyHoverMap, firstArrowKeyPressBoroughMap } = keyEventMaps; 
 

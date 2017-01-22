@@ -1,6 +1,7 @@
 import actions from '../actions/actions';
+import { gameStages } from '../constants/constants'; 
 
-const gameStage = function gameStage(state = 'pregame', action) {
+const gameStage = function gameStage(state = gameStages.PREGAME, action) {
 
 	let nextState = state; 
 
@@ -14,7 +15,7 @@ const gameStage = function gameStage(state = 'pregame', action) {
 
 	} else if (actions.RESTART_GAME === type) {
 
-		nextState = 'pregame'; 
+		nextState = gameStages.PREGAME; 
 
 	}
 

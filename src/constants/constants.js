@@ -1,5 +1,6 @@
 import boroughNames from './boroughNames'; 
 import events from './events'; 
+import gameStages from './gameStages'; 
 import heardKeys from './heardKeys'; 
 import keyEventMaps from './keyEventMaps';
 import mapTypes from './mapTypes';  
@@ -31,6 +32,7 @@ const WINDOW_RESIZE_DEBOUNCE_TIMEOUT 	= 100;
 export { 
 	boroughNames, 
 	events, 
+	gameStages, 
 	heardKeys, 
 	keyEventMaps, 
 	mapTypes, 

@@ -54,7 +54,7 @@
 
 	var _constants = __webpack_require__(313);
 
-	var _RandomLocationGenerator = __webpack_require__(354);
+	var _RandomLocationGenerator = __webpack_require__(355);
 
 	var _RandomLocationGenerator2 = _interopRequireDefault(_RandomLocationGenerator);
 
@@ -8240,23 +8240,23 @@
 
 	var _extend2 = _interopRequireDefault(_extend);
 
-	var _existenceCheck = __webpack_require__(327);
+	var _existenceCheck = __webpack_require__(328);
 
 	var _existenceCheck2 = _interopRequireDefault(_existenceCheck);
 
-	var _followPath = __webpack_require__(328);
+	var _followPath = __webpack_require__(329);
 
 	var _followPath2 = _interopRequireDefault(_followPath);
 
-	var _getArgumentsArray = __webpack_require__(331);
+	var _getArgumentsArray = __webpack_require__(332);
 
 	var _getArgumentsArray2 = _interopRequireDefault(_getArgumentsArray);
 
-	var _getOwnProp = __webpack_require__(332);
+	var _getOwnProp = __webpack_require__(333);
 
 	var _getOwnProp2 = _interopRequireDefault(_getOwnProp);
 
-	var _getProp = __webpack_require__(333);
+	var _getProp = __webpack_require__(334);
 
 	var _getProp2 = _interopRequireDefault(_getProp);
 
@@ -8264,23 +8264,23 @@
 
 	var _getType2 = _interopRequireDefault(_getType);
 
-	var _halt = __webpack_require__(334);
+	var _halt = __webpack_require__(335);
 
 	var _halt2 = _interopRequireDefault(_halt);
 
-	var _invoke = __webpack_require__(335);
+	var _invoke = __webpack_require__(336);
 
 	var _invoke2 = _interopRequireDefault(_invoke);
 
-	var _isEmpty = __webpack_require__(336);
+	var _isEmpty = __webpack_require__(337);
 
 	var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
-	var _isNothing = __webpack_require__(329);
+	var _isNothing = __webpack_require__(330);
 
 	var _isNothing2 = _interopRequireDefault(_isNothing);
 
-	var _isNumeric = __webpack_require__(337);
+	var _isNumeric = __webpack_require__(338);
 
 	var _isNumeric2 = _interopRequireDefault(_isNumeric);
 
@@ -8288,7 +8288,7 @@
 
 	var _isOneOf2 = _interopRequireDefault(_isOneOf);
 
-	var _isSomething = __webpack_require__(330);
+	var _isSomething = __webpack_require__(331);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -8296,11 +8296,11 @@
 
 	var _isType2 = _interopRequireDefault(_isType);
 
-	var _hasKeys = __webpack_require__(338);
+	var _hasKeys = __webpack_require__(339);
 
 	var _hasKeys2 = _interopRequireDefault(_hasKeys);
 
-	var _keys = __webpack_require__(326);
+	var _keys = __webpack_require__(327);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -8308,59 +8308,59 @@
 
 	var _length2 = _interopRequireDefault(_length);
 
-	var _makeRequest = __webpack_require__(339);
+	var _makeRequest = __webpack_require__(340);
 
 	var _makeRequest2 = _interopRequireDefault(_makeRequest);
 
-	var _merge = __webpack_require__(340);
+	var _merge = __webpack_require__(341);
 
 	var _merge2 = _interopRequireDefault(_merge);
 
-	var _negate = __webpack_require__(341);
+	var _negate = __webpack_require__(342);
 
 	var _negate2 = _interopRequireDefault(_negate);
 
-	var _noArguments = __webpack_require__(342);
+	var _noArguments = __webpack_require__(343);
 
 	var _noArguments2 = _interopRequireDefault(_noArguments);
 
-	var _noUniqueBetweenSets = __webpack_require__(343);
+	var _noUniqueBetweenSets = __webpack_require__(344);
 
 	var _noUniqueBetweenSets2 = _interopRequireDefault(_noUniqueBetweenSets);
 
-	var _once = __webpack_require__(344);
+	var _once = __webpack_require__(345);
 
 	var _once2 = _interopRequireDefault(_once);
 
-	var _pipeline = __webpack_require__(345);
+	var _pipeline = __webpack_require__(346);
 
 	var _pipeline2 = _interopRequireDefault(_pipeline);
 
-	var _poll = __webpack_require__(346);
+	var _poll = __webpack_require__(347);
 
 	var _poll2 = _interopRequireDefault(_poll);
 
-	var _recurseUntilTrue = __webpack_require__(347);
+	var _recurseUntilTrue = __webpack_require__(348);
 
 	var _recurseUntilTrue2 = _interopRequireDefault(_recurseUntilTrue);
 
-	var _returnItem = __webpack_require__(348);
+	var _returnItem = __webpack_require__(349);
 
 	var _returnItem2 = _interopRequireDefault(_returnItem);
 
-	var _throttle = __webpack_require__(349);
+	var _throttle = __webpack_require__(350);
 
 	var _throttle2 = _interopRequireDefault(_throttle);
 
-	var _throwErrorIfTrue = __webpack_require__(350);
+	var _throwErrorIfTrue = __webpack_require__(351);
 
 	var _throwErrorIfTrue2 = _interopRequireDefault(_throwErrorIfTrue);
 
-	var _truthyness = __webpack_require__(351);
+	var _truthyness = __webpack_require__(352);
 
 	var _truthyness2 = _interopRequireDefault(_truthyness);
 
-	var _tryAtMost = __webpack_require__(352);
+	var _tryAtMost = __webpack_require__(353);
 
 	var _tryAtMost2 = _interopRequireDefault(_tryAtMost);
 
@@ -8368,7 +8368,7 @@
 
 	var _typeIsValid2 = _interopRequireDefault(_typeIsValid);
 
-	var _walkArray = __webpack_require__(353);
+	var _walkArray = __webpack_require__(354);
 
 	var _walkArray2 = _interopRequireDefault(_walkArray);
 
@@ -8735,7 +8735,7 @@
 
 	var _getType2 = _interopRequireDefault(_getType);
 
-	var _keys = __webpack_require__(326);
+	var _keys = __webpack_require__(327);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -8831,7 +8831,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.TWO_BLOCKS_BUTTON_CLASS = exports.STREETVIEW_COUNTDOWN_LENGTH = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.MINIMUM_SPINNER_SCREEN_WIDTH = exports.MILLISECONDS_IN_A_SECOND = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_MAXIMUM_ROUNDS = exports.DEFAULT_MAP_OPTIONS = exports.CITY_LEVEL_ZOOM = exports.BOROUGH_LEVEL_ZOOM = exports.BLOCK_LEVEL_ZOOM = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.workerMessages = exports.tileLayer = exports.promptTypes = exports.nycCoordinates = exports.mapTypes = exports.keyEventMaps = exports.heardKeys = exports.events = exports.boroughNames = undefined;
+	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.TWO_BLOCKS_BUTTON_CLASS = exports.STREETVIEW_COUNTDOWN_LENGTH = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.MINIMUM_SPINNER_SCREEN_WIDTH = exports.MILLISECONDS_IN_A_SECOND = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_MAXIMUM_ROUNDS = exports.DEFAULT_MAP_OPTIONS = exports.CITY_LEVEL_ZOOM = exports.BOROUGH_LEVEL_ZOOM = exports.BLOCK_LEVEL_ZOOM = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.workerMessages = exports.tileLayer = exports.promptTypes = exports.nycCoordinates = exports.mapTypes = exports.keyEventMaps = exports.heardKeys = exports.gameStages = exports.events = exports.boroughNames = undefined;
 
 	var _boroughNames = __webpack_require__(314);
 
@@ -8841,39 +8841,43 @@
 
 	var _events2 = _interopRequireDefault(_events);
 
-	var _heardKeys = __webpack_require__(316);
+	var _gameStages = __webpack_require__(316);
+
+	var _gameStages2 = _interopRequireDefault(_gameStages);
+
+	var _heardKeys = __webpack_require__(317);
 
 	var _heardKeys2 = _interopRequireDefault(_heardKeys);
 
-	var _keyEventMaps = __webpack_require__(317);
+	var _keyEventMaps = __webpack_require__(318);
 
 	var _keyEventMaps2 = _interopRequireDefault(_keyEventMaps);
 
-	var _mapTypes = __webpack_require__(318);
+	var _mapTypes = __webpack_require__(319);
 
 	var _mapTypes2 = _interopRequireDefault(_mapTypes);
 
-	var _nycCoordinates = __webpack_require__(319);
+	var _nycCoordinates = __webpack_require__(320);
 
 	var _nycCoordinates2 = _interopRequireDefault(_nycCoordinates);
 
-	var _promptTypes = __webpack_require__(321);
+	var _promptTypes = __webpack_require__(322);
 
 	var _promptTypes2 = _interopRequireDefault(_promptTypes);
 
-	var _tileLayer = __webpack_require__(322);
+	var _tileLayer = __webpack_require__(323);
 
 	var _tileLayer2 = _interopRequireDefault(_tileLayer);
 
-	var _workerMessages = __webpack_require__(323);
+	var _workerMessages = __webpack_require__(324);
 
 	var _workerMessages2 = _interopRequireDefault(_workerMessages);
 
-	var _ALL_TYPES = __webpack_require__(324);
+	var _ALL_TYPES = __webpack_require__(325);
 
 	var _ALL_TYPES2 = _interopRequireDefault(_ALL_TYPES);
 
-	var _DEFAULT_MAP_OPTIONS = __webpack_require__(325);
+	var _DEFAULT_MAP_OPTIONS = __webpack_require__(326);
 
 	var _DEFAULT_MAP_OPTIONS2 = _interopRequireDefault(_DEFAULT_MAP_OPTIONS);
 
@@ -8899,6 +8903,7 @@
 
 	exports.boroughNames = _boroughNames2.default;
 	exports.events = _events2.default;
+	exports.gameStages = _gameStages2.default;
 	exports.heardKeys = _heardKeys2.default;
 	exports.keyEventMaps = _keyEventMaps2.default;
 	exports.mapTypes = _mapTypes2.default;
@@ -8973,6 +8978,24 @@
 /* 316 */
 /***/ function(module, exports) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.default = {
+		PREGAME: 'PREGAME',
+		LOADING_PANORAMA: 'LOADING_PANORAMA',
+		SHOWING_PANORAMA: 'SHOWING_PANORAMA',
+		GUESSING_LOCATION: 'GUESSING_LOCATION',
+		EVALUATING_ANSWER: 'EVALUATING_ANSWER',
+		POSTGAME: 'POSTGAME'
+		};
+
+/***/ },
+/* 317 */
+/***/ function(module, exports) {
+
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
@@ -8981,7 +9004,7 @@
 		exports.default = ["ArrowUp", "ArrowRight", "ArrowDown", "ArrowLeft", "Enter"];
 
 /***/ },
-/* 317 */
+/* 318 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9032,7 +9055,7 @@
 		exports.default = keyEventMaps;
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9046,7 +9069,7 @@
 		};
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9055,7 +9078,7 @@
 		value: true
 	});
 
-	var _NYC_BOUNDARIES_DATASET_URL = __webpack_require__(320);
+	var _NYC_BOUNDARIES_DATASET_URL = __webpack_require__(321);
 
 	var _NYC_BOUNDARIES_DATASET_URL2 = _interopRequireDefault(_NYC_BOUNDARIES_DATASET_URL);
 
@@ -9113,7 +9136,7 @@
 		exports.default = nycCoordinates;
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9125,7 +9148,7 @@
 	// export default "https://dl.dropboxusercontent.com/u/94150787/json/nyc-feature-collection.json";
 
 /***/ },
-/* 321 */
+/* 322 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9146,7 +9169,7 @@
 		exports.default = promptTypes;
 
 /***/ },
-/* 322 */
+/* 323 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9160,7 +9183,7 @@
 		};
 
 /***/ },
-/* 323 */
+/* 324 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9183,7 +9206,7 @@
 		exports.default = workerMessages;
 
 /***/ },
-/* 324 */
+/* 325 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9191,7 +9214,7 @@
 		module.exports = ['NaN', 'array', 'boolean', 'date', 'error', 'function', 'null', 'number', 'object', 'regex', 'string', 'undefined'];
 
 /***/ },
-/* 325 */
+/* 326 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9213,7 +9236,7 @@
 		};
 
 /***/ },
-/* 326 */
+/* 327 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9228,7 +9251,7 @@
 	exports.default = keys;
 
 /***/ },
-/* 327 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9237,11 +9260,11 @@
 		value: true
 	});
 
-	var _followPath = __webpack_require__(328);
+	var _followPath = __webpack_require__(329);
 
 	var _followPath2 = _interopRequireDefault(_followPath);
 
-	var _isNothing = __webpack_require__(329);
+	var _isNothing = __webpack_require__(330);
 
 	var _isNothing2 = _interopRequireDefault(_isNothing);
 
@@ -9276,7 +9299,7 @@
 	exports.default = existenceCheck;
 
 /***/ },
-/* 328 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9355,7 +9378,7 @@
 	exports.default = followPath;
 
 /***/ },
-/* 329 */
+/* 330 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9364,7 +9387,7 @@
 		value: true
 	});
 
-	var _isSomething = __webpack_require__(330);
+	var _isSomething = __webpack_require__(331);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -9377,7 +9400,7 @@
 	exports.default = isNothing;
 
 /***/ },
-/* 330 */
+/* 331 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9392,7 +9415,7 @@
 	exports.default = isSomething;
 
 /***/ },
-/* 331 */
+/* 332 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9410,7 +9433,7 @@
 	exports.default = getArgumentsArray;
 
 /***/ },
-/* 332 */
+/* 333 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9423,7 +9446,7 @@
 
 	var _applyToOwnProp2 = _interopRequireDefault(_applyToOwnProp);
 
-	var _getProp = __webpack_require__(333);
+	var _getProp = __webpack_require__(334);
 
 	var _getProp2 = _interopRequireDefault(_getProp);
 
@@ -9444,7 +9467,7 @@
 	exports.default = getOwnProp;
 
 /***/ },
-/* 333 */
+/* 334 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9459,7 +9482,7 @@
 	exports.default = getProp;
 
 /***/ },
-/* 334 */
+/* 335 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9495,7 +9518,7 @@
 	exports.default = halt;
 
 /***/ },
-/* 335 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9525,7 +9548,7 @@
 		exports.default = invoke;
 
 /***/ },
-/* 336 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9542,7 +9565,7 @@
 
 	var _isType2 = _interopRequireDefault(_isType);
 
-	var _keys = __webpack_require__(326);
+	var _keys = __webpack_require__(327);
 
 	var _keys2 = _interopRequireDefault(_keys);
 
@@ -9565,7 +9588,7 @@
 	exports.default = isEmpty;
 
 /***/ },
-/* 337 */
+/* 338 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9581,7 +9604,7 @@
 	exports.default = isNumeric;
 
 /***/ },
-/* 338 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9624,7 +9647,7 @@
 	exports.default = hasKeys;
 
 /***/ },
-/* 339 */
+/* 340 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9697,7 +9720,7 @@
 	exports.default = makeRequest;
 
 /***/ },
-/* 340 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9725,7 +9748,7 @@
 	exports.default = merge;
 
 /***/ },
-/* 341 */
+/* 342 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9746,7 +9769,7 @@
 	exports.default = negate;
 
 /***/ },
-/* 342 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9755,7 +9778,7 @@
 		value: true
 	});
 
-	var _isEmpty = __webpack_require__(336);
+	var _isEmpty = __webpack_require__(337);
 
 	var _isEmpty2 = _interopRequireDefault(_isEmpty);
 
@@ -9768,7 +9791,7 @@
 	exports.default = noArguments;
 
 /***/ },
-/* 343 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9802,7 +9825,7 @@
 	exports.default = noUniqueBetweenSets;
 
 /***/ },
-/* 344 */
+/* 345 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9835,7 +9858,7 @@
 	exports.default = once;
 
 /***/ },
-/* 345 */
+/* 346 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9858,7 +9881,7 @@
 		exports.default = pipeline;
 
 /***/ },
-/* 346 */
+/* 347 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9905,7 +9928,7 @@
 		exports.default = poll;
 
 /***/ },
-/* 347 */
+/* 348 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9925,7 +9948,7 @@
 	exports.default = recurseUntilTrue;
 
 /***/ },
-/* 348 */
+/* 349 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9942,7 +9965,7 @@
 	exports.default = returnItem;
 
 /***/ },
-/* 349 */
+/* 350 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9988,7 +10011,7 @@
 	exports.default = throttle;
 
 /***/ },
-/* 350 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9997,7 +10020,7 @@
 		value: true
 	});
 
-	var _isSomething = __webpack_require__(330);
+	var _isSomething = __webpack_require__(331);
 
 	var _isSomething2 = _interopRequireDefault(_isSomething);
 
@@ -10021,7 +10044,7 @@
 	exports.default = throwErrorIfTrue;
 
 /***/ },
-/* 351 */
+/* 352 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -10036,7 +10059,7 @@
 	exports.default = truthyness;
 
 /***/ },
-/* 352 */
+/* 353 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -10081,7 +10104,7 @@
 		exports.default = tryAtMost;
 
 /***/ },
-/* 353 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10124,7 +10147,7 @@
 	exports.default = walkArray;
 
 /***/ },
-/* 354 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10133,23 +10156,23 @@
 		value: true
 	});
 
-	var _turf = __webpack_require__(355);
+	var _turf = __webpack_require__(356);
 
 	var _turf2 = _interopRequireDefault(_turf);
 
-	var _getLatLngMaxMin = __webpack_require__(438);
+	var _getLatLngMaxMin = __webpack_require__(439);
 
 	var _getLatLngMaxMin2 = _interopRequireDefault(_getLatLngMaxMin);
 
-	var _getRandomFeature = __webpack_require__(439);
+	var _getRandomFeature = __webpack_require__(440);
 
 	var _getRandomFeature2 = _interopRequireDefault(_getRandomFeature);
 
-	var _selectRandomWeightedLinearRing = __webpack_require__(440);
+	var _selectRandomWeightedLinearRing = __webpack_require__(441);
 
 	var _selectRandomWeightedLinearRing2 = _interopRequireDefault(_selectRandomWeightedLinearRing);
 
-	var _getLatLngWithinBoundaries = __webpack_require__(446);
+	var _getLatLngWithinBoundaries = __webpack_require__(447);
 
 	var _getLatLngWithinBoundaries2 = _interopRequireDefault(_getLatLngWithinBoundaries);
 
@@ -10198,7 +10221,7 @@
 		exports.default = RandomLocationGenerator;
 
 /***/ },
-/* 355 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*eslint global-require: 0*/
@@ -10210,56 +10233,56 @@
 	 * @module turf
 	 * @summary Geospatial analysis for JavaScript
 	 */
-	var helpers = __webpack_require__(356);
+	var helpers = __webpack_require__(357);
 
 	module.exports = {
-	    isolines: __webpack_require__(357),
-	    convex: __webpack_require__(369),
-	    within: __webpack_require__(386),
-	    concave: __webpack_require__(387),
-	    difference: __webpack_require__(390),
-	    collect: __webpack_require__(391),
-	    flip: __webpack_require__(392),
-	    simplify: __webpack_require__(393),
-	    bezier: __webpack_require__(395),
-	    tag: __webpack_require__(397),
-	    sample: __webpack_require__(398),
-	    envelope: __webpack_require__(399),
-	    square: __webpack_require__(366),
-	    circle: __webpack_require__(401),
-	    midpoint: __webpack_require__(403),
-	    buffer: __webpack_require__(405),
-	    center: __webpack_require__(407),
-	    centerOfMass: __webpack_require__(408),
-	    centroid: __webpack_require__(409),
-	    combine: __webpack_require__(411),
-	    distance: __webpack_require__(367),
-	    explode: __webpack_require__(410),
-	    bbox: __webpack_require__(363),
-	    tesselate: __webpack_require__(412),
-	    bboxPolygon: __webpack_require__(400),
-	    inside: __webpack_require__(359),
-	    intersect: __webpack_require__(414),
-	    nearest: __webpack_require__(415),
-	    planepoint: __webpack_require__(365),
-	    random: __webpack_require__(416),
-	    tin: __webpack_require__(358),
-	    union: __webpack_require__(388),
-	    bearing: __webpack_require__(404),
-	    destination: __webpack_require__(402),
-	    kinks: __webpack_require__(418),
-	    pointOnSurface: __webpack_require__(419),
-	    area: __webpack_require__(420),
-	    along: __webpack_require__(423),
-	    lineDistance: __webpack_require__(424),
-	    lineSlice: __webpack_require__(425),
-	    lineSliceAlong: __webpack_require__(427),
-	    pointOnLine: __webpack_require__(426),
-	    pointGrid: __webpack_require__(433),
-	    squareGrid: __webpack_require__(434),
-	    triangleGrid: __webpack_require__(435),
-	    hexGrid: __webpack_require__(436),
-	    idw: __webpack_require__(437),
+	    isolines: __webpack_require__(358),
+	    convex: __webpack_require__(370),
+	    within: __webpack_require__(387),
+	    concave: __webpack_require__(388),
+	    difference: __webpack_require__(391),
+	    collect: __webpack_require__(392),
+	    flip: __webpack_require__(393),
+	    simplify: __webpack_require__(394),
+	    bezier: __webpack_require__(396),
+	    tag: __webpack_require__(398),
+	    sample: __webpack_require__(399),
+	    envelope: __webpack_require__(400),
+	    square: __webpack_require__(367),
+	    circle: __webpack_require__(402),
+	    midpoint: __webpack_require__(404),
+	    buffer: __webpack_require__(406),
+	    center: __webpack_require__(408),
+	    centerOfMass: __webpack_require__(409),
+	    centroid: __webpack_require__(410),
+	    combine: __webpack_require__(412),
+	    distance: __webpack_require__(368),
+	    explode: __webpack_require__(411),
+	    bbox: __webpack_require__(364),
+	    tesselate: __webpack_require__(413),
+	    bboxPolygon: __webpack_require__(401),
+	    inside: __webpack_require__(360),
+	    intersect: __webpack_require__(415),
+	    nearest: __webpack_require__(416),
+	    planepoint: __webpack_require__(366),
+	    random: __webpack_require__(417),
+	    tin: __webpack_require__(359),
+	    union: __webpack_require__(389),
+	    bearing: __webpack_require__(405),
+	    destination: __webpack_require__(403),
+	    kinks: __webpack_require__(419),
+	    pointOnSurface: __webpack_require__(420),
+	    area: __webpack_require__(421),
+	    along: __webpack_require__(424),
+	    lineDistance: __webpack_require__(425),
+	    lineSlice: __webpack_require__(426),
+	    lineSliceAlong: __webpack_require__(428),
+	    pointOnLine: __webpack_require__(427),
+	    pointGrid: __webpack_require__(434),
+	    squareGrid: __webpack_require__(435),
+	    triangleGrid: __webpack_require__(436),
+	    hexGrid: __webpack_require__(437),
+	    idw: __webpack_require__(438),
 	    point: helpers.point,
 	    polygon: helpers.polygon,
 	    lineString: helpers.lineString,
@@ -10273,7 +10296,7 @@
 
 
 /***/ },
-/* 356 */
+/* 357 */
 /***/ function(module, exports) {
 
 	/**
@@ -10602,20 +10625,20 @@
 
 
 /***/ },
-/* 357 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//https://github.com/jasondavies/conrec.js
 	//http://stackoverflow.com/questions/263305/drawing-a-topographical-map
-	var tin = __webpack_require__(358);
-	var inside = __webpack_require__(359);
-	var grid = __webpack_require__(361);
-	var bbox = __webpack_require__(363);
-	var planepoint = __webpack_require__(365);
-	var featurecollection = __webpack_require__(356).featureCollection;
-	var linestring = __webpack_require__(356).lineString;
-	var square = __webpack_require__(366);
-	var Conrec = __webpack_require__(368);
+	var tin = __webpack_require__(359);
+	var inside = __webpack_require__(360);
+	var grid = __webpack_require__(362);
+	var bbox = __webpack_require__(364);
+	var planepoint = __webpack_require__(366);
+	var featurecollection = __webpack_require__(357).featureCollection;
+	var linestring = __webpack_require__(357).lineString;
+	var square = __webpack_require__(367);
+	var Conrec = __webpack_require__(369);
 
 	/**
 	 * Takes {@link Point|points} with z-values and an array of
@@ -10704,13 +10727,13 @@
 
 
 /***/ },
-/* 358 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//http://en.wikipedia.org/wiki/Delaunay_triangulation
 	//https://github.com/ironwallaby/delaunay
-	var polygon = __webpack_require__(356).polygon;
-	var featurecollection = __webpack_require__(356).featureCollection;
+	var polygon = __webpack_require__(357).polygon;
+	var featurecollection = __webpack_require__(357).featureCollection;
 
 	/**
 	 * Takes a set of {@link Point|points} and the name of a z-value property and
@@ -10947,10 +10970,10 @@
 
 
 /***/ },
-/* 359 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var invariant = __webpack_require__(360);
+	var invariant = __webpack_require__(361);
 
 	// http://en.wikipedia.org/wiki/Even%E2%80%93odd_rule
 	// modified from: https://github.com/substack/point-in-polygon/blob/master/index.js
@@ -11052,7 +11075,7 @@
 
 
 /***/ },
-/* 360 */
+/* 361 */
 /***/ function(module, exports) {
 
 	/**
@@ -11151,10 +11174,10 @@
 
 
 /***/ },
-/* 361 */
+/* 362 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var point = __webpack_require__(362);
+	var point = __webpack_require__(363);
 
 	/**
 	 * Takes a bounding box and a cell depth and returns a {@link FeatureCollection} of {@link Point} features in a grid.
@@ -11194,7 +11217,7 @@
 
 
 /***/ },
-/* 362 */
+/* 363 */
 /***/ function(module, exports) {
 
 	/**
@@ -11230,10 +11253,10 @@
 
 
 /***/ },
-/* 363 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var each = __webpack_require__(364).coordEach;
+	var each = __webpack_require__(365).coordEach;
 
 	/**
 	 * Takes a set of features, calculates the bbox of all input features, and returns a bounding box.
@@ -11303,7 +11326,7 @@
 
 
 /***/ },
-/* 364 */
+/* 365 */
 /***/ function(module, exports) {
 
 	/**
@@ -11488,7 +11511,7 @@
 
 
 /***/ },
-/* 365 */
+/* 366 */
 /***/ function(module, exports) {
 
 	/**
@@ -11566,10 +11589,10 @@
 
 
 /***/ },
-/* 366 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var distance = __webpack_require__(367);
+	var distance = __webpack_require__(368);
 
 	/**
 	 * Takes a bounding box and calculates the minimum square bounding box that
@@ -11617,11 +11640,11 @@
 
 
 /***/ },
-/* 367 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getCoord = __webpack_require__(360).getCoord;
-	var radiansToDistance = __webpack_require__(356).radiansToDistance;
+	var getCoord = __webpack_require__(361).getCoord;
+	var radiansToDistance = __webpack_require__(357).radiansToDistance;
 	//http://en.wikipedia.org/wiki/Haversine_formula
 	//http://www.movable-type.co.uk/scripts/latlong.html
 
@@ -11683,7 +11706,7 @@
 
 
 /***/ },
-/* 368 */
+/* 369 */
 /***/ function(module, exports) {
 
 	/* eslint-disable */
@@ -12206,12 +12229,12 @@
 
 
 /***/ },
-/* 369 */
+/* 370 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var each = __webpack_require__(364).coordEach,
-	    convexHull = __webpack_require__(370),
-	    polygon = __webpack_require__(356).polygon;
+	var each = __webpack_require__(365).coordEach,
+	    convexHull = __webpack_require__(371),
+	    polygon = __webpack_require__(357).polygon;
 
 	/**
 	 * Takes a [feature](http://geojson.org/geojson-spec.html#feature-objects)
@@ -12309,14 +12332,14 @@
 
 
 /***/ },
-/* 370 */
+/* 371 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
-	var convexHull1d = __webpack_require__(371)
-	var convexHull2d = __webpack_require__(372)
-	var convexHullnd = __webpack_require__(380)
+	var convexHull1d = __webpack_require__(372)
+	var convexHull2d = __webpack_require__(373)
+	var convexHullnd = __webpack_require__(381)
 
 	module.exports = convexHull
 
@@ -12339,7 +12362,7 @@
 	}
 
 /***/ },
-/* 371 */
+/* 372 */
 /***/ function(module, exports) {
 
 	"use strict"
@@ -12367,14 +12390,14 @@
 	}
 
 /***/ },
-/* 372 */
+/* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
 	module.exports = convexHull2D
 
-	var monotoneHull = __webpack_require__(373)
+	var monotoneHull = __webpack_require__(374)
 
 	function convexHull2D(points) {
 	  var hull = monotoneHull(points)
@@ -12394,14 +12417,14 @@
 
 
 /***/ },
-/* 373 */
+/* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
 	module.exports = monotoneConvexHull2D
 
-	var orient = __webpack_require__(374)[3]
+	var orient = __webpack_require__(375)[3]
 
 	function monotoneConvexHull2D(points) {
 	  var n = points.length
@@ -12480,15 +12503,15 @@
 	}
 
 /***/ },
-/* 374 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
-	var twoProduct = __webpack_require__(375)
-	var robustSum = __webpack_require__(376)
-	var robustScale = __webpack_require__(377)
-	var robustSubtract = __webpack_require__(379)
+	var twoProduct = __webpack_require__(376)
+	var robustSum = __webpack_require__(377)
+	var robustScale = __webpack_require__(378)
+	var robustSubtract = __webpack_require__(380)
 
 	var NUM_EXPAND = 5
 
@@ -12675,7 +12698,7 @@
 	generateOrientationProc()
 
 /***/ },
-/* 375 */
+/* 376 */
 /***/ function(module, exports) {
 
 	"use strict"
@@ -12713,7 +12736,7 @@
 	}
 
 /***/ },
-/* 376 */
+/* 377 */
 /***/ function(module, exports) {
 
 	"use strict"
@@ -12874,13 +12897,13 @@
 	}
 
 /***/ },
-/* 377 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
 
-	var twoProduct = __webpack_require__(375)
-	var twoSum = __webpack_require__(378)
+	var twoProduct = __webpack_require__(376)
+	var twoSum = __webpack_require__(379)
 
 	module.exports = scaleLinearExpansion
 
@@ -12929,7 +12952,7 @@
 	}
 
 /***/ },
-/* 378 */
+/* 379 */
 /***/ function(module, exports) {
 
 	"use strict"
@@ -12951,7 +12974,7 @@
 	}
 
 /***/ },
-/* 379 */
+/* 380 */
 /***/ function(module, exports) {
 
 	"use strict"
@@ -13112,15 +13135,15 @@
 	}
 
 /***/ },
-/* 380 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
 	module.exports = convexHullnD
 
-	var ich = __webpack_require__(381)
-	var aff = __webpack_require__(385)
+	var ich = __webpack_require__(382)
+	var aff = __webpack_require__(386)
 
 	function permute(points, front) {
 	  var n = points.length
@@ -13177,7 +13200,7 @@
 	}
 
 /***/ },
-/* 381 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"
@@ -13188,8 +13211,8 @@
 
 	module.exports = incrementalConvexHull
 
-	var orient = __webpack_require__(374)
-	var compareCell = __webpack_require__(382).compareCells
+	var orient = __webpack_require__(375)
+	var compareCell = __webpack_require__(383).compareCells
 
 	function compareInt(a, b) {
 	  return a - b
@@ -13628,13 +13651,13 @@
 	}
 
 /***/ },
-/* 382 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict"; "use restrict";
 
-	var bits      = __webpack_require__(383)
-	  , UnionFind = __webpack_require__(384)
+	var bits      = __webpack_require__(384)
+	  , UnionFind = __webpack_require__(385)
 
 	//Returns the dimension of a cell complex
 	function dimension(cells) {
@@ -13976,7 +13999,7 @@
 
 
 /***/ },
-/* 383 */
+/* 384 */
 /***/ function(module, exports) {
 
 	/**
@@ -14186,7 +14209,7 @@
 
 
 /***/ },
-/* 384 */
+/* 385 */
 /***/ function(module, exports) {
 
 	"use strict"; "use restrict";
@@ -14253,14 +14276,14 @@
 	}
 
 /***/ },
-/* 385 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict'
 
 	module.exports = affineHull
 
-	var orient = __webpack_require__(374)
+	var orient = __webpack_require__(375)
 
 	function linearlyIndependent(points, d) {
 	  var nhull = new Array(d+1)
@@ -14309,11 +14332,11 @@
 	}
 
 /***/ },
-/* 386 */
+/* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var inside = __webpack_require__(359);
-	var featureCollection = __webpack_require__(356).featureCollection;
+	var inside = __webpack_require__(360);
+	var featureCollection = __webpack_require__(357).featureCollection;
 
 	/**
 	 * Takes a set of {@link Point|points} and a set of {@link Polygon|polygons} and returns the points that fall within the polygons.
@@ -14409,7 +14432,7 @@
 
 
 /***/ },
-/* 387 */
+/* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 1. run tin on points
@@ -14417,9 +14440,9 @@
 	// 3. remove triangles that fail the max length test
 	// 4. buffer the results slightly
 	// 5. merge the results
-	var tin = __webpack_require__(358);
-	var union = __webpack_require__(388);
-	var distance = __webpack_require__(367);
+	var tin = __webpack_require__(359);
+	var union = __webpack_require__(389);
+	var distance = __webpack_require__(368);
 
 	/**
 	 * Takes a set of {@link Point|points} and returns a concave hull polygon.
@@ -14531,7 +14554,7 @@
 
 
 /***/ },
-/* 388 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// look here for help http://svn.osgeo.org/grass/grass/branches/releasebranch_6_4/vector/v.overlay/main.c
@@ -14539,7 +14562,7 @@
 
 	// depend on jsts for now https://github.com/bjornharrtell/jsts/blob/master/examples/overlay.html
 
-	var jsts = __webpack_require__(389);
+	var jsts = __webpack_require__(390);
 
 	/**
 	 * Takes two or more {@link Polygon|polygons} and returns a combined polygon. If the input polygons are not contiguous, this function returns a {@link MultiPolygon} feature.
@@ -14611,7 +14634,7 @@
 
 
 /***/ },
-/* 389 */
+/* 390 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// JSTS. See https://github.com/bjornharrtell/jsts
@@ -14636,11 +14659,11 @@
 
 
 /***/ },
-/* 390 */
+/* 391 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// depend on jsts for now https://github.com/bjornharrtell/jsts/blob/master/examples/overlay.html
-	var jsts = __webpack_require__(389);
+	var jsts = __webpack_require__(390);
 
 	/**
 	 * Finds the difference between two {@link Polygon|polygons} by clipping the second
@@ -14736,10 +14759,10 @@
 
 
 /***/ },
-/* 391 */
+/* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var inside = __webpack_require__(359);
+	var inside = __webpack_require__(360);
 
 	/**
 	 * Merges a specified property from a FeatureCollection of points into a
@@ -14788,10 +14811,10 @@
 
 
 /***/ },
-/* 392 */
+/* 393 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var coordEach = __webpack_require__(364).coordEach;
+	var coordEach = __webpack_require__(365).coordEach;
 
 	/**
 	 * Takes input features and flips all of their coordinates
@@ -14830,10 +14853,10 @@
 
 
 /***/ },
-/* 393 */
+/* 394 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var simplify = __webpack_require__(394);
+	var simplify = __webpack_require__(395);
 
 	// supported GeoJSON geometries, used to check whether to wrap in simpleFeature()
 	var supportedTypes = ['LineString', 'MultiLineString', 'Polygon', 'MultiPolygon'];
@@ -15017,7 +15040,7 @@
 
 
 /***/ },
-/* 394 */
+/* 395 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -15154,11 +15177,11 @@
 
 
 /***/ },
-/* 395 */
+/* 396 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var linestring = __webpack_require__(356).lineString;
-	var Spline = __webpack_require__(396);
+	var linestring = __webpack_require__(357).lineString;
+	var Spline = __webpack_require__(397);
 
 	/**
 	 * Takes a {@link LineString|line} and returns a curved version
@@ -15226,7 +15249,7 @@
 
 
 /***/ },
-/* 396 */
+/* 397 */
 /***/ function(module, exports) {
 
 	/* eslint-disable */
@@ -15366,10 +15389,10 @@
 
 
 /***/ },
-/* 397 */
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var inside = __webpack_require__(359);
+	var inside = __webpack_require__(360);
 
 	/**
 	 * Takes a set of {@link Point|points} and a set of {@link Polygon|polygons} and performs a spatial join.
@@ -15427,11 +15450,11 @@
 
 
 /***/ },
-/* 398 */
+/* 399 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// http://stackoverflow.com/questions/11935175/sampling-a-random-subset-from-an-array
-	var featureCollection = __webpack_require__(356).featureCollection;
+	var featureCollection = __webpack_require__(357).featureCollection;
 
 	/**
 	 * Takes a {@link FeatureCollection} and returns a FeatureCollection with given number of {@link Feature|features} at random.
@@ -15467,11 +15490,11 @@
 
 
 /***/ },
-/* 399 */
+/* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var bbox = __webpack_require__(363);
-	var bboxPolygon = __webpack_require__(400);
+	var bbox = __webpack_require__(364);
+	var bboxPolygon = __webpack_require__(401);
 
 	/**
 	 * Takes any number of features and returns a rectangular {@link Polygon} that encompasses all vertices.
@@ -15531,10 +15554,10 @@
 
 
 /***/ },
-/* 400 */
+/* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var polygon = __webpack_require__(356).polygon;
+	var polygon = __webpack_require__(357).polygon;
 
 	/**
 	 * Takes a bbox and returns an equivalent {@link Polygon|polygon}.
@@ -15567,11 +15590,11 @@
 
 
 /***/ },
-/* 401 */
+/* 402 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var destination = __webpack_require__(402);
-	var helpers = __webpack_require__(356);
+	var destination = __webpack_require__(403);
+	var helpers = __webpack_require__(357);
 	var polygon = helpers.polygon;
 
 
@@ -15623,13 +15646,13 @@
 
 
 /***/ },
-/* 402 */
+/* 403 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//http://en.wikipedia.org/wiki/Haversine_formula
 	//http://www.movable-type.co.uk/scripts/latlong.html
-	var getCoord = __webpack_require__(360).getCoord;
-	var helpers = __webpack_require__(356);
+	var getCoord = __webpack_require__(361).getCoord;
+	var helpers = __webpack_require__(357);
 	var point = helpers.point;
 	var distanceToRadians = helpers.distanceToRadians;
 
@@ -15688,12 +15711,12 @@
 
 
 /***/ },
-/* 403 */
+/* 404 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var bearing = __webpack_require__(404);
-	var destination = __webpack_require__(402);
-	var distance = __webpack_require__(367);
+	var bearing = __webpack_require__(405);
+	var destination = __webpack_require__(403);
+	var distance = __webpack_require__(368);
 
 	/**
 	 * Takes two {@link Point|points} and returns a point midway between them.
@@ -15742,10 +15765,10 @@
 
 
 /***/ },
-/* 404 */
+/* 405 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getCoord = __webpack_require__(360).getCoord;
+	var getCoord = __webpack_require__(361).getCoord;
 	//http://en.wikipedia.org/wiki/Haversine_formula
 	//http://www.movable-type.co.uk/scripts/latlong.html
 
@@ -15810,17 +15833,17 @@
 
 
 /***/ },
-/* 405 */
+/* 406 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// http://stackoverflow.com/questions/839899/how-do-i-calculate-a-point-on-a-circles-circumference
 	// radians = degrees * (pi/180)
 	// https://github.com/bjornharrtell/jsts/blob/master/examples/buffer.html
 
-	var helpers = __webpack_require__(356);
+	var helpers = __webpack_require__(357);
 	var featureCollection = helpers.featureCollection;
-	var jsts = __webpack_require__(389);
-	var normalize = __webpack_require__(406);
+	var jsts = __webpack_require__(390);
+	var normalize = __webpack_require__(407);
 
 	/**
 	 * Calculates a buffer for input features for a given radius. Units supported are miles, kilometers, and degrees.
@@ -15876,7 +15899,7 @@
 
 
 /***/ },
-/* 406 */
+/* 407 */
 /***/ function(module, exports) {
 
 	module.exports = normalize;
@@ -15925,11 +15948,11 @@
 
 
 /***/ },
-/* 407 */
+/* 408 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var bbox = __webpack_require__(363),
-	    point = __webpack_require__(356).point;
+	var bbox = __webpack_require__(364),
+	    point = __webpack_require__(357).point;
 
 	/**
 	 * Takes a {@link FeatureCollection} and returns the absolute center point of all features.
@@ -16052,14 +16075,14 @@
 
 
 /***/ },
-/* 408 */
+/* 409 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var each = __webpack_require__(364).coordEach,
-	    centroid = __webpack_require__(409),
-	    convex = __webpack_require__(369),
-	    explode = __webpack_require__(410),
-	    point = __webpack_require__(356).point;
+	var each = __webpack_require__(365).coordEach,
+	    centroid = __webpack_require__(410),
+	    convex = __webpack_require__(370),
+	    explode = __webpack_require__(411),
+	    point = __webpack_require__(357).point;
 
 	/**
 	 * Takes a [feature](http://geojson.org/geojson-spec.html#feature-objects)
@@ -16242,11 +16265,11 @@
 
 
 /***/ },
-/* 409 */
+/* 410 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var each = __webpack_require__(364).coordEach;
-	var point = __webpack_require__(356).point;
+	var each = __webpack_require__(365).coordEach;
+	var point = __webpack_require__(357).point;
 
 	/**
 	 * Takes one or more features and calculates the centroid using
@@ -16294,12 +16317,12 @@
 
 
 /***/ },
-/* 410 */
+/* 411 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var featureCollection = __webpack_require__(356).featureCollection;
-	var each = __webpack_require__(364).coordEach;
-	var point = __webpack_require__(356).point;
+	var featureCollection = __webpack_require__(357).featureCollection;
+	var each = __webpack_require__(365).coordEach;
+	var point = __webpack_require__(357).point;
 
 	/**
 	 * Takes a feature or set of features and returns all positions as
@@ -16343,10 +16366,10 @@
 
 
 /***/ },
-/* 411 */
+/* 412 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var meta = __webpack_require__(364);
+	var meta = __webpack_require__(365);
 
 	/**
 	 * Combines a {@link FeatureCollection} of {@link Point},
@@ -16438,11 +16461,11 @@
 
 
 /***/ },
-/* 412 */
+/* 413 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var polygon = __webpack_require__(356).polygon;
-	var earcut = __webpack_require__(413);
+	var polygon = __webpack_require__(357).polygon;
+	var earcut = __webpack_require__(414);
 
 	/**
 	 * Tesselates a {@link Feature<Polygon>} into a {@link FeatureCollection<Polygon>} of triangles
@@ -16519,7 +16542,7 @@
 
 
 /***/ },
-/* 413 */
+/* 414 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17169,11 +17192,11 @@
 
 
 /***/ },
-/* 414 */
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// depend on jsts for now https://github.com/bjornharrtell/jsts/blob/master/examples/overlay.html
-	var jsts = __webpack_require__(389);
+	var jsts = __webpack_require__(390);
 
 	/**
 	 * Takes two {@link Polygon|polygons} and finds their intersection. If they share a border, returns the border; if they don't intersect, returns undefined.
@@ -17257,10 +17280,10 @@
 
 
 /***/ },
-/* 415 */
+/* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var distance = __webpack_require__(367);
+	var distance = __webpack_require__(368);
 
 	/**
 	 * Takes a reference {@link Point|point} and a FeatureCollection of Features
@@ -17336,10 +17359,10 @@
 
 
 /***/ },
-/* 416 */
+/* 417 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var random = __webpack_require__(417);
+	var random = __webpack_require__(418);
 
 	/**
 	 * Generates random {@link GeoJSON} data, including {@link Point|Points} and {@link Polygon|Polygons}, for testing
@@ -17393,7 +17416,7 @@
 
 
 /***/ },
-/* 417 */
+/* 418 */
 /***/ function(module, exports) {
 
 	module.exports = function() {
@@ -17502,7 +17525,7 @@
 
 
 /***/ },
-/* 418 */
+/* 419 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17538,7 +17561,7 @@
 	 * //=result
 	 */
 
-	var point = __webpack_require__(356).point;
+	var point = __webpack_require__(357).point;
 
 	module.exports = function (polyIn) {
 	    var poly;
@@ -17620,14 +17643,14 @@
 
 
 /***/ },
-/* 419 */
+/* 420 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var featureCollection = __webpack_require__(356).featureCollection;
-	var centroid = __webpack_require__(407);
-	var distance = __webpack_require__(367);
-	var inside = __webpack_require__(359);
-	var explode = __webpack_require__(410);
+	var featureCollection = __webpack_require__(357).featureCollection;
+	var centroid = __webpack_require__(408);
+	var distance = __webpack_require__(368);
+	var inside = __webpack_require__(360);
+	var explode = __webpack_require__(411);
 
 	/**
 	 * Takes a feature and returns a {@link Point} guaranteed to be on the surface of the feature.
@@ -17774,10 +17797,10 @@
 
 
 /***/ },
-/* 420 */
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var geometryArea = __webpack_require__(421).geometry;
+	var geometryArea = __webpack_require__(422).geometry;
 
 	/**
 	 * Takes one or more features and returns their area
@@ -17841,10 +17864,10 @@
 
 
 /***/ },
-/* 421 */
+/* 422 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var wgs84 = __webpack_require__(422);
+	var wgs84 = __webpack_require__(423);
 
 	module.exports.geometry = geometry;
 	module.exports.ring = ringArea;
@@ -17935,7 +17958,7 @@
 	}
 
 /***/ },
-/* 422 */
+/* 423 */
 /***/ function(module, exports) {
 
 	module.exports.RADIUS = 6378137;
@@ -17944,13 +17967,13 @@
 
 
 /***/ },
-/* 423 */
+/* 424 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var measureDistance = __webpack_require__(367);
-	var point = __webpack_require__(356).point;
-	var bearing = __webpack_require__(404);
-	var destination = __webpack_require__(402);
+	var measureDistance = __webpack_require__(368);
+	var point = __webpack_require__(357).point;
+	var bearing = __webpack_require__(405);
+	var destination = __webpack_require__(403);
 
 	/**
 	 * Takes a {@link LineString|line} and returns a {@link Point|point} at a specified distance along the line.
@@ -18012,11 +18035,11 @@
 
 
 /***/ },
-/* 424 */
+/* 425 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var distance = __webpack_require__(367);
-	var point = __webpack_require__(356).point;
+	var distance = __webpack_require__(368);
+	var point = __webpack_require__(357).point;
 
 	/**
 	 * Takes a {@link LineString|line} and measures its length in the specified units.
@@ -18099,11 +18122,11 @@
 
 
 /***/ },
-/* 425 */
+/* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var linestring = __webpack_require__(356).lineString;
-	var pointOnLine = __webpack_require__(426);
+	var linestring = __webpack_require__(357).lineString;
+	var pointOnLine = __webpack_require__(427);
 
 	/**
 	 * Takes a {@link LineString|line}, a start {@link Point}, and a stop point
@@ -18185,13 +18208,13 @@
 
 
 /***/ },
-/* 426 */
+/* 427 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var distance = __webpack_require__(367);
-	var point = __webpack_require__(356).point;
-	var bearing = __webpack_require__(404);
-	var destination = __webpack_require__(402);
+	var distance = __webpack_require__(368);
+	var point = __webpack_require__(357).point;
+	var bearing = __webpack_require__(405);
+	var destination = __webpack_require__(403);
 
 	/**
 	 * Takes a {@link Point} and a {@link LineString} and calculates the closest Point on the LineString.
@@ -18346,13 +18369,13 @@
 
 
 /***/ },
-/* 427 */
+/* 428 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var bearing = __webpack_require__(428);
-	var distance = __webpack_require__(430);
-	var destination = __webpack_require__(432);
-	var lineString = __webpack_require__(431).lineString;
+	var bearing = __webpack_require__(429);
+	var distance = __webpack_require__(431);
+	var destination = __webpack_require__(433);
+	var lineString = __webpack_require__(432).lineString;
 
 
 	/**
@@ -18438,10 +18461,10 @@
 
 
 /***/ },
-/* 428 */
+/* 429 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getCoord = __webpack_require__(429).getCoord;
+	var getCoord = __webpack_require__(430).getCoord;
 	//http://en.wikipedia.org/wiki/Haversine_formula
 	//http://www.movable-type.co.uk/scripts/latlong.html
 
@@ -18506,7 +18529,7 @@
 
 
 /***/ },
-/* 429 */
+/* 430 */
 /***/ function(module, exports) {
 
 	/**
@@ -18605,11 +18628,11 @@
 
 
 /***/ },
-/* 430 */
+/* 431 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getCoord = __webpack_require__(429).getCoord;
-	var radiansToDistance = __webpack_require__(431).radiansToDistance;
+	var getCoord = __webpack_require__(430).getCoord;
+	var radiansToDistance = __webpack_require__(432).radiansToDistance;
 	//http://en.wikipedia.org/wiki/Haversine_formula
 	//http://www.movable-type.co.uk/scripts/latlong.html
 
@@ -18671,7 +18694,7 @@
 
 
 /***/ },
-/* 431 */
+/* 432 */
 /***/ function(module, exports) {
 
 	/**
@@ -19000,13 +19023,13 @@
 
 
 /***/ },
-/* 432 */
+/* 433 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//http://en.wikipedia.org/wiki/Haversine_formula
 	//http://www.movable-type.co.uk/scripts/latlong.html
-	var getCoord = __webpack_require__(429).getCoord;
-	var helpers = __webpack_require__(431);
+	var getCoord = __webpack_require__(430).getCoord;
+	var helpers = __webpack_require__(432);
 	var point = helpers.point;
 	var distanceToRadians = helpers.distanceToRadians;
 
@@ -19065,12 +19088,12 @@
 
 
 /***/ },
-/* 433 */
+/* 434 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var point = __webpack_require__(356).point;
-	var featurecollection = __webpack_require__(356).featureCollection;
-	var distance = __webpack_require__(367);
+	var point = __webpack_require__(357).point;
+	var featurecollection = __webpack_require__(357).featureCollection;
+	var distance = __webpack_require__(368);
 	/**
 	 * Takes a bounding box and a cell depth and returns a set of {@link Point|points} in a grid.
 	 *
@@ -19111,13 +19134,13 @@
 
 
 /***/ },
-/* 434 */
+/* 435 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var featurecollection = __webpack_require__(356).featureCollection;
-	var point = __webpack_require__(356).point;
-	var polygon = __webpack_require__(356).polygon;
-	var distance = __webpack_require__(367);
+	var featurecollection = __webpack_require__(357).featureCollection;
+	var point = __webpack_require__(357).point;
+	var polygon = __webpack_require__(357).polygon;
+	var distance = __webpack_require__(368);
 
 	/**
 	 * Takes a bounding box and a cell depth and returns a set of square {@link Polygon|polygons} in a grid.
@@ -19166,12 +19189,12 @@
 
 
 /***/ },
-/* 435 */
+/* 436 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var featurecollection = __webpack_require__(356).featureCollection;
-	var polygon = __webpack_require__(356).polygon;
-	var distance = __webpack_require__(367);
+	var featurecollection = __webpack_require__(357).featureCollection;
+	var polygon = __webpack_require__(357).polygon;
+	var distance = __webpack_require__(368);
 
 	/**
 	 * Takes a bounding box and a cell depth and returns a set of triangular {@link Polygon|polygons} in a grid.
@@ -19264,13 +19287,13 @@
 
 
 /***/ },
-/* 436 */
+/* 437 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var point = __webpack_require__(356).point;
-	var polygon = __webpack_require__(356).polygon;
-	var distance = __webpack_require__(367);
-	var featurecollection = __webpack_require__(356).featureCollection;
+	var point = __webpack_require__(357).point;
+	var polygon = __webpack_require__(357).polygon;
+	var distance = __webpack_require__(368);
+	var featurecollection = __webpack_require__(357).featureCollection;
 
 	//Precompute cosines and sines of angles used in hexagon creation
 	// for performance gain
@@ -19400,13 +19423,13 @@
 
 
 /***/ },
-/* 437 */
+/* 438 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var distance = __webpack_require__(367);
-	var squareGrid = __webpack_require__(434);
-	var centroid = __webpack_require__(409);
-	var bbox = __webpack_require__(363);
+	var distance = __webpack_require__(368);
+	var squareGrid = __webpack_require__(435);
+	var centroid = __webpack_require__(410);
+	var bbox = __webpack_require__(364);
 
 	/**
 	 *
@@ -19457,7 +19480,7 @@
 
 
 /***/ },
-/* 438 */
+/* 439 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19518,7 +19541,7 @@
 	exports.default = getLatLngMaxMin;
 
 /***/ },
-/* 439 */
+/* 440 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19536,7 +19559,7 @@
 	exports.default = getRandomFeature;
 
 /***/ },
-/* 440 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19545,23 +19568,23 @@
 		value: true
 	});
 
-	var _getGeometricConstituents = __webpack_require__(441);
+	var _getGeometricConstituents = __webpack_require__(442);
 
 	var _getGeometricConstituents2 = _interopRequireDefault(_getGeometricConstituents);
 
-	var _sortLeastToGreatest = __webpack_require__(442);
+	var _sortLeastToGreatest = __webpack_require__(443);
 
 	var _sortLeastToGreatest2 = _interopRequireDefault(_sortLeastToGreatest);
 
-	var _playoff = __webpack_require__(443);
+	var _playoff = __webpack_require__(444);
 
 	var _playoff2 = _interopRequireDefault(_playoff);
 
-	var _headToHeadMatchups = __webpack_require__(444);
+	var _headToHeadMatchups = __webpack_require__(445);
 
 	var _headToHeadMatchups2 = _interopRequireDefault(_headToHeadMatchups);
 
-	var _weightedRandomSelection = __webpack_require__(445);
+	var _weightedRandomSelection = __webpack_require__(446);
 
 	var _weightedRandomSelection2 = _interopRequireDefault(_weightedRandomSelection);
 
@@ -19619,7 +19642,7 @@
 	exports.default = selectRandomWeightedLinearRing;
 
 /***/ },
-/* 441 */
+/* 442 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19628,7 +19651,7 @@
 		value: true
 	});
 
-	var _turf = __webpack_require__(355);
+	var _turf = __webpack_require__(356);
 
 	var _turf2 = _interopRequireDefault(_turf);
 
@@ -19672,7 +19695,7 @@
 	exports.default = getGeometricConstituents;
 
 /***/ },
-/* 442 */
+/* 443 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19700,7 +19723,7 @@
 	exports.default = sortLeastToGreatest;
 
 /***/ },
-/* 443 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -19740,7 +19763,7 @@
 	exports.default = playoff;
 
 /***/ },
-/* 444 */
+/* 445 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19771,7 +19794,7 @@
 	exports.default = headToHeadMatchups;
 
 /***/ },
-/* 445 */
+/* 446 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19817,7 +19840,7 @@
 	exports.default = weightedRandomSelection;
 
 /***/ },
-/* 446 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19826,11 +19849,11 @@
 		value: true
 	});
 
-	var _turf = __webpack_require__(355);
+	var _turf = __webpack_require__(356);
 
 	var _turf2 = _interopRequireDefault(_turf);
 
-	var _getRandomCoords = __webpack_require__(447);
+	var _getRandomCoords = __webpack_require__(448);
 
 	var _getRandomCoords2 = _interopRequireDefault(_getRandomCoords);
 
@@ -19865,7 +19888,7 @@
 	exports.default = getLatLngWithinBoundaries;
 
 /***/ },
-/* 447 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19874,7 +19897,7 @@
 		value: true
 	});
 
-	var _selectRandomValueOfRange = __webpack_require__(448);
+	var _selectRandomValueOfRange = __webpack_require__(449);
 
 	var _selectRandomValueOfRange2 = _interopRequireDefault(_selectRandomValueOfRange);
 
@@ -19904,7 +19927,7 @@
 	exports.default = getRandomCoords;
 
 /***/ },
-/* 448 */
+/* 449 */
 /***/ function(module, exports) {
 
 	'use strict';
