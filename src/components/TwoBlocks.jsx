@@ -7,7 +7,7 @@ import PromptManager from './component-utils/PromptManager';
 import createGameComponents from '../game-components/createGameComponents'; 
 import Countdown from './component-utils/Countdown';
 import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
-import { boroughNames, events, gameStages, heardKeys, keyEventMaps, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { boroughNames, events, gameStages, heardKeys, keyEventMaps, views, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
@@ -295,7 +295,7 @@ class TwoBlocks extends React.Component {
 		
 		/*----------  Show Map  ----------*/
 		
-		const view = 'map'; 
+		const view = views.MAP; 
 
 		store.dispatch({ type: actions.SHOW_MAP });
 
@@ -875,7 +875,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, store } = this.props; 
 
-		const view = 'map'; 
+		const view = views.MAP; 
 
 		store.dispatch({ type: actions.SHOW_MAP });
 
@@ -905,7 +905,7 @@ class TwoBlocks extends React.Component {
 	
 		const { gameInstance, store } = this.props; 
 
-		const view = 'panorama'; 
+		const view = views.PANORAMA; 
 
 		return createPromiseTimeout(PANORAMA_LOAD_DELAY) 
 

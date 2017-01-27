@@ -7,6 +7,7 @@ import mapTypes from './mapTypes';
 import nycCoordinates from './nycCoordinates';
 import promptTypes from './promptTypes'; 
 import tileLayer from './tileLayer';
+import views from './views'; 
 import workerMessages from './workerMessages'; 
 import ALL_TYPES from './ALL_TYPES'; 
 import DEFAULT_MAP_OPTIONS from './DEFAULT_MAP_OPTIONS'; 
@@ -39,6 +40,7 @@ export {
 	nycCoordinates,
 	promptTypes, 
 	tileLayer,  
+	views, 
 	workerMessages, 
 	ALL_TYPES,
 	ANSWER_EVALUATION_DELAY,
