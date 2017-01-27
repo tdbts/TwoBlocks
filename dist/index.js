@@ -38805,7 +38805,7 @@
 			});
 
 			this.store.dispatch({
-				stage: _constants.gameStages.POSTGAME,
+				stage: _constants.gameStages.LOADING_PANORAMA,
 				type: _actions2.default.SET_GAME_STAGE
 			});
 
@@ -38928,6 +38928,11 @@
 			return this.start();
 		},
 		showPanorama: function showPanorama() {
+
+			this.store.dispatch({
+				type: _actions2.default.SET_GAME_STAGE,
+				stage: _constants.gameStages.SHOWING_PANORAMA
+			});
 
 			this.emit(this.events.RANDOM_LOCATION);
 		},

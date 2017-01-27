@@ -210,7 +210,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		}); 
 
 		this.store.dispatch({
-			stage: gameStages.POSTGAME, 
+			stage: gameStages.LOADING_PANORAMA, 
 			type: actions.SET_GAME_STAGE
 		}); 
 
@@ -365,6 +365,11 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	}, 
 
 	showPanorama() {
+
+		this.store.dispatch({
+			type: actions.SET_GAME_STAGE, 
+			stage: gameStages.SHOWING_PANORAMA
+		}); 
 
 		this.emit(this.events.RANDOM_LOCATION); 
 
