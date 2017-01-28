@@ -298,18 +298,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return this.getRandomPanoramaLocation(featureCollection) 
 
-			.then(locationData => {  // boroughName, randomLatLng
-
-				const turn = {
-					...locationData, 
-					selectedBorough: null
-				}; 
-
-				this.gameDispatcher.setTurnLocationData(turn); 
-
-				return locationData; 
-
-			})
+			.then(locationData => this.onRandomPanoramaLocation(locationData))
 
 			.then(() => this.readyForNextStage()); 
 
@@ -394,6 +383,19 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.gameDispatcher.canEvaluateAnswer(); 
 
+	}, 
+
+	onRandomPanoramaLocation(locationData) {
+		
+		const turn = {
+			...locationData, 
+			selectedBorough: null
+		}; 
+
+		this.gameDispatcher.setTurnLocationData(turn); 
+
+		return locationData; 
+	
 	}, 
 
 	onTurnComplete() {

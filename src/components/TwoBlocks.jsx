@@ -395,7 +395,7 @@ class TwoBlocks extends React.Component {
 
 	onButtonClick(type) {
 
-		const { props } = this; 
+		const { gameInstance, store } = this.props; 
 
 		if ('BOROUGH_SUBMISSION' === type) {
 
@@ -403,11 +403,15 @@ class TwoBlocks extends React.Component {
 
 		} else if ('GO_BACK' === type) {
 
+			store.dispatch({
+				type: actions.CLEAR_SELECTED_BOROUGH
+			}); 			
+
 			this.setState({ selectedBorough: null }); 
 
 		} else if ('RESTART' === type) {
 
-			props.gameInstance.emit(events.RESTART_GAME); 
+			gameInstance.emit(events.RESTART_GAME); 
 
 		} else if (isOneOf(boroughNames, type)) {
 
@@ -789,7 +793,7 @@ class TwoBlocks extends React.Component {
 
 		const { maps, mobile, showLocationMarker } = this.state; 
 
-		const { gameInstance, locationData } = this.props; 
+		const { gameInstance, locationData, store } = this.props; 
 
 		const prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.turnComplete(); 
 
@@ -808,6 +812,10 @@ class TwoBlocks extends React.Component {
 
 		// Re-center map in case player moved it 
 		maps.city.instance.setCenter(centerLatLng);
+
+		store.dispatch({
+			type: actions.CLEAR_SELECTED_BOROUGH
+		}); 		
 
 		return this.setState({
 			
@@ -907,7 +915,11 @@ class TwoBlocks extends React.Component {
 
 		store.dispatch({ type: actions.SHOW_MAP });
 
-		gameInstance.emit(events.VIEW_CHANGE, { view }); 		
+		gameInstance.emit(events.VIEW_CHANGE, { view }); 	
+
+		store.dispatch({
+			type: actions.CLEAR_SELECTED_BOROUGH
+		}); 
 
 		return this.setState({  
 			selectedBorough: null, 

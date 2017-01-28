@@ -12541,7 +12541,9 @@
 		}, {
 			key: 'onButtonClick',
 			value: function onButtonClick(type) {
-				var props = this.props;
+				var _props2 = this.props;
+				var gameInstance = _props2.gameInstance;
+				var store = _props2.store;
 
 
 				if ('BOROUGH_SUBMISSION' === type) {
@@ -12549,10 +12551,14 @@
 					this.submitFinalAnswer();
 				} else if ('GO_BACK' === type) {
 
+					store.dispatch({
+						type: _actions2.default.CLEAR_SELECTED_BOROUGH
+					});
+
 					this.setState({ selectedBorough: null });
 				} else if ('RESTART' === type) {
 
-					props.gameInstance.emit(_constants.events.RESTART_GAME);
+					gameInstance.emit(_constants.events.RESTART_GAME);
 				} else if ((0, _utils.isOneOf)(_constants.boroughNames, type)) {
 
 					this.onMobileBoroughSelection(type);
@@ -12709,9 +12715,9 @@
 				var _state6 = this.state;
 				var maps = _state6.maps;
 				var mobile = _state6.mobile;
-				var _props2 = this.props;
-				var gameInstance = _props2.gameInstance;
-				var locationData = _props2.locationData;
+				var _props3 = this.props;
+				var gameInstance = _props3.gameInstance;
+				var locationData = _props3.locationData;
 
 				// Race condition circumvention: If the cityMap does not
 				// yet exist, wait until the 'GAME_COMPONENTS' event fires to execute
@@ -12762,9 +12768,9 @@
 
 				if (mobile) return; // Keypresses only apply to desktop
 
-				var _props3 = this.props;
-				var gameInstance = _props3.gameInstance;
-				var store = _props3.store;
+				var _props4 = this.props;
+				var gameInstance = _props4.gameInstance;
+				var store = _props4.store;
 
 				var _store$getState = store.getState();
 
@@ -12952,9 +12958,10 @@
 				var maps = _state10.maps;
 				var mobile = _state10.mobile;
 				var showLocationMarker = _state10.showLocationMarker;
-				var _props4 = this.props;
-				var gameInstance = _props4.gameInstance;
-				var locationData = _props4.locationData;
+				var _props5 = this.props;
+				var gameInstance = _props5.gameInstance;
+				var locationData = _props5.locationData;
+				var store = _props5.store;
 
 
 				var prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.turnComplete();
@@ -12971,6 +12978,10 @@
 
 				// Re-center map in case player moved it
 				maps.city.instance.setCenter(centerLatLng);
+
+				store.dispatch({
+					type: _actions2.default.CLEAR_SELECTED_BOROUGH
+				});
 
 				return this.setState({
 
@@ -13014,9 +13025,9 @@
 
 				if (mobile) return; // Request GeoJSON only on desktop (for map)
 
-				var _props5 = this.props;
-				var gameInstance = _props5.gameInstance;
-				var worker = _props5.worker;
+				var _props6 = this.props;
+				var gameInstance = _props6.gameInstance;
+				var worker = _props6.worker;
 
 
 				return gameInstance.geoJSONLoaded().then(function () {
@@ -13068,9 +13079,9 @@
 		}, {
 			key: 'restart',
 			value: function restart() {
-				var _props6 = this.props;
-				var gameInstance = _props6.gameInstance;
-				var store = _props6.store;
+				var _props7 = this.props;
+				var gameInstance = _props7.gameInstance;
+				var store = _props7.store;
 
 
 				var view = _constants.views.MAP;
@@ -13078,6 +13089,10 @@
 				store.dispatch({ type: _actions2.default.SHOW_MAP });
 
 				gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
+
+				store.dispatch({
+					type: _actions2.default.CLEAR_SELECTED_BOROUGH
+				});
 
 				return this.setState({
 					selectedBorough: null,
@@ -13099,9 +13114,9 @@
 			value: function showPanorama() {
 				var _this12 = this;
 
-				var _props7 = this.props;
-				var gameInstance = _props7.gameInstance;
-				var store = _props7.store;
+				var _props8 = this.props;
+				var gameInstance = _props8.gameInstance;
+				var store = _props8.store;
 
 
 				var view = _constants.views.PANORAMA;
@@ -38623,6 +38638,7 @@
 		CAN_EVALUATE_ANSWER: 'CAN_EVALUATE_ANSWER',
 		CANNOT_EVALUATE_ANSWER: 'CANNOT_EVAULATE_ANSWER',
 		CLEAR_CURRENT_TURN: 'CLEAR_CURRENT_TURN',
+		CLEAR_SELECTED_BOROUGH: 'CLEAR_SELECTED_BOROUGH',
 		CLEAR_STAGE_REQUIREMENTS: 'CLEAR_STAGE_REQUIREMENTS',
 		GAME_OVER: 'GAME_OVER',
 		INCREMENT_TOTAL_ROUNDS: 'INCREMENT_TOTAL_ROUNDS',
@@ -38944,15 +38960,7 @@
 			this.gameDispatcher.nextTurn(turn);
 
 			return this.getRandomPanoramaLocation(featureCollection).then(function (locationData) {
-				// boroughName, randomLatLng
-
-				var turn = _extends({}, locationData, {
-					selectedBorough: null
-				});
-
-				_this6.gameDispatcher.setTurnLocationData(turn);
-
-				return locationData;
+				return _this6.onRandomPanoramaLocation(locationData);
 			}).then(function () {
 				return _this6.readyForNextStage();
 			});
@@ -39022,6 +39030,16 @@
 		onGuessingLocation: function onGuessingLocation() {
 
 			this.gameDispatcher.canEvaluateAnswer();
+		},
+		onRandomPanoramaLocation: function onRandomPanoramaLocation(locationData) {
+
+			var turn = _extends({}, locationData, {
+				selectedBorough: null
+			});
+
+			this.gameDispatcher.setTurnLocationData(turn);
+
+			return locationData;
 		},
 		onTurnComplete: function onTurnComplete() {
 
@@ -52143,6 +52161,11 @@
 
 				nextState = _extends(nextState, { selectedBorough: selectedBorough });
 			}
+		} else if (_actions2.default.CLEAR_SELECTED_BOROUGH === type) {
+
+			nextState = _extends({}, state, {
+				selectedBorough: null
+			});
 		} else if (_actions2.default.RESTART_GAME === type) {
 
 			nextState = DEFAULT_STATE;

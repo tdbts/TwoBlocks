@@ -29,6 +29,13 @@ const currentTurn = function currentTurn(state = DEFAULT_STATE, action) {
 
 		} 
 
+	} else if (actions.CLEAR_SELECTED_BOROUGH === type) {
+
+		nextState = { 
+			...state, 
+			selectedBorough: null 
+		}; 
+
 	} else if (actions.RESTART_GAME === type) {
 
 		nextState = DEFAULT_STATE; 
