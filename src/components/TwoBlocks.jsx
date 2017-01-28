@@ -184,7 +184,9 @@ class TwoBlocks extends React.Component {
 
 	addGameEventListeners(twoBlocks) {
 
-		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.onGameComponents(gameComponents)); 
+		twoBlocks.on(events.GAME_STAGE, stages => this.onGameStage(stages)); 
+
+		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.onGameComponents(gameComponents)); 		
 
 		twoBlocks.on(events.NEXT_TURN, () => this.onNextTurn()); 
 
@@ -218,17 +220,17 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	evaluateFinalAnswer() {
+	// evaluateFinalAnswer() {
  
-		if (!(this.state.guessingLocation)) return; 
+	// 	if (!(this.state.guessingLocation)) return; 
 
-		const { panorama, selectedBorough } = this.state; 
+	// 	const { panorama, selectedBorough } = this.state; 
 
-		const { gameInstance } = this.props; 
+	// 	const { gameInstance } = this.props; 
 
-		gameInstance.evaluateFinalAnswer(panorama.borough, selectedBorough); 
+	// 	gameInstance.evaluateFinalAnswer(panorama.borough, selectedBorough); 
 
-	}
+	// }
 
 	getBoroughName(borough) {
 
@@ -320,7 +322,7 @@ class TwoBlocks extends React.Component {
 
 				if (this.state.mobile) {
 
-					gameInstance.emit(events.VIEW_READY); 
+					gameInstance.emit(events.VIEW_COMPLETE, gameStages.PREGAME); 
 
 				}
 
@@ -379,7 +381,15 @@ class TwoBlocks extends React.Component {
 			
 				mapType: 'block' 
 			
-			})); 
+			}))
+
+			.then(() => {
+
+				const { gameInstance } = this.props; 
+
+				gameInstance.emit(events.VIEW_COMPLETE, gameStages.EVALUATING_ANSWER); 
+
+			});
 
 	}
 
@@ -389,7 +399,7 @@ class TwoBlocks extends React.Component {
 
 		if ('BOROUGH_SUBMISSION' === type) {
 
-			this.evaluateFinalAnswer(); 
+			this.submitFinalAnswer(); 
 
 		} else if ('GO_BACK' === type) {
 
@@ -528,7 +538,23 @@ class TwoBlocks extends React.Component {
 		return this.setState({
 			mapType: 'city',
 			prompt: promptManager.gameOver(totalCorrect, DEFAULT_MAXIMUM_ROUNDS) 
-		}); 
+		})
+
+		.then(() => gameInstance.emit(events.VIEW_COMPLETE, gameStages.POSTGAME)); 
+
+	}
+
+	onGameStage(stages) {
+
+		const { stage } = stages; 
+
+		if ((gameStages.LOADING_PANORAMA === stage)) {
+
+			const { gameInstance } = this.props;
+
+			gameInstance.emit(events.VIEW_COMPLETE, stage);  
+
+		}			
 
 	}
 
@@ -559,7 +585,7 @@ class TwoBlocks extends React.Component {
 
 		}
 
-		gameInstance.emit(events.VIEW_READY); 
+		gameInstance.emit(events.VIEW_COMPLETE, gameStages.PREGAME); 
 
 	}
 
@@ -609,7 +635,7 @@ class TwoBlocks extends React.Component {
 
 			} else if (selectedBorough) {
 
-				this.evaluateFinalAnswer(); 
+				this.submitFinalAnswer(); 
 
 			}
 
@@ -755,7 +781,7 @@ class TwoBlocks extends React.Component {
 
 		panorama.spinner.stop(); 
 
-		gameInstance.emit(events.GUESSING_LOCATION); 
+		gameInstance.emit(events.VIEW_COMPLETE, gameStages.SHOWING_PANORAMA); 
 
 	}
 
@@ -783,13 +809,15 @@ class TwoBlocks extends React.Component {
 		// Re-center map in case player moved it 
 		maps.city.instance.setCenter(centerLatLng);
 
-		this.setState({
+		return this.setState({
 			
 			prompt, 
 			interchangeHidden: false, 
 			selectedBorough: null
 		
-		}); 
+		})
+
+		.then(() => gameInstance.emit(events.VIEW_COMPLETE, gameStages.EVALUATING_ANSWER)); 
 
 	}
 
@@ -962,7 +990,7 @@ class TwoBlocks extends React.Component {
 
 		}); 
 
-		countdown.on('end', () => gameInstance.emit(events.GUESSING_LOCATION)); 
+		countdown.on('end', () => gameInstance.emit(events.VIEW_COMPLETE, gameStages.SHOWING_PANORAMA)); 
 
 		return this.setState({
 				
@@ -1042,6 +1070,16 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	submitFinalAnswer() {
+		
+		if (!(this.state.guessingLocation)) return; 
+
+		const { gameInstance } = this.props; 
+
+		gameInstance.emit(events.VIEW_COMPLETE, gameStages.GUESSING_LOCATION); 
+
+	}
+
 	updateHoveredBorough(feature) {
 
 		if (!(feature)) {  // No borough is currently hovered.  Modify state to reflect this. 
@@ -1064,7 +1102,16 @@ class TwoBlocks extends React.Component {
 
 	updateSelectedBorough(boroughName) {
 
-		if (this.state.selectedBorough === boroughName) return; 
+		const { selectedBorough } = this.state; 
+
+		const { store } = this.props; 
+
+		if (selectedBorough === boroughName) return; 
+
+		store.dispatch({
+			type: actions.BOROUGH_SELECTED, 
+			selectedBorough: boroughName
+		}); 		
 
 		return this.setState({
 			hoveredBorough: '', 
