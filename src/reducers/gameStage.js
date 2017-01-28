@@ -1,7 +1,7 @@
 import actions from '../actions/actions';
 import { gameStages } from '../constants/constants'; 
 
-const gameStage = function gameStage(state = gameStages.PREGAME, action) {
+const gameStage = function gameStage(state = null, action) {
 
 	let nextState = state; 
 

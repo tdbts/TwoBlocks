@@ -8831,7 +8831,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.TWO_BLOCKS_BUTTON_CLASS = exports.STREETVIEW_COUNTDOWN_LENGTH = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.MINIMUM_SPINNER_SCREEN_WIDTH = exports.MILLISECONDS_IN_A_SECOND = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_MAXIMUM_ROUNDS = exports.DEFAULT_MAP_OPTIONS = exports.CITY_LEVEL_ZOOM = exports.BOROUGH_LEVEL_ZOOM = exports.BLOCK_LEVEL_ZOOM = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.workerMessages = exports.views = exports.tileLayer = exports.promptTypes = exports.nycCoordinates = exports.mapTypes = exports.keyEventMaps = exports.heardKeys = exports.gameStages = exports.events = exports.boroughNames = undefined;
+	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.TWO_BLOCKS_BUTTON_CLASS = exports.STREETVIEW_COUNTDOWN_LENGTH = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.MINIMUM_SPINNER_SCREEN_WIDTH = exports.MILLISECONDS_IN_A_SECOND = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.MAXIMUM_EVENT_EMITTER_LISTENERS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_MAXIMUM_ROUNDS = exports.DEFAULT_MAP_OPTIONS = exports.CITY_LEVEL_ZOOM = exports.BOROUGH_LEVEL_ZOOM = exports.BLOCK_LEVEL_ZOOM = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.workerMessages = exports.views = exports.tileLayer = exports.promptTypes = exports.nycCoordinates = exports.mapTypes = exports.keyEventMaps = exports.heardKeys = exports.gameStages = exports.events = exports.boroughNames = undefined;
 
 	var _boroughNames = __webpack_require__(314);
 
@@ -8894,6 +8894,7 @@
 	var DEFAULT_MAXIMUM_ROUNDS = 5;
 	var HOVERED_BOROUGH_FILL_COLOR = "#A8FFFC";
 	var KEY_PRESS_DEBOUNCE_TIMEOUT = 100;
+	var MAXIMUM_EVENT_EMITTER_LISTENERS = 50;
 	var MAXIMUM_PANORAMA_REQUESTS = 25;
 	var MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = 3;
 	var MILES_PER_METER = 0.000621371;
@@ -8925,6 +8926,7 @@
 	exports.DEFAULT_MAXIMUM_ROUNDS = DEFAULT_MAXIMUM_ROUNDS;
 	exports.HOVERED_BOROUGH_FILL_COLOR = HOVERED_BOROUGH_FILL_COLOR;
 	exports.KEY_PRESS_DEBOUNCE_TIMEOUT = KEY_PRESS_DEBOUNCE_TIMEOUT;
+	exports.MAXIMUM_EVENT_EMITTER_LISTENERS = MAXIMUM_EVENT_EMITTER_LISTENERS;
 	exports.MAXIMUM_PANORAMA_REQUESTS = MAXIMUM_PANORAMA_REQUESTS;
 	exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS;
 	exports.MILES_PER_METER = MILES_PER_METER;

@@ -1,10 +1,11 @@
 /* global window */
    
-import actions from './actions/actions'; 
+// import actions from './actions/actions'; 
 import { EventEmitter } from 'events'; 
 import { inherits } from 'util';
 import { createPromiseTimeout } from './utils/utils'; 
-import { events, gameStages, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
+import { events, gameStages, nycCoordinates, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
+import TwoBlocksGameDispatcher from './game-components/TwoBlocksGameDispatcher'; 
 
 const TwoBlocksGame = function TwoBlocksGame(store, worker, service) {
 
@@ -13,6 +14,8 @@ const TwoBlocksGame = function TwoBlocksGame(store, worker, service) {
 	this.worker = worker; 
 	this.service = service; 
 	this.locationData = {}; 
+
+	this.gameDispatcher = new TwoBlocksGameDispatcher(this.store);
 
 	this._geoJSONLoaded = new Promise(resolve => this.once(events.GEO_JSON_LOADED, resolve)); 
 
@@ -49,6 +52,8 @@ const TwoBlocksGame = function TwoBlocksGame(store, worker, service) {
 	
 /*----------  Inherit from EventEmitter  ----------*/
 
+EventEmitter.prototype._maxListeners = MAXIMUM_EVENT_EMITTER_LISTENERS; 
+
 inherits(TwoBlocksGame, EventEmitter); 
 
 /*----------  Define TwoBlocksGame Prototype  ----------*/
@@ -79,27 +84,21 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		const { currentTurn } = this.store.getState(); 
 
-		this.store.dispatch({
-			turn: currentTurn, 
-			type: actions.SAVE_TURN
-		}); 
+		this.gameDispatcher.saveTurn(currentTurn); 
+
+	}, 
+
+	answerIsCorrect(correctBorough, selectedBorough) {
+
+		return correctBorough === selectedBorough; 
 
 	}, 
 
 	endGame() {
 
-		const stage = gameStages.POSTGAME; 
+		this.nextGameStage(); 
 
-		this.setStageRequirements(stage); 
-
-		this.store.dispatch({
-			stage, 
-			type: actions.SET_GAME_STAGE
-		});
-
-		this.store.dispatch({
-			type: actions.GAME_OVER
-		}); 
+		this.gameDispatcher.gameOver(); 
 
 		this.emit(this.events.GAME_OVER); 
 
@@ -107,34 +106,21 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	evaluateAnswer() {
 
-		const stage = gameStages.EVALUATING_ANSWER; 
-
-		this.setStageRequirements(stage); 
-
-		this.store.dispatch({
-			stage, 
-			type: actions.SET_GAME_STAGE
-		}); 
-
-		this.emit(this.events.GAME_STAGE, {
-			stage, 
-			previousStage: gameStages.LOADING_PANORAMA
-		}); 
-
 		const { canEvaluateAnswer, currentTurn } = this.store.getState(); 
 
 		const { selectedBorough, boroughName: correctBorough } = currentTurn; 
 
-		if (!(canEvaluateAnswer)) return; 
+		if (!(canEvaluateAnswer)) return;
 
-		this.store.dispatch({
-			type: actions.CANNOT_EVALUATE_ANSWER  // Don't allow answer evaluation until the next turn
-		}); 
+		this.nextGameStage(); 
 
-		if (selectedBorough === correctBorough) {
+		// Don't allow answer evaluation until the next turn
+		this.gameDispatcher.cannotEvaluateAnswer();  
+
+		if (this.answerIsCorrect(correctBorough, selectedBorough)) {
 
 			this.emit(this.events.CORRECT_BOROUGH, correctBorough);  
-		
+			
 		} else {
 
 			this.emit(this.events.INCORRECT_BOROUGH, { correctBorough, selectedBorough });  
@@ -166,6 +152,51 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	geoJSONLoaded() {
 
 		return this._geoJSONLoaded; 
+
+	}, 
+
+	getNextGameStage() {
+
+		let nextStage = null; 
+
+		const { gameStage } = this.store.getState(); 
+
+		if (null === gameStage) {
+
+			nextStage = gameStages.PREGAME; 
+	
+		} else if (gameStages.PREGAME === gameStage) {
+
+			nextStage = gameStages.LOADING_PANORAMA; 
+
+		} else if (gameStages.LOADING_PANORAMA === gameStage) {
+
+			nextStage = gameStages.SHOWING_PANORAMA; 
+
+		} else if (gameStages.SHOWING_PANORAMA === gameStage) {
+
+			nextStage = gameStages.GUESSING_LOCATION; 
+
+		} else if (gameStages.GUESSING_LOCATION === gameStage) {
+
+			nextStage = gameStages.EVALUATING_ANSWER; 
+
+		} else if ((gameStages.EVALUATING_ANSWER === gameStage) && !(this.gameOver())) {
+
+			nextStage = gameStages.LOADING_PANORAMA; 
+
+		} else if (gameStages.EVALUATING_ANSWER === gameStage && this.gameOver()) {
+
+			nextStage = gameStages.POSTGAME; 
+
+		} else if (gameStages.POSTGAME === gameStage) {
+
+			// Handle restarts.  'PREGAME' stage only exists before first game. 
+			nextStage = gameStage.LOADING_PANORAMA; 
+
+		}
+
+		return nextStage; 
 
 	}, 
 
@@ -203,14 +234,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	guessLocation() {
 
-		const stage = gameStages.GUESSING_LOCATION; 
-
-		this.setStageRequirements(stage); 
-
-		this.store.dispatch({
-			stage, 
-			type: actions.SET_GAME_STAGE 
-		}); 
+		this.nextGameStage(); 
 
 		this.emit(this.events.GUESSING_LOCATION); 
 
@@ -219,17 +243,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	}, 
 
 	loadFirstGame() {
-
-		const stage = gameStages.PREGAME; 
-
-		this.store.dispatch({
-			stage, 
-			type: actions.SET_GAME_STAGE 
-		}); 
-
-		this.setStageRequirements(stage); 
-
-		this.emit(this.events.GAME_STAGE, { stage }); 
 
 		this.addEventListeners(); 
 
@@ -240,6 +253,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	}, 
 
 	loadGame() {
+
+		this.nextGameStage(); 
 
 		let loadProcess = null; 
 
@@ -261,9 +276,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	loadNewGame() {
 
-		this.store.dispatch({
-			type: actions.RESTART_GAME
-		}); 
+		this.gameDispatcher.restartGame(); 
 
 		return this.startGamePlay(); 
 
@@ -271,44 +284,28 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	loadPanorama() {
 
-		const previousStage = this.store.getState().gameStage; 
-
-		const stage = gameStages.LOADING_PANORAMA; 
+		this.nextGameStage(); 
 
 		const { featureCollection } = this.locationData;  
 
-		this.store.dispatch({
-			type: actions.NEXT_TURN, 
-			turn: {
-				boroughName: null, 
-				randomLatLng: null, 
-				selectedBorough: null
-			}
-		}); 
+		const turn = {
+			boroughName: null, 
+			randomLatLng: null, 
+			selectedBorough: null
+		}; 
 
-		this.setStageRequirements(stage); 
-		
-		this.store.dispatch({
-			stage,  
-			type: actions.SET_GAME_STAGE
-		}); 
-
-		this.emit(this.events.GAME_STAGE, {
-			stage, 
-			previousStage
-		}); 
+		this.gameDispatcher.nextTurn(turn);  
 
 		return this.getRandomPanoramaLocation(featureCollection) 
 
 			.then(locationData => {  // boroughName, randomLatLng
 
-				this.store.dispatch({
-					type: actions.SET_TURN_LOCATION_DATA, 
-					turn: {
-						...locationData, 
-						selectedBorough: null
-					}
-				}); 
+				const turn = {
+					...locationData, 
+					selectedBorough: null
+				}; 
+
+				this.gameDispatcher.setTurnLocationData(turn); 
 
 				return locationData; 
 
@@ -323,6 +320,20 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		const { totalRounds } = this.store.getState(); 
 
 		return totalRounds === DEFAULT_MAXIMUM_ROUNDS; 
+
+	}, 
+
+	nextGameStage() {
+
+		const { gameStage: previousStage } = this.store.getState(); 
+
+		const stage = this.getNextGameStage(); 
+
+		this.setStageRequirements(stage); 
+
+		this.gameDispatcher.setGameStage(stage); 
+
+		this.emit(this.events.GAME_STAGE, { stage, previousStage }); 
 
 	}, 
 
@@ -360,16 +371,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	onGameOver() {
 
-		const previousStage = gameStages.EVALUATING_ANSWER; 
-
-		const stage = gameStages.POSTGAME; 
-
-		this.store.dispatch({
-			stage, 
-			type: actions.SET_GAME_STAGE
-		}); 
-
-		this.emit(this.events.GAME_STAGE, { stage, previousStage }); 
+		this.nextGameStage(); 
 	
 	}, 
 
@@ -390,23 +392,17 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	onGuessingLocation() {
 
-		this.store.dispatch({
-			type: actions.CAN_EVALUATE_ANSWER
-		}); 
+		this.gameDispatcher.canEvaluateAnswer(); 
 
 	}, 
 
 	onTurnComplete() {
 		
-		this.store.dispatch({
-			type: actions.INCREMENT_TOTAL_ROUNDS
-		}); 
-
 		this.addTurnToGameHistory();
+		
+		this.gameDispatcher.incrementTotalRounds(); 
 
-		this.store.dispatch({
-			type: actions.CLEAR_CURRENT_TURN
-		}); 
+		this.gameDispatcher.clearCurrentTurn(); 
 
 		if (this.maximumRoundsPlayed()) {
 
@@ -474,32 +470,15 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		
 		}
 
-		this.store.dispatch({
-			type: actions.CLEAR_STAGE_REQUIREMENTS
-		}); 		
+		this.gameDispatcher.clearStageRequirements(); 
 
-		this.store.dispatch({
-			requirements, 
-			type: actions.ADD_STAGE_REQUIREMENTS
-		}); 
+		this.gameDispatcher.addStageRequirements(requirements); 
 
 	}, 
 
 	showPanorama() {
 
-		const stage = gameStages.SHOWING_PANORAMA; 
-
-		this.setStageRequirements(stage); 
-
-		this.store.dispatch({
-			stage, 
-			type: actions.SET_GAME_STAGE
-		}); 
-
-		this.emit(this.events.GAME_STAGE, {
-			stage, 
-			previousStage: gameStages.LOADING_PANORAMA
-		}); 
+		this.nextGameStage(); 
 
 		this.emit(this.events.RANDOM_LOCATION); 
 
@@ -515,9 +494,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	startGamePlay() {
 
-		this.store.dispatch({
-			type: actions.START_GAME
-		}); 
+		this.gameDispatcher.startGame(); 
 
 		this.nextTurn(); 
 
