@@ -685,6 +685,8 @@ class TwoBlocks extends React.Component {
 
 	onMobileDeviceDetected() {
 
+		require('../../public/css/two-blocks-mobile.css'); 
+
 		const { service } = this.props; 
 
 		service.loadLeaflet()

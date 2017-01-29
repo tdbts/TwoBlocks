@@ -1,8 +1,5 @@
 import React from 'react'; 
-// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import ReactTransitionGroup from 'react-addons-transition-group';
 import { createPromiseTimeout } from '../utils/utils';
-
 
 const PROMPT_TEXT_CLASS_NAME = "prompt-text"; 
 
@@ -77,9 +74,7 @@ class TwoBlocksPrompt extends React.Component {
 
 			<div className={ className }>
 				<div className={ PROMPT_TEXT_CLASS_NAME }>
-					<ReactTransitionGroup>
-						{ content }
-					</ReactTransitionGroup>				
+					{ content }	
 				</div>
 			</div>
 		

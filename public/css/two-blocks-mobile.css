@@ -1,0 +1,175 @@
+/* MOBILE CSS */
+
+.mobile.two-blocks {
+	height: 100%; 
+}
+
+.mobile .two-blocks-view, 
+.mobile .two-blocks-prompt {
+	position: absolute; 
+}
+
+.mobile .two-blocks-interchange {
+    position: absolute;
+    z-index: 100;
+	background-color: #000;
+    opacity: 0.7;
+}
+
+.mobile .two-blocks-prompt, 
+.mobile .two-blocks-submitter-text {
+	color: #fff;
+    font-size: 1.5em;
+    text-align: center;
+    top: 10%;	
+}
+
+.mobile .two-blocks-submitter {
+	position: absolute; 
+	width: 100%; 
+	height: 20%; 
+	top: 35%; 
+}
+
+.mobile .two-blocks-button {
+	background-color: rgb(255, 255, 255);	
+	font-size: 1.2em; 
+	max-width: 250px; 
+	min-height: 25px; 
+}
+
+.mobile .two-blocks-countdown {
+	position: absolute;
+	top: 10%; 
+	color: #fff; 
+	font-size: 1.5em;
+	font-weight: bold; 
+	text-shadow: 3px 3px 3px #000;  
+	z-index: 100; 
+}
+
+.mobile .two-blocks-prompt, 
+.mobile .two-blocks-countdown {
+	margin: 10px;
+}
+
+.two-blocks-prompt .green, 
+.mobile .two-blocks-countdown .green {
+	color: #009E39;
+}
+
+.two-blocks-prompt .yellow, 
+.mobile .two-blocks-countdown .yellow {
+	color: #DFC00F;
+}
+
+.two-blocks-prompt .red, 
+.mobile .two-blocks-countdown .red {
+	color: #D9285B;
+}
+
+.two-blocks-prompt .correct-borough, 
+.two-blocks-prompt .total-correct {
+	font-weight: bold; 
+}
+
+.mobile .borough-selection-button, 
+.mobile .two-blocks-submitter-button {
+	display: block; 
+	width: 60%; 
+	height: 30%; 
+	margin: 0px auto 35px auto;  
+}
+
+.mobile .two-blocks-replay-button {
+	position: absolute; 
+	width: 60%; 
+	height: 5%; 
+	left: 0; 
+	right: 0; 
+	top: 50%; 
+	margin: auto; 
+}
+
+@media screen and (orientation: landscape) {
+
+	.mobile .borough-selection-button {
+		margin-bottom: 15px; 
+	}
+
+	.mobile .two-blocks-prompt {
+		top: 0%; 
+	}
+
+	.mobile .two-blocks-prompt, 
+	.mobile .two-blocks-countdown {
+		left: 1%;
+	}
+
+	.mobile .two-blocks-submitter { 
+		position: relative;
+	}
+
+	.mobile .two-blocks-submitter-button {
+		margin-bottom: 25px; 
+	}	
+
+}
+
+/* React CSS Transiton testing */
+
+.mobile .pregame-prompt-enter {
+  opacity: 0.01;
+}
+
+.mobile .pregame-prompt-enter.pregame-prompt-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.mobile .pregame-prompt-leave {
+  opacity: 1;
+}
+
+.mobile .pregame-prompt-leave.pregame-prompt-leave-active {
+  opacity: 0.01;
+  transition: opacity 1000ms ease-in;
+}
+
+.mobile .pregame-prompt-appear {
+  opacity: 0.01;
+  transition: opacity 1.5s ease-in;
+}
+
+.mobile .pregame-prompt-appear.pregame-prompt-appear-active {
+  opacity: 1;
+}
+
+/* .showing-panorama-prompt */
+
+.mobile .showing-panorama-prompt-enter {
+  opacity: 0.01;
+}
+
+.mobile .showing-panorama-prompt-enter.showing-panorama-prompt-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.mobile .showing-panorama-prompt-leave {
+  opacity: 1;
+}
+
+.mobile .showing-panorama-prompt-leave.showing-panorama-prompt-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
+
+.mobile .showing-panorama-prompt-appear {
+  opacity: 0.01;
+}
+
+.mobile .showing-panorama-prompt-appear.showing-panorama-prompt-appear-active {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
