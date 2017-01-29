@@ -19,6 +19,8 @@ const TwoBlocksGame = function TwoBlocksGame(store, worker, service) {
 
 	this._geoJSONLoaded = new Promise(resolve => this.once(events.GEO_JSON_LOADED, resolve)); 
 
+	this.subscribeToStateChanges(); 
+
 	/*=================================
 	=            DEBUGGING            =
 	=================================*/
@@ -358,6 +360,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}, 
 
+	onDispatchedAction() {
+
+		
+
+	}, 
+
 	onGameOver() {
 
 		this.nextGameStage(); 
@@ -403,7 +411,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.addTurnToGameHistory();
 		
 		this.gameDispatcher.incrementTotalRounds(); 
-
 		this.gameDispatcher.clearCurrentTurn(); 
 
 		if (this.maximumRoundsPlayed()) {
@@ -499,6 +506,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		this.gameDispatcher.startGame(); 
 
 		this.nextTurn(); 
+
+	}, 
+
+	subscribeToStateChanges() {
+
+		this.store.subscribe(() => this.onDispatchedAction()); 
 
 	}, 
 

@@ -220,18 +220,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	// evaluateFinalAnswer() {
- 
-	// 	if (!(this.state.guessingLocation)) return; 
-
-	// 	const { panorama, selectedBorough } = this.state; 
-
-	// 	const { gameInstance } = this.props; 
-
-	// 	gameInstance.evaluateFinalAnswer(panorama.borough, selectedBorough); 
-
-	// }
-
 	getBoroughName(borough) {
 
 		let result = null; 
@@ -865,29 +853,7 @@ class TwoBlocks extends React.Component {
 
 				if (worker) {
 
-					/*----------  onGeoJSONSent()  ----------*/
-
-					const onGeoJSONSent = event => {
-
-						const { message, payload } = event.data; 
-
-						if (workerMessages.SENDING_GEO_JSON !== message) return; 
-
-						this.onGeoJSONReceived(payload);  
-
-						worker.removeEventListener('message', onGeoJSONSent); 
-
-					}; 
-
-					// Assign the event listener before posting message 
-					worker.addEventListener('message', onGeoJSONSent); 
-
-					// Request GeoJSON from web worker 
-					worker.postMessage({
-
-						message: workerMessages.REQUEST_GEO_JSON
-
-					}); 
+					this.requestGeoJSONFromWorker(); 
 
 				} else {
 
@@ -898,6 +864,36 @@ class TwoBlocks extends React.Component {
 			}); 	
 
 	}
+
+	requestGeoJSONFromWorker() {
+
+		const { worker } = this.props; 
+
+		/*----------  onGeoJSONSent()  ----------*/
+
+		const onGeoJSONSent = event => {
+
+			const { message, payload } = event.data; 
+
+			if (workerMessages.SENDING_GEO_JSON !== message) return; 
+
+			this.onGeoJSONReceived(payload);  
+
+			worker.removeEventListener('message', onGeoJSONSent); 
+
+		}; 
+
+		// Assign the event listener before posting message 
+		worker.addEventListener('message', onGeoJSONSent); 
+
+		// Request GeoJSON from web worker 
+		worker.postMessage({
+
+			message: workerMessages.REQUEST_GEO_JSON
+
+		}); 
+
+	} 
 
 	requiredDOMElementsExist() {
 

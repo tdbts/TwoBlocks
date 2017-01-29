@@ -12364,19 +12364,6 @@
 					return (0, _removeStreetNameAnnotations2.default)(panorama.instance);
 				});
 			}
-
-			// evaluateFinalAnswer() {
-
-			// 	if (!(this.state.guessingLocation)) return;
-
-			// 	const { panorama, selectedBorough } = this.state;
-
-			// 	const { gameInstance } = this.props;
-
-			// 	gameInstance.evaluateFinalAnswer(panorama.borough, selectedBorough);
-
-			// }
-
 		}, {
 			key: 'getBoroughName',
 			value: function getBoroughName(borough) {
@@ -13033,37 +13020,44 @@
 				return gameInstance.geoJSONLoaded().then(function () {
 
 					if (worker) {
-						(function () {
 
-							/*----------  onGeoJSONSent()  ----------*/
-
-							var onGeoJSONSent = function onGeoJSONSent(event) {
-								var _event$data = event.data;
-								var message = _event$data.message;
-								var payload = _event$data.payload;
-
-
-								if (_constants.workerMessages.SENDING_GEO_JSON !== message) return;
-
-								_this11.onGeoJSONReceived(payload);
-
-								worker.removeEventListener('message', onGeoJSONSent);
-							};
-
-							// Assign the event listener before posting message
-							worker.addEventListener('message', onGeoJSONSent);
-
-							// Request GeoJSON from web worker
-							worker.postMessage({
-
-								message: _constants.workerMessages.REQUEST_GEO_JSON
-
-							});
-						})();
+						_this11.requestGeoJSONFromWorker();
 					} else {
 
 						_this11.onGeoJSONReceived(gameInstance.locationData.featureCollection);
 					}
+				});
+			}
+		}, {
+			key: 'requestGeoJSONFromWorker',
+			value: function requestGeoJSONFromWorker() {
+				var _this12 = this;
+
+				var worker = this.props.worker;
+
+				/*----------  onGeoJSONSent()  ----------*/
+
+				var onGeoJSONSent = function onGeoJSONSent(event) {
+					var _event$data = event.data;
+					var message = _event$data.message;
+					var payload = _event$data.payload;
+
+
+					if (_constants.workerMessages.SENDING_GEO_JSON !== message) return;
+
+					_this12.onGeoJSONReceived(payload);
+
+					worker.removeEventListener('message', onGeoJSONSent);
+				};
+
+				// Assign the event listener before posting message
+				worker.addEventListener('message', onGeoJSONSent);
+
+				// Request GeoJSON from web worker
+				worker.postMessage({
+
+					message: _constants.workerMessages.REQUEST_GEO_JSON
+
 				});
 			}
 		}, {
@@ -13112,7 +13106,7 @@
 		}, {
 			key: 'showPanorama',
 			value: function showPanorama() {
-				var _this12 = this;
+				var _this13 = this;
 
 				var _props8 = this.props;
 				var gameInstance = _props8.gameInstance;
@@ -13130,32 +13124,32 @@
 					gameInstance.emit(_constants.events.SHOWING_PANORAMA);
 					gameInstance.emit(_constants.events.VIEW_CHANGE, { view: view });
 
-					return _this12.setState({
+					return _this13.setState({
 
 						prompt: promptManager.showingPanorama()
 
 					});
 				}).then(function () {
-					return _this12.state.mobile ? (0, _utils.createPromiseTimeout)(_constants.PANORAMA_LOAD_DELAY) : null;
+					return _this13.state.mobile ? (0, _utils.createPromiseTimeout)(_constants.PANORAMA_LOAD_DELAY) : null;
 				}).then(function () {
 
-					if (_this12.isMobile()) {
+					if (_this13.isMobile()) {
 
-						_this12.startStreetviewCountdown();
+						_this13.startStreetviewCountdown();
 
-						_this12.setState({
+						_this13.setState({
 							interchangeHidden: true
 						});
 					} else {
 
-						_this12.activateSpinner();
+						_this13.activateSpinner();
 					}
 				});
 			}
 		}, {
 			key: 'startStreetviewCountdown',
 			value: function startStreetviewCountdown() {
-				var _this13 = this;
+				var _this14 = this;
 
 				var gameInstance = this.props.gameInstance;
 
@@ -13164,7 +13158,7 @@
 
 				countdown.on('tick', function (timeLeft) {
 
-					_this13.setState({
+					_this14.setState({
 						countdownTimeLeft: timeLeft
 					});
 				});
@@ -13237,7 +13231,7 @@
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _this14 = this;
+				var _this15 = this;
 
 				var _state15 = this.state;
 				var maps = _state15.maps;
@@ -13260,7 +13254,7 @@
 				if (!featureCollection) return;
 
 				var unselectedBoroughs = featureCollection.filter(function (feature) {
-					return _this14.getBoroughName(feature) !== clickedBoroughName;
+					return _this15.getBoroughName(feature) !== clickedBoroughName;
 				});
 
 				unselectedBoroughs.forEach(function (feature) {
@@ -38699,6 +38693,8 @@
 			return _this.once(_constants.events.GEO_JSON_LOADED, resolve);
 		});
 
+		this.subscribeToStateChanges();
+
 		/*=================================
 	 =            DEBUGGING            =
 	 =================================*/
@@ -39015,6 +39011,7 @@
 
 			this.emit(this.events.HOST_LOCATION_DATA, locationData);
 		},
+		onDispatchedAction: function onDispatchedAction() {},
 		onGameOver: function onGameOver() {
 
 			this.nextGameStage();
@@ -39046,7 +39043,6 @@
 			this.addTurnToGameHistory();
 
 			this.gameDispatcher.incrementTotalRounds();
-
 			this.gameDispatcher.clearCurrentTurn();
 
 			if (this.maximumRoundsPlayed()) {
@@ -39120,6 +39116,13 @@
 			this.gameDispatcher.startGame();
 
 			this.nextTurn();
+		},
+		subscribeToStateChanges: function subscribeToStateChanges() {
+			var _this10 = this;
+
+			this.store.subscribe(function () {
+				return _this10.onDispatchedAction();
+			});
 		},
 		totalCorrectAnswers: function totalCorrectAnswers() {
 			var _store$getState8 = this.store.getState();
