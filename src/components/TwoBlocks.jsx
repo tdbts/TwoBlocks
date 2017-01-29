@@ -365,7 +365,7 @@ class TwoBlocks extends React.Component {
 
 			})
 
-			.then(() => this.setState( { 
+			.then(() => this.setState({ 
 			
 				mapType: 'block' 
 			
