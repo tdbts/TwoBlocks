@@ -1,4 +1,5 @@
 import React from 'react'; 
+import BoroughButton from './BoroughButton'; 
 
 const BoroughButtonsMobile = function BoroughButtonsMobile(props) {
 
@@ -6,15 +7,48 @@ const BoroughButtonsMobile = function BoroughButtonsMobile(props) {
 
 	const boroughButtonClassName = "two-blocks-button two-blocks-mobile-button borough-selection-button"; 
 
+	const TRANSITION_TIMEOUT = 250; 
+
 	return (	
-	
+
 		<div className={ twoBlocksClass }>
-			<button className={ boroughButtonClassName } onClick={ () => onButtonClick('Bronx') }>The Bronx</button>
-			<button className={ boroughButtonClassName } onClick={ () => onButtonClick('Manhattan') }>Manhattan</button>
-			<button className={ boroughButtonClassName } onClick={ () => onButtonClick('Queens') }>Queens</button>
-			<button className={ boroughButtonClassName } onClick={ () => onButtonClick('Brooklyn') }>Brooklyn</button>
-			<button className={ boroughButtonClassName } onClick={ () => onButtonClick('Staten Island') }>Staten Island</button>
+			<BoroughButton 
+				boroughButtonClassName={ boroughButtonClassName } 
+				boroughName={ 'Bronx' }
+				id={ "first-borough-selection-button" }
+				onButtonClick={ onButtonClick }
+				transitionTimeout={ TRANSITION_TIMEOUT }
+			/>
+			<BoroughButton 
+				boroughButtonClassName={ boroughButtonClassName } 
+				boroughName={ 'Manhattan' }
+				id={ "second-borough-selection-button" }
+				onButtonClick={ onButtonClick }
+				transitionTimeout={ TRANSITION_TIMEOUT }
+			/>
+			<BoroughButton 
+				boroughButtonClassName={ boroughButtonClassName } 
+				boroughName={ 'Queens' }
+				id={ "third-borough-selection-button" }
+				onButtonClick={ onButtonClick }
+				transitionTimeout={ TRANSITION_TIMEOUT }
+			/>
+			<BoroughButton 
+				boroughButtonClassName={ boroughButtonClassName } 
+				boroughName={ 'Brooklyn' }
+				id={ "fourth-borough-selection-button" }
+				onButtonClick={ onButtonClick }
+				transitionTimeout={ TRANSITION_TIMEOUT }
+			/>
+			<BoroughButton 
+				boroughButtonClassName={ boroughButtonClassName } 
+				boroughName={ 'Staten Island' }
+				id={ "fifth-borough-selection-button" }
+				onButtonClick={ onButtonClick }
+				transitionTimeout={ TRANSITION_TIMEOUT }
+			/>												
 		</div>
+	
 	
 	); 
 

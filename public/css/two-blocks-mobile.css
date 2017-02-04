@@ -24,6 +24,10 @@
     top: 10%;	
 }
 
+.mobile .two-blocks-prompt {
+	width: 100%; 
+}
+
 .mobile .two-blocks-submitter {
 	position: absolute; 
 	width: 100%; 
@@ -47,8 +51,7 @@
 	text-shadow: 3px 3px 3px #000;  
 	z-index: 100; 
 }
-
-.mobile .two-blocks-prompt, 
+ 
 .mobile .two-blocks-countdown {
 	margin: 10px;
 }
@@ -116,60 +119,109 @@
 
 }
 
-/* React CSS Transiton testing */
+/* Prompt Transitions */
 
-.mobile .pregame-prompt-enter {
+.mobile .prompt-text {
+	/*display: inline-block;*/
+	position: relative; 
+}
+
+.mobile .prompt-text span {
+	width: 100%; 
+	position: absolute; 
+	left: 0px; 
+} 
+
+.two-blocks-prompt .correct-borough-prompt .correct-borough,
+.two-blocks-prompt .incorrect-borough-prompt .correct-borough {
+	position: relative; 
+}
+
+/* .pregame-prompt */
+
+.mobile .pregame-prompt {
   opacity: 0.01;
+  -webkit-transition: all 1000ms ease-in-out;
+  -o-transition: all 1000ms ease-in-out;
+  transition: all 1000ms ease-in-out;
 }
 
-.mobile .pregame-prompt-enter.pregame-prompt-enter-active {
+.mobile .showing .pregame-prompt, 
+.mobile .leaving .pregame-prompt {
   opacity: 1;
-  transition: opacity 500ms ease-in;
 }
 
-.mobile .pregame-prompt-leave {
-  opacity: 1;
-}
-
-.mobile .pregame-prompt-leave.pregame-prompt-leave-active {
-  opacity: 0.01;
-  transition: opacity 1000ms ease-in;
-}
-
-.mobile .pregame-prompt-appear {
-  opacity: 0.01;
-  transition: opacity 1.5s ease-in;
-}
-
-.mobile .pregame-prompt-appear.pregame-prompt-appear-active {
-  opacity: 1;
+.mobile .leaving .pregame-prompt {
+  transform: translateX(-1000%);
 }
 
 /* .showing-panorama-prompt */
 
-.mobile .showing-panorama-prompt-enter {
+.mobile .showing-panorama-prompt {
   opacity: 0.01;
+  -webkit-transition: all 1000ms ease-out;
+  -o-transition: all 1000ms ease-out;
+  transition: all 1000ms ease-out;  
 }
 
-.mobile .showing-panorama-prompt-enter.showing-panorama-prompt-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
+.mobile .showing .showing-panorama-prompt {
+  opacity: 1; 
 }
 
-.mobile .showing-panorama-prompt-leave {
-  opacity: 1;
+.mobile .showing .showing-panorama-prompt.show-after {
+	transition-delay: 1s; 
 }
 
-.mobile .showing-panorama-prompt-leave.showing-panorama-prompt-leave-active {
-  opacity: 0.01;
-  transition: opacity 300ms ease-in;
+.mobile .leaving .showing-panorama-prompt {
+  opacity: 0; 
 }
 
-.mobile .showing-panorama-prompt-appear {
-  opacity: 0.01;
+/* .guessing-location-prompt */ 
+
+.mobile .guessing-location-prompt {
+	top: -10000px; 
+	-webkit-transition: all 500ms ease-out;
+	-o-transition: all 500ms ease-out;
+	transition: all 500ms ease-out;  	
 }
 
-.mobile .showing-panorama-prompt-appear.showing-panorama-prompt-appear-active {
-  opacity: 1;
-  transition: opacity .5s ease-in;
+.mobile .showing .guessing-location-prompt {
+	top: 0px; 
+}
+
+.mobile .leaving .guessing-location-prompt {
+	/*opacity: 0px; */
+}
+
+/* Mobile Submitter Buttons */ 
+
+.mobile .borough-selection-button {
+	transform: translateX(-1000px);
+	-webkit-transition: all 250ms ease-out;
+	-o-transition: all 250ms ease-out;
+	transition: all 250ms ease-out; 	
+}
+
+.mobile .borough-selection-button.showing {
+	transform: translateX(0px); 
+}
+
+#first-borough-selection-button {
+	transition-delay: 0ms; 
+}
+
+#second-borough-selection-button {
+	transition-delay: 250ms; 	
+}
+
+#third-borough-selection-button {
+	transition-delay: 500ms; 
+}
+
+#fourth-borough-selection-button {
+	transition-delay: 750ms; 
+}
+
+#fifth-borough-selection-button {
+	transition-delay: 1000ms; 
 }

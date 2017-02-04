@@ -32,7 +32,7 @@ const currentTurn = function currentTurn(state = DEFAULT_STATE, action) {
 	} else if (actions.CLEAR_SELECTED_BOROUGH === type) {
 
 		nextState = { 
-			...state, 
+			...state,  // TODO: Modify 'unit_test' NPM script to be able to transpile this 
 			selectedBorough: null 
 		}; 
 

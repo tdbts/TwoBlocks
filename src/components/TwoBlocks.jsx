@@ -7,7 +7,7 @@ import PromptManager from './component-utils/PromptManager';
 import createGameComponents from '../game-components/createGameComponents'; 
 import Countdown from './component-utils/Countdown';
 import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
-import { boroughNames, events, gameStages, heardKeys, keyEventMaps, views, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, PANORAMA_LOAD_DELAY, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { boroughNames, events, gameStages, heardKeys, keyEventMaps, transitionTypes, views, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
@@ -21,8 +21,8 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = { 
-			guessingLocation 		: false,
 			countdownTimeLeft 		: null,    
+			guessingLocation 		: false,
 			hoveredBorough 			: null,
 			initialized 			: false,  
 			interchangeHidden 		: false, 
@@ -31,6 +31,7 @@ class TwoBlocks extends React.Component {
 			mobile 					: null, 
 			panorama 				: null,   
 			prompt 					: null, 
+			promptTransition 		: null, 
 			selectedBorough 		: null, 
 			showLocationMarker 		: null
 		}; 
@@ -78,6 +79,8 @@ class TwoBlocks extends React.Component {
 
 		const prompt = promptManager.pregame(); 
 		
+		// const promptTransition = transitionTypes.SHOWING; 
+
 		const mobile = this.isMobile(); 
 
 		if (mobile) {
@@ -90,7 +93,9 @@ class TwoBlocks extends React.Component {
 			maps, 
 			mobile, 
 			panorama, 
-			prompt 
+			prompt
+			// , 
+			// promptTransition
 		}); 
 
 	}
@@ -295,7 +300,8 @@ class TwoBlocks extends React.Component {
 		
 		const nextState = {
 			...gameComponents,  
-			initialized: true
+			initialized: true, 
+			promptTransition: transitionTypes.SHOWING
 		}; 
 
 		return this.setState(nextState)
@@ -429,10 +435,19 @@ class TwoBlocks extends React.Component {
 			guessingLocation: true, 
 			hoveredBorough: '', 
 			interchangeHidden: false,  
-			prompt: promptManager.guessingLocation()
+			prompt: promptManager.guessingLocation(), 
+			promptTransition: null
 		})
 
-		.then(() => maps.city.element.blur()); 
+		.then(() => maps.city.element.blur())
+
+		.then(() => createPromiseTimeout(1))
+
+		.then(() => this.setState({
+			promptTransition: transitionTypes.SHOWING
+		}))
+
+		.then(() => createPromiseTimeout(1000));
 
 	}
 
@@ -731,11 +746,22 @@ class TwoBlocks extends React.Component {
 		maps.borough.instance.panTo(randomLatLng); 
 
 		return this.setState({ 
-			panorama: Object.assign({}, panorama, { 
+
+			panorama: {
+				...panorama, 
 				borough: boroughName, 
-				latLng: randomLatLng 
-			}) 
+				latLng: randomLatLng
+			}, 
+
+			promptTransition: transitionTypes.LEAVING 
+		
 		})
+
+		.then(() => createPromiseTimeout(1000))
+
+		.then(() => this.setState({
+			promptTransition: null
+		})) 
 
 		.then(() => this.showPanorama()); 
 
@@ -945,32 +971,35 @@ class TwoBlocks extends React.Component {
 
 		const view = views.PANORAMA; 
 
-		return createPromiseTimeout(PANORAMA_LOAD_DELAY) 
+		store.dispatch({ 
+			type: actions.SHOW_PANORAMA
+		}); 
 
-			.then(() => {
+		gameInstance.emit(events.SHOWING_PANORAMA); 
+		gameInstance.emit(events.VIEW_CHANGE, { view }); 
 
-				store.dispatch({ 
-					type: actions.SHOW_PANORAMA
-				}); 
+		const prompt = promptManager.showingPanorama(); 
+		const promptTransition = transitionTypes.SHOWING; 
 
-				gameInstance.emit(events.SHOWING_PANORAMA); 
-				gameInstance.emit(events.VIEW_CHANGE, { view }); 
+		return this.setState({ prompt })
 
-				return this.setState({
-			
-					prompt: promptManager.showingPanorama()
-				
-				}); 
+			.then(() => this.state.mobile ? createPromiseTimeout(1) : null)
 
-			})
+			.then(() => this.setState({ promptTransition }))
 
-			.then(() => (this.state.mobile) ? createPromiseTimeout(PANORAMA_LOAD_DELAY) : null)
+			.then(() => this.state.mobile ? createPromiseTimeout(2500) : null)
+
+			.then(() => this.setState({
+				promptTransition: transitionTypes.LEAVING
+			}))
+
+			.then(() => createPromiseTimeout(1000))
 
 			.then(() => {
 
 				if (this.isMobile()) {
 
-					this.startStreetviewCountdown();  					
+					this.startStreetviewCountdown();  		
 
 					this.setState({
 						interchangeHidden: true
@@ -1164,6 +1193,7 @@ class TwoBlocks extends React.Component {
 					mobile={ state.mobile }
 					onButtonClick={ this.onButtonClick.bind(this) }
 					prompt={ state.prompt }
+					promptTransition={ state.promptTransition }
 					selectedBorough={ state.selectedBorough }
 					twoBlocksClass={ props.promptTwoBlocksClass }
 				/>

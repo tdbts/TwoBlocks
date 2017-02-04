@@ -1,7 +1,4 @@
 import React from 'react'; 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import PregamePrompt from '../PregamePrompt';  
-import ShowingPanoramaPrompt from '../ShowingPanoramaPrompt'; 
 import stylizeBoroughName from './stylizeBoroughName'; 
 
 /*----------  Constructor  ----------*/
@@ -102,7 +99,7 @@ PromptManager.prototype = {
 
 		const type = 'pregame-prompt'; 
 
-		const content = <PregamePrompt key={ type } type={ type } />; 
+		const content = <span className={ type } key={ type } >Loading new TwoBlocks game...</span>; 
 
 		return {
 			content, 
@@ -128,14 +125,13 @@ PromptManager.prototype = {
 
 		const type = 'showing-panorama-prompt'; 
 
-		// const content = <span className={ type } key={ type }>Look closely...which borough is this Street View from?</span>; 
-
-		// return {
-		// 	content, 
-		// 	type
-		// }; 
-
-		const content = <ShowingPanoramaPrompt key={ type } type={ type } />;
+		const content = (
+			<div>
+				<span className={ type } key={ type }>Look closely...</span>
+				<br/>
+				<span className={ [ type, "show-after" ].join(" ") }>Which borough is this Street View from?</span>
+			</div>
+		);
 
 		return {
 			content, 

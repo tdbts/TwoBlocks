@@ -5,6 +5,7 @@ import heardKeys from './heardKeys';
 import keyEventMaps from './keyEventMaps';
 import mapTypes from './mapTypes';  
 import nycCoordinates from './nycCoordinates';
+import transitionTypes from './transitionTypes'; 
 import promptTypes from './promptTypes'; 
 import tileLayer from './tileLayer';
 import views from './views'; 
@@ -39,6 +40,7 @@ export {
 	keyEventMaps, 
 	mapTypes, 
 	nycCoordinates,
+	transitionTypes, 
 	promptTypes, 
 	tileLayer,  
 	views, 
