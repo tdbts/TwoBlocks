@@ -78,8 +78,6 @@ class TwoBlocks extends React.Component {
 		}; 
 
 		const prompt = promptManager.pregame(); 
-		
-		// const promptTransition = transitionTypes.SHOWING; 
 
 		const mobile = this.isMobile(); 
 
@@ -94,8 +92,6 @@ class TwoBlocks extends React.Component {
 			mobile, 
 			panorama, 
 			prompt
-			// , 
-			// promptTransition
 		}); 
 
 	}
@@ -245,7 +241,7 @@ class TwoBlocks extends React.Component {
 
 	getDeviceClass() {
 
-		return this.shouldUseDeviceOrientation() ? [ 'mobile' ].join(' ').trim() : ''; 
+		return this.isMobile() ? [ 'mobile' ].join(' ').trim() : ''; 
 
 	}
 
@@ -258,6 +254,12 @@ class TwoBlocks extends React.Component {
 		const feature = featureCollection.filter(feature => boroughName === this.getBoroughName(feature))[0]; 
 
 		return feature; 
+
+	}
+
+	getGameClassList() {
+
+		return [ this.props.TWO_BLOCKS_CLASS, this.getDeviceClass() ].join(' ').trim(); 
 
 	}
 
@@ -1169,7 +1171,7 @@ class TwoBlocks extends React.Component {
  
 		return (
 	
-			<div className={ [ props.TWO_BLOCKS_CLASS, this.getDeviceClass() ].join(' ') }>
+			<div className={ this.getGameClassList() }>
 				<TwoBlocksView 
 					blockLevelMap={ state.maps.block.instance }
 					boroughLevelMap={ state.maps.borough.instance }

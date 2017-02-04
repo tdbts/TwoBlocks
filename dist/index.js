@@ -12184,8 +12184,6 @@
 
 				var prompt = promptManager.pregame();
 
-				// const promptTransition = transitionTypes.SHOWING;
-
 				var mobile = this.isMobile();
 
 				if (mobile) {
@@ -12198,8 +12196,6 @@
 					mobile: mobile,
 					panorama: panorama,
 					prompt: prompt
-					// ,
-					// promptTransition
 				});
 			}
 		}, {
@@ -12389,7 +12385,7 @@
 			key: 'getDeviceClass',
 			value: function getDeviceClass() {
 
-				return this.shouldUseDeviceOrientation() ? ['mobile'].join(' ').trim() : '';
+				return this.isMobile() ? ['mobile'].join(' ').trim() : '';
 			}
 		}, {
 			key: 'getFeatureByBoroughName',
@@ -12406,6 +12402,12 @@
 				})[0];
 
 				return feature;
+			}
+		}, {
+			key: 'getGameClassList',
+			value: function getGameClassList() {
+
+				return [this.props.TWO_BLOCKS_CLASS, this.getDeviceClass()].join(' ').trim();
 			}
 		}, {
 			key: 'initializeTwoBlocks',
@@ -13360,7 +13362,7 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ className: [props.TWO_BLOCKS_CLASS, this.getDeviceClass()].join(' ') },
+					{ className: this.getGameClassList() },
 					_react2.default.createElement(_TwoBlocksView2.default, {
 						blockLevelMap: state.maps.block.instance,
 						boroughLevelMap: state.maps.borough.instance,
