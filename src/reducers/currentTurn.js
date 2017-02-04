@@ -25,7 +25,7 @@ const currentTurn = function currentTurn(state = DEFAULT_STATE, action) {
 
 		if (isType('object', nextState)) {
 
-			nextState = Object.assign(nextState, { selectedBorough }); 
+			nextState = { ...nextState, selectedBorough };  
 
 		} 
 
