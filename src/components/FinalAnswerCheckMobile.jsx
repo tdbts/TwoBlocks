@@ -19,7 +19,7 @@ const FinalAnswerCheckMobile = function FinalAnswerCheckMobile(props) {
 
 	return ( 
 
-		<div className={ wrapperClass }>
+		<div className={ [ wrapperClass, 'final-answer-check' ].join(" ").trim() }>
 			<p className="two-blocks-submitter-text"> { text } <span className="two-blocks-submitter-borough-name">{ borough }</span></p>
 			<button className={ finalAnswerClassName } onClick={ () => onButtonClick(BOROUGH_SUBMISSION) }>{ submissionButtonLabel }</button>
 			<button className={ goBackButtonClassName } onClick={ () => onButtonClick(GO_BACK) }>{ goBackButtonLabel }</button>

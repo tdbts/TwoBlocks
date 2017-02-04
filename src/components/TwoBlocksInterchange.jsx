@@ -11,7 +11,7 @@ class TwoBlocksInterchange extends React.Component {
 
 	render() {
 
-		const { guessingLocation, gameOver, hidden, hoveredBorough, mobile, prompt, promptTransition, selectedBorough, hideReplayButton, onButtonClick } = this.props; 
+		const { confirmingAnswer, gameStage, gameOver, guessingLocation, hidden, hoveredBorough, mobile, prompt, promptTransition, selectedBorough, hideReplayButton, onButtonClick } = this.props; 
 
 		return (
 			
@@ -25,6 +25,8 @@ class TwoBlocksInterchange extends React.Component {
 					wrapperClass={ "two-blocks-interchange-component" }
 				/>
 				<TwoBlocksSubmitter
+					confirmingAnswer={ confirmingAnswer }
+					gameStage={ gameStage }
 					guessingLocation={ guessingLocation } 
 					hoveredBorough={ hoveredBorough }
 					mobile={ mobile }

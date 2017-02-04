@@ -9,7 +9,7 @@ const TWO_BLOCKS_CLASS = 'two-blocks-submitter';
 
 const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
-	const { guessingLocation, mobile, onButtonClick, selectedBorough, wrapperClass } = props; 	
+	const { confirmingAnswer, gameStage, guessingLocation, mobile, onButtonClick, selectedBorough, wrapperClass } = props; 	
 
 	const calculatedClassName = getClassName(selectedBorough); 
 
@@ -21,11 +21,13 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const twoBlocksClass = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
 
-	const displayedComponent = (mobile && guessingLocation) 
+	const displayedComponent = guessingLocation ? mobile 
 
 		? <SubmitterMobile 
 			borough={ borough }
 			buttonClassName={ calculatedClassName }
+			confirmingAnswer={ confirmingAnswer }
+			gameStage={ gameStage }
 			submissionButtonLabel={ submissionButtonLabel }
 			text={ text }
 			onButtonClick={ onButtonClick }
@@ -39,7 +41,9 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 			submissionButtonLabel={ submissionButtonLabel }
 			text={ text }
 			twoBlocksClass={ twoBlocksClass }
-		  />;  // eslint-disable-line no-mixed-spaces-and-tabs 
+		  />  // eslint-disable-line no-mixed-spaces-and-tabs 
+
+		: null; 
 
 	return displayedComponent;  
 

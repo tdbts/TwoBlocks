@@ -21,19 +21,24 @@ class TwoBlocks extends React.Component {
 
 		// Define initial state 
 		this.state = { 
-			countdownTimeLeft 		: null,    
+
+			confirmingAnswer 		: false, 
 			guessingLocation 		: false,
-			hoveredBorough 			: null,
 			initialized 			: false,  
 			interchangeHidden 		: false, 
+			mapType 				: 'city',
+
+			countdownTimeLeft 		: null,    
+			gameStage 				: null, 
+			hoveredBorough 			: null,
 			maps 					: null, 
-			mapType 				: 'city',   
 			mobile 					: null, 
 			panorama 				: null,   
 			prompt 					: null, 
 			promptTransition 		: null, 
 			selectedBorough 		: null, 
 			showLocationMarker 		: null
+		
 		}; 
 
 		/*----------  Save reference to original setState() method  ----------*/
@@ -105,28 +110,38 @@ class TwoBlocks extends React.Component {
 
 	componentDidUpdate(prevProps, prevState) {  // eslint-disable-line no-unused-vars
 
-		if (this.state.initialized) return; 
-
-		const { service } = this.props; 
-		const { mobile } = this.state; 
-
-		// Child <TwoBlocksMap /> and <TwoBlocksPanorama /> 
-		// components will call methods which update this 
-		// component's state with the child components' 
-		// respective DOM elements.  Once both elements 
-		// exist in state, initialize TwoBlocks.  
-		// If on mobile device, wait for Leaflet library to load 
-		if (mobile && !(service.mobileMapLibraryLoaded())) {
-
-			service.loadLeaflet()
-
-				.then(() => this.initializeTwoBlocks()); 
-
-		} else {
-
-			this.initializeTwoBlocks(); 
+		const { selectedBorough } = this.state; 
+ 
+		if (selectedBorough && !(prevState.selectedBorough)) {
 			
-		}	
+			this.onDifferentSelectedBorough(); 
+		
+		}
+
+		if (!(this.state.initialized)) {
+
+			const { service } = this.props; 
+			const { mobile } = this.state; 
+
+			// Child <TwoBlocksMap /> and <TwoBlocksPanorama /> 
+			// components will call methods which update this 
+			// component's state with the child components' 
+			// respective DOM elements.  Once both elements 
+			// exist in state, initialize TwoBlocks.  
+			// If on mobile device, wait for Leaflet library to load 
+			if (mobile && !(service.mobileMapLibraryLoaded())) {
+
+				service.loadLeaflet()
+
+					.then(() => this.initializeTwoBlocks()); 
+
+			} else {
+
+				this.initializeTwoBlocks(); 
+				
+			}	
+			
+		} 
 
 	}
 
@@ -403,7 +418,10 @@ class TwoBlocks extends React.Component {
 				type: actions.CLEAR_SELECTED_BOROUGH
 			}); 			
 
-			this.setState({ selectedBorough: null }); 
+			this.setState({ 
+				confirmingAnswer: false, 
+				selectedBorough: null 
+			}); 
 
 		} else if ('RESTART' === type) {
 
@@ -524,6 +542,28 @@ class TwoBlocks extends React.Component {
 	
 	}
 
+	onDifferentSelectedBorough() {
+
+		return Promise.resolve()
+
+			.then(() => {
+
+				if (this.isMobile()) {
+
+					return createPromiseTimeout(1500);
+
+				}
+
+			})
+
+			.then(() => this.setState({
+				
+				confirmingAnswer: true
+			
+			})); 
+
+	}
+
 	onGameComponents(gameComponents) {
 
 		return this.setState({
@@ -557,11 +597,17 @@ class TwoBlocks extends React.Component {
 
 		const { stage } = stages; 
 
-		if ((gameStages.LOADING_PANORAMA === stage)) {
+		if (gameStages.LOADING_PANORAMA === stage) {
 
 			const { gameInstance } = this.props;
 
 			gameInstance.emit(events.VIEW_COMPLETE, stage);  
+
+		} else if (gameStages.EVALUATING_ANSWER === stage) {
+
+			this.setState({
+				confirmingAnswer: false
+			}); 
 
 		}			
 
@@ -824,7 +870,6 @@ class TwoBlocks extends React.Component {
 			maps.block.instance.removeLayer(showLocationMarker.marker); 
 
 		}
-
 
 		const centerLatLng = new google.maps.LatLng(locationData.CENTER.lat, locationData.CENTER.lng); 		
 
@@ -1187,8 +1232,10 @@ class TwoBlocks extends React.Component {
 					view={ store ? store.getState().view : 'map' } 
 				/>
 				<TwoBlocksInterchange 
+					confirmingAnswer={ state.confirmingAnswer }
 					guessingLocation={ state.guessingLocation }
 					gameOver={ props.gameInstance && props.gameInstance.gameOver() }
+					gameStage={ store.getState().gameStage }
 					hidden={ state.interchangeHidden }
 					hideReplayButton={ !(store) || !(store.getState().gameOver) }
 					hoveredBorough={ state.hoveredBorough }

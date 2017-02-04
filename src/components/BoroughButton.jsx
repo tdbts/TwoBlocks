@@ -62,20 +62,26 @@ class BoroughButton extends React.Component {
 
 		const { transitionClass } = this.state; 
 
-		const { boroughButtonClassName, boroughName, id, onButtonClick } = this.props; 
+		const { boroughButtonClassName, boroughName, isSelected, onButtonClick, orderClass } = this.props; 
 	
-		let className = [ boroughButtonClassName ]; 
+		let classList = [ boroughButtonClassName, orderClass ]; 
 
 		if (transitionClass) {
 
-			className.push(transitionClass); 
+			classList.push(transitionClass); 
 		
 		}
 
-		className = className.join(' '); 
+		if (isSelected) {
+
+			classList.push('selected'); 
+
+		}
+
+		classList = classList.join(' ').trim(); 
 
 		return (
-			<button id={ id } className={ className } onClick={ () => onButtonClick(boroughName) }>{ stylizeBoroughName(boroughName) }</button>
+			<button className={ classList } onClick={ () => onButtonClick(boroughName) }>{ stylizeBoroughName(boroughName) }</button>
 		); 
 
 	}
@@ -87,7 +93,6 @@ class BoroughButton extends React.Component {
 BoroughButton.propTypes = {
 	boroughButtonClassName: React.PropTypes.string.isRequired, 
 	boroughName: React.PropTypes.string.isRequired, 
-	id: React.PropTypes.string.isRequired, 
 	onButtonClick: React.PropTypes.func.isRequired, 
 	transitionTimeout: React.PropTypes.number.isRequired
 }; 

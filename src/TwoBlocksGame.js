@@ -346,6 +346,8 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		createPromiseTimeout(ANSWER_EVALUATION_DELAY) 
 
+			.then(() => this.addTurnToGameHistory())
+
 			.then(() => this.emit(this.events.TURN_COMPLETE));
 
 	}, 
@@ -407,8 +409,6 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 	}, 
 
 	onTurnComplete() {
-		
-		this.addTurnToGameHistory();
 		
 		this.gameDispatcher.incrementTotalRounds(); 
 		this.gameDispatcher.clearCurrentTurn(); 
