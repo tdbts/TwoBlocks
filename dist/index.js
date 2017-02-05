@@ -13023,7 +13023,7 @@
 				var store = _props5.store;
 
 
-				var prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.turnComplete();
+				var prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama();
 
 				if (!mobile) {
 
@@ -16846,6 +16846,21 @@
 				type: type
 			};
 		},
+		loadingPanorama: function loadingPanorama() {
+
+			var type = 'loading-panorama-prompt';
+
+			var content = _react2.default.createElement(
+				'span',
+				{ className: type, key: type },
+				'Loading next panorama...'
+			);
+
+			return {
+				content: content,
+				type: type
+			};
+		},
 		pregame: function pregame() {
 
 			var type = 'pregame-prompt';
@@ -16894,21 +16909,6 @@
 					{ className: [type, "show-after"].join(" ") },
 					'Which borough is this Street View from?'
 				)
-			);
-
-			return {
-				content: content,
-				type: type
-			};
-		},
-		turnComplete: function turnComplete() {
-
-			var type = 'turn-complete-prompt';
-
-			var content = _react2.default.createElement(
-				'span',
-				{ className: type, key: type },
-				'Loading next panorama...'
 			);
 
 			return {

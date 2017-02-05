@@ -859,7 +859,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, locationData, store } = this.props; 
 
-		const prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.turnComplete(); 
+		const prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama(); 
 
 		if (!(mobile)) {
 

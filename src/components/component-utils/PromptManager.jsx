@@ -95,6 +95,19 @@ PromptManager.prototype = {
 
 	}, 
 
+	loadingPanorama() {
+
+		const type = 'loading-panorama-prompt'; 
+
+		const content = <span className={ type } key={ type }>Loading next panorama...</span>; 
+
+		return {
+			content, 
+			type
+		}; 
+
+	}, 
+
 	pregame() {
 
 		const type = 'pregame-prompt'; 
@@ -132,19 +145,6 @@ PromptManager.prototype = {
 				<span className={ [ type, "show-after" ].join(" ") }>Which borough is this Street View from?</span>
 			</div>
 		);
-
-		return {
-			content, 
-			type
-		}; 
-
-	}, 
-
-	turnComplete() {
-
-		const type = 'turn-complete-prompt'; 
-
-		const content = <span className={ type } key={ type }>Loading next panorama...</span>; 
 
 		return {
 			content, 
