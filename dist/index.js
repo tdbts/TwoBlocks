@@ -12957,10 +12957,14 @@
 					panorama: _extends({}, panorama, {
 						borough: boroughName,
 						latLng: randomLatLng
-					}),
+					})
 
-					promptTransition: _constants.transitionTypes.LEAVING
-
+				}).then(function () {
+					return (0, _utils.createPromiseTimeout)(1000);
+				}).then(function () {
+					return _this12.setState({
+						promptTransition: _constants.transitionTypes.LEAVING
+					});
 				}).then(function () {
 					return (0, _utils.createPromiseTimeout)(1000);
 				}).then(function () {
@@ -13013,6 +13017,8 @@
 		}, {
 			key: 'onTurnComplete',
 			value: function onTurnComplete() {
+				var _this13 = this;
+
 				var _state10 = this.state;
 				var maps = _state10.maps;
 				var mobile = _state10.mobile;
@@ -13024,6 +13030,8 @@
 
 
 				var prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama();
+
+				var promptTransition = null;
 
 				if (!mobile) {
 
@@ -13045,9 +13053,16 @@
 				return this.setState({
 
 					prompt: prompt,
+					promptTransition: promptTransition,
 					interchangeHidden: false,
 					selectedBorough: null
 
+				}).then(function () {
+					return (0, _utils.createPromiseTimeout)(1);
+				}).then(function () {
+					return _this13.setState({
+						promptTransition: _constants.transitionTypes.SHOWING
+					});
 				}).then(function () {
 					return gameInstance.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.EVALUATING_ANSWER);
 				});
@@ -13077,7 +13092,7 @@
 		}, {
 			key: 'requestGeoJSON',
 			value: function requestGeoJSON() {
-				var _this13 = this;
+				var _this14 = this;
 
 				var mobile = this.state.mobile;
 
@@ -13093,17 +13108,17 @@
 
 					if (worker) {
 
-						_this13.requestGeoJSONFromWorker();
+						_this14.requestGeoJSONFromWorker();
 					} else {
 
-						_this13.onGeoJSONReceived(gameInstance.locationData.featureCollection);
+						_this14.onGeoJSONReceived(gameInstance.locationData.featureCollection);
 					}
 				});
 			}
 		}, {
 			key: 'requestGeoJSONFromWorker',
 			value: function requestGeoJSONFromWorker() {
-				var _this14 = this;
+				var _this15 = this;
 
 				var worker = this.props.worker;
 
@@ -13117,7 +13132,7 @@
 
 					if (_constants.workerMessages.SENDING_GEO_JSON !== message) return;
 
-					_this14.onGeoJSONReceived(payload);
+					_this15.onGeoJSONReceived(payload);
 
 					worker.removeEventListener('message', onGeoJSONSent);
 				};
@@ -13178,7 +13193,7 @@
 		}, {
 			key: 'showPanorama',
 			value: function showPanorama() {
-				var _this15 = this;
+				var _this16 = this;
 
 				var _props8 = this.props;
 				var gameInstance = _props8.gameInstance;
@@ -13198,36 +13213,36 @@
 				var promptTransition = _constants.transitionTypes.SHOWING;
 
 				return this.setState({ prompt: prompt }).then(function () {
-					return _this15.state.mobile ? (0, _utils.createPromiseTimeout)(1) : null;
+					return _this16.state.mobile ? (0, _utils.createPromiseTimeout)(1) : null;
 				}).then(function () {
-					return _this15.setState({ promptTransition: promptTransition });
+					return _this16.setState({ promptTransition: promptTransition });
 				}).then(function () {
-					return _this15.state.mobile ? (0, _utils.createPromiseTimeout)(2500) : null;
+					return _this16.state.mobile ? (0, _utils.createPromiseTimeout)(2500) : null;
 				}).then(function () {
-					return _this15.setState({
+					return _this16.setState({
 						promptTransition: _constants.transitionTypes.LEAVING
 					});
 				}).then(function () {
 					return (0, _utils.createPromiseTimeout)(1000);
 				}).then(function () {
 
-					if (_this15.isMobile()) {
+					if (_this16.isMobile()) {
 
-						_this15.startStreetviewCountdown();
+						_this16.startStreetviewCountdown();
 
-						_this15.setState({
+						_this16.setState({
 							interchangeHidden: true
 						});
 					} else {
 
-						_this15.activateSpinner();
+						_this16.activateSpinner();
 					}
 				});
 			}
 		}, {
 			key: 'startStreetviewCountdown',
 			value: function startStreetviewCountdown() {
-				var _this16 = this;
+				var _this17 = this;
 
 				var gameInstance = this.props.gameInstance;
 
@@ -13236,7 +13251,7 @@
 
 				countdown.on('tick', function (timeLeft) {
 
-					_this16.setState({
+					_this17.setState({
 						countdownTimeLeft: timeLeft
 					});
 				});
@@ -13309,7 +13324,7 @@
 		}, {
 			key: 'styleUnselectedBoroughs',
 			value: function styleUnselectedBoroughs(borough) {
-				var _this17 = this;
+				var _this18 = this;
 
 				var _state15 = this.state;
 				var maps = _state15.maps;
@@ -13332,7 +13347,7 @@
 				if (!featureCollection) return;
 
 				var unselectedBoroughs = featureCollection.filter(function (feature) {
-					return _this17.getBoroughName(feature) !== clickedBoroughName;
+					return _this18.getBoroughName(feature) !== clickedBoroughName;
 				});
 
 				unselectedBoroughs.forEach(function (feature) {
@@ -18913,7 +18928,7 @@
 
 
 	// module
-	exports.push([module.id, "/* MOBILE CSS */\n\n.mobile.two-blocks {\n\theight: 100%; \n}\n\n.mobile .two-blocks-view, \n.mobile .two-blocks-prompt {\n\tposition: absolute; \n}\n\n.mobile .two-blocks-interchange {\n    position: absolute;\n    z-index: 100;\n\tbackground-color: #000;\n    opacity: 0.7;\n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-submitter-text {\n\tcolor: #fff;\n    font-size: 1.5em;\n    text-align: center;\n    top: 10%;\t\n}\n\n.mobile .two-blocks-prompt {\n\twidth: 100%; \n}\n\n.mobile .two-blocks-submitter {\n\tposition: absolute; \n\twidth: 100%; \n\theight: 20%; \n\ttop: 35%; \n}\n\n.mobile .two-blocks-button {\n\tbackground-color: rgb(255, 255, 255);\t\n\tfont-size: 1.2em; \n\tmax-width: 250px; \n\tmin-height: 25px; \n}\n\n.mobile .two-blocks-countdown {\n\tposition: absolute;\n\ttop: 10%; \n\tcolor: #fff; \n\tfont-size: 1.5em;\n\tfont-weight: bold; \n\ttext-shadow: 3px 3px 3px #000;  \n\tz-index: 100; \n}\n \n.mobile .two-blocks-countdown {\n\tmargin: 10px;\n}\n\n.two-blocks-prompt .green, \n.mobile .two-blocks-countdown .green {\n\tcolor: #009E39;\n}\n\n.two-blocks-prompt .yellow, \n.mobile .two-blocks-countdown .yellow {\n\tcolor: #DFC00F;\n}\n\n.two-blocks-prompt .red, \n.mobile .two-blocks-countdown .red {\n\tcolor: #D9285B;\n}\n\n.two-blocks-prompt .correct-borough, \n.two-blocks-prompt .total-correct {\n\tfont-weight: bold; \n}\n\n.mobile .borough-selection-button, \n.mobile .two-blocks-submitter-button {\n\tdisplay: block; \n\twidth: 60%; \n\theight: 30%; \n\tmargin: 0px auto 35px auto;  \n}\n\n.mobile .two-blocks-replay-button {\n\tposition: absolute; \n\twidth: 60%; \n\theight: 5%; \n\tleft: 0; \n\tright: 0; \n\ttop: 50%; \n\tmargin: auto; \n}\n\n@media screen and (orientation: landscape) {\n\n\t.mobile .borough-selection-button {\n\t\tmargin-bottom: 15px; \n\t}\n\n\t.mobile .two-blocks-prompt {\n\t\ttop: 0%; \n\t}\n\n\t.mobile .two-blocks-prompt, \n\t.mobile .two-blocks-countdown {\n\t\tleft: 1%;\n\t}\n\n\t.mobile .two-blocks-submitter { \n\t\tposition: relative;\n\t}\n\n\t.mobile .two-blocks-submitter-button {\n\t\tmargin-bottom: 25px; \n\t}\t\n\n}\n\n/* Prompt Transitions */\n\n.mobile .prompt-text {\n\t/*display: inline-block;*/\n\tposition: relative; \n}\n\n.mobile .prompt-text span {\n\twidth: 100%; \n\tposition: absolute; \n\tleft: 0px; \n} \n\n.two-blocks-prompt .correct-borough-prompt .correct-borough,\n.two-blocks-prompt .incorrect-borough-prompt .correct-borough {\n\tposition: relative; \n}\n\n/* .pregame-prompt */\n\n.mobile .pregame-prompt {\n  opacity: 0.01;\n  -webkit-transition: all 1000ms ease-in-out;\n  -o-transition: all 1000ms ease-in-out;\n  transition: all 1000ms ease-in-out;\n}\n\n.mobile .showing .pregame-prompt, \n.mobile .leaving .pregame-prompt {\n  opacity: 1;\n}\n\n.mobile .leaving .pregame-prompt {\n  transform: translateX(-1000%);\n}\n\n/* .showing-panorama-prompt */\n\n.mobile .showing-panorama-prompt {\n  opacity: 0.01;\n  -webkit-transition: all 1000ms ease-out;\n  -o-transition: all 1000ms ease-out;\n  transition: all 1000ms ease-out;  \n}\n\n.mobile .showing .showing-panorama-prompt {\n  opacity: 1; \n}\n\n.mobile .showing .showing-panorama-prompt.show-after {\n\ttransition-delay: 1s; \n}\n\n.mobile .leaving .showing-panorama-prompt {\n  opacity: 0; \n}\n\n/* .guessing-location-prompt */ \n\n.mobile .guessing-location-prompt {\n\ttop: -10000px; \n\t-webkit-transition: all 500ms ease-out;\n\t-o-transition: all 500ms ease-out;\n\ttransition: all 500ms ease-out;  \t\n}\n\n.mobile .showing .guessing-location-prompt {\n\ttop: 0px; \n}\n\n.mobile .leaving .guessing-location-prompt {\n\t/*opacity: 0px; */\n}\n\n/* Mobile Submitter Buttons */ \n\n.mobile .borough-selection-button {\n\t-webkit-transform: translateX(-1000px);\n\t -ms-transform: translateX(-1000px);\n\t -o-transform: translateX(-1000px);\n\t transform: translateX(-1000px);\n\t-webkit-transition: all 250ms ease-out;\n\t-o-transition: all 250ms ease-out;\n\ttransition: all 250ms ease-out; \t\n}\n\n.mobile .borough-selection-button.showing {\n\ttransform: translateX(0px); \n}\n\n.mobile .first-borough-selection-button {\n\ttransition-delay: 0ms; \n}\n\n.mobile .second-borough-selection-button {\n\ttransition-delay: 250ms; \t\n}\n\n.mobile .third-borough-selection-button {\n\ttransition-delay: 500ms; \n}\n\n.mobile .fourth-borough-selection-button {\n\ttransition-delay: 750ms; \n}\n\n.mobile .fifth-borough-selection-button {\n\ttransition-delay: 1000ms; \n}\n\n.mobile .borough-selected .borough-selection-button {\n\t-webkit-transform: translateX(-1000px);\n\t-ms-transform: translateX(-1000px);\n\t-o-transform: translateX(-1000px);\n\ttransform: translateX(-1000px);\n}\n\n.mobile .borough-selected .selected {\n\t-webkit-transition: all 1500ms cubic-bezier(0.75, -0.13, 1, 0); \n\t-o-transition: all 1500ms cubic-bezier(0.75, -0.13, 1, 0); \n\ttransition: all 1500ms cubic-bezier(0.75, -0.13, 1, 0);\n}\n\n/* Final Answer Check */\n\n@keyframes swoop-in {\n\t0% {\n\t\t-webkit-transform: perspective(1000px) translate3d(0px, 0px, -1000px);\n\t\t-ms-transform: perspective(1000px) translate3d(0px, 0px, -1000px);\n\t\t-o-transform: perspective(1000px) translate3d(0px, 0px, -1000px);\n\t\ttransform: perspective(1000px) translate3d(0px, 0px, -1000px);\t\t\n\t}\n\n\t100% {\n\t\t-webkit-transform: perspective(0px) translate3d(0px, 0px, 0px);\n\t\t-ms-transform: perspective(0px) translate3d(0px, 0px, 0px);\n\t\t-o-transform: perspective(0px) translate3d(0px, 0px, 0px);\n\t\ttransform: perspective(0px) translate3d(0px, 0px, 0px);\t\t\n\t}\n}\n\n.mobile .final-answer-check {\n\t-webkit-animation-duration: 500ms;\n\t -o-animation-duration: 500ms;\n\t animation-duration: 500ms; \n\t-webkit-animation-name: swoop-in;\n\t -o-animation-name: swoop-in;\n\t animation-name: swoop-in; \n}\n\n/* Game Over Prompt */\n\n.mobile .game-over-prompt span {\n\tposition: relative;\n}\n", ""]);
+	exports.push([module.id, "/* MOBILE CSS */\n\n.mobile.two-blocks {\n\theight: 100%; \n}\n\n.mobile .two-blocks-view, \n.mobile .two-blocks-prompt {\n\tposition: absolute; \n}\n\n.mobile .two-blocks-interchange {\n    position: absolute;\n    z-index: 100;\n\tbackground-color: #000;\n    opacity: 0.7;\n}\n\n.mobile .two-blocks-prompt, \n.mobile .two-blocks-submitter-text {\n\tcolor: #fff;\n    font-size: 1.5em;\n    text-align: center;\n    top: 10%;\t\n}\n\n.mobile .two-blocks-prompt {\n\twidth: 100%; \n}\n\n.mobile .two-blocks-submitter {\n\tposition: absolute; \n\twidth: 100%; \n\theight: 20%; \n\ttop: 35%; \n}\n\n.mobile .two-blocks-button {\n\tbackground-color: rgb(255, 255, 255);\t\n\tfont-size: 1.2em; \n\tmax-width: 250px; \n\tmin-height: 25px; \n}\n\n.mobile .two-blocks-countdown {\n\tposition: absolute;\n\ttop: 10%; \n\tcolor: #fff; \n\tfont-size: 1.5em;\n\tfont-weight: bold; \n\ttext-shadow: 3px 3px 3px #000;  \n\tz-index: 100; \n}\n \n.mobile .two-blocks-countdown {\n\tmargin: 10px;\n}\n\n.two-blocks-prompt .green, \n.mobile .two-blocks-countdown .green {\n\tcolor: #009E39;\n}\n\n.two-blocks-prompt .yellow, \n.mobile .two-blocks-countdown .yellow {\n\tcolor: #DFC00F;\n}\n\n.two-blocks-prompt .red, \n.mobile .two-blocks-countdown .red {\n\tcolor: #D9285B;\n}\n\n.two-blocks-prompt .correct-borough, \n.two-blocks-prompt .total-correct {\n\tfont-weight: bold; \n}\n\n.mobile .borough-selection-button, \n.mobile .two-blocks-submitter-button {\n\tdisplay: block; \n\twidth: 60%; \n\theight: 30%; \n\tmargin: 0px auto 35px auto;  \n}\n\n.mobile .two-blocks-replay-button {\n\tposition: absolute; \n\twidth: 60%; \n\theight: 5%; \n\tleft: 0; \n\tright: 0; \n\ttop: 50%; \n\tmargin: auto; \n}\n\n@media screen and (orientation: landscape) {\n\n\t.mobile .borough-selection-button {\n\t\tmargin-bottom: 15px; \n\t}\n\n\t.mobile .two-blocks-prompt {\n\t\ttop: 0%; \n\t}\n\n\t.mobile .two-blocks-prompt, \n\t.mobile .two-blocks-countdown {\n\t\tleft: 1%;\n\t}\n\n\t.mobile .two-blocks-submitter { \n\t\tposition: relative;\n\t}\n\n\t.mobile .two-blocks-submitter-button {\n\t\tmargin-bottom: 25px; \n\t}\t\n\n}\n\n/* Prompt Transitions */\n\n.mobile .prompt-text {\n\t/*display: inline-block;*/\n\tposition: relative; \n}\n\n.mobile .prompt-text span {\n\twidth: 100%; \n\tposition: absolute; \n\tleft: 0px; \n} \n\n.two-blocks-prompt .correct-borough-prompt .correct-borough,\n.two-blocks-prompt .incorrect-borough-prompt .correct-borough {\n\tposition: relative; \n}\n\n/* .pregame-prompt */\n\n.mobile .pregame-prompt {\n  opacity: 0.01;\n  -webkit-transition: all 1000ms ease-in-out;\n  -o-transition: all 1000ms ease-in-out;\n  transition: all 1000ms ease-in-out;\n}\n\n.mobile .showing .pregame-prompt, \n.mobile .leaving .pregame-prompt {\n  opacity: 1;\n}\n\n.mobile .leaving .pregame-prompt {\n  transform: translateX(-1000%);\n}\n\n/* .showing-panorama-prompt */\n\n.mobile .showing-panorama-prompt {\n  opacity: 0.01;\n  -webkit-transition: all 1000ms ease-out;\n  -o-transition: all 1000ms ease-out;\n  transition: all 1000ms ease-out;  \n}\n\n.mobile .showing .showing-panorama-prompt {\n  opacity: 1; \n}\n\n.mobile .showing .showing-panorama-prompt.show-after {\n\ttransition-delay: 1s; \n}\n\n.mobile .leaving .showing-panorama-prompt {\n  opacity: 0; \n}\n\n/* .guessing-location-prompt */ \n\n.mobile .guessing-location-prompt {\n\ttop: -10000px; \n\t-webkit-transition: all 500ms ease-out;\n\t-o-transition: all 500ms ease-out;\n\ttransition: all 500ms ease-out;  \t\n}\n\n.mobile .showing .guessing-location-prompt {\n\ttop: 0px; \n}\n\n.mobile .leaving .guessing-location-prompt {\n\t/*opacity: 0px; */\n}\n\n/* Mobile Submitter Buttons */ \n\n.mobile .borough-selection-button {\n\t-webkit-transform: translateX(-1000px);\n\t -ms-transform: translateX(-1000px);\n\t -o-transform: translateX(-1000px);\n\t transform: translateX(-1000px);\n\t-webkit-transition: all 250ms ease-out;\n\t-o-transition: all 250ms ease-out;\n\ttransition: all 250ms ease-out; \t\n}\n\n.mobile .borough-selection-button.showing {\n\ttransform: translateX(0px); \n}\n\n.mobile .first-borough-selection-button {\n\ttransition-delay: 0ms; \n}\n\n.mobile .second-borough-selection-button {\n\ttransition-delay: 250ms; \t\n}\n\n.mobile .third-borough-selection-button {\n\ttransition-delay: 500ms; \n}\n\n.mobile .fourth-borough-selection-button {\n\ttransition-delay: 750ms; \n}\n\n.mobile .fifth-borough-selection-button {\n\ttransition-delay: 1000ms; \n}\n\n.mobile .borough-selected .borough-selection-button {\n\t-webkit-transform: translateX(-1000px);\n\t-ms-transform: translateX(-1000px);\n\t-o-transform: translateX(-1000px);\n\ttransform: translateX(-1000px);\n}\n\n.mobile .borough-selected .selected {\n\t-webkit-transition: all 1500ms cubic-bezier(0.75, -0.13, 1, 0); \n\t-o-transition: all 1500ms cubic-bezier(0.75, -0.13, 1, 0); \n\ttransition: all 1500ms cubic-bezier(0.75, -0.13, 1, 0);\n}\n\n/* Final Answer Check */\n\n@keyframes swoop-in {\n\t0% {\n\t\t-webkit-transform: perspective(1000px) translate3d(0px, 0px, -1000px);\n\t\t-ms-transform: perspective(1000px) translate3d(0px, 0px, -1000px);\n\t\t-o-transform: perspective(1000px) translate3d(0px, 0px, -1000px);\n\t\ttransform: perspective(1000px) translate3d(0px, 0px, -1000px);\t\t\n\t}\n\n\t100% {\n\t\t-webkit-transform: perspective(0px) translate3d(0px, 0px, 0px);\n\t\t-ms-transform: perspective(0px) translate3d(0px, 0px, 0px);\n\t\t-o-transform: perspective(0px) translate3d(0px, 0px, 0px);\n\t\ttransform: perspective(0px) translate3d(0px, 0px, 0px);\t\t\n\t}\n}\n\n.mobile .final-answer-check {\n\t-webkit-animation-duration: 500ms;\n\t -o-animation-duration: 500ms;\n\t animation-duration: 500ms; \n\t-webkit-animation-name: swoop-in;\n\t -o-animation-name: swoop-in;\n\t animation-name: swoop-in; \n}\n\n/* Loading Panorama Prompt */\n\n.mobile .loading-panorama-prompt {\n\t-webkit-transform: translateX(1000px);\n\t-ms-transform: translateX(1000px);\n\t-o-transform: translateX(1000px);\n\ttransform: translateX(1000px);\n\t-webkit-transition: all 1s ease-out;\n\t-o-transition: all 1s ease-out;\n\ttransition: all 1s ease-out;\n}\n\n.mobile .showing .loading-panorama-prompt {\n\t-webkit-transform: translateX(0px);\n\t-ms-transform: translateX(0px);\n\t-o-transform: translateX(0px);\n\ttransform: translateX(0px);\n}\n\n.mobile .leaving .loading-panorama-prompt {\n\t-webkit-transform: translateX(-1000px);\n\t-ms-transform: translateX(-1000px);\n\t-o-transform: translateX(-1000px);\n\ttransform: translateX(-1000px);\n}\n\n/* Game Over Prompt */\n\n.mobile .game-over-prompt span {\n\tposition: relative;\n}\n", ""]);
 
 	// exports
 

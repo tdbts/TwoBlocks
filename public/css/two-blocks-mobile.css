@@ -269,6 +269,32 @@
 	 animation-name: swoop-in; 
 }
 
+/* Loading Panorama Prompt */
+
+.mobile .loading-panorama-prompt {
+	-webkit-transform: translateX(1000px);
+	-ms-transform: translateX(1000px);
+	-o-transform: translateX(1000px);
+	transform: translateX(1000px);
+	-webkit-transition: all 1s ease-out;
+	-o-transition: all 1s ease-out;
+	transition: all 1s ease-out;
+}
+
+.mobile .showing .loading-panorama-prompt {
+	-webkit-transform: translateX(0px);
+	-ms-transform: translateX(0px);
+	-o-transform: translateX(0px);
+	transform: translateX(0px);
+}
+
+.mobile .leaving .loading-panorama-prompt {
+	-webkit-transform: translateX(-1000px);
+	-ms-transform: translateX(-1000px);
+	-o-transform: translateX(-1000px);
+	transform: translateX(-1000px);
+}
+
 /* Game Over Prompt */
 
 .mobile .game-over-prompt span {

@@ -799,11 +799,15 @@ class TwoBlocks extends React.Component {
 				...panorama, 
 				borough: boroughName, 
 				latLng: randomLatLng
-			}, 
-
-			promptTransition: transitionTypes.LEAVING 
+			} 
 		
 		})
+
+		.then(() => createPromiseTimeout(1000))
+
+		.then(() => this.setState({
+			promptTransition: transitionTypes.LEAVING
+		}))
 
 		.then(() => createPromiseTimeout(1000))
 
@@ -859,7 +863,9 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, locationData, store } = this.props; 
 
-		const prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama(); 
+		const prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama();
+
+		const promptTransition = null;  
 
 		if (!(mobile)) {
 
@@ -882,11 +888,18 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({
 			
-			prompt, 
+			prompt,
+			promptTransition,  
 			interchangeHidden: false, 
 			selectedBorough: null
 		
 		})
+
+		.then(() => createPromiseTimeout(1))
+
+		.then(() => this.setState({
+			promptTransition: transitionTypes.SHOWING
+		}))
 
 		.then(() => gameInstance.emit(events.VIEW_COMPLETE, gameStages.EVALUATING_ANSWER)); 
 
