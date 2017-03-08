@@ -12444,8 +12444,8 @@
 				/*----------  Create Game Components  ----------*/
 
 				var gameComponents = (0, _createGameComponents2.default)({
-					maps: maps,
 					locationData: locationData,
+					maps: maps,
 					mobile: mobile,
 					panorama: panorama
 				});
