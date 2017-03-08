@@ -291,8 +291,8 @@ class TwoBlocks extends React.Component {
 		/*----------  Create Game Components  ----------*/
 						
 		const gameComponents = createGameComponents({
-			maps,  
 			locationData, 
+			maps,  
 			mobile,  
 			panorama 
 		}); 
