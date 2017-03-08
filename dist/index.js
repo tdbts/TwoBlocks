@@ -12423,6 +12423,14 @@
 				return [this.props.TWO_BLOCKS_CLASS, this.getDeviceClass()].join(' ').trim();
 			}
 		}, {
+			key: 'getTurnCompletionPrompt',
+			value: function getTurnCompletionPrompt() {
+				var gameInstance = this.props.gameInstance;
+
+
+				return gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama();
+			}
+		}, {
 			key: 'initializeTwoBlocks',
 			value: function initializeTwoBlocks() {
 				var _this7 = this;
@@ -13029,9 +13037,7 @@
 				var store = _props5.store;
 
 
-				var prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama();
-
-				var promptTransition = null;
+				var prompt = this.getTurnCompletionPrompt();
 
 				if (!mobile) {
 
@@ -13053,8 +13059,8 @@
 				return this.setState({
 
 					prompt: prompt,
-					promptTransition: promptTransition,
 					interchangeHidden: false,
+					promptTransition: null,
 					selectedBorough: null
 
 				}).then(function () {
@@ -13064,7 +13070,7 @@
 						promptTransition: _constants.transitionTypes.SHOWING
 					});
 				}).then(function () {
-					return gameInstance.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.EVALUATING_ANSWER);
+					return gameInstance.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.LOADING_PANORAMA);
 				});
 			}
 		}, {
@@ -19678,7 +19684,11 @@
 				});
 			});
 
-			requirements.push(viewComplete);
+			// Only push view complete requirement after the first game stage
+			if (_constants.gameStages.PREGAME !== stage) {
+
+				requirements.push(viewComplete);
+			}
 
 			if (_constants.gameStages.PREGAME === stage) {
 

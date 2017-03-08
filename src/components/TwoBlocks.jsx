@@ -278,6 +278,17 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	getTurnCompletionPrompt() {
+
+		const { gameInstance } = this.props; 
+
+		return gameInstance.maximumRoundsPlayed() 
+			
+			? this.state.prompt 
+			: promptManager.loadingPanorama();
+
+	}
+
 	initializeTwoBlocks() {
 
 		if (this.state.initialized) return;  // Game already initialized 
@@ -863,9 +874,7 @@ class TwoBlocks extends React.Component {
 
 		const { gameInstance, locationData, store } = this.props; 
 
-		const prompt = gameInstance.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama();
-
-		const promptTransition = null;  
+		const prompt = this.getTurnCompletionPrompt(); 
 
 		if (!(mobile)) {
 
@@ -889,8 +898,8 @@ class TwoBlocks extends React.Component {
 		return this.setState({
 			
 			prompt,
-			promptTransition,  
 			interchangeHidden: false, 
+			promptTransition: null,  
 			selectedBorough: null
 		
 		})
@@ -901,7 +910,7 @@ class TwoBlocks extends React.Component {
 			promptTransition: transitionTypes.SHOWING
 		}))
 
-		.then(() => gameInstance.emit(events.VIEW_COMPLETE, gameStages.EVALUATING_ANSWER)); 
+		.then(() => gameInstance.emit(events.VIEW_COMPLETE, gameStages.LOADING_PANORAMA)); 
 
 	}
 

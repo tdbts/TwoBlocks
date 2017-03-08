@@ -469,7 +469,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}); 
 
-		requirements.push(viewComplete); 
+		// Only push view complete requirement after the first game stage 
+		if (gameStages.PREGAME !== stage) {
+
+			requirements.push(viewComplete); 
+		
+		}
 
 		if (gameStages.PREGAME === stage) {
 
