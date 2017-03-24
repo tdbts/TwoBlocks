@@ -15,7 +15,7 @@ PromptManager.prototype = {
 
 		const message = []; 
 
-		const question = "Where are you?"; 
+		const question = "Where in NYC are you?"; 
 
 		message.push(question); 
 
@@ -142,7 +142,7 @@ PromptManager.prototype = {
 			<div>
 				<span className={ type } key={ type }>Look closely...</span>
 				<br/>
-				<span className={ [ type, "show-after" ].join(" ") }>Which borough is this Street View from?</span>
+				<span className={ [ type, "show-after" ].join(" ") }>Which borough is this NYC Street View from?</span>
 			</div>
 		);
 

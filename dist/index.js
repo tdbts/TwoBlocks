@@ -16773,7 +16773,7 @@
 
 			var message = [];
 
-			var question = "Where are you?";
+			var question = "Where in NYC are you?";
 
 			message.push(question);
 
@@ -16940,7 +16940,7 @@
 				_react2.default.createElement(
 					'span',
 					{ className: [type, "show-after"].join(" ") },
-					'Which borough is this Street View from?'
+					'Which borough is this NYC Street View from?'
 				)
 			);
 
