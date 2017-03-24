@@ -15,7 +15,7 @@ PromptManager.prototype = {
 
 		const message = []; 
 
-		const question = "Which borough was the last panorama from?"; 
+		const question = "Where are you?"; 
 
 		message.push(question); 
 

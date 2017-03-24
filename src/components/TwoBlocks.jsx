@@ -364,8 +364,14 @@ class TwoBlocks extends React.Component {
 
 		const { maps, showLocationMarker, mobile } = this.state; 
 
+		const { store } = this.props;
+
 		showLocationMarker.setLocation(lat, lng); 
 		showLocationMarker.placeOnMap(maps.borough.instance); 
+
+		store.dispatch({
+			type: actions.SHOW_MAP
+		});
 
 		return Promise.resolve()
 
@@ -383,7 +389,7 @@ class TwoBlocks extends React.Component {
 				guessingLocation: false, 
 				mapType: 'borough'
 
-			}))
+			})) 
 
 			.then(() => createPromiseTimeout(ANSWER_EVALUATION_DELAY / 2))
 
@@ -448,9 +454,7 @@ class TwoBlocks extends React.Component {
 
 	onGuessingLocation() {
 
-		const { maps, mobile } = this.state; 
-
-		const { store } = this.props; 
+		const { maps, mobile, panorama } = this.state; 
 
 		if (!(mobile)) {
 
@@ -458,9 +462,10 @@ class TwoBlocks extends React.Component {
 		
 		}
 
-		store.dispatch({
-			type: actions.SHOW_MAP
-		}); 
+		panorama.instance.setOptions({
+			motionTracking: false, 
+			motionTrackingControl: false
+		});
 
 		return this.setState({
 			guessingLocation: true, 
@@ -1036,9 +1041,15 @@ class TwoBlocks extends React.Component {
 
 	showPanorama() {
 	
+		const { panorama } = this.state;
 		const { gameInstance, store } = this.props; 
 
 		const view = views.PANORAMA; 
+
+		panorama.instance.setOptions({
+			motionTracking: true, 
+			motionControl: true
+		});
 
 		store.dispatch({ 
 			type: actions.SHOW_PANORAMA

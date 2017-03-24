@@ -12513,10 +12513,15 @@
 				var maps = _state2.maps;
 				var showLocationMarker = _state2.showLocationMarker;
 				var mobile = _state2.mobile;
+				var store = this.props.store;
 
 
 				showLocationMarker.setLocation(lat, lng);
 				showLocationMarker.placeOnMap(maps.borough.instance);
+
+				store.dispatch({
+					type: _actions2.default.SHOW_MAP
+				});
 
 				return Promise.resolve().then(function () {
 
@@ -12591,7 +12596,7 @@
 				var _state3 = this.state;
 				var maps = _state3.maps;
 				var mobile = _state3.mobile;
-				var store = this.props.store;
+				var panorama = _state3.panorama;
 
 
 				if (!mobile) {
@@ -12599,8 +12604,9 @@
 					maps.city.instance.onGuessingLocation();
 				}
 
-				store.dispatch({
-					type: _actions2.default.SHOW_MAP
+				panorama.instance.setOptions({
+					motionTracking: false,
+					motionTrackingControl: false
 				});
 
 				return this.setState({
@@ -13201,12 +13207,18 @@
 			value: function showPanorama() {
 				var _this16 = this;
 
+				var panorama = this.state.panorama;
 				var _props8 = this.props;
 				var gameInstance = _props8.gameInstance;
 				var store = _props8.store;
 
 
 				var view = _constants.views.PANORAMA;
+
+				panorama.instance.setOptions({
+					motionTracking: true,
+					motionControl: true
+				});
 
 				store.dispatch({
 					type: _actions2.default.SHOW_PANORAMA
@@ -16761,7 +16773,7 @@
 
 			var message = [];
 
-			var question = "Which borough was the last panorama from?";
+			var question = "Where are you?";
 
 			message.push(question);
 
