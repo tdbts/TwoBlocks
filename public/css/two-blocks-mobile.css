@@ -200,16 +200,10 @@
 	-o-transition: all 500ms ease-out;
 	transition: all 500ms ease-out; 	
 
-	-webkit-transform: translateX(-1000px);
-	 -ms-transform: translateX(-1000px);
-	 -o-transform: translateX(-1000px);
-	 transform: translateX(-1000px);
-	
-	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	-o-transform: translateZ(0);
-	transform: translateZ(0);	 
+	-webkit-transform: translateX(-1000px), translateZ(0);
+	 -ms-transform: translateX(-1000px), translateZ(0);
+	 -o-transform: translateX(-1000px), translateZ(0);
+	 transform: translateX(-1000px), translateZ(0);
 }
 
 .mobile .borough-selection-button.showing {
