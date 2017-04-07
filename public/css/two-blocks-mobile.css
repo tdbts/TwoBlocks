@@ -206,7 +206,10 @@
 }
 
 .mobile .borough-selection-button.showing {
-	transform: translateX(0px); 
+	-webkit-transform: translateX(0px);
+	-ms-transform: translateX(0px);
+	-o-transform: translateX(0px);
+	transform: translateX(0px);
 }
 
 .mobile .first-borough-selection-button {
