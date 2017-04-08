@@ -7,6 +7,7 @@ import TwoBlocksGame from '../src/TwoBlocksGame';
 import TwoBlocksService from '../src/services/TwoBlocksService';   
 import TwoBlocksWorker from '../src/workers/twoBlocks.worker.js';
 import twoBlocks from '../src/reducers/twoBlocks';
+import twoBlocksUtils from '../src/game-utils/twoBlocksUtils';
 
 import { createStore } from 'redux';
 import { render } from 'react-dom';
@@ -14,7 +15,7 @@ import { events, nycCoordinates } from '../src/constants/constants';
 import { composeWithDevTools } from 'redux-devtools-extension';
 // import { Provider } from 'react-redux'; 
 
-require('../public/css/two-blocks.css');  // Use Webpack loaders to add CSS 
+twoBlocksUtils.loadCSS();
 
 /*----------  Create Redux Store  ----------*/
 
@@ -34,13 +35,7 @@ const worker = window.Worker ? new TwoBlocksWorker() : null;
 
 /*----------  Create service for data requests  ----------*/
 
-const service = new TwoBlocksService(); 
-
-if (worker) {
-
-	service.useWorker(worker); 
-
-}
+const service = new TwoBlocksService(worker); 
 
 window.console.log("service:", service); 
 
@@ -78,6 +73,16 @@ service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start l
 	})
 
 	.catch(e => window.console.error(e)); 
+
+/*----------  Start Loading Leaflet Library  ----------*/
+
+if (twoBlocksUtils.shouldUseDeviceOrientation()) {
+
+	service.loadLeaflet()
+
+		.then(() => window.console.log("window.L:", window.L)); 
+
+}
 
 /*----------  Add Google Maps Script  ----------*/
 

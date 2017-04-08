@@ -86,12 +86,6 @@ class TwoBlocks extends React.Component {
 
 		const mobile = this.isMobile(); 
 
-		if (mobile) {
-
-			this.onMobileDeviceDetected(); 
-
-		}
-
 		this.setState({ 
 			maps, 
 			mobile, 
@@ -118,30 +112,12 @@ class TwoBlocks extends React.Component {
 		
 		}
 
-		if (!(this.state.initialized)) {
 
-			const { service } = this.props; 
-			const { mobile } = this.state; 
+		const { service } = this.props;
 
-			// Child <TwoBlocksMap /> and <TwoBlocksPanorama /> 
-			// components will call methods which update this 
-			// component's state with the child components' 
-			// respective DOM elements.  Once both elements 
-			// exist in state, initialize TwoBlocks.  
-			// If on mobile device, wait for Leaflet library to load 
-			if (mobile && !(service.mobileMapLibraryLoaded())) {
+		service.librariesAreLoaded()
 
-				service.loadLeaflet()
-
-					.then(() => this.initializeTwoBlocks()); 
-
-			} else {
-
-				this.initializeTwoBlocks(); 
-				
-			}	
-			
-		} 
+			.then(() => this.initializeTwoBlocks());			
 
 	}
 
@@ -762,18 +738,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onMobileDeviceDetected() {
-
-		require('../../public/css/two-blocks-mobile.css'); 
-
-		const { service } = this.props; 
-
-		service.loadLeaflet()
-
-			.then(() => window.console.log("window.L:", window.L)); 
-
-	}
-
 	onNewPanorama() {
 
 		const { maps, panorama } = this.state; 
@@ -997,6 +961,10 @@ class TwoBlocks extends React.Component {
 
 	} 
 
+	// Child <TwoBlocksMap /> and <TwoBlocksPanorama /> 
+	// components will call methods which update this 
+	// component's state with the child components' 
+	// respective DOM elements.   
 	requiredDOMElementsExist() {
 
 		const { maps, panorama } = this.state; 
