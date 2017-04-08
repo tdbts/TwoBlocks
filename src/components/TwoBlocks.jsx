@@ -206,7 +206,7 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on(events.NEXT_TURN, () => this.onNextTurn()); 
 
-		twoBlocks.on(events.RANDOM_LOCATION, randomLocationDetails => this.onRandomLocation(randomLocationDetails)); 
+		twoBlocks.on(events.NEW_PANORAMA, panoramaDetails => this.onNewPanorama(panoramaDetails)); 
 
 		twoBlocks.on(events.SHOWING_PANORAMA, () => this.onShowingPanorama()); 
 
@@ -774,31 +774,7 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onNextTurn() {
-
-		const { showLocationMarker } = this.state; 
-		
-		showLocationMarker.hide();
-
-		this.setState({
-
-			mapType: 'city'
-		
-		});
-
-	}
-
-	onPanoramaMounted(element) {
-
-		const { panorama } = this.state; 
-
-		this.setState({ 
-			panorama: Object.assign({}, panorama, { element })
-		}); 
-
-	}
-
-	onRandomLocation() {
+	onNewPanorama() {
 
 		const { maps, panorama } = this.state; 
 		
@@ -832,6 +808,30 @@ class TwoBlocks extends React.Component {
 		})) 
 
 		.then(() => this.showPanorama()); 
+
+	}
+
+	onNextTurn() {
+
+		const { showLocationMarker } = this.state; 
+		
+		showLocationMarker.hide();
+
+		this.setState({
+
+			mapType: 'city'
+		
+		});
+
+	}
+
+	onPanoramaMounted(element) {
+
+		const { panorama } = this.state; 
+
+		this.setState({ 
+			panorama: Object.assign({}, panorama, { element })
+		}); 
 
 	}
 

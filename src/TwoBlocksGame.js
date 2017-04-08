@@ -494,7 +494,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.nextGameStage(); 
 
-		this.emit(this.events.RANDOM_LOCATION); 
+		this.emit(this.events.NEW_PANORAMA); 
 
 		return this.readyForNextStage(); 
 
