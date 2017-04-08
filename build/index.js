@@ -34,7 +34,13 @@ const worker = window.Worker ? new TwoBlocksWorker() : null;
 
 /*----------  Create service for data requests  ----------*/
 
-const service = new TwoBlocksService(worker); 
+const service = new TwoBlocksService(); 
+
+if (worker) {
+
+	service.useWorker(worker); 
+
+}
 
 window.console.log("service:", service); 
 

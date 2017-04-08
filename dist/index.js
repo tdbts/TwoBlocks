@@ -105,7 +105,12 @@
 
 	/*----------  Create service for data requests  ----------*/
 
-	var service = new _TwoBlocksService2.default(worker);
+	var service = new _TwoBlocksService2.default();
+
+	if (worker) {
+
+		service.useWorker(worker);
+	}
 
 	window.console.log("service:", service);
 
@@ -19904,6 +19909,10 @@
 
 			return (0, _getRandomPanoramaLocation3.default)(this.worker, featureCollection);
 		},
+		isUsingWorker: function isUsingWorker() {
+
+			return !!this.worker;
+		},
 		loadCityLocationData: function loadCityLocationData(url) {
 
 			return (0, _requestGeoJSON2.default)(url, this.worker);
@@ -19919,10 +19928,6 @@
 		mobileMapLibraryLoaded: function mobileMapLibraryLoaded() {
 
 			return !!window.L;
-		},
-		usingWorker: function usingWorker() {
-
-			return !!this.worker;
 		}
 	};
 

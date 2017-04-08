@@ -21,6 +21,12 @@ TwoBlocksService.prototype = {
 
 	}, 
 
+	isUsingWorker() {
+
+		return !!(this.worker); 
+
+	},
+
 	loadCityLocationData(url) {
 
 		return requestGeoJSON(url, this.worker); 
@@ -42,12 +48,6 @@ TwoBlocksService.prototype = {
 	mobileMapLibraryLoaded() {
 
 		return !!(window.L); 
-
-	}, 
-
-	usingWorker() {
-
-		return !!(this.worker); 
 
 	}
 
