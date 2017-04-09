@@ -76,7 +76,9 @@ service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start l
 
 /*----------  Start Loading Leaflet Library  ----------*/
 
-if (twoBlocksUtils.shouldUseDeviceOrientation()) {
+const mobile = twoBlocksUtils.shouldUseDeviceOrientation();
+
+if (mobile) {
 
 	service.loadLeaflet()
 
@@ -92,7 +94,8 @@ service.loadGoogleMaps(process.env.MAPS_API_KEY)
 		// <Provider store={store}>
 			<TwoBlocks 
 				gameInstance={ gameInstance }
-				locationData= { nycCoordinates }
+				locationData={ nycCoordinates }
+				mobile={ mobile }
 				service={ service }
 				store={ store }
 				worker={ worker }

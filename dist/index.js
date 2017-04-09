@@ -152,7 +152,9 @@
 
 	/*----------  Start Loading Leaflet Library  ----------*/
 
-	if (_twoBlocksUtils2.default.shouldUseDeviceOrientation()) {
+	var mobile = _twoBlocksUtils2.default.shouldUseDeviceOrientation();
+
+	if (mobile) {
 
 		service.loadLeaflet().then(function () {
 			return window.console.log("window.L:", window.L);
@@ -167,6 +169,7 @@
 		_react2.default.createElement(_TwoBlocks2.default, {
 			gameInstance: gameInstance,
 			locationData: _constants.nycCoordinates,
+			mobile: mobile,
 			service: service,
 			store: store,
 			worker: worker
@@ -12149,7 +12152,6 @@
 				gameStage: null,
 				hoveredBorough: null,
 				maps: null,
-				mobile: null,
 				panorama: null,
 				prompt: null,
 				promptTransition: null,
@@ -12202,11 +12204,8 @@
 
 				var prompt = promptManager.pregame();
 
-				var mobile = this.isMobile();
-
 				this.setState({
 					maps: maps,
-					mobile: mobile,
 					panorama: panorama,
 					prompt: prompt
 				});
@@ -12262,7 +12261,7 @@
 			value: function addCityMapEventListeners(mapInstance) {
 				var _this4 = this;
 
-				var mobile = this.state.mobile;
+				var mobile = this.props.mobile;
 
 
 				if (!mapInstance || mobile) return; // Event listeners below only apply to desktop game instances 
@@ -12301,7 +12300,7 @@
 
 				window.addEventListener('keydown', onKeydown);
 
-				if (this.state.mobile) {
+				if (this.props.mobile) {
 
 					// Prevent drags from moving the game view layers
 					window.addEventListener('touchmove', onTouchMove);
@@ -12391,7 +12390,7 @@
 			key: 'getDeviceClass',
 			value: function getDeviceClass() {
 
-				return this.isMobile() ? ['mobile'].join(' ').trim() : '';
+				return this.props.mobile ? ['mobile'].join(' ').trim() : '';
 			}
 		}, {
 			key: 'getFeatureByBoroughName',
@@ -12432,11 +12431,11 @@
 
 				var _state = this.state;
 				var maps = _state.maps;
-				var mobile = _state.mobile;
 				var panorama = _state.panorama;
 				var _props = this.props;
 				var gameInstance = _props.gameInstance;
 				var locationData = _props.locationData;
+				var mobile = _props.mobile;
 				var store = _props.store;
 
 
@@ -12482,17 +12481,11 @@
 					return gameInstance.emit(_constants.events.GAME_COMPONENTS, gameComponents);
 				}).then(function () {
 
-					if (_this7.state.mobile) {
+					if (_this7.props.mobile) {
 
 						gameInstance.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.PREGAME);
 					}
 				});
-			}
-		}, {
-			key: 'isMobile',
-			value: function isMobile() {
-
-				return this.shouldUseDeviceOrientation();
 			}
 		}, {
 			key: 'onAnswerEvaluated',
@@ -12505,8 +12498,9 @@
 				var _state2 = this.state;
 				var maps = _state2.maps;
 				var showLocationMarker = _state2.showLocationMarker;
-				var mobile = _state2.mobile;
-				var store = this.props.store;
+				var _props2 = this.props;
+				var mobile = _props2.mobile;
+				var store = _props2.store;
 
 
 				showLocationMarker.setLocation(lat, lng);
@@ -12518,7 +12512,7 @@
 
 				return Promise.resolve().then(function () {
 
-					if (!_this8.state.mobile) return;
+					if (!_this8.props.mobile) return;
 
 					return (0, _utils.createPromiseTimeout)(1500); // Communicate result of answer evaluation
 				}).then(function () {
@@ -12555,9 +12549,9 @@
 		}, {
 			key: 'onButtonClick',
 			value: function onButtonClick(type) {
-				var _props2 = this.props;
-				var gameInstance = _props2.gameInstance;
-				var store = _props2.store;
+				var _props3 = this.props;
+				var gameInstance = _props3.gameInstance;
+				var store = _props3.store;
 
 
 				if ('BOROUGH_SUBMISSION' === type) {
@@ -12588,8 +12582,8 @@
 
 				var _state3 = this.state;
 				var maps = _state3.maps;
-				var mobile = _state3.mobile;
 				var panorama = _state3.panorama;
+				var mobile = this.props.mobile;
 
 
 				if (!mobile) {
@@ -12701,7 +12695,7 @@
 
 				return Promise.resolve().then(function () {
 
-					if (_this10.isMobile()) {
+					if (_this10.props.mobile) {
 
 						return (0, _utils.createPromiseTimeout)(1500);
 					}
@@ -12765,12 +12759,11 @@
 			value: function onGeoJSONReceived(geoJSON) {
 				var _this11 = this;
 
-				var _state6 = this.state;
-				var maps = _state6.maps;
-				var mobile = _state6.mobile;
-				var _props3 = this.props;
-				var gameInstance = _props3.gameInstance;
-				var locationData = _props3.locationData;
+				var maps = this.state.maps;
+				var _props4 = this.props;
+				var gameInstance = _props4.gameInstance;
+				var locationData = _props4.locationData;
+				var mobile = _props4.mobile;
 
 				// Race condition circumvention: If the cityMap does not
 				// yet exist, wait until the 'GAME_COMPONENTS' event fires to execute
@@ -12813,17 +12806,17 @@
 
 				e.preventDefault(); // Prevent arrows from scrolling page
 
-				var _state7 = this.state;
-				var hoveredBorough = _state7.hoveredBorough;
-				var mobile = _state7.mobile;
-				var selectedBorough = _state7.selectedBorough;
+				var _state6 = this.state;
+				var hoveredBorough = _state6.hoveredBorough;
+				var selectedBorough = _state6.selectedBorough;
+				var mobile = this.props.mobile;
 
 
 				if (mobile) return; // Keypresses only apply to desktop
 
-				var _props4 = this.props;
-				var gameInstance = _props4.gameInstance;
-				var store = _props4.store;
+				var _props5 = this.props;
+				var gameInstance = _props5.gameInstance;
+				var store = _props5.store;
 
 				var _store$getState = store.getState();
 
@@ -12910,9 +12903,9 @@
 			value: function onNewPanorama() {
 				var _this12 = this;
 
-				var _state8 = this.state;
-				var maps = _state8.maps;
-				var panorama = _state8.panorama;
+				var _state7 = this.state;
+				var maps = _state7.maps;
+				var panorama = _state7.panorama;
 				var store = this.props.store;
 				var _store$getState$curre = store.getState().currentTurn;
 				var boroughName = _store$getState$curre.boroughName;
@@ -12988,9 +12981,8 @@
 		}, {
 			key: 'onShowingPanorama',
 			value: function onShowingPanorama() {
-				var _state9 = this.state;
-				var maps = _state9.maps;
-				var mobile = _state9.mobile;
+				var maps = this.state.maps;
+				var mobile = this.props.mobile;
 
 
 				if (mobile) return;
@@ -13013,14 +13005,14 @@
 			value: function onTurnComplete() {
 				var _this13 = this;
 
-				var _state10 = this.state;
-				var maps = _state10.maps;
-				var mobile = _state10.mobile;
-				var showLocationMarker = _state10.showLocationMarker;
-				var _props5 = this.props;
-				var gameInstance = _props5.gameInstance;
-				var locationData = _props5.locationData;
-				var store = _props5.store;
+				var _state8 = this.state;
+				var maps = _state8.maps;
+				var showLocationMarker = _state8.showLocationMarker;
+				var _props6 = this.props;
+				var gameInstance = _props6.gameInstance;
+				var locationData = _props6.locationData;
+				var mobile = _props6.mobile;
+				var store = _props6.store;
 
 
 				var prompt = this.getTurnCompletionPrompt();
@@ -13070,10 +13062,6 @@
 				var centerLatLng = new google.maps.LatLng(CENTER.lat, CENTER.lng);
 
 				maps.city.instance.setCenter(centerLatLng);
-
-				this.setState({
-					mobile: this.isMobile()
-				});
 			}
 
 			// If on desktop, request the GeoJSON data from the web worker in order to
@@ -13086,14 +13074,14 @@
 			value: function requestGeoJSON() {
 				var _this14 = this;
 
-				var mobile = this.state.mobile;
+				var mobile = this.props.mobile;
 
 
 				if (mobile) return; // Request GeoJSON only on desktop (for map)
 
-				var _props6 = this.props;
-				var gameInstance = _props6.gameInstance;
-				var worker = _props6.worker;
+				var _props7 = this.props;
+				var gameInstance = _props7.gameInstance;
+				var worker = _props7.worker;
 
 
 				return gameInstance.geoJSONLoaded().then(function () {
@@ -13148,9 +13136,9 @@
 		}, {
 			key: 'requiredDOMElementsExist',
 			value: function requiredDOMElementsExist() {
-				var _state11 = this.state;
-				var maps = _state11.maps;
-				var panorama = _state11.panorama;
+				var _state9 = this.state;
+				var maps = _state9.maps;
+				var panorama = _state9.panorama;
 
 
 				return maps.block.element && maps.borough.element && maps.city.element && panorama.element;
@@ -13158,9 +13146,9 @@
 		}, {
 			key: 'restart',
 			value: function restart() {
-				var _props7 = this.props;
-				var gameInstance = _props7.gameInstance;
-				var store = _props7.store;
+				var _props8 = this.props;
+				var gameInstance = _props8.gameInstance;
+				var store = _props8.store;
 
 
 				var view = _constants.views.MAP;
@@ -13179,24 +13167,14 @@
 				});
 			}
 		}, {
-			key: 'shouldUseDeviceOrientation',
-			value: function shouldUseDeviceOrientation() {
-
-				var conditions = [!!window.DeviceOrientationEvent || !!window.DeviceMotionEvent, window.screen.width < _constants.MINIMUM_SPINNER_SCREEN_WIDTH || /iPad/g.test(window.navigator.userAgent)];
-
-				return conditions.every(function (condition) {
-					return !!condition;
-				});
-			}
-		}, {
 			key: 'showPanorama',
 			value: function showPanorama() {
 				var _this16 = this;
 
 				var panorama = this.state.panorama;
-				var _props8 = this.props;
-				var gameInstance = _props8.gameInstance;
-				var store = _props8.store;
+				var _props9 = this.props;
+				var gameInstance = _props9.gameInstance;
+				var store = _props9.store;
 
 
 				var view = _constants.views.PANORAMA;
@@ -13217,11 +13195,11 @@
 				var promptTransition = _constants.transitionTypes.SHOWING;
 
 				return this.setState({ prompt: prompt }).then(function () {
-					return _this16.state.mobile ? (0, _utils.createPromiseTimeout)(1) : null;
+					return _this16.props.mobile ? (0, _utils.createPromiseTimeout)(1) : null;
 				}).then(function () {
 					return _this16.setState({ promptTransition: promptTransition });
 				}).then(function () {
-					return _this16.state.mobile ? (0, _utils.createPromiseTimeout)(2500) : null;
+					return _this16.props.mobile ? (0, _utils.createPromiseTimeout)(2500) : null;
 				}).then(function () {
 					return _this16.setState({
 						promptTransition: _constants.transitionTypes.LEAVING
@@ -13230,7 +13208,7 @@
 					return (0, _utils.createPromiseTimeout)(1000);
 				}).then(function () {
 
-					if (_this16.isMobile()) {
+					if (_this16.props.mobile) {
 
 						_this16.startStreetviewCountdown();
 
@@ -13275,10 +13253,10 @@
 		}, {
 			key: 'styleHoveredBorough',
 			value: function styleHoveredBorough(borough) {
-				var _state12 = this.state;
-				var maps = _state12.maps;
-				var mobile = _state12.mobile;
-				var selectedBorough = _state12.selectedBorough;
+				var _state10 = this.state;
+				var maps = _state10.maps;
+				var selectedBorough = _state10.selectedBorough;
+				var mobile = this.props.mobile;
 
 
 				if (mobile) return;
@@ -13298,10 +13276,10 @@
 
 				if (!borough) return;
 
-				var _state13 = this.state;
-				var maps = _state13.maps;
-				var mobile = _state13.mobile;
-				var selectedBorough = _state13.selectedBorough;
+				var _state11 = this.state;
+				var maps = _state11.maps;
+				var selectedBorough = _state11.selectedBorough;
+				var mobile = this.props.mobile;
 
 
 				if (mobile) return;
@@ -13314,9 +13292,8 @@
 		}, {
 			key: 'styleSelectedBorough',
 			value: function styleSelectedBorough(borough) {
-				var _state14 = this.state;
-				var maps = _state14.maps;
-				var mobile = _state14.mobile;
+				var maps = this.state.maps;
+				var mobile = this.props.mobile;
 
 
 				if (mobile) return;
@@ -13330,10 +13307,10 @@
 			value: function styleUnselectedBoroughs(borough) {
 				var _this18 = this;
 
-				var _state15 = this.state;
-				var maps = _state15.maps;
-				var mobile = _state15.mobile;
-				var selectedBorough = _state15.selectedBorough;
+				var _state12 = this.state;
+				var maps = _state12.maps;
+				var selectedBorough = _state12.selectedBorough;
+				var mobile = this.props.mobile;
 
 
 				if (mobile) return;
@@ -13430,7 +13407,7 @@
 						interchangeHidden: state.interchangeHidden,
 						maps: state.maps,
 						mapType: state.mapType,
-						mobile: state.mobile,
+						mobile: props.mobile,
 						onMapMounted: this.onMapMounted.bind(this),
 						onPanoramaMounted: this.onPanoramaMounted.bind(this),
 						panorama: state.panorama,
@@ -13444,7 +13421,7 @@
 						hidden: state.interchangeHidden,
 						hideReplayButton: !store || !store.getState().gameOver,
 						hoveredBorough: state.hoveredBorough,
-						mobile: state.mobile,
+						mobile: props.mobile,
 						onButtonClick: this.onButtonClick.bind(this),
 						prompt: state.prompt,
 						promptTransition: state.promptTransition,
@@ -13460,6 +13437,7 @@
 
 	TwoBlocks.propTypes = {
 		TWO_BLOCKS_CLASS: _react2.default.PropTypes.string.isRequired,
+		mobile: _react2.default.PropTypes.bool.isRequired,
 		service: _react2.default.PropTypes.object.isRequired,
 		store: _react2.default.PropTypes.object.isRequired,
 		worker: _react2.default.PropTypes.object,

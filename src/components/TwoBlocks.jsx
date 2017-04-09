@@ -7,7 +7,7 @@ import PromptManager from './component-utils/PromptManager';
 import createGameComponents from '../game-components/createGameComponents'; 
 import Countdown from './component-utils/Countdown';
 import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
-import { boroughNames, events, gameStages, heardKeys, keyEventMaps, transitionTypes, views, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, MINIMUM_SPINNER_SCREEN_WIDTH, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import { boroughNames, events, gameStages, heardKeys, keyEventMaps, transitionTypes, views, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
@@ -32,7 +32,6 @@ class TwoBlocks extends React.Component {
 			gameStage 				: null, 
 			hoveredBorough 			: null,
 			maps 					: null, 
-			mobile 					: null, 
 			panorama 				: null,   
 			prompt 					: null, 
 			promptTransition 		: null, 
@@ -84,11 +83,8 @@ class TwoBlocks extends React.Component {
 
 		const prompt = promptManager.pregame(); 
 
-		const mobile = this.isMobile(); 
-
 		this.setState({ 
 			maps, 
-			mobile, 
 			panorama, 
 			prompt
 		}); 
@@ -112,7 +108,6 @@ class TwoBlocks extends React.Component {
 		
 		}
 
-
 		const { service } = this.props;
 
 		service.librariesAreLoaded()
@@ -135,7 +130,7 @@ class TwoBlocks extends React.Component {
 
 	addCityMapEventListeners(mapInstance) {
 
-		const { mobile } = this.state; 
+		const { mobile } = this.props;
 
 		if (!(mapInstance) || mobile) return;  // Event listeners below only apply to desktop game instances  
  
@@ -165,7 +160,7 @@ class TwoBlocks extends React.Component {
 
 		window.addEventListener('keydown', onKeydown);
 
-		if (this.state.mobile) {
+		if (this.props.mobile) {
 
 			// Prevent drags from moving the game view layers 
 			window.addEventListener('touchmove', onTouchMove); 
@@ -232,7 +227,7 @@ class TwoBlocks extends React.Component {
 
 	getDeviceClass() {
 
-		return this.isMobile() ? [ 'mobile' ].join(' ').trim() : ''; 
+		return this.props.mobile ? [ 'mobile' ].join(' ').trim() : ''; 
 
 	}
 
@@ -269,9 +264,9 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.initialized) return;  // Game already initialized 
 
-		const { maps, mobile, panorama } = this.state;  
+		const { maps, panorama } = this.state;  
 
-		const { gameInstance, locationData, store } = this.props; 
+		const { gameInstance, locationData, mobile, store } = this.props; 
 
 		if (!(this.requiredDOMElementsExist())) return;  // DOM elements must exist before the game instance can be initialized 
 
@@ -318,7 +313,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				if (this.state.mobile) {
+				if (this.props.mobile) {
 
 					gameInstance.emit(events.VIEW_COMPLETE, gameStages.PREGAME); 
 
@@ -328,19 +323,13 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	isMobile() {
-
-		return this.shouldUseDeviceOrientation(); 
-
-	}
-
 	onAnswerEvaluated(answerDetails) {
 
 		const { lat, lng } = answerDetails.randomLatLng; 
 
-		const { maps, showLocationMarker, mobile } = this.state; 
+		const { maps, showLocationMarker } = this.state; 
 
-		const { store } = this.props;
+		const { mobile, store } = this.props;
 
 		showLocationMarker.setLocation(lat, lng); 
 		showLocationMarker.placeOnMap(maps.borough.instance); 
@@ -353,7 +342,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				if (!(this.state.mobile)) return; 
+				if (!(this.props.mobile)) return; 
 
 				return createPromiseTimeout(1500);  // Communicate result of answer evaluation 
 
@@ -430,7 +419,9 @@ class TwoBlocks extends React.Component {
 
 	onGuessingLocation() {
 
-		const { maps, mobile, panorama } = this.state; 
+		const { maps, panorama } = this.state; 
+
+		const { mobile } = this.props;
 
 		if (!(mobile)) {
 
@@ -540,7 +531,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				if (this.isMobile()) {
+				if (this.props.mobile) {
 
 					return createPromiseTimeout(1500);
 
@@ -607,9 +598,9 @@ class TwoBlocks extends React.Component {
 
 	onGeoJSONReceived(geoJSON) {
 
-		const { maps, mobile } = this.state; 
+		const { maps } = this.state; 
 
-		const { gameInstance, locationData } = this.props;  
+		const { gameInstance, locationData, mobile } = this.props;  
 
 		// Race condition circumvention: If the cityMap does not 
 		// yet exist, wait until the 'GAME_COMPONENTS' event fires to execute 
@@ -650,7 +641,9 @@ class TwoBlocks extends React.Component {
 
 		e.preventDefault();  // Prevent arrows from scrolling page 
 
-		const { hoveredBorough, mobile, selectedBorough } = this.state;
+		const { hoveredBorough, selectedBorough } = this.state;
+
+		const { mobile } = this.props;
 
 		if (mobile) return;  // Keypresses only apply to desktop 
 
@@ -817,7 +810,9 @@ class TwoBlocks extends React.Component {
 
 	onShowingPanorama() {
 
-		const { maps, mobile } = this.state; 
+		const { maps } = this.state; 
+
+		const { mobile } = this.props;
 
 		if (mobile) return; 
 
@@ -839,9 +834,9 @@ class TwoBlocks extends React.Component {
 
 	onTurnComplete() {
 
-		const { maps, mobile, showLocationMarker } = this.state; 
+		const { maps, showLocationMarker } = this.state; 
 
-		const { gameInstance, locationData, store } = this.props; 
+		const { gameInstance, locationData, mobile, store } = this.props; 
 
 		const prompt = this.getTurnCompletionPrompt(); 
 
@@ -895,10 +890,6 @@ class TwoBlocks extends React.Component {
 
 		maps.city.instance.setCenter(centerLatLng);
 
-		this.setState({
-			mobile: this.isMobile()
-		}); 
-
 	}
 
 	// If on desktop, request the GeoJSON data from the web worker in order to 
@@ -907,7 +898,7 @@ class TwoBlocks extends React.Component {
 	// If there is no worker, move on using the GeoJSON member of th game instance.  
 	requestGeoJSON() {
 
-		const { mobile } = this.state; 
+		const { mobile } = this.props;
 
 		if (mobile) return;  // Request GeoJSON only on desktop (for map)
 
@@ -994,19 +985,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	shouldUseDeviceOrientation() {
-
-		const conditions = [
-
-			!!(window.DeviceOrientationEvent) || !!(window.DeviceMotionEvent), 
-			(window.screen.width < MINIMUM_SPINNER_SCREEN_WIDTH) || /iPad/g.test(window.navigator.userAgent)
-
-		]; 
-
-		return conditions.every(condition => !!condition); 
-
-	} 
-
 	showPanorama() {
 	
 		const { panorama } = this.state;
@@ -1031,11 +1009,11 @@ class TwoBlocks extends React.Component {
 
 		return this.setState({ prompt })
 
-			.then(() => this.state.mobile ? createPromiseTimeout(1) : null)
+			.then(() => this.props.mobile ? createPromiseTimeout(1) : null)
 
 			.then(() => this.setState({ promptTransition }))
 
-			.then(() => this.state.mobile ? createPromiseTimeout(2500) : null)
+			.then(() => this.props.mobile ? createPromiseTimeout(2500) : null)
 
 			.then(() => this.setState({
 				promptTransition: transitionTypes.LEAVING
@@ -1045,7 +1023,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				if (this.isMobile()) {
+				if (this.props.mobile) {
 
 					this.startStreetviewCountdown();  		
 
@@ -1091,7 +1069,9 @@ class TwoBlocks extends React.Component {
 
 	styleHoveredBorough(borough) {
 
-		const { maps, mobile, selectedBorough } = this.state; 
+		const { maps, selectedBorough } = this.state; 
+
+		const { mobile } = this.props;
 
 		if (mobile) return; 
 
@@ -1111,7 +1091,9 @@ class TwoBlocks extends React.Component {
 
 		if (!(borough)) return; 
 
-		const { maps, mobile, selectedBorough } = this.state;
+		const { maps, selectedBorough } = this.state;
+
+		const { mobile } = this.props;
 
 		if (mobile) return; 
 
@@ -1125,7 +1107,9 @@ class TwoBlocks extends React.Component {
 
 	styleSelectedBorough(borough) {
 
-		const { maps, mobile } = this.state; 
+		const { maps } = this.state; 
+
+		const { mobile } = this.props;
 
 		if (mobile) return; 
 
@@ -1137,7 +1121,9 @@ class TwoBlocks extends React.Component {
 
 	styleUnselectedBoroughs(borough) {
 			
-		const { maps, mobile, selectedBorough } = this.state; 
+		const { maps, selectedBorough } = this.state; 
+
+		const { mobile } = this.props;
 
 		if (mobile) return; 
 
@@ -1226,7 +1212,7 @@ class TwoBlocks extends React.Component {
 					interchangeHidden={ state.interchangeHidden }
 					maps={ state.maps }
 					mapType={ state.mapType }
-					mobile={ state.mobile }
+					mobile={ props.mobile }
 					onMapMounted={ this.onMapMounted.bind(this) }
 					onPanoramaMounted={ this.onPanoramaMounted.bind(this) }  
 					panorama={ state.panorama }
@@ -1240,7 +1226,7 @@ class TwoBlocks extends React.Component {
 					hidden={ state.interchangeHidden }
 					hideReplayButton={ !(store) || !(store.getState().gameOver) }
 					hoveredBorough={ state.hoveredBorough }
-					mobile={ state.mobile }
+					mobile={ props.mobile }
 					onButtonClick={ this.onButtonClick.bind(this) }
 					prompt={ state.prompt }
 					promptTransition={ state.promptTransition }
@@ -1256,7 +1242,8 @@ class TwoBlocks extends React.Component {
 }
 
 TwoBlocks.propTypes = {
-	TWO_BLOCKS_CLASS 			: React.PropTypes.string.isRequired, 	
+	TWO_BLOCKS_CLASS 			: React.PropTypes.string.isRequired, 
+	mobile  					: React.PropTypes.bool.isRequired,	
 	service 					: React.PropTypes.object.isRequired, 
 	store 						: React.PropTypes.object.isRequired, 
 	worker 						: React.PropTypes.object, 
