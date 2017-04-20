@@ -17,6 +17,13 @@ const Countdown = function Countdown(countdownLength) {
 
 	}
 
+	this.events = {
+		END: 'END',
+		START: 'START',
+		STOP: 'STOP',
+		TICK: 'TICK'
+	};
+
 	this.countdownLength = countdownLength; 
 	this.interval = null; 
 	this.stopped = false; 
@@ -41,11 +48,11 @@ Object.assign(Countdown.prototype, {
 
 		this.countdownLength -= 1; 
 
-		this.emit('tick', this.countdownLength); 
+		this.emit(this.events.TICK, this.countdownLength); 
 
 		if (this.countdownLength === 0) {
 
-			this.emit('end'); 
+			this.emit(this.events.END, 'end'); 
 
 		}
 
@@ -63,7 +70,7 @@ Object.assign(Countdown.prototype, {
 		
 		this.interval = interval; 
 	
-		this.emit('start'); 
+		this.emit(this.events.START); 
 
 	}, 
 
@@ -71,7 +78,7 @@ Object.assign(Countdown.prototype, {
 
 		this.stopped = true; 
 
-		this.emit('stop'); 
+		this.emit(this.events.STOP); 
 
 	}
 

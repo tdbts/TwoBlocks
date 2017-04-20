@@ -34,9 +34,9 @@ class TwoBlocksView extends React.Component {
 					visible={ 'map' === view }
 				/>			
 				<TwoBlocksPanorama 
-					latLng={ panorama.latLng }
+					latLng={ panorama && panorama.getPosition() }
 					onPanoramaMounted={ onPanoramaMounted } 
-					panorama={ panorama.instance } 
+					panorama={ panorama } 
 				visible={ 'panorama' === view } 
 				/>
 				<TwoBlocksCountdown 

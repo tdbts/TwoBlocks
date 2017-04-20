@@ -4,10 +4,10 @@ import React from 'react';
 import TwoBlocksView from './TwoBlocksView';
 import TwoBlocksInterchange from './TwoBlocksInterchange'; 
 import PromptManager from './component-utils/PromptManager'; 
-import createGameComponents from '../game-components/createGameComponents'; 
-import Countdown from './component-utils/Countdown';
-import removeStreetNameAnnotations from './component-utils/removeStreetNameAnnotations';  
-import { boroughNames, events, gameStages, heardKeys, keyEventMaps, transitionTypes, views, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, SELECTED_BOROUGH_FILL_COLOR, STREETVIEW_COUNTDOWN_LENGTH, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
+import createGameComponents from '../game-components/createGameComponents';
+import PanoramaMobile from '../game-components/PanoramaMobile';
+import PanoramaDesktop from '../game-components/PanoramaDesktop'; 
+import { boroughNames, events, gameStages, heardKeys, keyEventMaps, transitionTypes, views, workerMessages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, HOVERED_BOROUGH_FILL_COLOR, KEY_PRESS_DEBOUNCE_TIMEOUT, SELECTED_BOROUGH_FILL_COLOR, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
 
@@ -27,7 +27,6 @@ class TwoBlocks extends React.Component {
 			initialized 			: false,  
 			interchangeHidden 		: false, 
 			mapType 				: 'city',
-
 			countdownTimeLeft 		: null,    
 			gameStage 				: null, 
 			hoveredBorough 			: null,
@@ -73,19 +72,11 @@ class TwoBlocks extends React.Component {
 			block: Object.assign({}, mapCache)
 		}; 
 
-		const panorama = {
-			borough: null, 
-			element: null, 
-			instance: null, 
-			latLng: null, 
-			spinner: null
-		}; 
-
 		const prompt = promptManager.pregame(); 
 
 		this.setState({ 
 			maps, 
-			panorama, 
+			// panorama, 
 			prompt
 		}); 
 
@@ -118,16 +109,6 @@ class TwoBlocks extends React.Component {
 
 	/*----------  Custom Component Methods  ----------*/
 	
-	activateSpinner() {
-
-		const { panorama } = this.state; 
-
-		panorama.spinner.start(); 
-
-		panorama.spinner.once('REVOLUTION', () => this.onSpinnerRevolution()); 
-
-	}
-
 	addCityMapEventListeners(mapInstance) {
 
 		const { mobile } = this.props;
@@ -197,16 +178,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	addGameComponentEventListeners() {
-
-		const { panorama } = this.state; 
-
-		/*----------  Add listeners to panorama  ----------*/
-		
-		google.maps.event.addListener(panorama.instance, 'pano_changed', () => removeStreetNameAnnotations(panorama.instance)); 
-
-	}
-
 	getBoroughName(borough) {
 
 		let result = null; 
@@ -264,7 +235,7 @@ class TwoBlocks extends React.Component {
 
 		if (this.state.initialized) return;  // Game already initialized 
 
-		const { maps, panorama } = this.state;  
+		const { maps } = this.state;  
 
 		const { gameInstance, locationData, mobile, store } = this.props; 
 
@@ -275,8 +246,7 @@ class TwoBlocks extends React.Component {
 		const gameComponents = createGameComponents({
 			locationData, 
 			maps,  
-			mobile,  
-			panorama 
+			mobile 
 		}); 
 
 		window.console.log("gameComponents:", gameComponents); 
@@ -304,8 +274,6 @@ class TwoBlocks extends React.Component {
 		}; 
 
 		return this.setState(nextState)
-
-			.then(() => this.addGameComponentEventListeners())
 
 			.then(() => this.addCityMapEventListeners(this.state.maps.city.instance))
 
@@ -429,10 +397,10 @@ class TwoBlocks extends React.Component {
 		
 		}
 
-		panorama.instance.setOptions({
+		panorama.setOptions({
 			motionTracking: false, 
 			motionTrackingControl: false
-		});
+		});		
 
 		return this.setState({
 			guessingLocation: true, 
@@ -738,21 +706,13 @@ class TwoBlocks extends React.Component {
 		const { store } = this.props; 
 
 		const { boroughName, randomLatLng } = store.getState().currentTurn; 
+		panorama.setBorough(boroughName);
+		panorama.setPosition(randomLatLng);
 
 		maps.block.instance.panTo(randomLatLng); 
 		maps.borough.instance.panTo(randomLatLng); 
 
-		return this.setState({ 
-
-			panorama: {
-				...panorama, 
-				borough: boroughName, 
-				latLng: randomLatLng
-			} 
-		
-		})
-
-		.then(() => createPromiseTimeout(1000))
+		return createPromiseTimeout(1000)
 
 		.then(() => this.setState({
 			promptTransition: transitionTypes.LEAVING
@@ -784,11 +744,42 @@ class TwoBlocks extends React.Component {
 
 	onPanoramaMounted(element) {
 
-		const { panorama } = this.state; 
+		const { gameInstance, mobile } = this.props;
 
-		this.setState({ 
-			panorama: Object.assign({}, panorama, { element })
-		}); 
+		const options = { 
+			fullscreenControl: false, 
+			position: null, 
+			visible: true, 
+			zoomControl: false
+		};
+
+		const panorama = mobile ? new PanoramaMobile(element, options) : new PanoramaDesktop(element, options);
+
+		panorama.on(panorama.events.DISPLAY_STOP, () => gameInstance.emit(events.VIEW_COMPLETE, gameStages.SHOWING_PANORAMA));
+
+		if (mobile) {
+
+			panorama.on(panorama.events.COUNTDOWN_START, countdownTimeLeft => this.setState({ countdownTimeLeft }));
+
+			panorama.on(panorama.events.COUNTDOWN_TICK, countdownTimeLeft => this.setState({ countdownTimeLeft }));
+
+		} else {
+
+			panorama.on(panorama.events.DISPLAY_STOP, () => {
+	
+				const { store } = this.props;
+
+				const view = views.MAP;
+
+				store.dispatch({ type: actions.SHOW_MAP });
+
+				gameInstance.emit(events.VIEW_CHANGE, { view }); 	
+
+			});
+
+		}
+
+		this.setState({ panorama });
 
 	}
 
@@ -817,18 +808,6 @@ class TwoBlocks extends React.Component {
 		if (mobile) return; 
 
 		maps.city.instance.onShowingPanorama();  
-
-	}
-
-	onSpinnerRevolution() {
-
-		const { panorama } = this.state; 
-
-		const { gameInstance } = this.props; 
-
-		panorama.spinner.stop(); 
-
-		gameInstance.emit(events.VIEW_COMPLETE, gameStages.SHOWING_PANORAMA); 
 
 	}
 
@@ -960,7 +939,9 @@ class TwoBlocks extends React.Component {
 
 		const { maps, panorama } = this.state; 
 
-		return maps.block.element && maps.borough.element && maps.city.element && panorama.element; 		
+		if (!(maps) || !(panorama)) return;
+
+		return maps.block.element && maps.borough.element && maps.city.element && panorama.el(); 		
 
 	}
 
@@ -992,10 +973,10 @@ class TwoBlocks extends React.Component {
 
 		const view = views.PANORAMA; 
 
-		panorama.instance.setOptions({
+		panorama.setOptions({
 			motionTracking: true, 
 			motionControl: true
-		});
+		});		
 
 		store.dispatch({ 
 			type: actions.SHOW_PANORAMA
@@ -1023,47 +1004,13 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				if (this.props.mobile) {
+				this.state.panorama.display();
 
-					this.startStreetviewCountdown();  		
-
-					this.setState({
-						interchangeHidden: true
-					}); 
-
-				} else {
-
-					this.activateSpinner(); 
-
-				}
+				this.setState({
+					interchangeHidden: this.props.mobile
+				}); 
 
 			}); 		
-
-	}
-
-	startStreetviewCountdown() {
-
-		const { gameInstance } = this.props; 
-
-		const countdown = new Countdown(STREETVIEW_COUNTDOWN_LENGTH); 
-
-		countdown.on('tick', timeLeft => {
-
-			this.setState({
-				countdownTimeLeft: timeLeft
-			}); 
-
-		}); 
-
-		countdown.on('end', () => gameInstance.emit(events.VIEW_COMPLETE, gameStages.SHOWING_PANORAMA)); 
-
-		return this.setState({
-				
-				countdownTimeLeft: STREETVIEW_COUNTDOWN_LENGTH
-			
-			})
-
-			.then(() => countdown.start()); 
 
 	}
 

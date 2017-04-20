@@ -1,10 +1,7 @@
 /* global google, L */
 
 import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, DEFAULT_MAP_OPTIONS } from '../constants/constants'; 
-import createPanorama from './createPanorama'; 
-import createWebGlManager from './createWebGlManager';
-import Spinner from './Spinner';  
-import CityMap from './CityMap';  
+import CityMap from './CityMap';
 import ShowLocationMarker from './ShowLocationMarker'; 
 
 let gameComponents = null; 
@@ -19,32 +16,7 @@ const createGameComponents = function createGameComponents(gameState) {
 
 	}
 
-	const { maps, locationData, mobile, panorama } = gameState; 
-	
-	const webGlManager = createWebGlManager(panorama.element); 
-	
-	const mode = webGlManager.canUseWebGl() ? "webgl" : "html5";
-
-	/*----------  Set up panorama  ----------*/
-
-	panorama.instance = createPanorama(panorama.element, { 
-		mode, 
-		fullscreenControl: false, 
-		position: null, 
-		visible: true, 
-		zoomControl: false
-	}); 
-
-	/*----------  Set up spinner  ----------*/
-	
-	panorama.spinner = new Spinner(panorama.instance, {
-		punctuate: {
-			segments: 4, 
-			delay: 2000
-		}
-	}); 	
-
-	panorama.spinner.on('REVOLUTION', () => window.console.log('REVOLUTION')); 
+	const { maps, locationData, mobile } = gameState; 
 	
 	/*----------  Set up cityMap  ----------*/
 
@@ -129,20 +101,11 @@ const createGameComponents = function createGameComponents(gameState) {
 		boroughLevelMap: maps.borough.instance
 	}); 
 
-	/*----------  Set up WebGl  ----------*/
-	
-	if (webGlManager.canUseWebGl()) {
-
-		setTimeout(() => webGlManager.initGl(), 1000);
-	
-	}
-
 	// Assign game components to variable so we can just return 
 	// the already-created components if we start a new game 
 	gameComponents = { 
 		maps, 
-		mapMarker, 
-		panorama
+		mapMarker
 	}; 
 
 	return gameComponents; 
