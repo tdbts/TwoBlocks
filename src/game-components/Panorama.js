@@ -14,7 +14,7 @@ const Panorama = function Panorama(element, options) {
 	this._borough = null;
 	this._element = element;
 	this._displaying = false;
-	this.options = this._normalizeOptions(options);
+	this.options = this._setOptions(options);
 	// Documentation on streetViewPanorama class: 
 	// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
 	this._latLng = null;
@@ -79,7 +79,7 @@ const panoramaMethods = {
 
 	},
 
-	_normalizeOptions(options) {
+	_setOptions(options) {
 
 		return Object.assign({}, getOptions.call(this), options);
 

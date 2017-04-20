@@ -17305,7 +17305,7 @@
 		this._borough = null;
 		this._element = element;
 		this._displaying = false;
-		this.options = this._normalizeOptions(options);
+		this.options = this._setOptions(options);
 		// Documentation on streetViewPanorama class:
 		// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
 		this._latLng = null;
@@ -17364,7 +17364,7 @@
 				return (0, _removeStreetNameAnnotations2.default)(_this2._panorama);
 			});
 		},
-		_normalizeOptions: function _normalizeOptions(options) {
+		_setOptions: function _setOptions(options) {
 
 			return _extends({}, getOptions.call(this), options);
 		},
