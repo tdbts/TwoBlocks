@@ -44,7 +44,7 @@ const createGameComponents = function createGameComponents(gameState) {
 		}
 	}); 	
 
-	panorama.spinner.on('revolution', () => window.console.log('revolution')); 
+	panorama.spinner.on('REVOLUTION', () => window.console.log('REVOLUTION')); 
 	
 	/*----------  Set up cityMap  ----------*/
 

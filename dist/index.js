@@ -12252,7 +12252,7 @@
 
 				panorama.spinner.start();
 
-				panorama.spinner.once('revolution', function () {
+				panorama.spinner.once('REVOLUTION', function () {
 					return _this3.onSpinnerRevolution();
 				});
 			}
@@ -16993,8 +16993,8 @@
 			}
 		});
 
-		panorama.spinner.on('revolution', function () {
-			return window.console.log('revolution');
+		panorama.spinner.on('REVOLUTION', function () {
+			return window.console.log('REVOLUTION');
 		});
 
 		/*----------  Set up cityMap  ----------*/
@@ -18395,7 +18395,7 @@
 
 				if (Math.round(pov.heading) % DEGREES_IN_A_CIRCLE === this._startHeading) {
 
-					this.emit('revolution');
+					this.emit('REVOLUTION');
 				}
 
 				if (this.punctuated) {

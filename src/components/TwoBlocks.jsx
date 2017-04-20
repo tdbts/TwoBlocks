@@ -124,7 +124,7 @@ class TwoBlocks extends React.Component {
 
 		panorama.spinner.start(); 
 
-		panorama.spinner.once('revolution', () => this.onSpinnerRevolution()); 
+		panorama.spinner.once('REVOLUTION', () => this.onSpinnerRevolution()); 
 
 	}
 

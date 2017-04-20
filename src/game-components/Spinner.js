@@ -35,6 +35,10 @@ const Spinner = function Spinner(panorama, options = {}) {
 
 	EventEmitter.call(this); 	
 
+	this.events = {
+		REVOLUTION: 'REVOLUTION'
+	};
+
 	this._canSpin = false;
 	this._lastRepaint = null; 
 	this._panorama = panorama;  
@@ -201,7 +205,7 @@ const spinnerMethods = {
 
 			if ((Math.round(pov.heading) % DEGREES_IN_A_CIRCLE) === this._startHeading) {
 
-				this.emit('revolution'); 
+				this.emit(this.events.REVOLUTION); 
 
 			}
 
