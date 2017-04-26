@@ -1152,9 +1152,6 @@ class TwoBlocks extends React.Component {
 	
 			<div className={ this.getGameClassList() }>
 				<TwoBlocksView 
-					blockLevelMap={ state.maps.block.instance }
-					boroughLevelMap={ state.maps.borough.instance }
-					cityLevelMap={ state.maps.city.instance }
 					countdownTimeLeft={ state.countdownTimeLeft }
 					interchangeHidden={ state.interchangeHidden }
 					maps={ state.maps }

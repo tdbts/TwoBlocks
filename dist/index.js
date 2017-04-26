@@ -13348,9 +13348,6 @@
 					'div',
 					{ className: this.getGameClassList() },
 					_react2.default.createElement(_TwoBlocksView2.default, {
-						blockLevelMap: state.maps.block.instance,
-						boroughLevelMap: state.maps.borough.instance,
-						cityLevelMap: state.maps.city.instance,
 						countdownTimeLeft: state.countdownTimeLeft,
 						interchangeHidden: state.interchangeHidden,
 						maps: state.maps,
