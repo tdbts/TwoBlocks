@@ -732,17 +732,17 @@ class TwoBlocks extends React.Component {
 
 		return createPromiseTimeout(1000)
 
-		.then(() => this.setState({
-			promptTransition: transitionTypes.LEAVING
-		}))
+			.then(() => this.setState({
+				promptTransition: transitionTypes.LEAVING
+			}))
 
-		.then(() => createPromiseTimeout(1000))
+			.then(() => createPromiseTimeout(1000))
 
-		.then(() => this.setState({
-			promptTransition: null
-		})) 
+			.then(() => this.setState({
+				promptTransition: null
+			})) 
 
-		.then(() => this.showPanorama()); 
+			.then(() => this.showPanorama()); 
 
 	}
 

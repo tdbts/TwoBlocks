@@ -46,8 +46,6 @@
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; }; /* global self */
-
 	__webpack_require__(1);
 
 	var _utils = __webpack_require__(299);
@@ -60,6 +58,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	/* global self */
+
 	var generator = null;
 	var geoJSON = null;
 
@@ -68,11 +68,9 @@
 
 			var onMessage = function onMessage(event) {
 
-				var eventData = event.data;
+				self.postMessage('Heard message from the DOM: ' + JSON.stringify(event.data));
 
-				self.postMessage('Heard message from the DOM: ' + JSON.stringify(eventData));
-
-				return handleMessage(eventData);
+				return handleMessage(event.data);
 			};
 
 			var handleMessage = function handleMessage(eventData) {
@@ -81,72 +79,85 @@
 
 
 				if (_constants.workerMessages.LOAD_GEO_JSON === message) {
-					var _ret2 = function () {
 
-						self.postMessage("Loading GeoJSON...");
-
-						var MAX_LOAD_ATTEMPTS = 3;
-						var RETRY_DELAY = 1000; // millisecons
-
-						return {
-							v: (0, _utils.tryAtMost)(function () {
-								return (0, _utils.makeRequest)(payload);
-							}, MAX_LOAD_ATTEMPTS, function () {
-								return (0, _utils.createPromiseTimeout)(RETRY_DELAY);
-							}) // payload is GeoJSON source URL
-
-							.then(function (response) {
-
-								geoJSON = JSON.parse(response.response);
-
-								self.postMessage({
-									message: _constants.workerMessages.GEO_JSON_LOADED
-								});
-							}).catch(function () {
-
-								self.postMessage({
-									message: _constants.workerMessages.GEO_JSON_REQUEST_FAILURE
-								});
-							})
-						};
-					}();
-
-					if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+					loadGeoJSON(payload);
 				} else if (_constants.workerMessages.REQUEST_GEO_JSON === message) {
 
-					self.postMessage("Fulfilling Geo JSON request...");
-
-					self.postMessage({
-						message: _constants.workerMessages.SENDING_GEO_JSON,
-						payload: geoJSON
-					});
+					fulfillGeoJSONRequest();
 				} else if (_constants.workerMessages.GET_RANDOM_LOCATION === message) {
 
-					self.postMessage("Getting random location...");
-
-					var newTurn = payload.newTurn;
-
-
-					if (newTurn || !generator) {
-
-						generator = new _RandomLocationGenerator2.default(geoJSON);
-					}
-
-					var randomLatLng = generator.randomLatLng();
-
-					var _generator = generator;
-					var selectedBorough = _generator.selectedBorough;
-
-
-					self.postMessage({
-						message: _constants.workerMessages.RANDOM_LOCATION_CHOSEN,
-						payload: {
-							selectedBorough: selectedBorough,
-							boroughName: selectedBorough.properties.boro_name,
-							latLng: randomLatLng
-						}
-					});
+					getRandomLocation(payload);
 				}
+			};
+
+			var loadGeoJSON = function loadGeoJSON(url) {
+
+				self.postMessage("Loading GeoJSON...");
+
+				var MAX_LOAD_ATTEMPTS = 3;
+				var RETRY_DELAY = 1000; // millisecons
+
+				(0, _utils.tryAtMost)(function () {
+					return (0, _utils.makeRequest)(url);
+				}, MAX_LOAD_ATTEMPTS, function () {
+					return (0, _utils.createPromiseTimeout)(RETRY_DELAY);
+				}) // payload is GeoJSON source URL
+
+				.then(onGeoJSONLoadSuccess).catch(onGeoJSONLoadError);
+			};
+
+			var onGeoJSONLoadSuccess = function onGeoJSONLoadSuccess(response) {
+
+				geoJSON = JSON.parse(response.response);
+
+				self.postMessage({
+					message: _constants.workerMessages.GEO_JSON_LOADED
+				});
+			};
+
+			var onGeoJSONLoadError = function onGeoJSONLoadError() {
+
+				self.postMessage({
+					message: _constants.workerMessages.GEO_JSON_REQUEST_FAILURE
+				});
+			};
+
+			var fulfillGeoJSONRequest = function fulfillGeoJSONRequest() {
+
+				self.postMessage("Fulfilling Geo JSON request...");
+
+				self.postMessage({
+					message: _constants.workerMessages.SENDING_GEO_JSON,
+					payload: geoJSON
+				});
+			};
+
+			var getRandomLocation = function getRandomLocation(payload) {
+
+				self.postMessage("Getting random location...");
+
+				var newTurn = payload.newTurn;
+
+
+				if (newTurn || !generator) {
+
+					generator = new _RandomLocationGenerator2.default(geoJSON);
+				}
+
+				var randomLatLng = generator.randomLatLng();
+
+				var _generator = generator;
+				var selectedBorough = _generator.selectedBorough;
+
+
+				self.postMessage({
+					message: _constants.workerMessages.RANDOM_LOCATION_CHOSEN,
+					payload: {
+						selectedBorough: selectedBorough,
+						boroughName: selectedBorough.properties.boro_name,
+						latLng: randomLatLng
+					}
+				});
 			};
 
 			self.addEventListener('message', onMessage);
