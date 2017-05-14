@@ -82,7 +82,9 @@ const getRootClassList = function getRootClassList(selectedBorough, twoBlocksCla
 
 BoroughButtonsMobile.propTypes = {
 
-	onButtonClick: React.PropTypes.func.isRequired, 
+	onButtonClick: React.PropTypes.func.isRequired,
+	selectedBorough: React.PropTypes.string, 
+	showButtons: React.PropTypes.bool,
 	twoBlocksClass: React.PropTypes.string.isRequired
 
 }; 

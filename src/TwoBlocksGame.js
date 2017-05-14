@@ -13,7 +13,9 @@ const TwoBlocksGame = function TwoBlocksGame(store, worker, service) {
 	this.store = store;   
 	this.worker = worker; 
 	this.service = service; 
-	this.locationData = {}; 
+	this.locationData = {};
+
+	this.MAXIMUM_ROUNDS = DEFAULT_MAXIMUM_ROUNDS; 
 
 	this.gameDispatcher = new TwoBlocksGameDispatcher(this.store);
 
@@ -156,6 +158,12 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 		return this._geoJSONLoaded; 
 
 	}, 
+
+	getMaximumRounds() {
+
+		return this.MAXIMUM_ROUNDS;
+
+	},
 
 	getNextGameStage() {
 
@@ -310,7 +318,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		const { totalRounds } = this.store.getState(); 
 
-		return totalRounds === DEFAULT_MAXIMUM_ROUNDS; 
+		return totalRounds === this.getMaximumRounds(); 
 
 	}, 
 

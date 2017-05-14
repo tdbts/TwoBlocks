@@ -9,9 +9,10 @@ const CityMaps = function CityMaps(elements) {
 	EventEmitter.call(this);
 
 	this.options = CityMaps.prototype._getOptions();
-	
+
+	this._currentCoords = null;	
 	this._elements = elements;
-	this._maps = this._createMaps(elements);
+	this._maps = null;
 
 	this.mapTypes = {
 		CITY: 'city', 
@@ -74,6 +75,8 @@ const cityMapsMethods = {
 	},
 
 	/*----------  Public API  ----------*/
+
+	createLatLng() {},
 	
 	getBlockLevelMap() {
 
@@ -93,7 +96,11 @@ const cityMapsMethods = {
 
 	}, 
 
-	createLatLng() {},
+	getCurrentCoords() {
+
+		return this._currentCoords;
+
+	},
 
 	onGuessingLocation() {},
 
@@ -107,15 +114,15 @@ const cityMapsMethods = {
 
 	onTurnComplete() {},
 
-	panTo(lat, lng) {
-
-		const latLng = this.createLatLng(lat, lng);
-
-		this._forEachMap(map => map.panTo(latLng));
-
-	},
+	panTo() {},
 
 	setCenter() {},
+
+	setCurrentCoords(lat, lng) {
+
+		this._currentCoords = { lat, lng };
+
+	},
 
 	unselectBorough() {}
 

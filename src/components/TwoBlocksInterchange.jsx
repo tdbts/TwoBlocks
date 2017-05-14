@@ -50,8 +50,10 @@ class TwoBlocksInterchange extends React.Component {
 /*----------  Define PropTypes  ----------*/
 
 TwoBlocksInterchange.propTypes = {
+	confirmingAnswer: React.PropTypes.bool,
 	guessingLocation: React.PropTypes.bool,  
 	gameOver: React.PropTypes.bool,
+	gameStage: React.PropTypes.string,
 	hidden: React.PropTypes.bool,  
 	hideReplayButton: React.PropTypes.bool, 
 	hoveredBorough: React.PropTypes.string, 

@@ -1,4 +1,5 @@
 import React from 'react'; 
+import once from '../utils/once';
 
 const updateConfig = function updateConfig(mapInstance, config) {
 
@@ -15,13 +16,15 @@ const Map = function Map(props) {
 
 	const { className, config, mapInstance, mapType, onRef } = props; 
 
+	const callOnceOnRef = once(mapCanvas => onRef(mapType, mapCanvas));
+
 	updateConfig(mapInstance, config); 
 	
 	return (
 
 		<div
 			className={ className }
-			ref={ mapCanvas => onRef(mapType, mapCanvas) }
+			ref={ callOnceOnRef }
 		></div>	
 	
 	);

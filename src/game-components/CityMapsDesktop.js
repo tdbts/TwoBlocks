@@ -1,6 +1,6 @@
 /* global google */
 
-import { mapTypes, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM } from '../constants/constants';
+import { mapTypes, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, HOVERED_BOROUGH_FILL_COLOR, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants';
 import CityMaps from './CityMaps';
 
 /*----------  Constructor  ----------*/
@@ -16,8 +16,14 @@ const CityMapsDesktop = function CityMapsDesktop(elements) {
 		CLICK: 'click'
 	};
 
+	this._maps = this._createMaps(elements);
+
 	this._addDOMEventListenersToMaps();
 };
+
+/*----------  Inherit from CityMaps  ----------*/
+
+CityMapsDesktop.prototype = Object.create(CityMaps.prototype);
 
 /*----------  Assign Constructor  ----------*/
 
@@ -33,16 +39,17 @@ const cityMapsDesktopMethods = {
 
 		const trackedEvents = [
 			this.events.MOUSEOUT, 
-			this.eents.MOUSEOVER, 
+			this.events.MOUSEOVER, 
 			this.events.CLICK
 		];
 
-		const listener = e => this.emit(event, { 
-			event: e, 
-			mapType: this.mapTypes.CITY 
-		});
+		const listener = event => e => {
+			this.emit(event, Object.assign(e, { 
+				mapType: this.mapTypes.CITY 
+			}));	
+		};
 
-		trackedEvents.forEach(event => cityMap.data.addListener(event, listener));
+		trackedEvents.forEach(event => cityMap.data.addListener(event, listener(event)));
 
 	},
 
@@ -97,20 +104,30 @@ const cityMapsDesktopMethods = {
 
 		} else if (this.mapTypes.BLOCK === type) {
 
-			zoom === BLOCK_LEVEL_ZOOM;
+			zoom = BLOCK_LEVEL_ZOOM;
 
 		}
+
+		return zoom;
 
 	},
 
 
-	onGuessingLocation() {
+	onGuessingLocation(latLng) {
+
+		const { lat, lng } = latLng;
+
+		this.panTo(lat, lng);
 
 		this.getCityLevelMap().data.revertStyle();
 
 	},
 
-	onConsideredBorough(borough, options) {
+	onConsideredBorough(borough, options = {}) {
+
+		options = Object.assign({}, options, {
+			fillColor: HOVERED_BOROUGH_FILL_COLOR
+		});
 
 		this.getCityLevelMap().data.overrideStyle(borough, options);
 
@@ -118,13 +135,17 @@ const cityMapsDesktopMethods = {
 
 	onGeoJSONReceived(geoJSON) {
 
-		this.getCityLevelMap().data.addGeoJson(geoJSON);
+		return this.getCityLevelMap().data.addGeoJson(geoJSON);
 
 	},
 
-	onSelectedBorough(borough, options) {
+	onSelectedBorough(borough, options = {}) {
 
 		if (!(borough)) return; 
+
+		options = Object.assign({}, options, {
+			fillColor: SELECTED_BOROUGH_FILL_COLOR
+		});
 
 		this.getCityLevelMap().data.overrideStyle(borough, options);
 
@@ -141,6 +162,16 @@ const cityMapsDesktopMethods = {
 		this.getCityLevelMap().data.revertStyle();
 
 	},
+	
+	panTo(lat, lng) {
+
+		const latLng = this.createLatLng(lat, lng);
+
+		// this._forEachMap(map => map.panTo(latLng));
+		this.getBoroughLevelMap().panTo(latLng);
+		this.getBlockLevelMap().panTo(latLng);
+
+	},
 
 	setCenter(lat, lng) {
 
@@ -152,7 +183,7 @@ const cityMapsDesktopMethods = {
 
 	unselectBorough(borough) {
 
-		if (!(borough)) return;  // Don't want to revert style for entire map 
+		if (!(borough)) return; // Don't want to revert style for entire map 
 
 		this.getCityLevelMap().data.revertStyle(borough); 
 

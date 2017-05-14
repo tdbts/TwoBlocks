@@ -2,18 +2,54 @@
 
 /*----------  Constructor  ----------*/
 
-const ShowLocationMarker = function ShowLocationMarker(options, gameComponents) {
+const ShowLocationMarker = function ShowLocationMarker(maps, mobile) {
 
-	const { mobile } = gameComponents; 
+	this.maps = maps;
+	this.mobile = mobile;
 
-	this.marker = mobile ? new L.Marker(options) : new google.maps.Marker(options); 
-	this.mobile = mobile; 
+	this.blockLevelMap = this.maps.getBlockLevelMap();
+	this.boroughLevelMap = this.maps.getBoroughLevelMap();
+	this.marker = this._createMarker();
 
 }; 
 
 /*----------  Prototype  ----------*/
 
 ShowLocationMarker.prototype = {
+
+	_createMarker() {
+
+		const options = this._createOptions();
+
+		return this.mobile ? new L.Marker(options) : new google.maps.Marker(options); 
+	},
+
+	_createOptions() {
+
+		const markerOptions = {}; 
+
+		if (this.mobile) {
+
+			markerOptions.dragging = false; 
+
+		} else {
+
+			markerOptions.draggable = false; 
+			markerOptions.animation = google.maps.Animation.BOUNCE; 
+
+		}
+
+		return markerOptions;
+
+	},
+
+	/*----------  Public API  ----------*/
+	
+	getMarker() {
+
+		return this.marker;
+
+	},
 
 	hide() {
 
@@ -28,6 +64,18 @@ ShowLocationMarker.prototype = {
 		}
 
 	}, 
+
+	placeOnBlockLevelMap() {
+
+		this.placeOnMap(this.blockLevelMap);
+
+	}, 
+
+	placeOnBoroughLevelMap() {
+
+		this.placeOnMap(this.boroughLevelMap);
+
+	},
 
 	placeOnMap(map) {
 

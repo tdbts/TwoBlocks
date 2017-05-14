@@ -41,6 +41,7 @@ html, body {
 }
 
 .two-blocks-view {
+	margin-bottom: 2%;
 	box-shadow: 2px 2px 10px #000;
 }
 
@@ -51,6 +52,10 @@ html, body {
 
 .two-blocks-map {
 	position: absolute; 
+}
+
+.two-blocks-interchange {
+	margin-left: 1%;
 }
 
 .two-blocks-submitter-borough-name {

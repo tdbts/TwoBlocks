@@ -7,10 +7,15 @@ import CityMaps from './CityMaps';
 
 const CityMapsMobile = function CityMapsMobile(elements) {
 
-	// Call superclass
 	CityMaps.call(this, elements);
 	
+	this._maps = this._createMaps(elements);
+
 };
+
+/*----------  Inherit from CityMaps  ----------*/
+
+CityMapsMobile.prototype = Object.create(CityMaps.prototype);
 
 /*----------  Assign Constructor  ----------*/
 
@@ -65,7 +70,7 @@ const cityMapsMobileMethods = {
 	getZoom(type) {
 
 		let zoom = null;
-
+ 
 		if (this.mapTypes.CITY === type) {
 
 			zoom = CITY_LEVEL_ZOOM;
@@ -76,9 +81,11 @@ const cityMapsMobileMethods = {
 
 		} else if (this.mapTypes.BLOCK === type) {
 
-			zoom === BLOCK_LEVEL_ZOOM - 1;
+			zoom = BLOCK_LEVEL_ZOOM - 1;
 
 		}
+
+		return zoom;
 
 	}, 
 
@@ -88,6 +95,14 @@ const cityMapsMobileMethods = {
 		// this.getBlockLevelMap().removeLayer(this.getMarker());
 
 	},
+
+	panTo(lat, lng) {
+
+		const latLng = this.createLatLng(lat, lng);
+
+		this._forEachMap(map => map.panTo(latLng));
+
+	},	
 
 	setCenter(lat, lng) {
 

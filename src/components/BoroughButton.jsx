@@ -93,7 +93,9 @@ class BoroughButton extends React.Component {
 BoroughButton.propTypes = {
 	boroughButtonClassName: React.PropTypes.string.isRequired, 
 	boroughName: React.PropTypes.string.isRequired, 
+	isSelected: React.PropTypes.bool.isRequired,
 	onButtonClick: React.PropTypes.func.isRequired, 
+	orderClass: React.PropTypes.string,
 	transitionTimeout: React.PropTypes.number.isRequired
 }; 
 

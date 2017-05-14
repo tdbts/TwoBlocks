@@ -20,15 +20,15 @@ class TwoBlocksView extends React.Component {
 
 	render() {
 
-		const { countdownTimeLeft, interchangeHidden, onMapMounted, maps, mapType, mobile, onPanoramaMounted, panorama, view } = this.props;		
+		const { blockLevelMap, boroughLevelMap, cityLevelMap, countdownTimeLeft, interchangeHidden, onMapMounted, mapType, mobile, onPanoramaMounted, panorama, view } = this.props;		
 
 		return (
 
 			<div className={ this.getClassName() }>
 				<TwoBlocksMap 
-					blockLevelMap={ maps.block.instance }
-					boroughLevelMap={ maps.borough.instance }
-					cityLevelMap={ maps.city.instance }
+					blockLevelMap={ blockLevelMap }
+					boroughLevelMap={ boroughLevelMap }
+					cityLevelMap={ cityLevelMap }
 					onMapMounted={ onMapMounted }
 					mapType={ mapType }
 					visible={ 'map' === view }
@@ -54,6 +54,9 @@ class TwoBlocksView extends React.Component {
 
 TwoBlocksView.propTypes = {
 	
+	blockLevelMap 			: React.PropTypes.object,
+	boroughLevelMap 		: React.PropTypes.object,
+	cityLevelMap 			: React.PropTypes.object,
 	countdownTimeLeft 		: React.PropTypes.number, 
 	interchangeHidden 		: React.PropTypes.bool, 
 	mapCanvasClassName 		: React.PropTypes.string, 
