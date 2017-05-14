@@ -1,6 +1,6 @@
 /* global google */
 
-import { mapTypes, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, HOVERED_BOROUGH_FILL_COLOR, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants';
+import { mapSources, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, HOVERED_BOROUGH_FILL_COLOR, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants';
 import CityMaps from './CityMaps';
 
 /*----------  Constructor  ----------*/
@@ -80,7 +80,7 @@ const cityMapsDesktopMethods = {
 
 	getMapType() {
 
-		return mapTypes.GOOGLE;
+		return mapSources.GOOGLE;
 
 	}, 
 

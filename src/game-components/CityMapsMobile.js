@@ -1,6 +1,6 @@
 /* global L */
 
-import { mapTypes, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM } from '../constants/constants';
+import { mapSources, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM } from '../constants/constants';
 import CityMaps from './CityMaps';
 
 /*----------  Constructor  ----------*/
@@ -63,7 +63,7 @@ const cityMapsMobileMethods = {
 
 	getMapType() {
 
-		return mapTypes.LEAFLET;
+		return mapSources.LEAFLET;
 
 	}, 
 

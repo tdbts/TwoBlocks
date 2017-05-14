@@ -3,7 +3,7 @@ import events from './events';
 import gameStages from './gameStages'; 
 import heardKeys from './heardKeys'; 
 import keyEventMaps from './keyEventMaps';
-import mapTypes from './mapTypes';  
+import mapSources from './mapSources';  
 import nycCoordinates from './nycCoordinates';
 import transitionTypes from './transitionTypes'; 
 import promptTypes from './promptTypes'; 
@@ -38,7 +38,7 @@ export {
 	gameStages, 
 	heardKeys, 
 	keyEventMaps, 
-	mapTypes, 
+	mapSources, 
 	nycCoordinates,
 	transitionTypes, 
 	promptTypes, 
