@@ -59,6 +59,15 @@ const panoramaMobileMethods = {
 
 		this.emit(this.events.DISPLAY_START);
 
+	},
+
+	onGuessingLocation() {
+
+		this.setOptions({
+			motionTracking: false, 
+			motionTrackingControl: false
+		});		
+
 	}
 
 };

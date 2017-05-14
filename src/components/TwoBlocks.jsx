@@ -124,8 +124,6 @@ class TwoBlocks extends React.Component {
 
 		twoBlocks.on(events.GAME_STAGE, stages => this.onGameStage(stages)); 
 
-		twoBlocks.once(events.GAME_COMPONENTS, gameComponents => this.onGameComponents(gameComponents)); 		
-
 		twoBlocks.on(events.NEXT_TURN, () => this.onNextTurn()); 
 
 		twoBlocks.on(events.NEW_PANORAMA, panoramaDetails => this.onNewPanorama(panoramaDetails)); 
@@ -170,9 +168,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				const { maps: existingMaps } = this.state;
-
-				if (existingMaps) return;
+				if (this.state.maps) return;
 
 				const { locationData, mobile } = this.props;
 
@@ -230,7 +226,7 @@ class TwoBlocks extends React.Component {
 
 	getGameClassList() {
 
-		return [ this.props.TWO_BLOCKS_CLASS, this.getDeviceClass() ].join(' ').trim(); 
+		return [ "two-blocks", this.getDeviceClass() ].join(' ').trim(); 
 
 	}
 
@@ -281,7 +277,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.addMapsEventListeners(maps))
 
-			.then(() => gameInstance.emit(events.GAME_COMPONENTS))
+			.then(() => gameInstance.emit(events.INIT))
 
 			.then(() => {
 
@@ -398,11 +394,8 @@ class TwoBlocks extends React.Component {
 		const { randomLatLng } = store.getState().currentTurn; 
 		
 		maps.onGuessingLocation(randomLatLng); 
-
-		panorama.setOptions({
-			motionTracking: false, 
-			motionTrackingControl: false
-		});		
+		
+		panorama.onGuessingLocation();
 
 		return this.setState({
 			guessingLocation: true, 
@@ -575,11 +568,11 @@ class TwoBlocks extends React.Component {
 		const { gameInstance, locationData, mobile } = this.props;  
 
 		// Race condition circumvention: If the cityMap does not 
-		// yet exist, wait until the 'GAME_COMPONENTS' event fires to execute 
+		// yet exist, wait until the 'INIT' event fires to execute 
 		// the rest of the method body.  
 		if (!(maps)) {
 			
-			gameInstance.once(events.GAME_COMPONENTS, () => this.onGeoJSONReceived(geoJSON)); 
+			gameInstance.once(events.INIT, () => this.onGeoJSONReceived(geoJSON)); 
 
 			return; 
 
@@ -1206,18 +1199,12 @@ class TwoBlocks extends React.Component {
 }
 
 TwoBlocks.propTypes = {
-	TWO_BLOCKS_CLASS 			: React.PropTypes.string.isRequired, 
 	mobile  					: React.PropTypes.bool.isRequired,	
 	service 					: React.PropTypes.object.isRequired, 
 	store 						: React.PropTypes.object.isRequired, 
 	worker 						: React.PropTypes.object, 
 	gameInstance 				: React.PropTypes.object.isRequired, 
 	locationData 				: React.PropTypes.object.isRequired
-}; 
-
-// Assign default props to the constructor 
-TwoBlocks.defaultProps = { 
-	TWO_BLOCKS_CLASS: "two-blocks" 
 }; 
 
 export default TwoBlocks; 

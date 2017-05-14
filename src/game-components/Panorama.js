@@ -120,6 +120,8 @@ const panoramaMethods = {
 
 	},
 
+	onGuessingLocation() {},
+
 	setBorough(borough) {
 
 		if (!(borough)) return;
