@@ -12476,8 +12476,7 @@
 
 					if (!_this7.props.mobile) return;
 
-					maps.setCenter(lat, lng, maps.mapTypes.BOROUGH);
-					maps.setCenter(lat, lng, maps.mapTypes.BLOCK);
+					maps.onAnswerEvaluated(lat, lng);
 
 					return (0, _utils.createPromiseTimeout)(1500); // Communicate result of answer evaluation
 				}).then(function () {
@@ -17170,6 +17169,11 @@
 		getCurrentCoords: function getCurrentCoords() {
 
 			return this._currentCoords;
+		},
+		onAnswerEvaluated: function onAnswerEvaluated(lat, lng) {
+
+			this.setCenter(lat, lng, this.mapTypes.BOROUGH);
+			this.setCenter(lat, lng, this.mapTypes.BLOCK);
 		},
 		onGuessingLocation: function onGuessingLocation() {},
 		onConsideredBorough: function onConsideredBorough() {},

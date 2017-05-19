@@ -311,9 +311,8 @@ class TwoBlocks extends React.Component {
 			.then(() => {
 
 				if (!(this.props.mobile)) return; 
-
-				maps.setCenter(lat, lng, maps.mapTypes.BOROUGH);
-				maps.setCenter(lat, lng, maps.mapTypes.BLOCK);
+				
+				maps.onAnswerEvaluated(lat, lng);
 
 				return createPromiseTimeout(1500);  // Communicate result of answer evaluation 
 

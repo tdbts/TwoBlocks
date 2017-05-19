@@ -102,6 +102,13 @@ const cityMapsMethods = {
 
 	},
 
+	onAnswerEvaluated(lat, lng) {
+
+		this.setCenter(lat, lng, this.mapTypes.BOROUGH);
+		this.setCenter(lat, lng, this.mapTypes.BLOCK);
+
+	},
+
 	onGuessingLocation() {},
 
 	onConsideredBorough() {},
