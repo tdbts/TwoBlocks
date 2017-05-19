@@ -56,9 +56,9 @@
 
 	var _TwoBlocks2 = _interopRequireDefault(_TwoBlocks);
 
-	var _TwoBlocksGame = __webpack_require__(421);
+	var _Gameplay = __webpack_require__(421);
 
-	var _TwoBlocksGame2 = _interopRequireDefault(_TwoBlocksGame);
+	var _Gameplay2 = _interopRequireDefault(_Gameplay);
 
 	var _TwoBlocksService = __webpack_require__(423);
 
@@ -115,9 +115,9 @@
 
 	/*----------  Create TwoBlocks Game Instance  ----------*/
 
-	var gameInstance = new _TwoBlocksGame2.default(store, worker, service);
+	var gameplay = new _Gameplay2.default(store, worker, service);
 
-	window.console.log("gameInstance:", gameInstance);
+	window.console.log("gameplay:", gameplay);
 
 	/*----------  Start Loading the GeoGson Immediately  ----------*/
 
@@ -145,7 +145,7 @@
 		// thread, and the game instance requests data as needed.  Without
 		// a worker, however, this is not the case.  Here, once the GeoJSON has been
 		// loaded, inform the game instance and pass the JSON to it for reference.
-		gameInstance.emit(_constants.events.GEO_JSON_LOADED, payload);
+		gameplay.emit(_constants.events.GEO_JSON_LOADED, payload);
 	}).catch(function (e) {
 		return window.console.error(e);
 	});
@@ -167,7 +167,7 @@
 		return (0, _reactDom.render)(
 		// <Provider store={store}>
 		_react2.default.createElement(_TwoBlocks2.default, {
-			gameInstance: gameInstance,
+			gameplay: gameplay,
 			locationData: _constants.nycCoordinates,
 			mobile: mobile,
 			service: service,

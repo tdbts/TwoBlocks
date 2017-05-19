@@ -3,7 +3,7 @@
 import 'babel-polyfill'; 
 import React from 'react'; 
 import TwoBlocks from '../src/components/TwoBlocks';
-import TwoBlocksGame from '../src/TwoBlocksGame';
+import Gameplay from '../src/game-components/Gameplay';
 import TwoBlocksService from '../src/services/TwoBlocksService';   
 import TwoBlocksWorker from '../src/workers/twoBlocks.worker.js';
 import twoBlocks from '../src/reducers/twoBlocks';
@@ -41,9 +41,9 @@ window.console.log("service:", service);
 
 /*----------  Create TwoBlocks Game Instance  ----------*/
 
-const gameInstance = new TwoBlocksGame(store, worker, service); 
+const gameplay = new Gameplay(store, worker, service); 
 
-window.console.log("gameInstance:", gameInstance); 
+window.console.log("gameplay:", gameplay); 
 
 /*----------  Start Loading the GeoGson Immediately  ----------*/
 
@@ -68,7 +68,7 @@ service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start l
 		// thread, and the game instance requests data as needed.  Without 
 		// a worker, however, this is not the case.  Here, once the GeoJSON has been 
 		// loaded, inform the game instance and pass the JSON to it for reference.
-		gameInstance.emit(events.GEO_JSON_LOADED, payload); 
+		gameplay.emit(events.GEO_JSON_LOADED, payload); 
 
 	})
 
@@ -93,7 +93,7 @@ service.loadGoogleMaps(process.env.MAPS_API_KEY)
 	.then(() => render(
 		// <Provider store={store}>
 			<TwoBlocks 
-				gameInstance={ gameInstance }
+				gameplay={ gameplay }
 				locationData={ nycCoordinates }
 				mobile={ mobile }
 				service={ service }
