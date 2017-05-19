@@ -1,68 +1,62 @@
 /* global window */
-   
-// import actions from './actions/actions'; 
+ 
 import { EventEmitter } from 'events'; 
-import { inherits } from 'util';
 import { createPromiseTimeout } from './utils/utils'; 
 import { events, gameStages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from './constants/constants';   
 import TwoBlocksGameDispatcher from './game-components/TwoBlocksGameDispatcher'; 
 
-const TwoBlocksGame = function TwoBlocksGame(store, worker, service) {
+export default class TwoBlocksGame extends EventEmitter {
 
-	this.events = events; 
-	this.store = store;   
-	this.worker = worker; 
-	this.service = service; 
-	this.locationData = {};
+	constructor(store, worker, service) {
 
-	this.MAXIMUM_ROUNDS = DEFAULT_MAXIMUM_ROUNDS; 
+		super();
 
-	this.gameDispatcher = new TwoBlocksGameDispatcher(this.store);
+		this.setMaxListeners(MAXIMUM_EVENT_EMITTER_LISTENERS);
 
-	this._geoJSONLoaded = new Promise(resolve => this.once(events.GEO_JSON_LOADED, resolve)); 
+		this.events = events; 
+		this.store = store;   
+		this.worker = worker; 
+		this.service = service; 
+		this.locationData = {};
 
-	this.subscribeToStateChanges(); 
+		this.MAXIMUM_ROUNDS = DEFAULT_MAXIMUM_ROUNDS; 
 
-	/*=================================
-	=            DEBUGGING            =
-	=================================*/
+		this.gameDispatcher = new TwoBlocksGameDispatcher(this.store);
 
-	const logEvent = function logEvent(event) {
-	
-		return payload => {
+		this._geoJSONLoaded = new Promise(resolve => this.once(events.GEO_JSON_LOADED, resolve)); 
 
-			window.console.log("event:", event); 
+		this.subscribeToStateChanges(); 
 
-			if (payload) {
+		/*=================================
+		=            DEBUGGING            =
+		=================================*/
 
-				window.console.log("payload:", payload); 
-			
-			}
+		const logEvent = function logEvent(event) {
+		
+			return payload => {
 
+				window.console.log("event:", event); 
+
+				if (payload) {
+
+					window.console.log("payload:", payload); 
+				
+				}
+
+			}; 
+		
 		}; 
-	
-	}; 
-	
-	
-	for (const event in this.events) {
+		
+		
+		for (const event in this.events) {
 
-		this.on(event, logEvent(event)); 
+			this.on(event, logEvent(event)); 
+
+		}
+		
+		/*=====  End of DEBUGGING  ======*/
 
 	}
-	
-	/*=====  End of DEBUGGING  ======*/
-
-}; 
-	
-/*----------  Inherit from EventEmitter  ----------*/
-
-EventEmitter.prototype._maxListeners = MAXIMUM_EVENT_EMITTER_LISTENERS; 
-
-inherits(TwoBlocksGame, EventEmitter); 
-
-/*----------  Define TwoBlocksGame Prototype  ----------*/
-
-TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	addEventListeners() {
 
@@ -82,7 +76,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.on(this.events.RESTART_GAME, () => this.restart()); 
 
-	},
+	}
 
 	addTurnToGameHistory() {
 
@@ -90,13 +84,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.gameDispatcher.saveTurn(currentTurn); 
 
-	}, 
+	} 
 
 	answerIsCorrect(correctBorough, selectedBorough) {
 
 		return correctBorough === selectedBorough; 
 
-	}, 
+	} 
 
 	endGame() {
 
@@ -106,7 +100,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.emit(this.events.GAME_OVER); 
 
-	}, 
+	} 
 
 	evaluateAnswer() {
 
@@ -137,25 +131,25 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return this.readyForNextStage(); 
 
-	}, 
+	} 
 
 	gameOver() {
 
 		return this.store.getState().gameOver; 
 	
-	},
+	}
 
 	geoJSONLoaded() {
 
 		return this._geoJSONLoaded; 
 
-	}, 
+	} 
 
 	getMaximumRounds() {
 
 		return this.MAXIMUM_ROUNDS;
 
-	},
+	}
 
 	getNextGameStage() {
 
@@ -200,7 +194,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return nextStage; 
 
-	}, 
+	} 
 
 	getRandomPanoramaLocation(featureCollection, attemptsLeft = MAXIMUM_RANDOM_PANORAMA_ATTEMPTS) {
 		
@@ -232,7 +226,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			}); 
 
-	}, 
+	} 
 
 	guessLocation() {
 
@@ -242,7 +236,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return this.readyForGameplay(); 
 
-	}, 
+	} 
 
 	loadFirstGame() {
 
@@ -252,7 +246,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			.then(() => this.startGamePlay()); 		
 
-	}, 
+	} 
 
 	loadGame() {
 
@@ -274,7 +268,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return loadProcess; 
 
-	}, 
+	} 
 
 	loadNewGame() {
 
@@ -282,7 +276,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return this.startGamePlay(); 
 
-	}, 
+	} 
 
 	loadPanorama() {
 
@@ -304,7 +298,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			.then(() => this.readyForNextStage()); 
 
-	}, 
+	} 
 
 	maximumRoundsPlayed() {
 
@@ -312,7 +306,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return totalRounds === this.getMaximumRounds(); 
 
-	}, 
+	} 
 
 	nextGameStage() {
 
@@ -326,7 +320,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.emit(this.events.GAME_STAGE, { stage, previousStage }); 
 
-	}, 
+	} 
 
 	nextTurn() {
 
@@ -340,7 +334,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			.then(() => this.evaluateAnswer()); 
 
-	}, 
+	} 
 
 	onAnswerEvaluated() {
 
@@ -350,23 +344,23 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 			.then(() => this.emit(this.events.TURN_COMPLETE));
 
-	}, 
+	} 
 
 	onDispatchedAction() {
 
 		
-	}, 
+	} 
 
 	onGameOver() {
 
 		this.nextGameStage(); 
 	
-	}, 
+	} 
 
 	onGameStage() {
 
 
-	}, 
+	} 
 
 	onGeoJSONLoaded(geoJSON) {
 
@@ -376,13 +370,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-	}, 
+	} 
 
 	onGuessingLocation() {
 
 		this.gameDispatcher.canEvaluateAnswer(); 
 
-	}, 
+	} 
 
 	onRandomPanoramaLocation(locationData) {
 		
@@ -395,7 +389,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return locationData; 
 	
-	}, 
+	} 
 
 	onTurnComplete() {
 		
@@ -412,19 +406,19 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		}
 
-	}, 
+	} 
 
 	onViewComplete() {
 
 
 
-	}, 
+	} 
 
 	readyForGameplay() {
 
 		return this.readyForNextStage(); 
 
-	}, 
+	} 
 
 	readyForNextStage() {
 
@@ -432,13 +426,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return Promise.all(stageRequirements); 
 
-	}, 
+	} 
 
 	restart() {
 
 		return this.start(); 
 
-	}, 
+	} 
 
 	setStageRequirements(stage) {
 
@@ -477,7 +471,7 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.gameDispatcher.addStageRequirements(requirements); 
 
-	}, 
+	} 
 
 	showPanorama() {
 
@@ -487,13 +481,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		return this.readyForNextStage(); 
 
-	}, 
+	} 
 
 	start() {
 
 		return this.loadGame(); 
 
-	}, 
+	} 
 
 	startGamePlay() {
 
@@ -501,13 +495,13 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 		this.nextTurn(); 
 
-	}, 
+	} 
 
 	subscribeToStateChanges() {
 
 		this.store.subscribe(() => this.onDispatchedAction()); 
 
-	}, 
+	} 
 
 	totalCorrectAnswers() {
 
@@ -517,6 +511,4 @@ TwoBlocksGame.prototype = Object.assign(TwoBlocksGame.prototype, {
 
 	}
 
-}); 
-
-export default TwoBlocksGame; 
+}
