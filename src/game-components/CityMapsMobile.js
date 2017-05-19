@@ -52,6 +52,12 @@ const cityMapsMobileMethods = {
 		});
 
 	}, 
+
+	_getCenteringMethod() {
+
+		return 'setView';
+
+	},
 	
 	/*----------  Public API  ----------*/
 	
@@ -101,14 +107,6 @@ const cityMapsMobileMethods = {
 		const latLng = this.createLatLng(lat, lng);
 
 		this._forEachMap(map => map.panTo(latLng));
-
-	},	
-
-	setCenter(lat, lng) {
-
-		const latLng = this.createLatLng(lat, lng);
-
-		this._forEachMap(map => map.setView(latLng));
 
 	}
 

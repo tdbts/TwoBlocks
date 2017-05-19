@@ -54,7 +54,7 @@ const cityMapsMethods = {
 
 		for (const type in this._maps) {
 
-			action(this._maps[type]);
+			action(this._maps[type], type);
 
 		}
 
@@ -116,7 +116,25 @@ const cityMapsMethods = {
 
 	panTo() {},
 
-	setCenter() {},
+	setCenter(lat, lng, type) {
+
+		const latLng = this.createLatLng(lat, lng);
+
+		if (type) {
+
+			const map = this._maps[type]; 
+
+			if (!(map)) return;
+
+			map[this._getCenteringMethod()](latLng);
+
+		} else {
+
+			this._forEachMap(map => map[this._getCenteringMethod()](latLng));
+		
+		}
+
+	},
 
 	setCurrentCoords(lat, lng) {
 

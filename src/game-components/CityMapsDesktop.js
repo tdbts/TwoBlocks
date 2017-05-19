@@ -59,6 +59,12 @@ const cityMapsDesktopMethods = {
 
 	}, 
 
+	_getCenteringMethod() {
+
+		return 'setCenter';
+
+	},
+
 	_getOptions(type) {
 
 		return Object.assign({}, this.options, {
@@ -170,14 +176,6 @@ const cityMapsDesktopMethods = {
 		// this._forEachMap(map => map.panTo(latLng));
 		this.getBoroughLevelMap().panTo(latLng);
 		this.getBlockLevelMap().panTo(latLng);
-
-	},
-
-	setCenter(lat, lng) {
-
-		const latLng = this.createLatLng(lat, lng);
-
-		this._forEachMap(map => map.setCenter(latLng));
 
 	},
 

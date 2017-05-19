@@ -12476,6 +12476,9 @@
 
 					if (!_this7.props.mobile) return;
 
+					maps.setCenter(lat, lng, maps.mapTypes.BOROUGH);
+					maps.setCenter(lat, lng, maps.mapTypes.BLOCK);
+
 					return (0, _utils.createPromiseTimeout)(1500); // Communicate result of answer evaluation
 				}).then(function () {
 					return _this7.setState({
@@ -16953,6 +16956,10 @@
 
 			return new google.maps.Map(element, this._getOptions(type));
 		},
+		_getCenteringMethod: function _getCenteringMethod() {
+
+			return 'setCenter';
+		},
 		_getOptions: function _getOptions(type) {
 
 			return _extends({}, this.options, {
@@ -17046,14 +17053,6 @@
 			this.getBoroughLevelMap().panTo(latLng);
 			this.getBlockLevelMap().panTo(latLng);
 		},
-		setCenter: function setCenter(lat, lng) {
-
-			var latLng = this.createLatLng(lat, lng);
-
-			this._forEachMap(function (map) {
-				return map.setCenter(latLng);
-			});
-		},
 		unselectBorough: function unselectBorough(borough) {
 
 			if (!borough) return; // Don't want to revert style for entire map
@@ -17138,7 +17137,7 @@
 
 			for (var type in this._maps) {
 
-				action(this._maps[type]);
+				action(this._maps[type], type);
 			}
 		},
 		_getMap: function _getMap(type) {
@@ -17179,7 +17178,25 @@
 		onShowingPanorama: function onShowingPanorama() {},
 		onTurnComplete: function onTurnComplete() {},
 		panTo: function panTo() {},
-		setCenter: function setCenter() {},
+		setCenter: function setCenter(lat, lng, type) {
+			var _this = this;
+
+			var latLng = this.createLatLng(lat, lng);
+
+			if (type) {
+
+				var map = this._maps[type];
+
+				if (!map) return;
+
+				map[this._getCenteringMethod()](latLng);
+			} else {
+
+				this._forEachMap(function (map) {
+					return map[_this._getCenteringMethod()](latLng);
+				});
+			}
+		},
 		setCurrentCoords: function setCurrentCoords(lat, lng) {
 
 			this._currentCoords = { lat: lat, lng: lng };
@@ -17565,6 +17582,10 @@
 
 			});
 		},
+		_getCenteringMethod: function _getCenteringMethod() {
+
+			return 'setView';
+		},
 
 
 		/*----------  Public API  ----------*/
@@ -17606,14 +17627,6 @@
 
 			this._forEachMap(function (map) {
 				return map.panTo(latLng);
-			});
-		},
-		setCenter: function setCenter(lat, lng) {
-
-			var latLng = this.createLatLng(lat, lng);
-
-			this._forEachMap(function (map) {
-				return map.setView(latLng);
 			});
 		}
 	};
