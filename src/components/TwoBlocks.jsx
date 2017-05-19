@@ -1166,7 +1166,6 @@ class TwoBlocks extends React.Component {
 					boroughLevelMap={ state.maps && state.maps.getBoroughLevelMap() }
 					cityLevelMap={ state.maps && state.maps.getCityLevelMap() }
 					countdownTimeLeft={ state.countdownTimeLeft }
-					interchangeHidden={ state.interchangeHidden }
 					maps={ state.maps }
 					mapType={ state.mapType }
 					mobile={ props.mobile }

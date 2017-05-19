@@ -12230,15 +12230,15 @@
 
 				var onKeydown = (0, _utils.debounce)(this.onKeydown.bind(this), _constants.KEY_PRESS_DEBOUNCE_TIMEOUT);
 
+				window.addEventListener('resize', onWindowResize);
+
+				window.addEventListener('keydown', onKeydown);
+
 				/*----------  Handle touchmove events  ----------*/
 
 				var onTouchMove = function onTouchMove(e) {
 					return e.preventDefault();
 				};
-
-				window.addEventListener('resize', onWindowResize);
-
-				window.addEventListener('keydown', onKeydown);
 
 				if (this.props.mobile) {
 
@@ -13362,7 +13362,6 @@
 						boroughLevelMap: state.maps && state.maps.getBoroughLevelMap(),
 						cityLevelMap: state.maps && state.maps.getCityLevelMap(),
 						countdownTimeLeft: state.countdownTimeLeft,
-						interchangeHidden: state.interchangeHidden,
 						maps: state.maps,
 						mapType: state.mapType,
 						mobile: props.mobile,
@@ -13465,7 +13464,6 @@
 				var boroughLevelMap = _props.boroughLevelMap;
 				var cityLevelMap = _props.cityLevelMap;
 				var countdownTimeLeft = _props.countdownTimeLeft;
-				var interchangeHidden = _props.interchangeHidden;
 				var onMapMounted = _props.onMapMounted;
 				var mapType = _props.mapType;
 				var mobile = _props.mobile;
@@ -13492,7 +13490,6 @@
 						visible: 'panorama' === view
 					}),
 					_react2.default.createElement(_TwoBlocksCountdown2.default, {
-						interchangeHidden: interchangeHidden,
 						mobile: mobile,
 						timeLeft: countdownTimeLeft
 					})
@@ -13854,7 +13851,6 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var TwoBlocksCountdown = function TwoBlocksCountdown(props) {
-		var interchangeHidden = props.interchangeHidden;
 		var mobile = props.mobile;
 		var timeLeft = props.timeLeft;
 
@@ -13874,7 +13870,7 @@
 			timeClass = "red";
 		}
 
-		var visibilityClass = mobile && interchangeHidden && 'number' === typeof timeLeft && timeLeft > -1 ? '' : 'hidden';
+		var visibilityClass = mobile && 'number' === typeof timeLeft && timeLeft > 0 ? '' : 'hidden';
 
 		var className = ["two-blocks-countdown", visibilityClass].join(' ').trim();
 

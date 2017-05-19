@@ -20,7 +20,7 @@ class TwoBlocksView extends React.Component {
 
 	render() {
 
-		const { blockLevelMap, boroughLevelMap, cityLevelMap, countdownTimeLeft, interchangeHidden, onMapMounted, mapType, mobile, onPanoramaMounted, panorama, view } = this.props;		
+		const { blockLevelMap, boroughLevelMap, cityLevelMap, countdownTimeLeft, onMapMounted, mapType, mobile, onPanoramaMounted, panorama, view } = this.props;		
 
 		return (
 
@@ -40,7 +40,6 @@ class TwoBlocksView extends React.Component {
 				visible={ 'panorama' === view } 
 				/>
 				<TwoBlocksCountdown 
-					interchangeHidden={ interchangeHidden }
 					mobile={ mobile }
 					timeLeft={ countdownTimeLeft }
 				/>

@@ -2,7 +2,7 @@ import React from 'react';
 
 const TwoBlocksCountdown = function TwoBlocksCountdown(props) {
 
-	const { interchangeHidden, mobile, timeLeft } = props; 
+	const { mobile, timeLeft } = props; 
 
 	const text = "Time left:"; 
 
@@ -22,7 +22,7 @@ const TwoBlocksCountdown = function TwoBlocksCountdown(props) {
 	
 	}
 
-	const visibilityClass = mobile && interchangeHidden && ('number' === typeof timeLeft) && (timeLeft > -1) ?  '' : 'hidden'; 
+	const visibilityClass = mobile && ('number' === typeof timeLeft) && (timeLeft > 0) ?  '' : 'hidden'; 
 
 	const className = [ "two-blocks-countdown", visibilityClass ].join(' ').trim(); 
 
