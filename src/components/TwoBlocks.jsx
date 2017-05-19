@@ -103,13 +103,13 @@ class TwoBlocks extends React.Component {
 		
 		const onKeydown = debounce(this.onKeydown.bind(this), KEY_PRESS_DEBOUNCE_TIMEOUT); 
 
-		/*----------  Handle touchmove events  ----------*/
-		
-		const onTouchMove = e => e.preventDefault(); 
-
 		window.addEventListener('resize', onWindowResize); 
 
 		window.addEventListener('keydown', onKeydown);
+		
+		/*----------  Handle touchmove events  ----------*/
+		
+		const onTouchMove = e => e.preventDefault(); 
 
 		if (this.props.mobile) {
 
