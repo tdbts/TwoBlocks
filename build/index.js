@@ -8,14 +8,11 @@ import TwoBlocksService from '../src/services/TwoBlocksService';
 import TwoBlocksWorker from '../src/workers/twoBlocks.worker.js';
 import twoBlocks from '../src/reducers/twoBlocks';
 import twoBlocksUtils from '../src/game-utils/twoBlocksUtils';
-
 import { createStore } from 'redux';
 import { render } from 'react-dom';
 import { events, nycCoordinates } from '../src/constants/constants';  
 import { composeWithDevTools } from 'redux-devtools-extension';
 // import { Provider } from 'react-redux'; 
-
-twoBlocksUtils.loadCSS();
 
 /*----------  Create Redux Store  ----------*/
 
@@ -56,7 +53,6 @@ if (worker) {
 	worker.addEventListener('error', e => window.console.log("Worker error:", e)); 
 
 }
-
 
 service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start loading it as soon as possible 
 

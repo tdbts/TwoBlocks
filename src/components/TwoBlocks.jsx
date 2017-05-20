@@ -8,7 +8,8 @@ import CityMapsDesktop from '../game-components/CityMapsDesktop';
 import CityMapsMobile from '../game-components/CityMapsMobile';
 import ShowLocationMarker from '../game-components/ShowLocationMarker';
 import PanoramaMobile from '../game-components/PanoramaMobile';
-import PanoramaDesktop from '../game-components/PanoramaDesktop'; 
+import PanoramaDesktop from '../game-components/PanoramaDesktop';
+import twoBlocksUtils from '../game-utils/twoBlocksUtils';
 import { boroughNames, events, gameStages, heardKeys, keyEventMaps, transitionTypes, views, workerMessages, ANSWER_EVALUATION_DELAY, KEY_PRESS_DEBOUNCE_TIMEOUT, WINDOW_RESIZE_DEBOUNCE_TIMEOUT } from '../constants/constants'; 
 import { createPromiseTimeout, debounce, isOneOf, isType } from '../utils/utils';  
 import actions from '../actions/actions'; 
@@ -20,6 +21,13 @@ class TwoBlocks extends React.Component {
 	constructor(props) {
 
 		super(props); 
+
+		this.gameplay = null;
+		this.locationData = null;
+		this.mobile = null;  // Should live in state 
+		this.service = null;
+		this.store = null;
+		this.worker = null;
 
 		// Define initial state 
 		this.state = { 
@@ -63,6 +71,8 @@ class TwoBlocks extends React.Component {
 	/*----------  React Component Lifecycle Methods  ----------*/
 	
 	componentWillMount() {
+
+		twoBlocksUtils.loadCSS();
 
 		const prompt = promptManager.pregame(); 
 
