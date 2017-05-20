@@ -9,7 +9,6 @@ import loading from './loading';
 import stageRequirements from './stageRequirements';  
 import totalRounds from './totalRounds';  
 import view from './view'; 
-import viewReady from './viewReady'; 
 
 const twoBlocks = combineReducers({
 	canEvaluateAnswer, 
@@ -21,8 +20,7 @@ const twoBlocks = combineReducers({
 	loading, 
 	stageRequirements, 
 	totalRounds,  
-	view, 
-	viewReady
+	view
 }); 
 
 export default twoBlocks; 
