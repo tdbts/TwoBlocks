@@ -590,10 +590,6 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	onGameComponents(/* gameComponents */) {
-
-	}
-
 	onGameOver() {
 
 		window.console.log("GAME OVER."); 
