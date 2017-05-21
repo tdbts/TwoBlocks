@@ -12194,8 +12194,8 @@
 			key: 'componentDidMount',
 			value: function componentDidMount() {
 
-				this.addDOMEventListeners();
-				this.requestGeoJSON();
+				this._addDOMEventListeners();
+				this._requestGeoJSON();
 			}
 		}, {
 			key: 'componentDidUpdate',
@@ -12207,23 +12207,23 @@
 
 				if (selectedBorough && !prevState.selectedBorough) {
 
-					this.onDifferentSelectedBorough();
+					this._onDifferentSelectedBorough();
 				}
 			}
 
 			/*----------  Custom Component Methods  ----------*/
 
 		}, {
-			key: 'addDOMEventListeners',
-			value: function addDOMEventListeners() {
+			key: '_addDOMEventListeners',
+			value: function _addDOMEventListeners() {
 
 				/*----------  Resize map on window 'resize' events  ----------*/
 
-				var onWindowResize = (0, _utils.debounce)(this.onWindowResize.bind(this), _constants.WINDOW_RESIZE_DEBOUNCE_TIMEOUT);
+				var onWindowResize = (0, _utils.debounce)(this._onWindowResize.bind(this), _constants.WINDOW_RESIZE_DEBOUNCE_TIMEOUT);
 
 				/*----------  Handle key presses  ----------*/
 
-				var onKeydown = (0, _utils.debounce)(this.onKeydown.bind(this), _constants.KEY_PRESS_DEBOUNCE_TIMEOUT);
+				var onKeydown = (0, _utils.debounce)(this._onKeydown.bind(this), _constants.KEY_PRESS_DEBOUNCE_TIMEOUT);
 
 				window.addEventListener('resize', onWindowResize);
 
@@ -12242,76 +12242,76 @@
 				}
 			}
 		}, {
-			key: 'addGameEventListeners',
-			value: function addGameEventListeners(twoBlocks) {
+			key: '_addGameEventListeners',
+			value: function _addGameEventListeners(twoBlocks) {
 				var _this3 = this;
 
 				twoBlocks.on(_constants.events.GAME_STAGE, function (stages) {
-					return _this3.onGameStage(stages);
+					return _this3._onGameStage(stages);
 				});
 
 				twoBlocks.on(_constants.events.NEXT_TURN, function () {
-					return _this3.onNextTurn();
+					return _this3._onNextTurn();
 				});
 
 				twoBlocks.on(_constants.events.NEW_PANORAMA, function (panoramaDetails) {
-					return _this3.onNewPanorama(panoramaDetails);
+					return _this3._onNewPanorama(panoramaDetails);
 				});
 
 				twoBlocks.on(_constants.events.SHOWING_PANORAMA, function () {
-					return _this3.onShowingPanorama();
+					return _this3._onShowingPanorama();
 				});
 
 				twoBlocks.on(_constants.events.GUESSING_LOCATION, function () {
-					return _this3.onGuessingLocation();
+					return _this3._onGuessingLocation();
 				});
 
 				twoBlocks.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
-					return _this3.onAnswerEvaluated(answerDetails);
+					return _this3._onAnswerEvaluated(answerDetails);
 				});
 
 				twoBlocks.on(_constants.events.CORRECT_BOROUGH, function (boroughName) {
-					return _this3.onCorrectBorough(boroughName);
+					return _this3._onCorrectBorough(boroughName);
 				});
 
 				twoBlocks.on(_constants.events.INCORRECT_BOROUGH, function (selectionDetails) {
-					return _this3.onIncorrectBorough(selectionDetails);
+					return _this3._onIncorrectBorough(selectionDetails);
 				});
 
 				twoBlocks.on(_constants.events.TURN_COMPLETE, function () {
-					return _this3.onTurnComplete();
+					return _this3._onTurnComplete();
 				});
 
 				twoBlocks.on(_constants.events.GAME_OVER, function () {
-					return _this3.onGameOver();
+					return _this3._onGameOver();
 				});
 
 				twoBlocks.on(_constants.events.RESTART_GAME, function () {
-					return _this3.restart();
+					return _this3._restart();
 				});
 			}
 		}, {
-			key: 'addMapsEventListeners',
-			value: function addMapsEventListeners(maps) {
+			key: '_addMapsEventListeners',
+			value: function _addMapsEventListeners(maps) {
 				var _this4 = this;
 
 				if (!maps || this.mobile) return; // Event listeners below only apply to desktop game instances 
 
 				maps.on('mouseover', function (event) {
-					return _this4.onMapMouseover(event);
+					return _this4._onMapMouseover(event);
 				});
 
 				maps.on('mouseout', function (event) {
-					return _this4.onMapMouseout(event);
+					return _this4._onMapMouseout(event);
 				});
 
 				maps.on('click', function (event) {
-					return _this4.onMapClick(event);
+					return _this4._onMapClick(event);
 				});
 			}
 		}, {
-			key: 'createMaps',
-			value: function createMaps(elements) {
+			key: '_createMaps',
+			value: function _createMaps(elements) {
 				var _this5 = this;
 
 				return this.service.librariesAreLoaded().then(function () {
@@ -12335,8 +12335,8 @@
 				});
 			}
 		}, {
-			key: 'getBoroughName',
-			value: function getBoroughName(borough) {
+			key: '_getBoroughName',
+			value: function _getBoroughName(borough) {
 
 				var result = null;
 
@@ -12351,14 +12351,14 @@
 				return result;
 			}
 		}, {
-			key: 'getDeviceClass',
-			value: function getDeviceClass() {
+			key: '_getDeviceClass',
+			value: function _getDeviceClass() {
 
 				return this.mobile ? ['mobile'].join(' ').trim() : '';
 			}
 		}, {
-			key: 'getFeatureByBoroughName',
-			value: function getFeatureByBoroughName(boroughName) {
+			key: '_getFeatureByBoroughName',
+			value: function _getFeatureByBoroughName(boroughName) {
 				var _this6 = this;
 
 				if (!boroughName || !(0, _utils.isType)('string', boroughName)) return;
@@ -12367,26 +12367,26 @@
 
 
 				var feature = featureCollection.filter(function (feature) {
-					return boroughName === _this6.getBoroughName(feature);
+					return boroughName === _this6._getBoroughName(feature);
 				})[0];
 
 				return feature;
 			}
 		}, {
-			key: 'getGameClassList',
-			value: function getGameClassList() {
+			key: '_getGameClassList',
+			value: function _getGameClassList() {
 
-				return ["two-blocks", this.getDeviceClass()].join(' ').trim();
+				return ["two-blocks", this._getDeviceClass()].join(' ').trim();
 			}
 		}, {
-			key: 'getTurnCompletionPrompt',
-			value: function getTurnCompletionPrompt() {
+			key: '_getTurnCompletionPrompt',
+			value: function _getTurnCompletionPrompt() {
 
 				return this.gameplay.maximumRoundsPlayed() ? this.state.prompt : promptManager.loadingPanorama();
 			}
 		}, {
-			key: 'initializeTwoBlocks',
-			value: function initializeTwoBlocks() {
+			key: '_initializeTwoBlocks',
+			value: function _initializeTwoBlocks() {
 				var _this7 = this;
 
 				if (this.state.initialized) return; // Game already initialized
@@ -12395,11 +12395,11 @@
 
 				// DOM elements must exist before the game instance can be initialized
 
-				if (!this.requiredGameComponentsExist()) return;
+				if (!this._requiredGameComponentsExist()) return;
 
 				/*----------  Start Game Instance  ----------*/
 
-				this.addGameEventListeners(this.gameplay);
+				this._addGameEventListeners(this.gameplay);
 
 				this.gameplay.start();
 
@@ -12419,7 +12419,7 @@
 				};
 
 				return this.setState(nextState).then(function () {
-					return _this7.addMapsEventListeners(maps);
+					return _this7._addMapsEventListeners(maps);
 				}).then(function () {
 					return _this7.gameplay.emit(_constants.events.INIT);
 				}).then(function () {
@@ -12431,8 +12431,8 @@
 				});
 			}
 		}, {
-			key: 'onAnswerEvaluated',
-			value: function onAnswerEvaluated(answerDetails) {
+			key: '_onAnswerEvaluated',
+			value: function _onAnswerEvaluated(answerDetails) {
 				var _this8 = this;
 
 				var _answerDetails$random = answerDetails.randomLatLng;
@@ -12486,12 +12486,12 @@
 				});
 			}
 		}, {
-			key: 'onButtonClick',
-			value: function onButtonClick(type) {
+			key: '_onButtonClick',
+			value: function _onButtonClick(type) {
 
 				if ('BOROUGH_SUBMISSION' === type) {
 
-					this.submitFinalAnswer();
+					this._submitFinalAnswer();
 				} else if ('GO_BACK' === type) {
 
 					this.store.dispatch({
@@ -12507,12 +12507,12 @@
 					this.gameplay.emit(_constants.events.RESTART_GAME);
 				} else if ((0, _utils.isOneOf)(_constants.boroughNames, type)) {
 
-					this.onMobileBoroughSelection(type);
+					this._onMobileBoroughSelection(type);
 				}
 			}
 		}, {
-			key: 'onGuessingLocation',
-			value: function onGuessingLocation() {
+			key: '_onGuessingLocation',
+			value: function _onGuessingLocation() {
 				var _this9 = this;
 
 				var _state2 = this.state;
@@ -12542,8 +12542,8 @@
 				});
 			}
 		}, {
-			key: 'onMapClick',
-			value: function onMapClick(event) {
+			key: '_onMapClick',
+			value: function _onMapClick(event) {
 				var maps = this.state.maps;
 
 
@@ -12551,11 +12551,11 @@
 
 				if (this.gameplay.gameOver()) return;
 
-				this.onSelectedBorough(event.feature);
+				this._onSelectedBorough(event.feature);
 			}
 		}, {
-			key: 'onMapMouseout',
-			value: function onMapMouseout(event) {
+			key: '_onMapMouseout',
+			value: function _onMapMouseout(event) {
 				var _state3 = this.state;
 				var guessingLocation = _state3.guessingLocation;
 				var gameOver = _state3.gameOver;
@@ -12564,9 +12564,9 @@
 
 				if (maps.mapTypes.CITY !== event.mapType) return;
 
-				this.updateHoveredBorough('');
+				this._updateHoveredBorough('');
 
-				this.styleNonHoveredBorough(event.feature);
+				this._styleNonHoveredBorough(event.feature);
 
 				if (!gameOver && guessingLocation) {
 
@@ -12578,18 +12578,18 @@
 				}
 			}
 		}, {
-			key: 'onMapMouseover',
-			value: function onMapMouseover(event) {
+			key: '_onMapMouseover',
+			value: function _onMapMouseover(event) {
 				var maps = this.state.maps;
 
 
 				if (maps.mapTypes.CITY !== event.mapType) return;
 
-				this.onConsideredBorough(event.feature);
+				this._onConsideredBorough(event.feature);
 			}
 		}, {
-			key: 'onConsideredBorough',
-			value: function onConsideredBorough(feature) {
+			key: '_onConsideredBorough',
+			value: function _onConsideredBorough(feature) {
 				var _state4 = this.state;
 				var guessingLocation = _state4.guessingLocation;
 				var gameOver = _state4.gameOver;
@@ -12597,17 +12597,17 @@
 
 				// Unhover the currently-hovered borough
 
-				var featureToUnhover = this.getFeatureByBoroughName(hoveredBorough);
+				var featureToUnhover = this._getFeatureByBoroughName(hoveredBorough);
 
-				this.styleNonHoveredBorough(featureToUnhover);
+				this._styleNonHoveredBorough(featureToUnhover);
 
-				this.updateHoveredBorough(feature);
+				this._updateHoveredBorough(feature);
 
-				this.styleHoveredBorough(feature);
+				this._styleHoveredBorough(feature);
 
 				if (!gameOver && guessingLocation) {
 
-					var consideredBorough = this.getBoroughName(feature);
+					var consideredBorough = this._getBoroughName(feature);
 
 					this.setState({
 
@@ -12617,16 +12617,16 @@
 				}
 			}
 		}, {
-			key: 'onCorrectBorough',
-			value: function onCorrectBorough(boroughName) {
+			key: '_onCorrectBorough',
+			value: function _onCorrectBorough(boroughName) {
 
 				this.setState({
 					prompt: promptManager.correctBorough(boroughName)
 				});
 			}
 		}, {
-			key: 'onDifferentSelectedBorough',
-			value: function onDifferentSelectedBorough() {
+			key: '_onDifferentSelectedBorough',
+			value: function _onDifferentSelectedBorough() {
 				var _this10 = this;
 
 				return Promise.resolve().then(function () {
@@ -12644,11 +12644,8 @@
 				});
 			}
 		}, {
-			key: 'onGameComponents',
-			value: function onGameComponents() /* gameComponents */{}
-		}, {
-			key: 'onGameOver',
-			value: function onGameOver() {
+			key: '_onGameOver',
+			value: function _onGameOver() {
 				var _this11 = this;
 
 				window.console.log("GAME OVER.");
@@ -12666,8 +12663,8 @@
 				});
 			}
 		}, {
-			key: 'onGameStage',
-			value: function onGameStage(stages) {
+			key: '_onGameStage',
+			value: function _onGameStage(stages) {
 				var stage = stages.stage;
 
 
@@ -12682,8 +12679,8 @@
 				}
 			}
 		}, {
-			key: 'onGeoJSONReceived',
-			value: function onGeoJSONReceived(geoJSON) {
+			key: '_onGeoJSONReceived',
+			value: function _onGeoJSONReceived(geoJSON) {
 				var _this12 = this;
 
 				var maps = this.state.maps;
@@ -12695,7 +12692,7 @@
 				if (!maps) {
 
 					this.gameplay.once(_constants.events.INIT, function () {
-						return _this12.onGeoJSONReceived(geoJSON);
+						return _this12._onGeoJSONReceived(geoJSON);
 					});
 
 					return;
@@ -12713,8 +12710,8 @@
 				this.gameplay.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.PREGAME);
 			}
 		}, {
-			key: 'onIncorrectBorough',
-			value: function onIncorrectBorough(selectionDetails) {
+			key: '_onIncorrectBorough',
+			value: function _onIncorrectBorough(selectionDetails) {
 				var correctBorough = selectionDetails.correctBorough;
 				var selectedBorough = selectionDetails.selectedBorough;
 
@@ -12724,8 +12721,8 @@
 				});
 			}
 		}, {
-			key: 'onKeydown',
-			value: function onKeydown(e) {
+			key: '_onKeydown',
+			value: function _onKeydown(e) {
 
 				e.preventDefault(); // Prevent arrows from scrolling page
 
@@ -12762,12 +12759,12 @@
 						this.gameplay.emit(_constants.events.RESTART_GAME);
 					} else if (hoveredBorough) {
 
-						var selectedFeature = this.getFeatureByBoroughName(hoveredBorough);
+						var selectedFeature = this._getFeatureByBoroughName(hoveredBorough);
 
-						this.onSelectedBorough(selectedFeature);
+						this._onSelectedBorough(selectedFeature);
 					} else if (selectedBorough) {
 
-						this.submitFinalAnswer();
+						this._submitFinalAnswer();
 					}
 				} else {
 
@@ -12791,14 +12788,14 @@
 
 					if (boroughName === hoveredBorough) return;
 
-					var feature = this.getFeatureByBoroughName(boroughName);
+					var feature = this._getFeatureByBoroughName(boroughName);
 
-					this.onConsideredBorough(feature);
+					this._onConsideredBorough(feature);
 				}
 			}
 		}, {
-			key: 'onMapMounted',
-			value: function onMapMounted(mapType, mapElement) {
+			key: '_onMapMounted',
+			value: function _onMapMounted(mapType, mapElement) {
 				var _this13 = this;
 
 				var mapElements = this.state.mapElements;
@@ -12816,7 +12813,7 @@
 
 					if (maps || !mapElements.city || !mapElements.borough || !mapElements.block) return;
 
-					return _this13.createMaps(mapElements);
+					return _this13._createMaps(mapElements);
 				}).then(function () {
 					var maps = _this13.state.maps;
 
@@ -12825,18 +12822,18 @@
 
 					return _this13.setState({ showLocationMarker: showLocationMarker });
 				}).then(function () {
-					return _this13.initializeTwoBlocks();
+					return _this13._initializeTwoBlocks();
 				});
 			}
 		}, {
-			key: 'onMobileBoroughSelection',
-			value: function onMobileBoroughSelection(boroughName) {
+			key: '_onMobileBoroughSelection',
+			value: function _onMobileBoroughSelection(boroughName) {
 
-				this.updateSelectedBorough(boroughName);
+				this._updateSelectedBorough(boroughName);
 			}
 		}, {
-			key: 'onNewPanorama',
-			value: function onNewPanorama() {
+			key: '_onNewPanorama',
+			value: function _onNewPanorama() {
 				var _this14 = this;
 
 				var panorama = this.state.panorama;
@@ -12859,12 +12856,12 @@
 						promptTransition: null
 					});
 				}).then(function () {
-					return _this14.showPanorama();
+					return _this14._showPanorama();
 				});
 			}
 		}, {
-			key: 'onNextTurn',
-			value: function onNextTurn() {
+			key: '_onNextTurn',
+			value: function _onNextTurn() {
 				var showLocationMarker = this.state.showLocationMarker;
 
 
@@ -12877,8 +12874,8 @@
 				});
 			}
 		}, {
-			key: 'onPanoramaMounted',
-			value: function onPanoramaMounted(element) {
+			key: '_onPanoramaMounted',
+			value: function _onPanoramaMounted(element) {
 				var _this15 = this;
 
 				if (this.state.panorama) return;
@@ -12923,32 +12920,32 @@
 				});
 			}
 		}, {
-			key: 'onSelectedBorough',
-			value: function onSelectedBorough(feature) {
+			key: '_onSelectedBorough',
+			value: function _onSelectedBorough(feature) {
 				var guessingLocation = this.state.guessingLocation;
 
 
 				if (!guessingLocation) return;
 
-				this.styleUnselectedBoroughs(feature);
+				this._styleUnselectedBoroughs(feature);
 
-				this.styleSelectedBorough(feature);
+				this._styleSelectedBorough(feature);
 
-				var boroughName = this.getBoroughName(feature);
+				var boroughName = this._getBoroughName(feature);
 
-				this.updateSelectedBorough(boroughName);
+				this._updateSelectedBorough(boroughName);
 			}
 		}, {
-			key: 'onShowingPanorama',
-			value: function onShowingPanorama() {
+			key: '_onShowingPanorama',
+			value: function _onShowingPanorama() {
 				var maps = this.state.maps;
 
 
 				maps.onShowingPanorama();
 			}
 		}, {
-			key: 'onTurnComplete',
-			value: function onTurnComplete() {
+			key: '_onTurnComplete',
+			value: function _onTurnComplete() {
 				var _this16 = this;
 
 				var _state6 = this.state;
@@ -12956,7 +12953,7 @@
 				var showLocationMarker = _state6.showLocationMarker;
 
 
-				var prompt = this.getTurnCompletionPrompt();
+				var prompt = this._getTurnCompletionPrompt();
 
 				maps.onTurnComplete();
 
@@ -12990,8 +12987,8 @@
 				});
 			}
 		}, {
-			key: 'onWindowResize',
-			value: function onWindowResize() {
+			key: '_onWindowResize',
+			value: function _onWindowResize() {
 				var maps = this.state.maps;
 
 
@@ -13009,8 +13006,8 @@
 			// If there is no worker, move on using the GeoJSON member of th game instance. 
 
 		}, {
-			key: 'requestGeoJSON',
-			value: function requestGeoJSON() {
+			key: '_requestGeoJSON',
+			value: function _requestGeoJSON() {
 				var _this17 = this;
 
 				if (this.mobile) return; // Request GeoJSON only on desktop (for map)
@@ -13019,16 +13016,16 @@
 
 					if (_this17.worker) {
 
-						_this17.requestGeoJSONFromWorker();
+						_this17._requestGeoJSONFromWorker();
 					} else {
 
-						_this17.onGeoJSONReceived(_this17.locationData.featureCollection);
+						_this17._onGeoJSONReceived(_this17.locationData.featureCollection);
 					}
 				});
 			}
 		}, {
-			key: 'requestGeoJSONFromWorker',
-			value: function requestGeoJSONFromWorker() {
+			key: '_requestGeoJSONFromWorker',
+			value: function _requestGeoJSONFromWorker() {
 				var _this18 = this;
 
 				/*----------  onGeoJSONSent()  ----------*/
@@ -13041,7 +13038,7 @@
 
 					if (_constants.workerMessages.SENDING_GEO_JSON !== message) return;
 
-					_this18.onGeoJSONReceived(payload);
+					_this18._onGeoJSONReceived(payload);
 
 					_this18.worker.removeEventListener('message', onGeoJSONSent);
 				};
@@ -13065,8 +13062,8 @@
 			// be created.  
 
 		}, {
-			key: 'requiredGameComponentsExist',
-			value: function requiredGameComponentsExist() {
+			key: '_requiredGameComponentsExist',
+			value: function _requiredGameComponentsExist() {
 				var _state7 = this.state;
 				var maps = _state7.maps;
 				var panorama = _state7.panorama;
@@ -13075,8 +13072,8 @@
 				return !!maps && !!panorama;
 			}
 		}, {
-			key: 'restart',
-			value: function restart() {
+			key: '_restart',
+			value: function _restart() {
 
 				var view = _constants.views.MAP;
 
@@ -13094,8 +13091,8 @@
 				});
 			}
 		}, {
-			key: 'showPanorama',
-			value: function showPanorama() {
+			key: '_showPanorama',
+			value: function _showPanorama() {
 				var _this19 = this;
 
 				var panorama = this.state.panorama;
@@ -13140,8 +13137,8 @@
 				});
 			}
 		}, {
-			key: 'styleHoveredBorough',
-			value: function styleHoveredBorough(borough) {
+			key: '_styleHoveredBorough',
+			value: function _styleHoveredBorough(borough) {
 				var _state8 = this.state;
 				var maps = _state8.maps;
 				var selectedBorough = _state8.selectedBorough;
@@ -13151,14 +13148,14 @@
 
 				// On hover, change the fill color of the borough, unless the
 				// borough is the selected borough.
-				if (selectedBorough !== this.getBoroughName(borough)) {
+				if (selectedBorough !== this._getBoroughName(borough)) {
 
 					maps.onConsideredBorough(borough);
 				}
 			}
 		}, {
-			key: 'styleNonHoveredBorough',
-			value: function styleNonHoveredBorough(borough) {
+			key: '_styleNonHoveredBorough',
+			value: function _styleNonHoveredBorough(borough) {
 
 				if (!borough) return;
 
@@ -13169,14 +13166,14 @@
 
 				if (this.mobile) return;
 
-				if (selectedBorough !== this.getBoroughName(borough)) {
+				if (selectedBorough !== this._getBoroughName(borough)) {
 
 					maps.unselectBorough(borough);
 				}
 			}
 		}, {
-			key: 'styleSelectedBorough',
-			value: function styleSelectedBorough(borough) {
+			key: '_styleSelectedBorough',
+			value: function _styleSelectedBorough(borough) {
 				var maps = this.state.maps;
 
 
@@ -13185,8 +13182,8 @@
 				maps.onSelectedBorough(borough);
 			}
 		}, {
-			key: 'styleUnselectedBoroughs',
-			value: function styleUnselectedBoroughs(borough) {
+			key: '_styleUnselectedBoroughs',
+			value: function _styleUnselectedBoroughs(borough) {
 				var _this20 = this;
 
 				var _state10 = this.state;
@@ -13196,7 +13193,7 @@
 
 				if (this.mobile) return;
 
-				var clickedBoroughName = this.getBoroughName(borough);
+				var clickedBoroughName = this._getBoroughName(borough);
 
 				// Don't revert styles if the player clicks on the currently-selected borough 
 				if (selectedBorough === clickedBoroughName) return;
@@ -13207,7 +13204,7 @@
 				if (!featureCollection) return;
 
 				var unselectedBoroughs = featureCollection.filter(function (feature) {
-					return _this20.getBoroughName(feature) !== clickedBoroughName;
+					return _this20._getBoroughName(feature) !== clickedBoroughName;
 				});
 
 				unselectedBoroughs.forEach(function (feature) {
@@ -13215,16 +13212,16 @@
 				});
 			}
 		}, {
-			key: 'submitFinalAnswer',
-			value: function submitFinalAnswer() {
+			key: '_submitFinalAnswer',
+			value: function _submitFinalAnswer() {
 
 				if (!this.state.guessingLocation) return;
 
 				this.gameplay.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.GUESSING_LOCATION);
 			}
 		}, {
-			key: 'updateHoveredBorough',
-			value: function updateHoveredBorough(feature) {
+			key: '_updateHoveredBorough',
+			value: function _updateHoveredBorough(feature) {
 
 				if (!feature) {
 					// No borough is currently hovered.  Modify state to reflect this.
@@ -13234,7 +13231,7 @@
 					});
 				}
 
-				var boroughName = this.getBoroughName(feature);
+				var boroughName = this._getBoroughName(feature);
 
 				// Don't change state if the hovered borough has not changed.
 				if (this.state.hoveredBorough === boroughName) return;
@@ -13244,8 +13241,8 @@
 				});
 			}
 		}, {
-			key: 'updateSelectedBorough',
-			value: function updateSelectedBorough(boroughName) {
+			key: '_updateSelectedBorough',
+			value: function _updateSelectedBorough(boroughName) {
 				var selectedBorough = this.state.selectedBorough;
 
 
@@ -13274,7 +13271,7 @@
 
 				return _react2.default.createElement(
 					'div',
-					{ className: this.getGameClassList() },
+					{ className: this._getGameClassList() },
 					_react2.default.createElement(_TwoBlocksView2.default, {
 						blockLevelMap: state.maps && state.maps.getBlockLevelMap(),
 						boroughLevelMap: state.maps && state.maps.getBoroughLevelMap(),
@@ -13283,8 +13280,8 @@
 						maps: state.maps,
 						mapType: state.mapType,
 						mobile: this.mobile,
-						onMapMounted: this.onMapMounted.bind(this),
-						onPanoramaMounted: this.onPanoramaMounted.bind(this),
+						onMapMounted: this._onMapMounted.bind(this),
+						onPanoramaMounted: this._onPanoramaMounted.bind(this),
 						panorama: state.panorama,
 						view: store ? store.getState().view : 'map'
 					}),
@@ -13297,7 +13294,7 @@
 						hideReplayButton: !store || !store.getState().gameOver,
 						hoveredBorough: state.hoveredBorough,
 						mobile: this.mobile,
-						onButtonClick: this.onButtonClick.bind(this),
+						onButtonClick: this._onButtonClick.bind(this),
 						prompt: state.prompt,
 						promptTransition: state.promptTransition,
 						selectedBorough: state.selectedBorough,
