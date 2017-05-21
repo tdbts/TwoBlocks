@@ -14018,6 +14018,8 @@
 		value: true
 	});
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _react = __webpack_require__(299);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -14052,7 +14054,7 @@
 		var wrapperClass = props.wrapperClass;
 
 
-		var calculatedClassName = getClassName(selectedBorough);
+		var buttonClassName = getClassName(selectedBorough);
 
 		var text = getText(selectedBorough);
 
@@ -14062,27 +14064,21 @@
 
 		var twoBlocksClass = [wrapperClass, TWO_BLOCKS_CLASS].join(" ");
 
-		var displayedComponent = guessingLocation ? mobile ? _react2.default.createElement(_SubmitterMobile2.default, {
+		var commonProps = {
 			borough: borough,
-			buttonClassName: calculatedClassName,
+			buttonClassName: buttonClassName,
+			onButtonClick: onButtonClick,
+			submissionButtonLabel: submissionButtonLabel,
+			text: text,
+			twoBlocksClass: twoBlocksClass
+		};
+
+		var mobileProps = {
 			confirmingAnswer: confirmingAnswer,
-			gameStage: gameStage,
-			submissionButtonLabel: submissionButtonLabel,
-			text: text,
-			onButtonClick: onButtonClick,
-			twoBlocksClass: twoBlocksClass
-		}) // eslint-disable-line no-mixed-spaces-and-tabs
+			gameStage: gameStage
+		};
 
-		: _react2.default.createElement(_SubmitterDesktop2.default, {
-			borough: borough,
-			buttonClassName: calculatedClassName,
-			onButtonClick: onButtonClick,
-			submissionButtonLabel: submissionButtonLabel,
-			text: text,
-			twoBlocksClass: twoBlocksClass
-		}) // eslint-disable-line no-mixed-spaces-and-tabs
-
-		: null;
+		var displayedComponent = guessingLocation ? mobile ? _react2.default.createElement(_SubmitterMobile2.default, _extends({}, commonProps, mobileProps)) : _react2.default.createElement(_SubmitterDesktop2.default, commonProps) : null;
 
 		return displayedComponent;
 	};

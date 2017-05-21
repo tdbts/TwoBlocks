@@ -11,7 +11,7 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const { confirmingAnswer, gameStage, guessingLocation, mobile, onButtonClick, selectedBorough, wrapperClass } = props; 	
 
-	const calculatedClassName = getClassName(selectedBorough); 
+	const buttonClassName = getClassName(selectedBorough); 
 
 	const text = getText(selectedBorough); 
 
@@ -21,27 +21,25 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const twoBlocksClass = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
 
+	const commonProps = {
+		borough,
+		buttonClassName,
+		onButtonClick,
+		submissionButtonLabel,
+		text,
+		twoBlocksClass
+	};
+
+	const mobileProps = {
+		confirmingAnswer,
+		gameStage
+	};
+
 	const displayedComponent = guessingLocation ? mobile 
 
-		? <SubmitterMobile 
-			borough={ borough }
-			buttonClassName={ calculatedClassName }
-			confirmingAnswer={ confirmingAnswer }
-			gameStage={ gameStage }
-			submissionButtonLabel={ submissionButtonLabel }
-			text={ text }
-			onButtonClick={ onButtonClick }
-			twoBlocksClass={ twoBlocksClass }
-		  />  // eslint-disable-line no-mixed-spaces-and-tabs
+		? <SubmitterMobile { ...commonProps } { ...mobileProps } />
 
-		: <SubmitterDesktop 
-			borough={ borough }
-			buttonClassName={ calculatedClassName }
-			onButtonClick={ onButtonClick }
-			submissionButtonLabel={ submissionButtonLabel }
-			text={ text }
-			twoBlocksClass={ twoBlocksClass }
-		  />  // eslint-disable-line no-mixed-spaces-and-tabs 
+		: <SubmitterDesktop { ...commonProps } />
 
 		: null; 
 
