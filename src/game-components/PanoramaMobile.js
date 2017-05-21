@@ -4,9 +4,9 @@ import { STREETVIEW_COUNTDOWN_LENGTH } from '../constants/constants';
 
 /*----------  Constructor  ----------*/
 
-const PanoramaMobile = function PanoramaMobile(element, options) {
+const PanoramaMobile = function PanoramaMobile(element) {
 
-	Panorama.call(this, element, options);
+	Panorama.call(this, element);
 
 	this.events = Object.assign({}, this.events, {
 		

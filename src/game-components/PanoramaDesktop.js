@@ -12,10 +12,10 @@ const SPINNER_OPTIONS = {
 
 /*----------  Constructor  ----------*/
 
-const PanoramaDesktop = function PanoramaDesktop(element, options) {
+const PanoramaDesktop = function PanoramaDesktop(element) {
 
 	// Inherit from superclass
-	Panorama.call(this, element, options);
+	Panorama.call(this, element);
 
 	this._spinner = new Spinner(this.getGooglePanorama(), SPINNER_OPTIONS);
 	

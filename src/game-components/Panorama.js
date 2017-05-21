@@ -6,7 +6,7 @@ import removeStreetNameAnnotations from '../components/component-utils/removeStr
 
 /*----------  Constructor  ----------*/
 
-const Panorama = function Panorama(element, options) {
+const Panorama = function Panorama(element) {
 
 	// Call superclass
 	EventEmitter.call(this);
@@ -14,7 +14,7 @@ const Panorama = function Panorama(element, options) {
 	this._borough = null;
 	this._element = element;
 	this._displaying = false;
-	this.options = this._setOptions(options);
+	this.options = this._getOptions();
 	// Documentation on streetViewPanorama class: 
 	// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
 	this._latLng = null;
@@ -57,6 +57,50 @@ const panoramaMethods = {
 
 	}, 
 
+	_getOptions() {
+
+		const position = google.maps.ControlPosition.TOP_LEFT;
+
+		return {
+			// Address control shows a box with basic information about the 
+			// location, as well as a link to see the map on Google Maps 
+			addressControl: false,
+			addressControlOptions: { position },
+			// clickToGo shows a rectangular "highlight" under the cursor, and on 
+			// click, the street view moves to the location clicked upon.  We will 
+			// want to keep this disabled for the game.			
+			clickToGo: false,
+			disableDoubleClickZoom: true,
+			// Below, we add an event listener to 'closeclick', which fires when 
+			// the close button is clicked.  In the original author's implementation, 
+			// the application reveals the map on 'closeclick'.  			
+			enableCloseButton: false,
+			fullscreenControl: false,
+			imageDateControl: false,
+			linksControl: false,
+			mode: this._getGraphicsMode(),
+			// Pan Control shows a UI element that allows you to rotate the pano 
+			panControl: false,
+			panControlOptions: { position },
+			pano: null,  // ID of panorama to use 
+			position: null,
+			pov: {
+				zoom: 1.1,		
+				heading: 0,
+				pitch: 0
+			},
+			scrollwheel: false,
+			visible: true,
+			// Zoom control functionality is obvious 
+			zoomControl: false,
+			zoomControlOptions: {
+				position, 
+				style: google.maps.ZoomControlStyle.DEFAULT
+			}
+		};	
+
+	},
+
 	_listenForDisplays() {
 
 		this.on(this.events.DISPLAY_START, () => {
@@ -76,12 +120,6 @@ const panoramaMethods = {
 	_listenForPanoChanges() {
 
 		google.maps.event.addListener(this._panorama, 'pano_changed', () => removeStreetNameAnnotations(this._panorama)); 		
-
-	},
-
-	_setOptions(options) {
-
-		return Object.assign({}, getOptions.call(this), options);
 
 	},
 
@@ -149,51 +187,6 @@ const panoramaMethods = {
 	}
 
 };
-
-/*----------  Helper Functions  ----------*/
-
-const getOptions = function getOptions() {
-
-	const position = google.maps.ControlPosition.TOP_LEFT;
-
-	return {
-		position: null, 
-		// Address control shows a box with basic information about the 
-		// location, as well as a link to see the map on Google Maps 
-		addressControl: false,
-		addressControlOptions: { position },
-		// clickToGo shows a rectangular "highlight" under the cursor, and on 
-		// click, the street view moves to the location clicked upon.  We will 
-		// want to keep this disabled for the game.			
-		clickToGo: false,
-		disableDoubleClickZoom: true,
-		// Below, we add an event listener to 'closeclick', which fires when 
-		// the close button is clicked.  In the original author's implementation, 
-		// the application reveals the map on 'closeclick'.  			
-		enableCloseButton: false,
-		imageDateControl: false,
-		linksControl: false,
-		mode: this._getGraphicsMode(),
-		// Pan Control shows a UI element that allows you to rotate the pano 
-		panControl: false,
-		panControlOptions: { position },
-		pano: null,  // ID of panorama to use 
-		pov: {
-			zoom: 1.1,		
-			heading: 0,
-			pitch: 0
-		},
-		scrollwheel: false,
-		visible: true,
-		// Zoom control functionality is obvious 
-		zoomControl: false,
-		zoomControlOptions: {
-			position, 
-			style: google.maps.ZoomControlStyle.DEFAULT
-		}
-	};	
-
-}; 
 
 /*----------  Assign methods to prototype  ----------*/
 

@@ -823,14 +823,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => {
 
-				const options = { 
-					fullscreenControl: false, 
-					position: null, 
-					visible: true, 
-					zoomControl: false
-				};
-
-				const panorama = this.mobile ? new PanoramaMobile(element, options) : new PanoramaDesktop(element, options);
+				const panorama = this.mobile ? new PanoramaMobile(element) : new PanoramaDesktop(element);
 
 				panorama.on(panorama.events.DISPLAY_STOP, () => this.gameplay.emit(events.VIEW_COMPLETE, gameStages.SHOWING_PANORAMA));
 

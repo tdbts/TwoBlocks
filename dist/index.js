@@ -12882,14 +12882,7 @@
 
 				this.service.librariesAreLoaded().then(function () {
 
-					var options = {
-						fullscreenControl: false,
-						position: null,
-						visible: true,
-						zoomControl: false
-					};
-
-					var panorama = _this15.mobile ? new _PanoramaMobile2.default(element, options) : new _PanoramaDesktop2.default(element, options);
+					var panorama = _this15.mobile ? new _PanoramaMobile2.default(element) : new _PanoramaDesktop2.default(element);
 
 					panorama.on(panorama.events.DISPLAY_STOP, function () {
 						return _this15.gameplay.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.SHOWING_PANORAMA);
@@ -17749,9 +17742,9 @@
 
 	/*----------  Constructor  ----------*/
 
-	var PanoramaMobile = function PanoramaMobile(element, options) {
+	var PanoramaMobile = function PanoramaMobile(element) {
 
-		_Panorama2.default.call(this, element, options);
+		_Panorama2.default.call(this, element);
 
 		this.events = _extends({}, this.events, {
 
@@ -17836,8 +17829,6 @@
 		value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global google */
-
 	var _events = __webpack_require__(407);
 
 	var _WebGLManager = __webpack_require__(412);
@@ -17854,7 +17845,7 @@
 
 	/*----------  Constructor  ----------*/
 
-	var Panorama = function Panorama(element, options) {
+	var Panorama = function Panorama(element) {
 
 		// Call superclass
 		_events.EventEmitter.call(this);
@@ -17862,7 +17853,7 @@
 		this._borough = null;
 		this._element = element;
 		this._displaying = false;
-		this.options = this._setOptions(options);
+		this.options = this._getOptions();
 		// Documentation on streetViewPanorama class:
 		// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
 		this._latLng = null;
@@ -17878,6 +17869,8 @@
 	};
 
 	/*----------  Inherit from EventEmitter() class  ----------*/
+
+	/* global google */
 
 	Panorama.prototype = Object.create(_events.EventEmitter.prototype);
 
@@ -17901,6 +17894,48 @@
 
 			return webGLManager.canUseWebGl() ? "webgl" : "html5";
 		},
+		_getOptions: function _getOptions() {
+
+			var position = google.maps.ControlPosition.TOP_LEFT;
+
+			return {
+				// Address control shows a box with basic information about the
+				// location, as well as a link to see the map on Google Maps
+				addressControl: false,
+				addressControlOptions: { position: position },
+				// clickToGo shows a rectangular "highlight" under the cursor, and on
+				// click, the street view moves to the location clicked upon.  We will
+				// want to keep this disabled for the game.			
+				clickToGo: false,
+				disableDoubleClickZoom: true,
+				// Below, we add an event listener to 'closeclick', which fires when
+				// the close button is clicked.  In the original author's implementation,
+				// the application reveals the map on 'closeclick'.  			
+				enableCloseButton: false,
+				fullscreenControl: false,
+				imageDateControl: false,
+				linksControl: false,
+				mode: this._getGraphicsMode(),
+				// Pan Control shows a UI element that allows you to rotate the pano
+				panControl: false,
+				panControlOptions: { position: position },
+				pano: null, // ID of panorama to use
+				position: null,
+				pov: {
+					zoom: 1.1,
+					heading: 0,
+					pitch: 0
+				},
+				scrollwheel: false,
+				visible: true,
+				// Zoom control functionality is obvious
+				zoomControl: false,
+				zoomControlOptions: {
+					position: position,
+					style: google.maps.ZoomControlStyle.DEFAULT
+				}
+			};
+		},
 		_listenForDisplays: function _listenForDisplays() {
 			var _this = this;
 
@@ -17920,10 +17955,6 @@
 			google.maps.event.addListener(this._panorama, 'pano_changed', function () {
 				return (0, _removeStreetNameAnnotations2.default)(_this2._panorama);
 			});
-		},
-		_setOptions: function _setOptions(options) {
-
-			return _extends({}, getOptions.call(this), options);
 		},
 
 
@@ -17972,50 +18003,6 @@
 
 			this._panorama.setOptions(options);
 		}
-	};
-
-	/*----------  Helper Functions  ----------*/
-
-	var getOptions = function getOptions() {
-
-		var position = google.maps.ControlPosition.TOP_LEFT;
-
-		return {
-			position: null,
-			// Address control shows a box with basic information about the
-			// location, as well as a link to see the map on Google Maps
-			addressControl: false,
-			addressControlOptions: { position: position },
-			// clickToGo shows a rectangular "highlight" under the cursor, and on
-			// click, the street view moves to the location clicked upon.  We will
-			// want to keep this disabled for the game.			
-			clickToGo: false,
-			disableDoubleClickZoom: true,
-			// Below, we add an event listener to 'closeclick', which fires when
-			// the close button is clicked.  In the original author's implementation,
-			// the application reveals the map on 'closeclick'.  			
-			enableCloseButton: false,
-			imageDateControl: false,
-			linksControl: false,
-			mode: this._getGraphicsMode(),
-			// Pan Control shows a UI element that allows you to rotate the pano
-			panControl: false,
-			panControlOptions: { position: position },
-			pano: null, // ID of panorama to use
-			pov: {
-				zoom: 1.1,
-				heading: 0,
-				pitch: 0
-			},
-			scrollwheel: false,
-			visible: true,
-			// Zoom control functionality is obvious
-			zoomControl: false,
-			zoomControlOptions: {
-				position: position,
-				style: google.maps.ZoomControlStyle.DEFAULT
-			}
-		};
 	};
 
 	/*----------  Assign methods to prototype  ----------*/
@@ -18974,10 +18961,10 @@
 	/*----------  Constructor  ----------*/
 
 	// TODO: Resolve
-	var PanoramaDesktop = function PanoramaDesktop(element, options) {
+	var PanoramaDesktop = function PanoramaDesktop(element) {
 
 		// Inherit from superclass
-		_Panorama2.default.call(this, element, options);
+		_Panorama2.default.call(this, element);
 
 		this._spinner = new _Spinner2.default(this.getGooglePanorama(), SPINNER_OPTIONS);
 	};
