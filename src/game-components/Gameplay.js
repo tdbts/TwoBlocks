@@ -62,8 +62,6 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		this.on(this.events.GEO_JSON_LOADED, geoJSON => this.onGeoJSONLoaded(geoJSON)); 
 
-		this.on(this.events.GAME_STAGE, gameStage => this.onGameStage(gameStage)); 
-
 		this.on(this.events.VIEW_COMPLETE, () => this.onViewComplete()); 
 
 		this.on(this.events.GUESSING_LOCATION, () => this.onGuessingLocation()); 
@@ -355,11 +353,6 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		this.nextGameStage(); 
 	
-	} 
-
-	onGameStage() {
-
-
 	} 
 
 	onGeoJSONLoaded(geoJSON) {
