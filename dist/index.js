@@ -17470,116 +17470,128 @@
 		value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global L */
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _constants = __webpack_require__(359);
 
-	var _CityMaps = __webpack_require__(406);
+	var _CityMaps2 = __webpack_require__(406);
 
-	var _CityMaps2 = _interopRequireDefault(_CityMaps);
+	var _CityMaps3 = _interopRequireDefault(_CityMaps2);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	/*----------  Constructor  ----------*/
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var CityMapsMobile = function CityMapsMobile(elements) {
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-		_CityMaps2.default.call(this, elements);
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global L */
 
-		this._maps = this._createMaps(elements);
-	};
+	var CityMapsMobile = function (_CityMaps) {
+		_inherits(CityMapsMobile, _CityMaps);
 
-	/*----------  Inherit from CityMaps  ----------*/
+		function CityMapsMobile(elements) {
+			_classCallCheck(this, CityMapsMobile);
 
-	CityMapsMobile.prototype = Object.create(_CityMaps2.default.prototype);
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CityMapsMobile).call(this, elements));
 
-	/*----------  Assign Constructor  ----------*/
+			_this._maps = _this._createMaps(elements);
 
-	CityMapsMobile.prototype.constructor = CityMapsMobile;
+			return _this;
+		}
 
-	/*----------  Define methods  ----------*/
-
-	var cityMapsMobileMethods = {
-		_addTileLayerAttribution: function _addTileLayerAttribution(map) {
-			var ATTRIBUTION = _constants.tileLayer.ATTRIBUTION;
-			var URL = _constants.tileLayer.URL;
-
-
-			L.tileLayer(URL, { attribution: ATTRIBUTION }).addTo(map);
-		},
-		_createMap: function _createMap(type, element) {
-
-			var map = new L.Map(element, this._getOptions(type));
-
-			this._addTileLayerAttribution(map);
-
-			return map;
-		},
-		_getOptions: function _getOptions(type) {
-
-			return _extends({}, this.options, {
-
-				zoom: this.getZoom(type)
-
-			});
-		},
-		_getCenteringMethod: function _getCenteringMethod() {
-
-			return 'setView';
-		},
+		_createClass(CityMapsMobile, [{
+			key: '_addTileLayerAttribution',
+			value: function _addTileLayerAttribution(map) {
+				var ATTRIBUTION = _constants.tileLayer.ATTRIBUTION;
+				var URL = _constants.tileLayer.URL;
 
 
-		/*----------  Public API  ----------*/
+				L.tileLayer(URL, { attribution: ATTRIBUTION }).addTo(map);
+			}
+		}, {
+			key: '_createMap',
+			value: function _createMap(type, element) {
 
-		createLatLng: function createLatLng(lat, lng) {
+				var map = new L.Map(element, this._getOptions(type));
 
-			return L.latLng(lat, lng);
-		},
-		getMapType: function getMapType() {
+				this._addTileLayerAttribution(map);
 
-			return _constants.mapSources.LEAFLET;
-		},
-		getZoom: function getZoom(type) {
+				return map;
+			}
+		}, {
+			key: '_getOptions',
+			value: function _getOptions(type) {
 
-			var zoom = null;
+				return _extends({}, this.options, {
 
-			if (this.mapTypes.CITY === type) {
+					zoom: this.getZoom(type)
 
-				zoom = _constants.CITY_LEVEL_ZOOM;
-			} else if (this.mapTypes.BOROUGH === type) {
+				});
+			}
+		}, {
+			key: '_getCenteringMethod',
+			value: function _getCenteringMethod() {
 
-				zoom = _constants.BOROUGH_LEVEL_ZOOM - 1;
-			} else if (this.mapTypes.BLOCK === type) {
-
-				zoom = _constants.BLOCK_LEVEL_ZOOM - 1;
+				return 'setView';
 			}
 
-			return zoom;
-		},
-		onTurnComplete: function onTurnComplete() {
+			/*----------  Public API  ----------*/
 
-			// Need to implement marker
-			// this.getBlockLevelMap().removeLayer(this.getMarker());
+		}, {
+			key: 'createLatLng',
+			value: function createLatLng(lat, lng) {
 
-		},
-		panTo: function panTo(lat, lng) {
+				return L.latLng(lat, lng);
+			}
+		}, {
+			key: 'getMapType',
+			value: function getMapType() {
 
-			var latLng = this.createLatLng(lat, lng);
+				return _constants.mapSources.LEAFLET;
+			}
+		}, {
+			key: 'getZoom',
+			value: function getZoom(type) {
 
-			this._forEachMap(function (map) {
-				return map.panTo(latLng);
-			});
-		}
-	};
+				var zoom = null;
 
-	/*----------  Assign methods to prototype  ----------*/
+				if (this.mapTypes.CITY === type) {
 
-	for (var method in cityMapsMobileMethods) {
+					zoom = _constants.CITY_LEVEL_ZOOM;
+				} else if (this.mapTypes.BOROUGH === type) {
 
-		CityMapsMobile.prototype[method] = cityMapsMobileMethods[method];
-	}
+					zoom = _constants.BOROUGH_LEVEL_ZOOM - 1;
+				} else if (this.mapTypes.BLOCK === type) {
 
-	/*----------  Export  ----------*/
+					zoom = _constants.BLOCK_LEVEL_ZOOM - 1;
+				}
+
+				return zoom;
+			}
+		}, {
+			key: 'onTurnComplete',
+			value: function onTurnComplete() {
+
+				// Need to implement marker
+				// this.getBlockLevelMap().removeLayer(this.getMarker());
+
+			}
+		}, {
+			key: 'panTo',
+			value: function panTo(lat, lng) {
+
+				var latLng = this.createLatLng(lat, lng);
+
+				this._forEachMap(function (map) {
+					return map.panTo(latLng);
+				});
+			}
+		}]);
+
+		return CityMapsMobile;
+	}(_CityMaps3.default);
 
 		exports.default = CityMapsMobile;
 

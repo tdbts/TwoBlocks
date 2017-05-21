@@ -3,27 +3,15 @@
 import { mapSources, tileLayer, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM } from '../constants/constants';
 import CityMaps from './CityMaps';
 
-/*----------  Constructor  ----------*/
+export default class CityMapsMobile extends CityMaps {
 
-const CityMapsMobile = function CityMapsMobile(elements) {
+	constructor(elements) {
 
-	CityMaps.call(this, elements);
-	
-	this._maps = this._createMaps(elements);
+		super(elements);
+		
+		this._maps = this._createMaps(elements);
 
-};
-
-/*----------  Inherit from CityMaps  ----------*/
-
-CityMapsMobile.prototype = Object.create(CityMaps.prototype);
-
-/*----------  Assign Constructor  ----------*/
-
-CityMapsMobile.prototype.constructor = CityMapsMobile;
-
-/*----------  Define methods  ----------*/
-
-const cityMapsMobileMethods = {
+	}
 
 	_addTileLayerAttribution(map) {
 
@@ -31,7 +19,7 @@ const cityMapsMobileMethods = {
 
 		L.tileLayer(URL, { attribution: ATTRIBUTION }).addTo(map);
 
-	},
+	}
 
 	_createMap(type, element) {
 
@@ -41,7 +29,7 @@ const cityMapsMobileMethods = {
 
 		return map;
 
-	}, 
+	} 
 
 	_getOptions(type) {
 
@@ -51,13 +39,13 @@ const cityMapsMobileMethods = {
 
 		});
 
-	}, 
+	} 
 
 	_getCenteringMethod() {
 
 		return 'setView';
 
-	},
+	}
 	
 	/*----------  Public API  ----------*/
 	
@@ -65,13 +53,13 @@ const cityMapsMobileMethods = {
 
 		return L.latLng(lat, lng);
 
-	}, 
+	} 
 
 	getMapType() {
 
 		return mapSources.LEAFLET;
 
-	}, 
+	} 
 
 	getZoom(type) {
 
@@ -93,14 +81,14 @@ const cityMapsMobileMethods = {
 
 		return zoom;
 
-	}, 
+	} 
 
 	onTurnComplete() {
 
 		// Need to implement marker 
 		// this.getBlockLevelMap().removeLayer(this.getMarker());
 
-	},
+	}
 
 	panTo(lat, lng) {
 
@@ -110,16 +98,4 @@ const cityMapsMobileMethods = {
 
 	}
 
-};
-
-/*----------  Assign methods to prototype  ----------*/
-
-for (const method in cityMapsMobileMethods) {
-	
-	CityMapsMobile.prototype[method] = cityMapsMobileMethods[method];
-
 }
-
-/*----------  Export  ----------*/
-
-export default CityMapsMobile;
