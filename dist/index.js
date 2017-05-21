@@ -16986,139 +16986,173 @@
 
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 	var _events = __webpack_require__(407);
 
 	var _constants = __webpack_require__(359);
 
-	/*----------  Constructor  ----------*/
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var CityMaps = function CityMaps(elements) {
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-		// Call superclass
-		_events.EventEmitter.call(this);
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-		this.options = CityMaps.prototype._getOptions();
+	var CityMaps = function (_EventEmitter) {
+		_inherits(CityMaps, _EventEmitter);
 
-		this._currentCoords = null;
-		this._elements = elements;
-		this._maps = null;
+		function CityMaps(elements) {
+			_classCallCheck(this, CityMaps);
 
-		this.mapTypes = {
-			CITY: 'city',
-			BOROUGH: 'borough',
-			BLOCK: 'block'
-		};
-	};
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CityMaps).call(this));
 
-	/*----------  Inherit EventEmitter() functionality  ----------*/
+			_this.options = CityMaps.prototype._getOptions();
 
-	CityMaps.prototype = Object.create(_events.EventEmitter.prototype);
+			_this._currentCoords = null;
+			_this._elements = elements;
+			_this._maps = null;
 
-	/*----------  Assign Constructor  ----------*/
+			_this.mapTypes = {
+				CITY: 'city',
+				BOROUGH: 'borough',
+				BLOCK: 'block'
+			};
 
-	CityMaps.prototype.constructor = CityMaps;
+			return _this;
+		}
 
-	/*----------  Define methods  ----------*/
+		_createClass(CityMaps, [{
+			key: '_createMap',
+			value: function _createMap() {} // Subclassed
 
-	var cityMapsMethods = {
-		_createMap: function _createMap() {},
-		// Subclassed
+		}, {
+			key: '_createMaps',
+			value: function _createMaps(elements) {
 
-		_createMaps: function _createMaps(elements) {
+				var maps = {};
 
-			var maps = {};
+				for (var type in elements) {
 
-			for (var type in elements) {
+					maps[type] = this._createMap(type, elements[type]);
+				}
 
-				maps[type] = this._createMap(type, elements[type]);
+				return maps;
+			}
+		}, {
+			key: '_forEachMap',
+			value: function _forEachMap(action) {
+
+				for (var type in this._maps) {
+
+					action(this._maps[type], type);
+				}
+			}
+		}, {
+			key: '_getMap',
+			value: function _getMap(type) {
+
+				if (!this._maps) return;
+
+				return this._maps[type];
+			}
+		}, {
+			key: '_getOptions',
+			value: function _getOptions() {
+
+				return _extends({}, _constants.DEFAULT_MAP_OPTIONS);
 			}
 
-			return maps;
-		},
-		_forEachMap: function _forEachMap(action) {
+			/*----------  Public API  ----------*/
 
-			for (var type in this._maps) {
+		}, {
+			key: 'createLatLng',
+			value: function createLatLng() {}
+		}, {
+			key: 'getBlockLevelMap',
+			value: function getBlockLevelMap() {
 
-				action(this._maps[type], type);
+				return this._getMap(this.mapTypes.BLOCK);
 			}
-		},
-		_getMap: function _getMap(type) {
+		}, {
+			key: 'getBoroughLevelMap',
+			value: function getBoroughLevelMap() {
 
-			if (!this._maps) return;
-
-			return this._maps[type];
-		},
-		_getOptions: function _getOptions() {
-
-			return _extends({}, _constants.DEFAULT_MAP_OPTIONS);
-		},
-
-
-		/*----------  Public API  ----------*/
-
-		createLatLng: function createLatLng() {},
-		getBlockLevelMap: function getBlockLevelMap() {
-
-			return this._getMap(this.mapTypes.BLOCK);
-		},
-		getBoroughLevelMap: function getBoroughLevelMap() {
-
-			return this._getMap(this.mapTypes.BOROUGH);
-		},
-		getCityLevelMap: function getCityLevelMap() {
-
-			return this._getMap(this.mapTypes.CITY);
-		},
-		getCurrentCoords: function getCurrentCoords() {
-
-			return this._currentCoords;
-		},
-		onAnswerEvaluated: function onAnswerEvaluated(lat, lng) {
-
-			this.setCenter(lat, lng, this.mapTypes.BOROUGH);
-			this.setCenter(lat, lng, this.mapTypes.BLOCK);
-		},
-		onGuessingLocation: function onGuessingLocation() {},
-		onConsideredBorough: function onConsideredBorough() {},
-		onGeoJSONReceived: function onGeoJSONReceived() {},
-		onSelectedBorough: function onSelectedBorough() {},
-		onShowingPanorama: function onShowingPanorama() {},
-		onTurnComplete: function onTurnComplete() {},
-		panTo: function panTo() {},
-		setCenter: function setCenter(lat, lng, type) {
-			var _this = this;
-
-			var latLng = this.createLatLng(lat, lng);
-
-			if (type) {
-
-				var map = this._maps[type];
-
-				if (!map) return;
-
-				map[this._getCenteringMethod()](latLng);
-			} else {
-
-				this._forEachMap(function (map) {
-					return map[_this._getCenteringMethod()](latLng);
-				});
+				return this._getMap(this.mapTypes.BOROUGH);
 			}
-		},
-		setCurrentCoords: function setCurrentCoords(lat, lng) {
+		}, {
+			key: 'getCityLevelMap',
+			value: function getCityLevelMap() {
 
-			this._currentCoords = { lat: lat, lng: lng };
-		},
-		unselectBorough: function unselectBorough() {}
-	};
+				return this._getMap(this.mapTypes.CITY);
+			}
+		}, {
+			key: 'getCurrentCoords',
+			value: function getCurrentCoords() {
 
-	/*----------  Assign methods to prototype  ----------*/
+				return this._currentCoords;
+			}
+		}, {
+			key: 'onAnswerEvaluated',
+			value: function onAnswerEvaluated(lat, lng) {
 
-	for (var method in cityMapsMethods) {
+				this.setCenter(lat, lng, this.mapTypes.BOROUGH);
+				this.setCenter(lat, lng, this.mapTypes.BLOCK);
+			}
+		}, {
+			key: 'onGuessingLocation',
+			value: function onGuessingLocation() {}
+		}, {
+			key: 'onConsideredBorough',
+			value: function onConsideredBorough() {}
+		}, {
+			key: 'onGeoJSONReceived',
+			value: function onGeoJSONReceived() {}
+		}, {
+			key: 'onSelectedBorough',
+			value: function onSelectedBorough() {}
+		}, {
+			key: 'onShowingPanorama',
+			value: function onShowingPanorama() {}
+		}, {
+			key: 'onTurnComplete',
+			value: function onTurnComplete() {}
+		}, {
+			key: 'panTo',
+			value: function panTo() {}
+		}, {
+			key: 'setCenter',
+			value: function setCenter(lat, lng, type) {
+				var _this2 = this;
 
-		CityMaps.prototype[method] = cityMapsMethods[method];
-	}
+				var latLng = this.createLatLng(lat, lng);
 
-	/*----------  Export  ----------*/
+				if (type) {
+
+					var map = this._maps[type];
+
+					if (!map) return;
+
+					map[this._getCenteringMethod()](latLng);
+				} else {
+
+					this._forEachMap(function (map) {
+						return map[_this2._getCenteringMethod()](latLng);
+					});
+				}
+			}
+		}, {
+			key: 'setCurrentCoords',
+			value: function setCurrentCoords(lat, lng) {
+
+				this._currentCoords = { lat: lat, lng: lng };
+			}
+		}, {
+			key: 'unselectBorough',
+			value: function unselectBorough() {}
+		}]);
+
+		return CityMaps;
+	}(_events.EventEmitter);
 
 		exports.default = CityMaps;
 
@@ -33090,10 +33124,6 @@
 					return _this2.onGeoJSONLoaded(geoJSON);
 				});
 
-				this.on(this.events.GAME_STAGE, function (gameStage) {
-					return _this2.onGameStage(gameStage);
-				});
-
 				this.on(this.events.VIEW_COMPLETE, function () {
 					return _this2.onViewComplete();
 				});
@@ -33401,9 +33431,6 @@
 
 				this.nextGameStage();
 			}
-		}, {
-			key: 'onGameStage',
-			value: function onGameStage() {}
 		}, {
 			key: 'onGeoJSONLoaded',
 			value: function onGeoJSONLoaded(geoJSON) {

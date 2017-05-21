@@ -1,40 +1,27 @@
 import { EventEmitter } from 'events';
 import { DEFAULT_MAP_OPTIONS } from '../constants/constants';
 
-/*----------  Constructor  ----------*/
+export default class CityMaps extends EventEmitter {
 
-const CityMaps = function CityMaps(elements) {
+	constructor(elements) {
+		
+		super();
 
-	// Call superclass 
-	EventEmitter.call(this);
+		this.options = CityMaps.prototype._getOptions();
 
-	this.options = CityMaps.prototype._getOptions();
+		this._currentCoords = null;	
+		this._elements = elements;
+		this._maps = null;
 
-	this._currentCoords = null;	
-	this._elements = elements;
-	this._maps = null;
+		this.mapTypes = {
+			CITY: 'city', 
+			BOROUGH: 'borough', 
+			BLOCK: 'block'
+		};
 
-	this.mapTypes = {
-		CITY: 'city', 
-		BOROUGH: 'borough', 
-		BLOCK: 'block'
-	};
+	}
 	
-};
-
-/*----------  Inherit EventEmitter() functionality  ----------*/
-
-CityMaps.prototype = Object.create(EventEmitter.prototype);
-
-/*----------  Assign Constructor  ----------*/
-
-CityMaps.prototype.constructor = CityMaps;
-
-/*----------  Define methods  ----------*/
-
-const cityMapsMethods = {
-	
-	_createMap() {}, // Subclassed
+	_createMap() {} // Subclassed
 
 	_createMaps(elements) {
 
@@ -48,7 +35,7 @@ const cityMapsMethods = {
 
 		return maps;
 
-	}, 
+	} 
 
 	_forEachMap(action) {
 
@@ -58,7 +45,7 @@ const cityMapsMethods = {
 
 		}
 
-	},
+	}
 
 	_getMap(type) {
 
@@ -66,62 +53,62 @@ const cityMapsMethods = {
 
 		return this._maps[type];
 
-	}, 
+	}
 
 	_getOptions() {
 
 		return Object.assign({}, DEFAULT_MAP_OPTIONS);
 
-	},
+	}
 
 	/*----------  Public API  ----------*/
 
-	createLatLng() {},
+	createLatLng() {}
 	
 	getBlockLevelMap() {
 
 		return this._getMap(this.mapTypes.BLOCK);
 
-	},
+	}
 
 	getBoroughLevelMap() {
 
 		return this._getMap(this.mapTypes.BOROUGH);
 
-	}, 
+	} 
 
 	getCityLevelMap() {
 
 		return this._getMap(this.mapTypes.CITY);
 
-	}, 
+	} 
 
 	getCurrentCoords() {
 
 		return this._currentCoords;
 
-	},
+	}
 
 	onAnswerEvaluated(lat, lng) {
 
 		this.setCenter(lat, lng, this.mapTypes.BOROUGH);
 		this.setCenter(lat, lng, this.mapTypes.BLOCK);
 
-	},
+	}
 
-	onGuessingLocation() {},
+	onGuessingLocation() {}
 
-	onConsideredBorough() {},
+	onConsideredBorough() {}
 
-	onGeoJSONReceived() {},
+	onGeoJSONReceived() {}
 
-	onSelectedBorough() {},
+	onSelectedBorough() {}
 
-	onShowingPanorama() {},
+	onShowingPanorama() {}
 
-	onTurnComplete() {},
+	onTurnComplete() {}
 
-	panTo() {},
+	panTo() {}
 
 	setCenter(lat, lng, type) {
 
@@ -141,26 +128,14 @@ const cityMapsMethods = {
 		
 		}
 
-	},
+	}
 
 	setCurrentCoords(lat, lng) {
 
 		this._currentCoords = { lat, lng };
 
-	},
+	}
 
 	unselectBorough() {}
 
-};
-
-/*----------  Assign methods to prototype  ----------*/
-
-for (const method in cityMapsMethods) {
-	
-	CityMaps.prototype[method] = cityMapsMethods[method];
-
 }
-
-/*----------  Export  ----------*/
-
-export default CityMaps;

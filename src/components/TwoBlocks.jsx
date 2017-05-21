@@ -999,7 +999,7 @@ class TwoBlocks extends React.Component {
 	_requiredGameComponentsExist() {
 
 		const { maps, panorama } = this.state; 
- 		
+
 		return !!maps && !!panorama;
 
 	}
