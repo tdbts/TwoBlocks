@@ -16796,181 +16796,206 @@
 		value: true
 	});
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /* global google */
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _constants = __webpack_require__(359);
 
-	var _CityMaps = __webpack_require__(406);
+	var _CityMaps2 = __webpack_require__(406);
 
-	var _CityMaps2 = _interopRequireDefault(_CityMaps);
+	var _CityMaps3 = _interopRequireDefault(_CityMaps2);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	/*----------  Constructor  ----------*/
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var CityMapsDesktop = function CityMapsDesktop(elements) {
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-		// Call superclass
-		_CityMaps2.default.call(this, elements);
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global google */
 
-		this.events = {
-			MOUSEOUT: 'mouseout',
-			MOUSEOVER: 'mouseover',
-			CLICK: 'click'
-		};
+	var CityMapsDesktop = function (_CityMaps) {
+		_inherits(CityMapsDesktop, _CityMaps);
 
-		this._maps = this._createMaps(elements);
+		function CityMapsDesktop(elements) {
+			_classCallCheck(this, CityMapsDesktop);
 
-		this._addDOMEventListenersToMaps();
-	};
+			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CityMapsDesktop).call(this, elements));
 
-	/*----------  Inherit from CityMaps  ----------*/
-
-	CityMapsDesktop.prototype = Object.create(_CityMaps2.default.prototype);
-
-	/*----------  Assign Constructor  ----------*/
-
-	CityMapsDesktop.prototype.constructor = CityMapsDesktop;
-
-	/*----------  Define methods  ----------*/
-
-	var cityMapsDesktopMethods = {
-		_addDOMEventListenersToMaps: function _addDOMEventListenersToMaps() {
-			var _this = this;
-
-			var cityMap = this.getCityLevelMap();
-
-			var trackedEvents = [this.events.MOUSEOUT, this.events.MOUSEOVER, this.events.CLICK];
-
-			var listener = function listener(event) {
-				return function (e) {
-					_this.emit(event, _extends(e, {
-						mapType: _this.mapTypes.CITY
-					}));
-				};
+			_this.events = {
+				MOUSEOUT: 'mouseout',
+				MOUSEOVER: 'mouseover',
+				CLICK: 'click'
 			};
 
-			trackedEvents.forEach(function (event) {
-				return cityMap.data.addListener(event, listener(event));
-			});
-		},
-		_createMap: function _createMap(type, element) {
+			_this._maps = _this._createMaps(elements);
 
-			return new google.maps.Map(element, this._getOptions(type));
-		},
-		_getCenteringMethod: function _getCenteringMethod() {
+			_this._addDOMEventListenersToMaps();
 
-			return 'setCenter';
-		},
-		_getOptions: function _getOptions(type) {
+			return _this;
+		}
 
-			return _extends({}, this.options, {
+		_createClass(CityMapsDesktop, [{
+			key: '_addDOMEventListenersToMaps',
+			value: function _addDOMEventListenersToMaps() {
+				var _this2 = this;
 
-				mapTypeId: this.getMapTypeId(),
-				zoom: this.getZoom(type)
+				var cityMap = this.getCityLevelMap();
 
-			});
-		},
+				var trackedEvents = [this.events.MOUSEOUT, this.events.MOUSEOVER, this.events.CLICK];
 
+				var listener = function listener(event) {
+					return function (e) {
+						_this2.emit(event, _extends(e, {
+							mapType: _this2.mapTypes.CITY
+						}));
+					};
+				};
 
-		/*----------  Public API  ----------*/
+				trackedEvents.forEach(function (event) {
+					return cityMap.data.addListener(event, listener(event));
+				});
+			}
+		}, {
+			key: '_createMap',
+			value: function _createMap(type, element) {
 
-		createLatLng: function createLatLng(lat, lng) {
+				return new google.maps.Map(element, this._getOptions(type));
+			}
+		}, {
+			key: '_getCenteringMethod',
+			value: function _getCenteringMethod() {
 
-			return { lat: lat, lng: lng };
-		},
-		getMapType: function getMapType() {
+				return 'setCenter';
+			}
+		}, {
+			key: '_getOptions',
+			value: function _getOptions(type) {
 
-			return _constants.mapSources.GOOGLE;
-		},
-		getMapTypeId: function getMapTypeId() {
+				return _extends({}, this.options, {
 
-			return google.maps.MapTypeId.ROADMAP;
-		},
-		getZoom: function getZoom(type) {
+					mapTypeId: this.getMapTypeId(),
+					zoom: this.getZoom(type)
 
-			var zoom = null;
-
-			if (this.mapTypes.CITY === type) {
-
-				zoom = _constants.CITY_LEVEL_ZOOM;
-			} else if (this.mapTypes.BOROUGH === type) {
-
-				zoom = _constants.BOROUGH_LEVEL_ZOOM;
-			} else if (this.mapTypes.BLOCK === type) {
-
-				zoom = _constants.BLOCK_LEVEL_ZOOM;
+				});
 			}
 
-			return zoom;
-		},
-		onGuessingLocation: function onGuessingLocation(latLng) {
-			var lat = latLng.lat;
-			var lng = latLng.lng;
+			/*----------  Public API  ----------*/
+
+		}, {
+			key: 'createLatLng',
+			value: function createLatLng(lat, lng) {
+
+				return { lat: lat, lng: lng };
+			}
+		}, {
+			key: 'getMapType',
+			value: function getMapType() {
+
+				return _constants.mapSources.GOOGLE;
+			}
+		}, {
+			key: 'getMapTypeId',
+			value: function getMapTypeId() {
+
+				return google.maps.MapTypeId.ROADMAP;
+			}
+		}, {
+			key: 'getZoom',
+			value: function getZoom(type) {
+
+				var zoom = null;
+
+				if (this.mapTypes.CITY === type) {
+
+					zoom = _constants.CITY_LEVEL_ZOOM;
+				} else if (this.mapTypes.BOROUGH === type) {
+
+					zoom = _constants.BOROUGH_LEVEL_ZOOM;
+				} else if (this.mapTypes.BLOCK === type) {
+
+					zoom = _constants.BLOCK_LEVEL_ZOOM;
+				}
+
+				return zoom;
+			}
+		}, {
+			key: 'onGuessingLocation',
+			value: function onGuessingLocation(latLng) {
+				var lat = latLng.lat;
+				var lng = latLng.lng;
 
 
-			this.panTo(lat, lng);
+				this.panTo(lat, lng);
 
-			this.getCityLevelMap().data.revertStyle();
-		},
-		onConsideredBorough: function onConsideredBorough(borough) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-
-			options = _extends({}, options, {
-				fillColor: _constants.HOVERED_BOROUGH_FILL_COLOR
-			});
-
-			this.getCityLevelMap().data.overrideStyle(borough, options);
-		},
-		onGeoJSONReceived: function onGeoJSONReceived(geoJSON) {
-
-			return this.getCityLevelMap().data.addGeoJson(geoJSON);
-		},
-		onSelectedBorough: function onSelectedBorough(borough) {
-			var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+				this.getCityLevelMap().data.revertStyle();
+			}
+		}, {
+			key: 'onConsideredBorough',
+			value: function onConsideredBorough(borough) {
+				var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
 
-			if (!borough) return;
+				options = _extends({}, options, {
+					fillColor: _constants.HOVERED_BOROUGH_FILL_COLOR
+				});
 
-			options = _extends({}, options, {
-				fillColor: _constants.SELECTED_BOROUGH_FILL_COLOR
-			});
+				this.getCityLevelMap().data.overrideStyle(borough, options);
+			}
+		}, {
+			key: 'onGeoJSONReceived',
+			value: function onGeoJSONReceived(geoJSON) {
 
-			this.getCityLevelMap().data.overrideStyle(borough, options);
-		},
-		onShowingPanorama: function onShowingPanorama() {
+				return this.getCityLevelMap().data.addGeoJson(geoJSON);
+			}
+		}, {
+			key: 'onSelectedBorough',
+			value: function onSelectedBorough(borough) {
+				var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-			this.getCityLevelMap().data.revertStyle();
-		},
-		onTurnComplete: function onTurnComplete() {
 
-			this.getCityLevelMap().data.revertStyle();
-		},
-		panTo: function panTo(lat, lng) {
+				if (!borough) return;
 
-			var latLng = this.createLatLng(lat, lng);
+				options = _extends({}, options, {
+					fillColor: _constants.SELECTED_BOROUGH_FILL_COLOR
+				});
 
-			// this._forEachMap(map => map.panTo(latLng));
-			this.getBoroughLevelMap().panTo(latLng);
-			this.getBlockLevelMap().panTo(latLng);
-		},
-		unselectBorough: function unselectBorough(borough) {
+				this.getCityLevelMap().data.overrideStyle(borough, options);
+			}
+		}, {
+			key: 'onShowingPanorama',
+			value: function onShowingPanorama() {
 
-			if (!borough) return; // Don't want to revert style for entire map
+				this.getCityLevelMap().data.revertStyle();
+			}
+		}, {
+			key: 'onTurnComplete',
+			value: function onTurnComplete() {
 
-			this.getCityLevelMap().data.revertStyle(borough);
-		}
-	};
+				this.getCityLevelMap().data.revertStyle();
+			}
+		}, {
+			key: 'panTo',
+			value: function panTo(lat, lng) {
 
-	/*----------  Assign methods to prototype  ----------*/
+				var latLng = this.createLatLng(lat, lng);
 
-	for (var method in cityMapsDesktopMethods) {
+				// this._forEachMap(map => map.panTo(latLng));
+				this.getBoroughLevelMap().panTo(latLng);
+				this.getBlockLevelMap().panTo(latLng);
+			}
+		}, {
+			key: 'unselectBorough',
+			value: function unselectBorough(borough) {
 
-		CityMapsDesktop.prototype[method] = cityMapsDesktopMethods[method];
-	}
+				if (!borough) return; // Don't want to revert style for entire map
 
-	/*----------  Export  ----------*/
+				this.getCityLevelMap().data.revertStyle(borough);
+			}
+		}]);
+
+		return CityMapsDesktop;
+	}(_CityMaps3.default);
 
 		exports.default = CityMapsDesktop;
 

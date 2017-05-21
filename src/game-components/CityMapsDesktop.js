@@ -3,35 +3,23 @@
 import { mapSources, BLOCK_LEVEL_ZOOM, BOROUGH_LEVEL_ZOOM, CITY_LEVEL_ZOOM, HOVERED_BOROUGH_FILL_COLOR, SELECTED_BOROUGH_FILL_COLOR } from '../constants/constants';
 import CityMaps from './CityMaps';
 
-/*----------  Constructor  ----------*/
+export default class CityMapsDesktop extends CityMaps {
 
-const CityMapsDesktop = function CityMapsDesktop(elements) {
-
-	// Call superclass
-	CityMaps.call(this, elements);
+	constructor(elements) {
 	
-	this.events = {
-		MOUSEOUT: 'mouseout',
-		MOUSEOVER: 'mouseover',
-		CLICK: 'click'
-	};
+		super(elements);
 
-	this._maps = this._createMaps(elements);
+		this.events = {
+			MOUSEOUT: 'mouseout',
+			MOUSEOVER: 'mouseover',
+			CLICK: 'click'
+		};
 
-	this._addDOMEventListenersToMaps();
-};
+		this._maps = this._createMaps(elements);
 
-/*----------  Inherit from CityMaps  ----------*/
+		this._addDOMEventListenersToMaps();
 
-CityMapsDesktop.prototype = Object.create(CityMaps.prototype);
-
-/*----------  Assign Constructor  ----------*/
-
-CityMapsDesktop.prototype.constructor = CityMapsDesktop;
-
-/*----------  Define methods  ----------*/
-
-const cityMapsDesktopMethods = {
+	}
 
 	_addDOMEventListenersToMaps() {
 
@@ -51,19 +39,19 @@ const cityMapsDesktopMethods = {
 
 		trackedEvents.forEach(event => cityMap.data.addListener(event, listener(event)));
 
-	},
+	}
 
 	_createMap(type, element) {
 
 		return new google.maps.Map(element, this._getOptions(type));
 
-	}, 
+	} 
 
 	_getCenteringMethod() {
 
 		return 'setCenter';
 
-	},
+	}
 
 	_getOptions(type) {
 
@@ -74,7 +62,7 @@ const cityMapsDesktopMethods = {
 
 		});
 
-	},
+	}
 
 	/*----------  Public API  ----------*/
 	
@@ -82,19 +70,19 @@ const cityMapsDesktopMethods = {
 
 		return { lat, lng };
 
-	}, 
+	} 
 
 	getMapType() {
 
 		return mapSources.GOOGLE;
 
-	}, 
+	} 
 
 	getMapTypeId() {
 
 		return google.maps.MapTypeId.ROADMAP;
 	
-	},
+	}
 
 	getZoom(type) {
 
@@ -116,7 +104,7 @@ const cityMapsDesktopMethods = {
 
 		return zoom;
 
-	},
+	}
 
 
 	onGuessingLocation(latLng) {
@@ -127,7 +115,7 @@ const cityMapsDesktopMethods = {
 
 		this.getCityLevelMap().data.revertStyle();
 
-	},
+	}
 
 	onConsideredBorough(borough, options = {}) {
 
@@ -137,13 +125,13 @@ const cityMapsDesktopMethods = {
 
 		this.getCityLevelMap().data.overrideStyle(borough, options);
 
-	},
+	}
 
 	onGeoJSONReceived(geoJSON) {
 
 		return this.getCityLevelMap().data.addGeoJson(geoJSON);
 
-	},
+	}
 
 	onSelectedBorough(borough, options = {}) {
 
@@ -155,19 +143,19 @@ const cityMapsDesktopMethods = {
 
 		this.getCityLevelMap().data.overrideStyle(borough, options);
 
-	},
+	}
 
 	onShowingPanorama() {
 
 		this.getCityLevelMap().data.revertStyle();
 
-	},
+	}
 
 	onTurnComplete() {
 
 		this.getCityLevelMap().data.revertStyle();
 
-	},
+	}
 	
 	panTo(lat, lng) {
 
@@ -177,7 +165,7 @@ const cityMapsDesktopMethods = {
 		this.getBoroughLevelMap().panTo(latLng);
 		this.getBlockLevelMap().panTo(latLng);
 
-	},
+	}
 
 	unselectBorough(borough) {
 
@@ -187,16 +175,4 @@ const cityMapsDesktopMethods = {
 
 	}
 
-};
-
-/*----------  Assign methods to prototype  ----------*/
-
-for (const method in cityMapsDesktopMethods) {
-	
-	CityMapsDesktop.prototype[method] = cityMapsDesktopMethods[method];
-
 }
-
-/*----------  Export  ----------*/
-
-export default CityMapsDesktop;
