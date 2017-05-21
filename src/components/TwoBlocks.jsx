@@ -79,89 +79,19 @@ class TwoBlocks extends React.Component {
 	
 	componentWillMount() {
 
-		/*----------  Load CSS  ----------*/
+		this._createStore();
+		this._createWorker();
+		this._createService();
+		this._createGameplay();
+
+		this._detectDeviceMode();
 		
-		twoBlocksUtils.loadCSS();
-
-		/*----------  Create Redux Store  ----------*/
-
-		const reducers = [ twoBlocks ]; 
-
-		if ('development' === process.env.NODE_ENV) {
-
-			reducers.push(composeWithDevTools()); 
-
-		}
-
-		this.store = createStore(...reducers); 
-
-		/*----------  Create TwoBlocks WebWorker  ----------*/
-
-		this.worker = window.Worker ? new TwoBlocksWorker() : null;
-
-		if (this.worker) {
-
-			this.worker.onmessage = e => window.console.log("Worker message:", e.data); 
-
-			this.worker.addEventListener('error', e => window.console.log("Worker error:", e)); 
-
-		}
-
-
-		/*----------  Create service for data requests  ----------*/
-
-		this.service = new TwoBlocksService(this.worker); 
-
-		window.console.log("this.service:", this.service); 
-
-		/*----------  Create TwoBlocks Game Instance  ----------*/
-
-		this.gameplay = new Gameplay(this.store, this.worker, this.service); 
-
-		window.console.log("this.gameplay:", this.gameplay); 
-
-		/*----------  Start Loading the GeoGson Immediately  ----------*/
-
-		const { GEO_JSON_SOURCE } = this.locationData; 
-
-		this.service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start loading it as soon as possible 
-
-			.then(response => {
-
-				const payload = response ? response.body : null; 
-
-				// When a Web Worker is available, the GeoJSON object stays on the worker 
-				// thread, and the game instance requests data as needed.  Without 
-				// a worker, however, this is not the case.  Here, once the GeoJSON has been 
-				// loaded, inform the game instance and pass the JSON to it for reference.
-				this.gameplay.emit(events.GEO_JSON_LOADED, payload); 
-
-			})
-
-			.catch(e => window.console.error(e)); 
-
-		/*----------  Start Loading Leaflet Library  ----------*/
-
-		this.mobile = twoBlocksUtils.shouldUseDeviceOrientation();
-
-		if (this.mobile) {
-
-			this.service.loadLeaflet()
-
-				.then(() => window.console.log("window.L:", window.L)); 
-
-		}
-
-		/*----------  Add Google Maps Script  ----------*/
-
-		this.service.loadGoogleMaps(process.env.MAPS_API_KEY); 		
-
-		/*----------  Load Pregame Prompt  ----------*/
-		
-		const prompt = promptManager.pregame(); 
+		this._loadCSS();
+		this._loadGeoJSON();
+		this._loadLibraries();	 
 
 		this.setState({  
-			prompt
+			prompt: promptManager.pregame()
 		}); 
 
 	}
@@ -252,6 +182,14 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	_createGameplay() {
+
+		this.gameplay = new Gameplay(this.store, this.worker, this.service); 
+
+		window.console.log("this.gameplay:", this.gameplay); 
+
+	}
+
 	_createMaps(elements) {
 
 		return this.service.librariesAreLoaded()
@@ -273,6 +211,48 @@ class TwoBlocks extends React.Component {
 				return maps;
 			
 			});
+
+	}
+
+	_createService() {
+
+		this.service = new TwoBlocksService(this.worker); 
+
+		window.console.log("this.service:", this.service); 
+
+	}
+
+	_createStore() {
+
+		const reducers = [ twoBlocks ]; 
+
+		if ('development' === process.env.NODE_ENV) {
+
+			reducers.push(composeWithDevTools()); 
+
+		}
+
+		this.store = createStore(...reducers); 
+
+	}
+
+	_createWorker() {
+
+		this.worker = window.Worker ? new TwoBlocksWorker() : null;
+
+		if (this.worker) {
+
+			this.worker.onmessage = e => window.console.log("Worker message:", e.data); 
+
+			this.worker.addEventListener('error', e => window.console.log("Worker error:", e)); 
+
+		}
+
+	}
+
+	_detectDeviceMode() {
+
+		this.mobile = twoBlocksUtils.shouldUseDeviceOrientation();
 
 	}
 
@@ -372,6 +352,57 @@ class TwoBlocks extends React.Component {
 				}
 
 			}); 	
+
+	}
+
+	_loadCSS() {
+
+		twoBlocksUtils.loadCSS();
+
+	}
+
+	_loadGeoJSON() {
+
+		const { GEO_JSON_SOURCE } = this.locationData; 
+
+		this.service.loadCityLocationData(GEO_JSON_SOURCE)  // The GeoJSON is heavy.  Start loading it as soon as possible 
+
+			.then(response => {
+
+				const payload = response ? response.body : null; 
+
+				// When a Web Worker is available, the GeoJSON object stays on the worker 
+				// thread, and the game instance requests data as needed.  Without 
+				// a worker, however, this is not the case.  Here, once the GeoJSON has been 
+				// loaded, inform the game instance and pass the JSON to it for reference.
+				this.gameplay.emit(events.GEO_JSON_LOADED, payload); 
+
+			})
+
+			.catch(e => window.console.error(e)); 
+
+	}
+
+	_loadGoogleMaps() {
+
+		this.service.loadGoogleMaps(process.env.MAPS_API_KEY); 	
+
+	}
+
+	_loadLeaflet() {
+
+		if (!(this.mobile)) return;
+
+		this.service.loadLeaflet()
+
+			.then(() => window.console.log("window.L:", window.L)); 
+
+	}
+
+	_loadLibraries() {
+
+		this._loadLeaflet();
+		this._loadGoogleMaps();
 
 	}
 

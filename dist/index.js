@@ -12103,91 +12103,20 @@
 		_createClass(TwoBlocks, [{
 			key: 'componentWillMount',
 			value: function componentWillMount() {
-				var _this2 = this;
 
-				/*----------  Load CSS  ----------*/
+				this._createStore();
+				this._createWorker();
+				this._createService();
+				this._createGameplay();
 
-				_twoBlocksUtils2.default.loadCSS();
+				this._detectDeviceMode();
 
-				/*----------  Create Redux Store  ----------*/
-
-				var reducers = [_twoBlocks2.default];
-
-				if (true) {
-
-					reducers.push((0, _reduxDevtoolsExtension.composeWithDevTools)());
-				}
-
-				this.store = _redux.createStore.apply(undefined, reducers);
-
-				/*----------  Create TwoBlocks WebWorker  ----------*/
-
-				this.worker = window.Worker ? new _twoBlocksWorker2.default() : null;
-
-				if (this.worker) {
-
-					this.worker.onmessage = function (e) {
-						return window.console.log("Worker message:", e.data);
-					};
-
-					this.worker.addEventListener('error', function (e) {
-						return window.console.log("Worker error:", e);
-					});
-				}
-
-				/*----------  Create service for data requests  ----------*/
-
-				this.service = new _TwoBlocksService2.default(this.worker);
-
-				window.console.log("this.service:", this.service);
-
-				/*----------  Create TwoBlocks Game Instance  ----------*/
-
-				this.gameplay = new _Gameplay2.default(this.store, this.worker, this.service);
-
-				window.console.log("this.gameplay:", this.gameplay);
-
-				/*----------  Start Loading the GeoGson Immediately  ----------*/
-
-				var GEO_JSON_SOURCE = this.locationData.GEO_JSON_SOURCE;
-
-
-				this.service.loadCityLocationData(GEO_JSON_SOURCE) // The GeoJSON is heavy.  Start loading it as soon as possible
-
-				.then(function (response) {
-
-					var payload = response ? response.body : null;
-
-					// When a Web Worker is available, the GeoJSON object stays on the worker
-					// thread, and the game instance requests data as needed.  Without
-					// a worker, however, this is not the case.  Here, once the GeoJSON has been
-					// loaded, inform the game instance and pass the JSON to it for reference.
-					_this2.gameplay.emit(_constants.events.GEO_JSON_LOADED, payload);
-				}).catch(function (e) {
-					return window.console.error(e);
-				});
-
-				/*----------  Start Loading Leaflet Library  ----------*/
-
-				this.mobile = _twoBlocksUtils2.default.shouldUseDeviceOrientation();
-
-				if (this.mobile) {
-
-					this.service.loadLeaflet().then(function () {
-						return window.console.log("window.L:", window.L);
-					});
-				}
-
-				/*----------  Add Google Maps Script  ----------*/
-
-				this.service.loadGoogleMaps(("AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE"));
-
-				/*----------  Load Pregame Prompt  ----------*/
-
-				var prompt = promptManager.pregame();
+				this._loadCSS();
+				this._loadGeoJSON();
+				this._loadLibraries();
 
 				this.setState({
-					prompt: prompt
+					prompt: promptManager.pregame()
 				});
 			}
 		}, {
@@ -12244,95 +12173,147 @@
 		}, {
 			key: '_addGameEventListeners',
 			value: function _addGameEventListeners(twoBlocks) {
-				var _this3 = this;
+				var _this2 = this;
 
 				twoBlocks.on(_constants.events.GAME_STAGE, function (stages) {
-					return _this3._onGameStage(stages);
+					return _this2._onGameStage(stages);
 				});
 
 				twoBlocks.on(_constants.events.NEXT_TURN, function () {
-					return _this3._onNextTurn();
+					return _this2._onNextTurn();
 				});
 
 				twoBlocks.on(_constants.events.NEW_PANORAMA, function (panoramaDetails) {
-					return _this3._onNewPanorama(panoramaDetails);
+					return _this2._onNewPanorama(panoramaDetails);
 				});
 
 				twoBlocks.on(_constants.events.SHOWING_PANORAMA, function () {
-					return _this3._onShowingPanorama();
+					return _this2._onShowingPanorama();
 				});
 
 				twoBlocks.on(_constants.events.GUESSING_LOCATION, function () {
-					return _this3._onGuessingLocation();
+					return _this2._onGuessingLocation();
 				});
 
 				twoBlocks.on(_constants.events.ANSWER_EVALUATED, function (answerDetails) {
-					return _this3._onAnswerEvaluated(answerDetails);
+					return _this2._onAnswerEvaluated(answerDetails);
 				});
 
 				twoBlocks.on(_constants.events.CORRECT_BOROUGH, function (boroughName) {
-					return _this3._onCorrectBorough(boroughName);
+					return _this2._onCorrectBorough(boroughName);
 				});
 
 				twoBlocks.on(_constants.events.INCORRECT_BOROUGH, function (selectionDetails) {
-					return _this3._onIncorrectBorough(selectionDetails);
+					return _this2._onIncorrectBorough(selectionDetails);
 				});
 
 				twoBlocks.on(_constants.events.TURN_COMPLETE, function () {
-					return _this3._onTurnComplete();
+					return _this2._onTurnComplete();
 				});
 
 				twoBlocks.on(_constants.events.GAME_OVER, function () {
-					return _this3._onGameOver();
+					return _this2._onGameOver();
 				});
 
 				twoBlocks.on(_constants.events.RESTART_GAME, function () {
-					return _this3._restart();
+					return _this2._restart();
 				});
 			}
 		}, {
 			key: '_addMapsEventListeners',
 			value: function _addMapsEventListeners(maps) {
-				var _this4 = this;
+				var _this3 = this;
 
 				if (!maps || this.mobile) return; // Event listeners below only apply to desktop game instances 
 
 				maps.on('mouseover', function (event) {
-					return _this4._onMapMouseover(event);
+					return _this3._onMapMouseover(event);
 				});
 
 				maps.on('mouseout', function (event) {
-					return _this4._onMapMouseout(event);
+					return _this3._onMapMouseout(event);
 				});
 
 				maps.on('click', function (event) {
-					return _this4._onMapClick(event);
+					return _this3._onMapClick(event);
 				});
+			}
+		}, {
+			key: '_createGameplay',
+			value: function _createGameplay() {
+
+				this.gameplay = new _Gameplay2.default(this.store, this.worker, this.service);
+
+				window.console.log("this.gameplay:", this.gameplay);
 			}
 		}, {
 			key: '_createMaps',
 			value: function _createMaps(elements) {
-				var _this5 = this;
+				var _this4 = this;
 
 				return this.service.librariesAreLoaded().then(function () {
 
-					if (_this5.state.maps) return;
+					if (_this4.state.maps) return;
 
-					var _locationData$CENTER = _this5.locationData.CENTER;
+					var _locationData$CENTER = _this4.locationData.CENTER;
 					var lat = _locationData$CENTER.lat;
 					var lng = _locationData$CENTER.lng;
 
 
-					var MapsClass = _this5.mobile ? _CityMapsMobile2.default : _CityMapsDesktop2.default;
+					var MapsClass = _this4.mobile ? _CityMapsMobile2.default : _CityMapsDesktop2.default;
 
 					var maps = new MapsClass(elements);
 
 					maps.setCenter(lat, lng);
 
-					_this5.setState({ maps: maps });
+					_this4.setState({ maps: maps });
 
 					return maps;
 				});
+			}
+		}, {
+			key: '_createService',
+			value: function _createService() {
+
+				this.service = new _TwoBlocksService2.default(this.worker);
+
+				window.console.log("this.service:", this.service);
+			}
+		}, {
+			key: '_createStore',
+			value: function _createStore() {
+
+				var reducers = [_twoBlocks2.default];
+
+				if (true) {
+
+					reducers.push((0, _reduxDevtoolsExtension.composeWithDevTools)());
+				}
+
+				this.store = _redux.createStore.apply(undefined, reducers);
+			}
+		}, {
+			key: '_createWorker',
+			value: function _createWorker() {
+
+				this.worker = window.Worker ? new _twoBlocksWorker2.default() : null;
+
+				if (this.worker) {
+
+					this.worker.onmessage = function (e) {
+						return window.console.log("Worker message:", e.data);
+					};
+
+					this.worker.addEventListener('error', function (e) {
+						return window.console.log("Worker error:", e);
+					});
+				}
+			}
+		}, {
+			key: '_detectDeviceMode',
+			value: function _detectDeviceMode() {
+
+				this.mobile = _twoBlocksUtils2.default.shouldUseDeviceOrientation();
 			}
 		}, {
 			key: '_getBoroughName',
@@ -12359,7 +12340,7 @@
 		}, {
 			key: '_getFeatureByBoroughName',
 			value: function _getFeatureByBoroughName(boroughName) {
-				var _this6 = this;
+				var _this5 = this;
 
 				if (!boroughName || !(0, _utils.isType)('string', boroughName)) return;
 
@@ -12367,7 +12348,7 @@
 
 
 				var feature = featureCollection.filter(function (feature) {
-					return boroughName === _this6._getBoroughName(feature);
+					return boroughName === _this5._getBoroughName(feature);
 				})[0];
 
 				return feature;
@@ -12387,7 +12368,7 @@
 		}, {
 			key: '_initializeTwoBlocks',
 			value: function _initializeTwoBlocks() {
-				var _this7 = this;
+				var _this6 = this;
 
 				if (this.state.initialized) return; // Game already initialized
 
@@ -12419,16 +12400,68 @@
 				};
 
 				return this.setState(nextState).then(function () {
-					return _this7._addMapsEventListeners(maps);
+					return _this6._addMapsEventListeners(maps);
 				}).then(function () {
-					return _this7.gameplay.emit(_constants.events.INIT);
+					return _this6.gameplay.emit(_constants.events.INIT);
 				}).then(function () {
 
-					if (_this7.mobile) {
+					if (_this6.mobile) {
 
-						_this7.gameplay.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.PREGAME);
+						_this6.gameplay.emit(_constants.events.VIEW_COMPLETE, _constants.gameStages.PREGAME);
 					}
 				});
+			}
+		}, {
+			key: '_loadCSS',
+			value: function _loadCSS() {
+
+				_twoBlocksUtils2.default.loadCSS();
+			}
+		}, {
+			key: '_loadGeoJSON',
+			value: function _loadGeoJSON() {
+				var _this7 = this;
+
+				var GEO_JSON_SOURCE = this.locationData.GEO_JSON_SOURCE;
+
+
+				this.service.loadCityLocationData(GEO_JSON_SOURCE) // The GeoJSON is heavy.  Start loading it as soon as possible
+
+				.then(function (response) {
+
+					var payload = response ? response.body : null;
+
+					// When a Web Worker is available, the GeoJSON object stays on the worker
+					// thread, and the game instance requests data as needed.  Without
+					// a worker, however, this is not the case.  Here, once the GeoJSON has been
+					// loaded, inform the game instance and pass the JSON to it for reference.
+					_this7.gameplay.emit(_constants.events.GEO_JSON_LOADED, payload);
+				}).catch(function (e) {
+					return window.console.error(e);
+				});
+			}
+		}, {
+			key: '_loadGoogleMaps',
+			value: function _loadGoogleMaps() {
+
+				this.service.loadGoogleMaps(("AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE"));
+			}
+		}, {
+			key: '_loadLeaflet',
+			value: function _loadLeaflet() {
+
+				if (!this.mobile) return;
+
+				this.service.loadLeaflet().then(function () {
+					return window.console.log("window.L:", window.L);
+				});
+			}
+		}, {
+			key: '_loadLibraries',
+			value: function _loadLibraries() {
+
+				this._loadLeaflet();
+				this._loadGoogleMaps();
 			}
 		}, {
 			key: '_onAnswerEvaluated',
