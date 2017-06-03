@@ -8842,7 +8842,7 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.TWO_BLOCKS_BUTTON_CLASS = exports.STREETVIEW_COUNTDOWN_LENGTH = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.MINIMUM_SPINNER_SCREEN_WIDTH = exports.MILLISECONDS_IN_A_SECOND = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.MAXIMUM_EVENT_EMITTER_LISTENERS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_MAXIMUM_ROUNDS = exports.DEFAULT_MAP_OPTIONS = exports.CITY_LEVEL_ZOOM = exports.BOROUGH_LEVEL_ZOOM = exports.BLOCK_LEVEL_ZOOM = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.workerMessages = exports.views = exports.tileLayer = exports.promptTypes = exports.transitionTypes = exports.nycCoordinates = exports.mapSources = exports.keyEventMaps = exports.heardKeys = exports.gameStages = exports.events = exports.boroughNames = undefined;
+	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = exports.STREETVIEW_COUNTDOWN_LENGTH = exports.SELECTED_BOROUGH_FILL_COLOR = exports.PANORAMA_LOAD_DELAY = exports.MINIMUM_SPINNER_SCREEN_WIDTH = exports.MILLISECONDS_IN_A_SECOND = exports.MILES_PER_METER = exports.MAXIMUM_RANDOM_PANORAMA_ATTEMPTS = exports.MAXIMUM_PANORAMA_REQUESTS = exports.MAXIMUM_EVENT_EMITTER_LISTENERS = exports.KEY_PRESS_DEBOUNCE_TIMEOUT = exports.HOVERED_BOROUGH_FILL_COLOR = exports.DEFAULT_MAXIMUM_ROUNDS = exports.DEFAULT_MAP_OPTIONS = exports.CITY_LEVEL_ZOOM = exports.BOROUGH_LEVEL_ZOOM = exports.BLOCK_LEVEL_ZOOM = exports.ANSWER_EVALUATION_DELAY = exports.ALL_TYPES = exports.workerMessages = exports.views = exports.tileLayer = exports.promptTypes = exports.transitionTypes = exports.nycCoordinates = exports.mapSources = exports.keyEventMaps = exports.heardKeys = exports.gameStages = exports.events = exports.boroughNames = undefined;
 
 	var _boroughNames = __webpack_require__(314);
 
@@ -8918,7 +8918,6 @@
 	var PANORAMA_LOAD_DELAY = 3000;
 	var SELECTED_BOROUGH_FILL_COLOR = "#FFFFFF";
 	var STREETVIEW_COUNTDOWN_LENGTH = 15; // Seconds
-	var TWO_BLOCKS_BUTTON_CLASS = "two-blocks-button";
 	var WINDOW_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
 	exports.boroughNames = _boroughNames2.default;
@@ -8951,7 +8950,6 @@
 	exports.PANORAMA_LOAD_DELAY = PANORAMA_LOAD_DELAY;
 	exports.SELECTED_BOROUGH_FILL_COLOR = SELECTED_BOROUGH_FILL_COLOR;
 	exports.STREETVIEW_COUNTDOWN_LENGTH = STREETVIEW_COUNTDOWN_LENGTH;
-	exports.TWO_BLOCKS_BUTTON_CLASS = TWO_BLOCKS_BUTTON_CLASS;
 	exports.WINDOW_RESIZE_DEBOUNCE_TIMEOUT = WINDOW_RESIZE_DEBOUNCE_TIMEOUT;
 
 /***/ },

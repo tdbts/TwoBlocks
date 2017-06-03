@@ -1,9 +1,7 @@
 import React from 'react'; 
 import stylizeBoroughName from './component-utils/stylizeBoroughName';
 import SubmitterDesktop from './SubmitterDesktop';  
-import SubmitterMobile from './SubmitterMobile'; 
-import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
-const TWO_BLOCKS_CLASS = 'two-blocks-submitter'; 
+import SubmitterMobile from './SubmitterMobile';  
 
 /*----------  Component  ----------*/
 
@@ -19,7 +17,7 @@ const TwoBlocksSubmitter = function TwoBlocksSubmitter(props) {
 
 	const submissionButtonLabel = "Final answer?"; 
 
-	const twoBlocksClass = [ wrapperClass, TWO_BLOCKS_CLASS ].join(" "); 
+	const twoBlocksClass = [ wrapperClass, 'two-blocks-submitter' ].join(" "); 
 
 	const commonProps = {
 		borough,
@@ -59,8 +57,8 @@ const getClassName = function getClassName(selectedBorough) {
 
 	return [
 	
-		"two-blocks-submitter-button", 
-		TWO_BLOCKS_BUTTON_CLASS, 
+		'two-blocks-submitter-button', 
+		'two-blocks-button', 
 		selectedBorough ? "" : "hidden"
 
 	].join(" ").trim(); 

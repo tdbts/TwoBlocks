@@ -1,6 +1,4 @@
-import React from 'react'; 
-import { TWO_BLOCKS_BUTTON_CLASS } from '../constants/constants'; 
-const TWO_BLOCKS_CLASS = "two-blocks-replay-button"; 
+import React from 'react';   
 
 /*----------  Component  ----------*/
 
@@ -10,7 +8,7 @@ const TwoBlocksReplayButton = function TwoBlocksReplayButton(props) {
 
 	const { hidden, onButtonClick } = props; 
 
-	const calculatedClassName = getClassName(TWO_BLOCKS_CLASS, hidden); 
+	const calculatedClassName = getClassName(hidden); 
 
 	return (
 		<button className={ calculatedClassName } onClick={ () => onButtonClick(BUTTON_TYPE) }>Play again?</button>
@@ -20,12 +18,12 @@ const TwoBlocksReplayButton = function TwoBlocksReplayButton(props) {
 
 /*----------  Helper Functions  ----------*/
 
-const getClassName = function getClassName(twoBlocksClass, hidden) {
+const getClassName = function getClassName(hidden) {
 
 	return [
 
-		twoBlocksClass, 
-		TWO_BLOCKS_BUTTON_CLASS, 
+		"two-blocks-button", 
+		"two-blocks-replay-button", 
 		hidden ? "hidden" : ""
 
 	].join(" ").trim(); 
