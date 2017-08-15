@@ -7,7 +7,7 @@
     "test": "find . -name test -type d ! -path './node_modules/*' -exec mocha {} --compilers js:babel-core/register --recursive ';'",
     "build": "npm run lint && NODE_ENV=production webpack -p",
     "pack": "UV_THREADPOOL_SIZE=100 webpack",
-    "lint": "eslint src/ src/**/* build/",
+    "lint": "eslint --ext .js --ext .jsx src/**/* build/**/*.js",
     "postlint": "echo 'Linting complete with no errors.'",
     "start": "nodemon --watch dist dist/server.js",
     "start-dev": "browser-sync start --serve-static 'dist' --no-open --server --index './build/index.dev.html' --files './dist/index.js, ./dist/index.min.js, ./build/*.html, ./build/*.js'",
@@ -75,6 +75,7 @@
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
     "redux-devtools-extension": "^1.0.0",
+    "redux-thunk": "^2.2.0",
     "serve-static": "^1.11.1",
     "superagent": "^2.3.0"
   }

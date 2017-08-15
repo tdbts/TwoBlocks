@@ -9,12 +9,12 @@ import { isOneOf } from '../utils/utils';
 
 /*----------  Constants  ----------*/
 
-const DEGREES_IN_A_CIRCLE  	= 360; 
-const DELAY_DEFAULT  		= 1000; 	// Milliseconds  
-const INCREMENT_DEFAULT  	= 1; 		// Degrees 
-const INTERVAL_DEFAULT  	= 25; 		// Milliseconds 
-const SEGMENTS_DEFAULT  	= 4; 
-const VALID_SEGMENTS 		= [2, 4, 6, 9, 12]; 
+const DEGREES_IN_A_CIRCLE  			= 360;
+const DELAY_DEFAULT_MS  			= 1000;
+const INCREMENT_DEFAULT_DEGREES  	= 1;
+const INTERVAL_DEFAULT_MS  			= 25; 
+const SEGMENTS_DEFAULT  			= 4;
+const VALID_SEGMENTS 				= [2, 4, 6, 9, 12]; 
 
 /**
  *
@@ -173,7 +173,7 @@ const spinnerMethods = {
 
 		if (!(increment)) {
 
-			increment = INCREMENT_DEFAULT;  // Degrees 
+			increment = INCREMENT_DEFAULT_DEGREES;  // Degrees 
 		
 		}
 
@@ -185,7 +185,7 @@ const spinnerMethods = {
 
 		if (!(interval)) {
 
-			interval = INTERVAL_DEFAULT; 
+			interval = INTERVAL_DEFAULT_MS; 
 
 		}		
 
@@ -233,7 +233,7 @@ const spinnerMethods = {
 
 			this._started = true; 
 
-			this._startHeading = Math.round(this._panorama.getPov().heading); 
+			this._startHeading = Math.round(this._panorama.getPov().heading) % DEGREES_IN_A_CIRCLE; 
 
 		}
 
@@ -291,7 +291,7 @@ const processPunctuationOption = function processPunctuationOption(options) {
 
 		if (!(delay)) {
 		
-			delay = DELAY_DEFAULT; 
+			delay = DELAY_DEFAULT_MS; 
 		
 		}
 

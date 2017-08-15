@@ -2,10 +2,10 @@
 
 /*----------  Constructor  ----------*/
 
-const ShowLocationMarker = function ShowLocationMarker(maps, mobile) {
+const ShowLocationMarker = function ShowLocationMarker(maps, isMobile) {
 
 	this.maps = maps;
-	this.mobile = mobile;
+	this.isMobile = isMobile;
 
 	this.blockLevelMap = this.maps.getBlockLevelMap();
 	this.boroughLevelMap = this.maps.getBoroughLevelMap();
@@ -21,14 +21,14 @@ ShowLocationMarker.prototype = {
 
 		const options = this._createOptions();
 
-		return this.mobile ? new L.Marker(options) : new google.maps.Marker(options); 
+		return this.isMobile ? new L.Marker(options) : new google.maps.Marker(options); 
 	},
 
 	_createOptions() {
 
 		const markerOptions = {}; 
 
-		if (this.mobile) {
+		if (this.isMobile) {
 
 			markerOptions.dragging = false; 
 
@@ -53,7 +53,7 @@ ShowLocationMarker.prototype = {
 
 	hide() {
 
-		if (this.mobile) {
+		if (this.isMobile) {
 
 			this.marker.setOpacity(0); 
 
@@ -79,7 +79,7 @@ ShowLocationMarker.prototype = {
 
 	placeOnMap(map) {
 
-		if (this.mobile) {
+		if (this.isMobile) {
 
 			this.marker.setOpacity(1); 
 			this.marker.addTo(map); 
@@ -94,11 +94,19 @@ ShowLocationMarker.prototype = {
 
 	}, 
 
+	removeFromMap(map) {
+
+		if (!(this.isMobile)) return;
+
+		map.removeLayer(this.marker);
+
+	},
+
 	setLocation(lat, lng) {
 
-		const latLng = this.mobile ? L.latLng(lat, lng) : new google.maps.LatLng({ lat, lng }); 
+		const latLng = this.isMobile ? L.latLng(lat, lng) : new google.maps.LatLng({ lat, lng }); 
 
-		if (this.mobile) {
+		if (this.isMobile) {
 
 			this.marker.setLatLng(latLng); 
 

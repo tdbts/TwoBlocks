@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
-import domElementsMounted from './domElementsMounted';
-import gameComponentsStarted from './gameComponentsStarted';
+import cssLoaded from './cssLoaded';
+import gameComponentsCreated from './gameComponentsCreated';
 import geoJSONLoaded from './geoJSONLoaded';
 import librariesLoaded from './librariesLoaded';
 
 const initialization = combineReducers({
-	domElementsMounted, 
-	gameComponentsStarted, 
+	cssLoaded,
+	gameComponentsCreated, 
 	geoJSONLoaded,
 	librariesLoaded
 });

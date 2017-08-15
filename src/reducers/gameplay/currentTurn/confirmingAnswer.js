@@ -4,7 +4,7 @@ const confirmingAnswer = function confirmingAnswer(state = false, action) {
 
 	switch (action.type) {
 
-		case actions.CONFIRMING_ANSWER: 
+		case actions.CONFIRM_ANSWER: 
 
 			state = true;
 

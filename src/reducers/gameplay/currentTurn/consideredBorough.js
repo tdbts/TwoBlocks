@@ -13,6 +13,7 @@ const consideredBorough = function consideredBorough(state = null, action) {
 			break;
 
 		case actions.CLEAR_CONSIDERED_BOROUGH:
+		case actions.CLEAR_CURRENT_TURN:
 
 			state = null;
 

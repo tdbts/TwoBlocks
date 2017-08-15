@@ -1,24 +1,24 @@
 import actions from '../../actions/actions';
 
-const level = function level(state = 'CITY', action) {
+export default function level(state = 'city', action) {
 
 	switch (action.type) {
 
-		case actions.SHOW_BLOCK_LEVEL_MAP: 
+		case actions.SET_MAP_LEVEL_BLOCK: 
 
-			state = 'BLOCK';
-
-			break;
-
-		case actions.SHOW_BOROUGH_LEVEL_MAP: 
-
-			state = 'BOROUGH';
+			state = 'block';
 
 			break;
 
-		case actions.SHOW_CITY_LEVEL_MAP: 
+		case actions.SET_MAP_LEVEL_BOROUGH: 
 
-			state = 'CITY';
+			state = 'borough';
+
+			break;
+
+		case actions.SET_MAP_LEVEL_CITY: 
+
+			state = 'city';
 
 			break;
 
@@ -26,6 +26,4 @@ const level = function level(state = 'CITY', action) {
 
 	return state;
 
-}; 
-
-export default level;
+}

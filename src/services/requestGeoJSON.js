@@ -42,7 +42,9 @@ const requestGeoJSON = function requestGeoJSON(url, worker) {
 
 	} else {
 
-		result = request.get(url);  
+		result = request.get(url)
+
+			.then(response => response.body);
 
 	}	
 

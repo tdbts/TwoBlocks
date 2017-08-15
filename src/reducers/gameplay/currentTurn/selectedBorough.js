@@ -1,6 +1,6 @@
 import actions from '../../../actions/actions';
 
-const selectedBorough = function selectedBorough(state = '', action) {
+const selectedBorough = function selectedBorough(state = null, action) {
 
 	const { borough, type } = action;
 
@@ -12,9 +12,10 @@ const selectedBorough = function selectedBorough(state = '', action) {
 
 			break;
 
-		case actions.CLEAR_CONSIDERED_BOROUGH:
+		case actions.CLEAR_CURRENT_TURN:
+		case actions.CLEAR_SELECTED_BOROUGH:
 
-			state = '';
+			state = null;
 
 			break;
 

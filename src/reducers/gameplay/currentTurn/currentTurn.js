@@ -2,17 +2,17 @@ import { combineReducers } from 'redux';
 import canEvaluateAnswer from './canEvaluateAnswer';
 import confirmingAnswer from './confirmingAnswer';
 import consideredBorough from './consideredBorough';
+import randomLocation from './randomLocation';
 import selectedBorough from './selectedBorough';
-import stage from './stage';
-import submittedBorough from './submittedBorough';
+import submitted from './submitted';
 
 const currentTurn = combineReducers({
 	canEvaluateAnswer,
 	confirmingAnswer,
 	consideredBorough,
+	randomLocation,
 	selectedBorough,
-	stage,
-	submittedBorough
+	submitted
 });
 
 export default currentTurn;

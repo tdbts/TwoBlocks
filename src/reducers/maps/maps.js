@@ -1,13 +1,15 @@
 import { combineReducers } from 'redux';
-import elements from './elements';
+import created from './created';
 import hoveredBorough from './hoveredBorough';
 import level from './level';
+import showingAnswer from './showingAnswer';
 import visible from './visible';
 
 const maps = combineReducers({
-	elements,
+	created,
 	hoveredBorough,
 	level,
+	showingAnswer,
 	visible
 });
 

@@ -3,8 +3,9 @@ import events from './events';
 import gameStages from './gameStages'; 
 import heardKeys from './heardKeys'; 
 import keyEventMaps from './keyEventMaps';
+import lifecycle from './lifecycle';
 import mapSources from './mapSources';  
-import nycCoordinates from './nycCoordinates';
+import nycLocationData from './nycLocationData';
 import transitionTypes from './transitionTypes'; 
 import promptTypes from './promptTypes'; 
 import tileLayer from './tileLayer';
@@ -17,18 +18,19 @@ const ANSWER_EVALUATION_DELAY 			= 7000;  // milliseconds
 const BLOCK_LEVEL_ZOOM 					= 16; 
 const BOROUGH_LEVEL_ZOOM 				= 12; 
 const CITY_LEVEL_ZOOM 					= 10; 
-const DEFAULT_MAXIMUM_ROUNDS 			= 5;
+// const DEFAULT_MAXIMUM_ROUNDS 			= 5;
+const DEFAULT_MAXIMUM_ROUNDS 			= 1;
 const HOVERED_BOROUGH_FILL_COLOR  		= "#A8FFFC";
 const KEY_PRESS_DEBOUNCE_TIMEOUT 		= 100; 
 const MAXIMUM_EVENT_EMITTER_LISTENERS	= 50; 
-const MAXIMUM_PANORAMA_REQUESTS  		= 25; 
+const MAXIMUM_PANORAMA_REQUESTS  		= 5; 
 const MAXIMUM_RANDOM_PANORAMA_ATTEMPTS  = 3; 
 const MILES_PER_METER  					= 0.000621371;
 const MILLISECONDS_IN_A_SECOND 			= 1000;  
-const MINIMUM_SPINNER_SCREEN_WIDTH 		= 720;  
+const MINIMUM_SPINNER_SCREEN_WIDTH 		= 737;  
 const PANORAMA_LOAD_DELAY  				= 3000; 
 const SELECTED_BOROUGH_FILL_COLOR 		= "#FFFFFF";
-const STREETVIEW_COUNTDOWN_LENGTH 		= 15;  // Seconds 
+const STREETVIEW_COUNTDOWN_LENGTH 		= 15;  // Seconds
 const WINDOW_RESIZE_DEBOUNCE_TIMEOUT 	= 100;
 
 export { 
@@ -36,9 +38,10 @@ export {
 	events, 
 	gameStages, 
 	heardKeys, 
-	keyEventMaps, 
+	keyEventMaps,
+	lifecycle, 
 	mapSources, 
-	nycCoordinates,
+	nycLocationData,
 	transitionTypes, 
 	promptTypes, 
 	tileLayer,  

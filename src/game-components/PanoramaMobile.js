@@ -1,5 +1,5 @@
 import Panorama from './Panorama';
-import Countdown from '../components/component-utils/Countdown';  // TODO: move location
+import Countdown from '../game-components/Countdown';  // TODO: move location
 import { STREETVIEW_COUNTDOWN_LENGTH } from '../constants/constants';
 
 /*----------  Constructor  ----------*/
@@ -53,7 +53,7 @@ const panoramaMobileMethods = {
 
 		this._countdown = new Countdown(STREETVIEW_COUNTDOWN_LENGTH);
 
-		this._listenForCountdownEvents(this._countdown);
+		this._listenForCountdownEvents();
 
 		this._countdown.start();
 

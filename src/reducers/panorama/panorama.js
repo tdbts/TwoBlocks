@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
-import showingLocation from './showingLocation';
+import created from './created';
+import displayingLocation from './displayingLocation';
 import visible from './visible';
 
 const panorama = combineReducers({
-	showingLocation,
+	created,
+	displayingLocation,
 	visible
 });
 

@@ -1,20 +1,24 @@
 import { combineReducers } from 'redux';
-import complete from './complete';
 import currentTurn from './currentTurn/currentTurn';
 import history from './history';
-import randomLocation from './randomLocation';
+import over from './over';
 import roundsPlayed from './roundsPlayed';
 import stageRequirements from './stageRequirements';
+import restarting from './restarting';
+import stage from './stage';
 import started from './started';
+import totalGamesPlayed from './totalGamesPlayed';
 
 const gameplay = combineReducers({
-	complete,
 	currentTurn,
 	history,
-	randomLocation,
+	over,
+	restarting,
 	roundsPlayed,
+	stage,
 	stageRequirements,
-	started
+	started,
+	totalGamesPlayed
 });
 
 export default gameplay;

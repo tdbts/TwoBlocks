@@ -1,5 +1,5 @@
 /* global window */
- 
+
 import { EventEmitter } from 'events'; 
 import { createPromiseTimeout } from '../utils/utils'; 
 import { events, gameStages, ANSWER_EVALUATION_DELAY, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS, MAXIMUM_RANDOM_PANORAMA_ATTEMPTS } from '../constants/constants';   

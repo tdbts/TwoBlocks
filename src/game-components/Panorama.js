@@ -18,8 +18,7 @@ const Panorama = function Panorama(element) {
 	// Documentation on streetViewPanorama class: 
 	// https://developers.google.com/maps/documentation/javascript/reference#StreetViewPanorama
 	this._latLng = null;
-	this._panorama = new google.maps.StreetViewPanorama(element, 
-			this.options); 
+	this._panorama = new google.maps.StreetViewPanorama(element, this.options); 
 	
 	this.events = {
 		DISPLAY_START: 'DISPLAY_START',

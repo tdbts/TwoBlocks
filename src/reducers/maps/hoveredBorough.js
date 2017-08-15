@@ -1,6 +1,6 @@
 import actions from '../../actions/actions';
 
-const hoveredBorough = function hoveredBorough(state = '', action) {
+const hoveredBorough = function hoveredBorough(state = null, action) {
 
 	const { borough, type } = action;
 
@@ -14,7 +14,7 @@ const hoveredBorough = function hoveredBorough(state = '', action) {
 
 		case actions.CLEAR_HOVERED_BOROUGH: 
 
-			state = '';
+			state = null;
 
 			break;
 

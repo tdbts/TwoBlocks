@@ -6,8 +6,8 @@ const arrowKeyHoverMap = {
 	}, 
 	"Manhattan": {
 		"ArrowUp": ["Bronx"], 
-		"ArrowRight": ["Queens"], 
-		"ArrowDown": ["Brooklyn"] 
+		"ArrowRight": ["Queens", "Brooklyn"], 
+		"ArrowDown": ["Brooklyn", "Staten Island"] 
 	}, 
 	"Queens": {
 		"ArrowUp": ["Bronx"], 
@@ -15,22 +15,22 @@ const arrowKeyHoverMap = {
 		"ArrowDown": ["Brooklyn"]
 	}, 
 	"Brooklyn": {
-		"ArrowUp": ["Queens"], 
+		"ArrowUp": ["Queens", "Manhattan"], 
 		"ArrowLeft": ["Manhattan"], 
 		"ArrowRight": ["Queens"], 
 		"ArrowDown": ["Staten Island"]
 	}, 
 	"Staten Island": {
 		"ArrowRight": ["Brooklyn"], 
-		"ArrowUp": ["Brooklyn"]
+		"ArrowUp": ["Brooklyn", "Manhattan"]
 	}
 }; 
 
 const firstArrowKeyPressBoroughMap = {
 	"ArrowUp": ["Bronx"], 
 	"ArrowLeft": ["Manhattan"], 
-	"ArrowRight": ["Queens"], 
-	"ArrowDown": ["Brooklyn", "Staten Island"]
+	"ArrowRight": ["Brooklyn", "Queens"], 
+	"ArrowDown": ["Staten Island", "Brooklyn"]
 }; 
 
 const keyEventMaps = {

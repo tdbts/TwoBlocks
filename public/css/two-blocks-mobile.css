@@ -15,7 +15,6 @@
 
 .mobile .two-blocks-interchange {
     position: absolute;
-    margin-left: 1%;
     z-index: 100;
 	background-color: #000;
     opacity: 0.7;
@@ -61,6 +60,10 @@
 	margin: 10px;
 }
 
+.mobile .two-blocks-countdown .time-left {
+	margin-left: 10px;
+}
+
 .two-blocks-prompt .green, 
 .mobile .two-blocks-countdown .green {
 	color: #009E39;
@@ -89,10 +92,10 @@
 	margin: 0px auto 35px auto;  
 }
 
-.mobile .two-blocks-replay-button {
+.mobile .two-blocks-interchange .two-blocks-replay-button {
 	position: absolute; 
 	width: 60%; 
-	height: 5%; 
+	height: 50px; 
 	left: 0; 
 	right: 0; 
 	top: 50%; 
@@ -106,7 +109,7 @@
 	}
 
 	.mobile .two-blocks-prompt {
-		top: 0%; 
+		top: 7%; 
 	}
 
 	.mobile .two-blocks-prompt, 
@@ -114,21 +117,27 @@
 		left: 1%;
 	}
 
+	.mobile .two-blocks-button {
+		height: 40%;
+	}
+
 	.mobile .two-blocks-submitter { 
 		position: relative;
+		top: 23%;
 	}
 
 	.mobile .two-blocks-submitter-button {
 		margin-bottom: 25px; 
-	}	
+	}
 
 }
 
 /* Prompt Transitions */
 
 .mobile .prompt-text {
-	/*display: inline-block;*/
-	position: relative; 
+	position: relative;
+	width: 90%;
+	margin: auto; 
 }
 
 .mobile .prompt-text span {
@@ -171,6 +180,10 @@
 
 .mobile .showing .showing-panorama-prompt {
   opacity: 1; 
+}
+
+.mobile .showing-panorama-prompt.show-after {
+	top: 40px;
 }
 
 .mobile .showing .showing-panorama-prompt.show-after {
@@ -285,9 +298,6 @@
 	-ms-transform: translateX(1000px);
 	-o-transform: translateX(1000px);
 	transform: translateX(1000px);
-	-webkit-transition: all 1s ease-out;
-	-o-transition: all 1s ease-out;
-	transition: all 1s ease-out;
 }
 
 .mobile .showing .loading-panorama-prompt {
@@ -302,6 +312,13 @@
 	-ms-transform: translateX(-1000px);
 	-o-transform: translateX(-1000px);
 	transform: translateX(-1000px);
+}
+
+.mobile .showing .loading-panorama-prompt,
+.mobile .leaving .loading-panorama-prompt {
+	-webkit-transition: all 1s ease-out;
+	-o-transition: all 1s ease-out;
+	transition: all 1s ease-out;
 }
 
 /* Game Over Prompt */

@@ -6,16 +6,9 @@ import interchange from './interchange/interchange';
 import maps from './maps/maps';
 import marker from './marker/marker';
 import panorama from './panorama/panorama';
-// import canEvaluateAnswer from './canEvaluateAnswer'; 
-// import currentTurn from './currentTurn';
-// import gameHistory from './gameHistory';
-// import gameOver from './gameOver';   
-// import gameStage from './gameStage';  
-// import hasStarted from './hasStarted'; 
-// import loading from './loading';
-// import stageRequirements from './stageRequirements';  
-// import totalRounds from './totalRounds';  
-// import view from './view'; 
+import prompt from './prompt/prompt';
+import service from './service/service';
+import view from './view/view';
 
 const twoBlocks = combineReducers({
 	app,
@@ -24,17 +17,10 @@ const twoBlocks = combineReducers({
 	interchange,
 	maps,
 	marker,
-	panorama
-	// canEvaluateAnswer, 
-	// currentTurn,
-	// gameHistory,  
-	// gameOver, 
-	// gameStage, 
-	// hasStarted, 
-	// loading, 
-	// stageRequirements, 
-	// totalRounds,  
-	// view
+	panorama,
+	prompt,
+	service,
+	view
 }); 
 
 export default twoBlocks; 

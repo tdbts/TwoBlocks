@@ -73,7 +73,7 @@ PromptManager.prototype = {
 
 		const className = ['total-correct', fractionClass ].join(" ").trim(); 
 
-		const content = <span className={ type } key={ type }>Game over.  You correctly guessed <span className={ className }>{ totalCorrect.toString() } / { totalRounds.toString() }</span> of the Street View locations.</span>
+		const content = <span className={ type } key={ type }>Game over.  You correctly guessed <span className={ className }>{ totalCorrect.toString() } / { totalRounds.toString() }</span> of the Street View locations.</span>;
 	
 		return {
 			content, 
@@ -117,7 +117,7 @@ PromptManager.prototype = {
 		return {
 			content, 
 			type
-		}
+		};
 
 	}, 
 

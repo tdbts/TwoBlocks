@@ -6,7 +6,7 @@ const canEvaluateAnswer = function canEvaluateAnswer(state = false, action) {
 
 	const { type } = action; 
 
-	if (actions.CAN_EVALUATE_ANSWER === type) {
+	if (actions.SUBMIT_BOROUGH === type) {
 
 		nextState = true; 
 

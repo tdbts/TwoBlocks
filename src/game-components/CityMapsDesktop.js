@@ -106,7 +106,6 @@ export default class CityMapsDesktop extends CityMaps {
 
 	}
 
-
 	onGuessingLocation(latLng) {
 
 		const { lat, lng } = latLng;

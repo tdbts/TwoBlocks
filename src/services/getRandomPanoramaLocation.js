@@ -2,6 +2,7 @@ import requestNearestPanorama from './random-panorama/requestNearestPanorama';
 import pointToLatLngLiteral from './random-panorama/pointToLatLngLiteral'; 
 import RandomLocationGenerator from '../random-location-generator/RandomLocationGenerator'; 
 import getRandomLocationFromWorker from './random-panorama/getRandomLocationFromWorker'; 
+import Borough from '../game-components/Borough';
 import { tryAtMost } from '../utils/utils';
 import { MAXIMUM_PANORAMA_REQUESTS } from '../constants/constants';  
 
@@ -48,9 +49,7 @@ const getRandomPanoramaLocation = function getRandomPanoramaLocation(worker, fea
 
 		.then(() => (randomLatLng = (pointToLatLngLiteral(randomLatLng))))
 
-		// N.B - Parentheses must be wrapped around an object literal 
-		// returned by an arrow function
-		.then(() => ( { boroughName, randomLatLng, selectedBorough } ));	
+		.then(() => ( { ...randomLatLng, borough: new Borough(boroughName) } ));
 
 	/*----------  If worker exists, use it to get random location and then execute panorama request  ----------*/
 	

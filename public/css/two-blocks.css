@@ -2,9 +2,13 @@ html, body {
 	height: 100%; 
 	margin: 0; 
 	padding: 0;
-} 
+}
 
-.full-dimensions {
+.app-container {
+	overflow: hidden;
+}
+
+.fill-container {
 	height: 100%; 
 	width: 100%; 
 }
@@ -54,10 +58,6 @@ html, body {
 	position: absolute; 
 }
 
-.two-blocks-interchange {
-	margin-left: 1%;
-}
-
 .two-blocks-submitter-borough-name {
 	color: #D9285B;
 }
@@ -66,4 +66,8 @@ html, body {
 	border-radius: 10px;
 	height: 2em;
 	letter-spacing: 1px; 
+}
+
+.desktop .two-blocks-replay-button {
+	margin-top: 15px;
 }
