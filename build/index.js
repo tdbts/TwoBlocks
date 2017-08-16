@@ -6,7 +6,7 @@ import { render } from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import TwoBlocks from '../src/components/TwoBlocks/TwoBlocks.refactor';
+import TwoBlocks from '../src/components/TwoBlocks/TwoBlocks';
 import twoBlocks from '../src/reducers/twoBlocks';
 
 const reducers = [ twoBlocks, {} ];

@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { MILLISECONDS_IN_A_SECOND } from '../constants/constants';
+import { MILLISECONDS_IN_A_SECOND } from '../../../constants/constants';
 
 export default class Countdown extends EventEmitter {
 

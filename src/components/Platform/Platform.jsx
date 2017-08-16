@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Anchor = function Anchor(props) {
+const Platform = function Platform(props) {
 
 	const { className, onRef } = props;
 
@@ -15,11 +15,11 @@ const Anchor = function Anchor(props) {
 
 };
 
-Anchor.propTypes = {
+Platform.propTypes = {
 
 	className: React.PropTypes.string,
 	onRef: React.PropTypes.func
 
 };
 
-export default Anchor;
+export default Platform;

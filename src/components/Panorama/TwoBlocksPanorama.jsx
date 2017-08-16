@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import twoBlocksUtils from '../../game-utils/twoBlocksUtils';
 import { gameStages, lifecycle } from '../../constants/constants';
-import Panorama from '../Anchor';
-import PanoramaDisplay from '../../game-components/PanoramaDisplay';
-import Countdown from '../Countdown/TwoBlocksCountdown.refactor';
-import removeStreetNameAnnotations from '../component-utils/removeStreetNameAnnotations';
+import twoBlocksUtils from '../../game-utils/twoBlocksUtils';
+import Panorama from '../Platform/Platform';
+import Display from './Display/Display';
+import Countdown from './Countdown/TwoBlocksCountdown';
+import removeStreetNameAnnotations from './removeStreetNameAnnotations';
 import mapStateToProps from './mapStateToProps';
 import mapDispatchToProps from './mapDispatchToProps';
 
@@ -312,7 +312,7 @@ class TwoBlocksPanorama extends React.Component {
 
 	_onDisplayingLocation() {
 
-		this._display = new PanoramaDisplay(this._panorama, this.props.isMobile);
+		this._display = new Display(this._panorama, this.props.isMobile);
 
 		this._assignDisplayEventListeners();
 		this._startMotionControl();

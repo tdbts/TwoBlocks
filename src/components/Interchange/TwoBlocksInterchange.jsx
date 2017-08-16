@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import TwoBlocksPrompt from '../Prompt/TwoBlocksPrompt.refactor'; 
-import TwoBlocksSubmitter from '../Submitter/TwoBlocksSubmitter.refactor'; 
-import TwoBlocksReplayButton from '../ReplayButton/TwoBlocksReplayButton.refactor';
+import TwoBlocksPrompt from '../Prompt/TwoBlocksPrompt'; 
+import TwoBlocksSubmitter from '../Submitter/TwoBlocksSubmitter'; 
+import TwoBlocksReplayButton from '../ReplayButton/TwoBlocksReplayButton';
 import mapStateToProps from './mapStateToProps';
 
 /*----------  Class  ----------*/

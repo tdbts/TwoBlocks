@@ -3,11 +3,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { lifecycle } from '../../constants/constants';
-import TwoBlocksWorldView from '../WorldView/TwoBlocksWorldView.refactor';
-import TwoBlocksInterchange from '../Interchange/TwoBlocksInterchange.refactor';
+import TwoBlocksWorldView from '../WorldView/TwoBlocksWorldView';
+import TwoBlocksInterchange from '../Interchange/TwoBlocksInterchange';
 import TwoBlocksService from '../../services/TwoBlocksService';
-import Gameplay from '../../game-components/Gameplay.refactor';
-import viewProgress from '../component-utils/viewProgress';
+import Gameplay from '../../game-components/Gameplay';
+import viewProgress from './viewProgress';
 import twoBlocksUtils from '../../game-utils/twoBlocksUtils';
 import mapStateToProps from './mapStateToProps';
 import mapDispatchToProps from './mapDispatchToProps';

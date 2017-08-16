@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { lifecycle, nycLocationData } from '../../constants/constants';
-import Map from '../Anchor';
-import CityMapsDesktop from '../../game-components/CityMapsDesktop.refactor';
-import CityMapsMobile from '../../game-components/CityMapsMobile.refactor';
-import ShowLocationMarker from '../../game-components/ShowLocationMarker';
+import Map from '../Platform/Platform';
+import CityMapsDesktop from './CityMapsDesktop';
+import CityMapsMobile from './CityMapsMobile';
+import ShowLocationMarker from './ShowLocationMarker/ShowLocationMarker';
 import AnswerDisplay from './AnswerDisplay';
 import ClassNames from './ClassNames';
 import DOMEventManager from './DOMEventManager';

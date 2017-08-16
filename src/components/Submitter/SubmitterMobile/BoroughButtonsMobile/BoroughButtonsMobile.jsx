@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import BoroughButton from './BoroughButton/BoroughButton.refactor'; 
+import { transitionTypes } from '../../../../constants/constants';
+import { createPromiseTimeout } from '../../../../utils/utils'; 
+import BoroughButton from './BoroughButton/BoroughButton'; 
 import Borough from '../../../../game-components/Borough';
 import mapStateToProps from './mapStateToProps';
 import mapDispatchToProps from './mapDispatchToProps';
-import { transitionTypes } from '../../../../constants/constants';
-import { createPromiseTimeout } from '../../../../utils/utils'; 
 
 class BoroughButtonsMobile extends React.Component {
 

@@ -1,7 +1,7 @@
 import React from 'react'; 
 import { connect } from 'react-redux';
-import BoroughButtonsMobile from './BoroughButtonsMobile/BoroughButtonsMobile.refactor'; 
-import FinalAnswerCheckMobile from './FinalAnswerCheckMobile/FinalAnswerCheckMobile.refactor'; 
+import BoroughButtonsMobile from './BoroughButtonsMobile/BoroughButtonsMobile'; 
+import FinalAnswerCheckMobile from './FinalAnswerCheckMobile/FinalAnswerCheckMobile'; 
 import mapDispatchToProps from './mapDispatchToProps';
 import mapStateToProps from './mapStateToProps';
 

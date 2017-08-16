@@ -1,10 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { debounce } from '../../utils/utils';
-import { KEY_PRESS_DEBOUNCE_TIMEOUT } from '../../constants/constants';
-import SubmitterDesktop from './SubmitterDesktop/SubmitterDesktop.refactor';
-import SubmitterMobile from './SubmitterMobile/SubmitterMobile.refactor';
-import { gameStages } from '../../constants/constants';
+import { gameStages, KEY_PRESS_DEBOUNCE_TIMEOUT } from '../../constants/constants';
+import SubmitterDesktop from './SubmitterDesktop/SubmitterDesktop';
+import SubmitterMobile from './SubmitterMobile/SubmitterMobile';
 import mapStateToProps from './mapStateToProps';
 import mapDispatchToProps from './mapDispatchToProps';
 

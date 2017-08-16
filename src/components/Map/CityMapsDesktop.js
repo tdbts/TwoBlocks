@@ -1,7 +1,7 @@
 /* global google */
 
-import CityMaps from './CityMaps.refactor';
-import Borough from './Borough';
+import CityMaps from './CityMaps';
+import Borough from '../../game-components/Borough';
 
 export default class CityMapsDesktop extends CityMaps {
 

@@ -32123,9 +32123,9 @@
 
 	var _constants = __webpack_require__(507);
 
-	var _Anchor = __webpack_require__(526);
+	var _Platform = __webpack_require__(526);
 
-	var _Anchor2 = _interopRequireDefault(_Anchor);
+	var _Platform2 = _interopRequireDefault(_Platform);
 
 	var _CityMapsDesktop = __webpack_require__(527);
 
@@ -32451,15 +32451,15 @@
 				return _react2.default.createElement(
 					'div',
 					{ className: this._classNames.getContainerClass(), onKeyDown: onKeyDown },
-					_react2.default.createElement(_Anchor2.default, {
+					_react2.default.createElement(_Platform2.default, {
 						className: this._classNames.getMapClass(CITY),
 						onRef: this._mountHandlers.CITY
 					}),
-					_react2.default.createElement(_Anchor2.default, {
+					_react2.default.createElement(_Platform2.default, {
 						className: this._classNames.getMapClass(BOROUGH),
 						onRef: this._mountHandlers.BOROUGH
 					}),
-					_react2.default.createElement(_Anchor2.default, {
+					_react2.default.createElement(_Platform2.default, {
 						className: this._classNames.getMapClass(BLOCK),
 						onRef: this._mountHandlers.BLOCK
 					})
@@ -32488,7 +32488,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Anchor = function Anchor(props) {
+	var Platform = function Platform(props) {
 		var className = props.className;
 		var onRef = props.onRef;
 
@@ -32499,14 +32499,14 @@
 		});
 	};
 
-	Anchor.propTypes = {
+	Platform.propTypes = {
 
 		className: _react2.default.PropTypes.string,
 		onRef: _react2.default.PropTypes.func
 
 	};
 
-		exports.default = Anchor;
+		exports.default = Platform;
 
 /***/ },
 /* 527 */
@@ -37498,19 +37498,19 @@
 
 	var _reactRedux = __webpack_require__(492);
 
+	var _constants = __webpack_require__(507);
+
 	var _twoBlocksUtils = __webpack_require__(639);
 
 	var _twoBlocksUtils2 = _interopRequireDefault(_twoBlocksUtils);
 
-	var _constants = __webpack_require__(507);
+	var _Platform = __webpack_require__(526);
 
-	var _Anchor = __webpack_require__(526);
+	var _Platform2 = _interopRequireDefault(_Platform);
 
-	var _Anchor2 = _interopRequireDefault(_Anchor);
+	var _Display = __webpack_require__(646);
 
-	var _PanoramaDisplay = __webpack_require__(646);
-
-	var _PanoramaDisplay2 = _interopRequireDefault(_PanoramaDisplay);
+	var _Display2 = _interopRequireDefault(_Display);
 
 	var _TwoBlocksCountdown = __webpack_require__(649);
 
@@ -37829,7 +37829,7 @@
 			key: '_onDisplayingLocation',
 			value: function _onDisplayingLocation() {
 
-				this._display = new _PanoramaDisplay2.default(this._panorama, this.props.isMobile);
+				this._display = new _Display2.default(this._panorama, this.props.isMobile);
 
 				this._assignDisplayEventListeners();
 				this._startMotionControl();
@@ -37953,7 +37953,7 @@
 				return _react2.default.createElement(
 					'div',
 					{ className: this._getContainerClassName() },
-					_react2.default.createElement(_Anchor2.default, {
+					_react2.default.createElement(_Platform2.default, {
 						className: this._getClassName(),
 						onRef: function onRef(ref) {
 							return _this4._onRef(ref);
@@ -40780,6 +40780,10 @@
 
 	var _reactRedux = __webpack_require__(492);
 
+	var _constants = __webpack_require__(507);
+
+	var _utils = __webpack_require__(534);
+
 	var _BoroughButton = __webpack_require__(671);
 
 	var _BoroughButton2 = _interopRequireDefault(_BoroughButton);
@@ -40795,10 +40799,6 @@
 	var _mapDispatchToProps = __webpack_require__(673);
 
 	var _mapDispatchToProps2 = _interopRequireDefault(_mapDispatchToProps);
-
-	var _constants = __webpack_require__(507);
-
-	var _utils = __webpack_require__(534);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
