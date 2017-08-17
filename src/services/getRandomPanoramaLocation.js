@@ -1,6 +1,6 @@
 import requestNearestPanorama from './random-panorama/requestNearestPanorama';  
 import pointToLatLngLiteral from './random-panorama/pointToLatLngLiteral'; 
-import RandomLocationGenerator from '../random-location-generator/RandomLocationGenerator'; 
+import RandomLocationGenerator from './random-location-generator/RandomLocationGenerator'; 
 import getRandomLocationFromWorker from './random-panorama/getRandomLocationFromWorker'; 
 import Borough from '../game-components/Borough';
 import { tryAtMost } from '../utils/utils';

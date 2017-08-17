@@ -4,14 +4,6 @@ import { MINIMUM_SPINNER_SCREEN_WIDTH } from '../constants/constants';
  
 const twoBlocksUtils = {
 
-	deviceIsMotionCapable: !!(window.DeviceOrientationEvent) || !!(window.DeviceMotionEvent), 
-
-	deviceIsSmallEnoughForMotion: (window.screen.width < MINIMUM_SPINNER_SCREEN_WIDTH),
-
-	deviceIsIpad: /iPad/g.test(window.navigator.userAgent), 
-
-	/*----------  Methods  ----------*/
-
 	answerIsCorrect(randomLocation, selectedBorough) {
 
 		return randomLocation.borough.getID() === selectedBorough.getID();
@@ -53,6 +45,24 @@ const twoBlocksUtils = {
 
 	},
 
+	deviceIsMotionCapable() {
+
+		return !!(window.DeviceOrientationEvent) || !!(window.DeviceMotionEvent);
+	
+	}, 
+
+	deviceIsSmallEnoughForMotion() {
+
+		return (window.screen.width < MINIMUM_SPINNER_SCREEN_WIDTH);
+
+	},
+
+	deviceIsIpad() {
+
+		return /iPad/g.test(window.navigator.userAgent);
+
+	}, 
+
 	loadCSS() {
 
 		require('../../public/css/two-blocks.css');  // Use Webpack loaders to add CSS 
@@ -69,8 +79,8 @@ const twoBlocksUtils = {
  
 		const conditions = [
 
-			this.deviceIsMotionCapable, 
-			this.deviceIsSmallEnoughForMotion || this.deviceIsIpad
+			this.deviceIsMotionCapable(), 
+			this.deviceIsSmallEnoughForMotion() || this.deviceIsIpad()
 
 		]; 
 

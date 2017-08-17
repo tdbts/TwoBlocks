@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { MILLISECONDS_IN_A_SECOND } from '../../../constants/constants';
+import { MILLISECONDS_PER_SECOND } from '../../../constants/constants';
 
 export default class Countdown extends EventEmitter {
 
@@ -66,7 +66,7 @@ export default class Countdown extends EventEmitter {
 
 	start() {
 
-		const interval = setInterval(() => this._nextTick(), MILLISECONDS_IN_A_SECOND); 
+		const interval = setInterval(() => this._nextTick(), MILLISECONDS_PER_SECOND); 
 		
 		this.interval = interval; 
 	

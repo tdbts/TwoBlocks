@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { lifecycle } from '../../constants/constants';
+import { lifecycle, transitionTypes } from '../../constants/constants';
 import mapStateToProps from './mapStateToProps';
 import mapDispatchToProps from './mapDispatchToProps';
 import Content from './Content';
@@ -35,12 +35,7 @@ class TwoBlocksPrompt extends React.Component {
 		
 		};
 
-		this.transitionTypes = {
-
-			LEAVING: 'leaving',
-			SHOWING: 'showing'
-
-		};
+		this.transitionTypes = transitionTypes;
 
 		this._promisifySetState();
 

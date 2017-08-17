@@ -1,7 +1,7 @@
 /* global window */
  
 import { EventEmitter } from 'events';
-import { events, gameStages, lifecycle, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS } from '../constants/constants';   
+import { gameStages, lifecycle, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS } from '../constants/constants';   
 
 /**
  *
@@ -18,7 +18,11 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		this.setMaxListeners(MAXIMUM_EVENT_EMITTER_LISTENERS);
 
-		this.events = events; 
+		this.events = {
+
+			PROPS_UPDATE: 'PROPS_UPDATE'
+		
+		}; 
 
 		this.MAXIMUM_ROUNDS = DEFAULT_MAXIMUM_ROUNDS; 
 
