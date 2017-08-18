@@ -158,7 +158,7 @@ class BoroughButtonsMobile extends React.Component {
 
 BoroughButtonsMobile.propTypes = {
 
-	selectedBorough: React.PropTypes.string
+	selectedBorough: React.PropTypes.object
 
 }; 
 

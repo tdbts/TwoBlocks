@@ -79,6 +79,14 @@ class TwoBlocks extends React.Component {
 
 	}
 
+	/**
+	 *
+	 * The functionality of many components of the game is dependent on
+	 * the player's device.  Wait until the device mode has been determined    
+	 * before starting these components.
+	 *
+	 */
+
 	_checkDeviceModeDetermination(prevIsMobile) {
 
 		if (prevIsMobile === this.props.app.isMobile) return;
@@ -95,7 +103,7 @@ class TwoBlocks extends React.Component {
 
 		if (gameComponentsCreated || !(maps.created) || !(panorama.created)) return;
 
-		this.props.onGameComponentsCreated();
+		this.props.gameComponentsCreated();
 
 	}
 
@@ -111,7 +119,9 @@ class TwoBlocks extends React.Component {
 
 		const { initialized, initialization } = this.props.app;
 
-		const initializationComplete = Object.keys(initialization).every(requirement => initialization[requirement] === true);
+		const initializationComplete = Object.keys(initialization)
+
+			.every(requirement => initialization[requirement] === true);
 
 		if (initialized || !(initializationComplete)) return;
 

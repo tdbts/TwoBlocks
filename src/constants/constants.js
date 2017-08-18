@@ -1,3 +1,4 @@
+import ALL_TYPES from './ALL_TYPES';
 import boroughNames from './boroughNames'; 
 import gameStages from './gameStages'; 
 import heardKeys from './heardKeys'; 
@@ -17,6 +18,7 @@ const MINIMUM_SPINNER_SCREEN_WIDTH 		= 737;
 const WINDOW_RESIZE_DEBOUNCE_TIMEOUT 	= 100;
 
 export { 
+	ALL_TYPES,
 	boroughNames,
 	gameStages, 
 	heardKeys, 

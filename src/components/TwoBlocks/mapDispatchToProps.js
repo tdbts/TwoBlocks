@@ -22,6 +22,8 @@ export default dispatch => {
 
 		cssLoaded: 					() => dispatch(actionCreators.cssLoaded()),
 
+		gameComponentsCreated: 		() => dispatch(actionCreators.gameComponentsCreated()),
+
 		gameOver: 					() => dispatch(actionCreators.gameOver()),
 
 		geoJSONLoaded: 				() => dispatch(actionCreators.geoJSONLoaded()),
@@ -31,8 +33,6 @@ export default dispatch => {
 		librariesLoaded: 			() => dispatch(actionCreators.librariesLoaded()),
 
 		nextTurn: 					() => dispatch(actionCreators.nextTurn()),
-
-		onGameComponentsCreated: 	() => dispatch(actionCreators.gameComponentsCreated()),
 
 		requestRandomLocation: 		() => dispatch(actionCreators.requestRandomLocation()),
 
