@@ -4,7 +4,6 @@ import countdown from './countdown/countdown';
 import gameplay from './gameplay/gameplay';
 import interchange from './interchange/interchange';
 import maps from './maps/maps';
-import marker from './marker/marker';
 import panorama from './panorama/panorama';
 import prompt from './prompt/prompt';
 import service from './service/service';
@@ -16,7 +15,6 @@ const twoBlocks = combineReducers({
 	gameplay,
 	interchange,
 	maps,
-	marker,
 	panorama,
 	prompt,
 	service,

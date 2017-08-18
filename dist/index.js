@@ -36185,16 +36185,13 @@
 		CLEAR_CURRENT_TURN: 'CLEAR_CURRENT_TURN',
 		CLEAR_CONSIDERED_BOROUGH: 'CLEAR_CONSIDERED_BOROUGH',
 		CLEAR_HOVERED_BOROUGH: 'CLEAR_HOVERED_BOROUGH',
-		CLEAR_MARKER_MAP: 'CLEAR_MARKER_MAP',
 		CLEAR_RANDOM_LOCATION: 'CLEAR_RANDOM_LOCATION',
 		CLEAR_SELECTED_BOROUGH: 'CLEAR_SELECTED_BOROUGH',
-		CLEAR_STAGE_REQUIREMENTS: 'CLEAR_STAGE_REQUIREMENTS',
 		DISPLAY_LOCATION: 'DISPLAY_LOCATION',
 		DOM_ELEMENTS_MOUNTED: 'DOM_ELEMENTS_MOUNTED',
 		GAME_COMPONENTS_CREATED: 'GAME_COMPONENTS_CREATED',
 		GAME_OVER: 'GAME_OVER',
 		GEO_JSON_LOADED: 'GEO_JSON_LOADED',
-		HIDE_COUNTDOWN: 'HIDE_COUNTDOWN',
 		HIDE_MAP: 'HIDE_MAP',
 		HIDE_PANORAMA: 'HIDE_PANORAMA',
 		INCREMENT_TOTAL_ROUNDS: 'INCREMENT_TOTAL_ROUNDS',
@@ -36202,7 +36199,6 @@
 		MAPS_CREATED: 'MAPS_CREATED',
 		NEXT_TURN: 'NEXT_TURN',
 		PANORAMA_CREATED: 'PANORAMA_CREATED',
-		REMOVE_STAGE_REQUIREMENTS: 'REMOVE_STAGE_REQUIREMENTS',
 		REQUEST_RANDOM_LOCATION: 'REQUEST_RANDOM_LOCATION',
 		RESTART_GAME: 'RESTART_GAME',
 		SAVE_TURN: 'SAVE_TURN',
@@ -36214,12 +36210,10 @@
 		SET_MAP_LEVEL_BLOCK: 'SET_MAP_LEVEL_BLOCK',
 		SET_MAP_LEVEL_BOROUGH: 'SET_MAP_LEVEL_BOROUGH',
 		SET_MAP_LEVEL_CITY: 'SET_MAP_LEVEL_CITY',
-		SET_MARKER_MAP: 'SET_MARKER_MAP',
 		SET_MOBILE_APP: 'SET_MOBILE_APP',
 		SET_RANDOM_LOCATION: 'SET_RANDOM_LOCATION',
 		SET_SELECTED_BOROUGH: 'SET_SELECTED_BOROUGH',
 		SHOW_ANSWER: 'START_SHOWING_ANSWER',
-		SHOW_COUNTDOWN: 'SHOW_COUNTDOWN',
 		SHOW_MAP: 'SHOW_MAP',
 		SHOW_PANORAMA: 'SHOW_PANORAMA',
 		SHOW_PROMPT: 'SHOW_PROMPT',
@@ -54412,35 +54406,31 @@
 
 	var _countdown2 = _interopRequireDefault(_countdown);
 
-	var _gameplay = __webpack_require__(806);
+	var _gameplay = __webpack_require__(804);
 
 	var _gameplay2 = _interopRequireDefault(_gameplay);
 
-	var _interchange = __webpack_require__(821);
+	var _interchange = __webpack_require__(819);
 
 	var _interchange2 = _interopRequireDefault(_interchange);
 
-	var _maps = __webpack_require__(823);
+	var _maps = __webpack_require__(822);
 
 	var _maps2 = _interopRequireDefault(_maps);
 
-	var _marker = __webpack_require__(829);
-
-	var _marker2 = _interopRequireDefault(_marker);
-
-	var _panorama = __webpack_require__(832);
+	var _panorama = __webpack_require__(828);
 
 	var _panorama2 = _interopRequireDefault(_panorama);
 
-	var _prompt = __webpack_require__(836);
+	var _prompt = __webpack_require__(832);
 
 	var _prompt2 = _interopRequireDefault(_prompt);
 
-	var _service = __webpack_require__(838);
+	var _service = __webpack_require__(834);
 
 	var _service2 = _interopRequireDefault(_service);
 
-	var _view = __webpack_require__(840);
+	var _view = __webpack_require__(836);
 
 	var _view2 = _interopRequireDefault(_view);
 
@@ -54452,7 +54442,6 @@
 		gameplay: _gameplay2.default,
 		interchange: _interchange2.default,
 		maps: _maps2.default,
-		marker: _marker2.default,
 		panorama: _panorama2.default,
 		prompt: _prompt2.default,
 		service: _service2.default,
@@ -54770,15 +54759,10 @@
 
 	var _timeLeft2 = _interopRequireDefault(_timeLeft);
 
-	var _visible = __webpack_require__(804);
-
-	var _visible2 = _interopRequireDefault(_visible);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var countdown = (0, _redux.combineReducers)({
-		timeLeft: _timeLeft2.default,
-		visible: _visible2.default
+		timeLeft: _timeLeft2.default
 	});
 
 		exports.default = countdown;
@@ -54829,102 +54813,40 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _actions = __webpack_require__(579);
-
-	var _actions2 = _interopRequireDefault(_actions);
-
-	var _createVisibilityReducer = __webpack_require__(805);
-
-	var _createVisibilityReducer2 = _interopRequireDefault(_createVisibilityReducer);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-		exports.default = (0, _createVisibilityReducer2.default)(_actions2.default.SHOW_COUNTDOWN, _actions2.default.HIDE_COUNTDOWN);
-
-/***/ },
-/* 805 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	var createVisibilityReducer = function createVisibilityReducer(showAction, hideAction) {
-		var defaultState = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-
-
-		return function () {
-			var state = arguments.length <= 0 || arguments[0] === undefined ? defaultState : arguments[0];
-			var action = arguments[1];
-
-
-			switch (action.type) {
-
-				case showAction:
-
-					state = true;
-
-					break;
-
-				case hideAction:
-
-					state = false;
-
-					break;
-
-			}
-
-			return state;
-		};
-	};
-
-	exports.default = createVisibilityReducer;
-
-/***/ },
-/* 806 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 
 	var _redux = __webpack_require__(479);
 
-	var _currentTurn = __webpack_require__(807);
+	var _currentTurn = __webpack_require__(805);
 
 	var _currentTurn2 = _interopRequireDefault(_currentTurn);
 
-	var _history = __webpack_require__(814);
+	var _history = __webpack_require__(812);
 
 	var _history2 = _interopRequireDefault(_history);
 
-	var _over = __webpack_require__(815);
+	var _over = __webpack_require__(813);
 
 	var _over2 = _interopRequireDefault(_over);
 
-	var _roundsPlayed = __webpack_require__(816);
+	var _roundsPlayed = __webpack_require__(814);
 
 	var _roundsPlayed2 = _interopRequireDefault(_roundsPlayed);
 
-	var _restarting = __webpack_require__(817);
+	var _restarting = __webpack_require__(815);
 
 	var _restarting2 = _interopRequireDefault(_restarting);
 
-	var _stage = __webpack_require__(818);
+	var _stage = __webpack_require__(816);
 
 	var _stage2 = _interopRequireDefault(_stage);
 
-	var _started = __webpack_require__(819);
+	var _started = __webpack_require__(817);
 
 	var _started2 = _interopRequireDefault(_started);
 
-	var _totalGamesPlayed = __webpack_require__(820);
+	var _totalGamesPlayed = __webpack_require__(818);
 
 	var _totalGamesPlayed2 = _interopRequireDefault(_totalGamesPlayed);
 
@@ -54944,7 +54866,7 @@
 		exports.default = gameplay;
 
 /***/ },
-/* 807 */
+/* 805 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54955,27 +54877,27 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _canEvaluateAnswer = __webpack_require__(808);
+	var _canEvaluateAnswer = __webpack_require__(806);
 
 	var _canEvaluateAnswer2 = _interopRequireDefault(_canEvaluateAnswer);
 
-	var _confirmingAnswer = __webpack_require__(809);
+	var _confirmingAnswer = __webpack_require__(807);
 
 	var _confirmingAnswer2 = _interopRequireDefault(_confirmingAnswer);
 
-	var _consideredBorough = __webpack_require__(810);
+	var _consideredBorough = __webpack_require__(808);
 
 	var _consideredBorough2 = _interopRequireDefault(_consideredBorough);
 
-	var _randomLocation = __webpack_require__(811);
+	var _randomLocation = __webpack_require__(809);
 
 	var _randomLocation2 = _interopRequireDefault(_randomLocation);
 
-	var _selectedBorough = __webpack_require__(812);
+	var _selectedBorough = __webpack_require__(810);
 
 	var _selectedBorough2 = _interopRequireDefault(_selectedBorough);
 
-	var _submitted = __webpack_require__(813);
+	var _submitted = __webpack_require__(811);
 
 	var _submitted2 = _interopRequireDefault(_submitted);
 
@@ -54993,7 +54915,7 @@
 		exports.default = currentTurn;
 
 /***/ },
-/* 808 */
+/* 806 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55035,7 +54957,7 @@
 	exports.default = canEvaluateAnswer;
 
 /***/ },
-/* 809 */
+/* 807 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55076,7 +54998,7 @@
 	exports.default = confirmingAnswer;
 
 /***/ },
-/* 810 */
+/* 808 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55121,7 +55043,7 @@
 	exports.default = consideredBorough;
 
 /***/ },
-/* 811 */
+/* 809 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55164,7 +55086,7 @@
 		};
 
 /***/ },
-/* 812 */
+/* 810 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55209,7 +55131,7 @@
 	exports.default = selectedBorough;
 
 /***/ },
-/* 813 */
+/* 811 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55253,7 +55175,7 @@
 	exports.default = submitted;
 
 /***/ },
-/* 814 */
+/* 812 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55296,7 +55218,7 @@
 	exports.default = history;
 
 /***/ },
-/* 815 */
+/* 813 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55339,7 +55261,7 @@
 	exports.default = complete;
 
 /***/ },
-/* 816 */
+/* 814 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55381,7 +55303,7 @@
 	exports.default = roundsPlayed;
 
 /***/ },
-/* 817 */
+/* 815 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55421,7 +55343,7 @@
 		};
 
 /***/ },
-/* 818 */
+/* 816 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55487,7 +55409,7 @@
 		};
 
 /***/ },
-/* 819 */
+/* 817 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55523,7 +55445,7 @@
 	exports.default = started;
 
 /***/ },
-/* 820 */
+/* 818 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55559,7 +55481,7 @@
 		}
 
 /***/ },
-/* 821 */
+/* 819 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55570,7 +55492,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _visible = __webpack_require__(822);
+	var _visible = __webpack_require__(820);
 
 	var _visible2 = _interopRequireDefault(_visible);
 
@@ -55583,7 +55505,7 @@
 		exports.default = interchange;
 
 /***/ },
-/* 822 */
+/* 820 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55596,7 +55518,7 @@
 
 	var _actions2 = _interopRequireDefault(_actions);
 
-	var _createVisibilityReducer = __webpack_require__(805);
+	var _createVisibilityReducer = __webpack_require__(821);
 
 	var _createVisibilityReducer2 = _interopRequireDefault(_createVisibilityReducer);
 
@@ -55605,7 +55527,47 @@
 		exports.default = (0, _createVisibilityReducer2.default)(_actions2.default.SHOW_INTERCHANGE, _actions2.default.HIDE_INTERCHANGE);
 
 /***/ },
-/* 823 */
+/* 821 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	var createVisibilityReducer = function createVisibilityReducer(showAction, hideAction) {
+		var defaultState = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+
+		return function () {
+			var state = arguments.length <= 0 || arguments[0] === undefined ? defaultState : arguments[0];
+			var action = arguments[1];
+
+
+			switch (action.type) {
+
+				case showAction:
+
+					state = true;
+
+					break;
+
+				case hideAction:
+
+					state = false;
+
+					break;
+
+			}
+
+			return state;
+		};
+	};
+
+	exports.default = createVisibilityReducer;
+
+/***/ },
+/* 822 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55616,23 +55578,23 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _created = __webpack_require__(824);
+	var _created = __webpack_require__(823);
 
 	var _created2 = _interopRequireDefault(_created);
 
-	var _hoveredBorough = __webpack_require__(825);
+	var _hoveredBorough = __webpack_require__(824);
 
 	var _hoveredBorough2 = _interopRequireDefault(_hoveredBorough);
 
-	var _level = __webpack_require__(826);
+	var _level = __webpack_require__(825);
 
 	var _level2 = _interopRequireDefault(_level);
 
-	var _showingAnswer = __webpack_require__(827);
+	var _showingAnswer = __webpack_require__(826);
 
 	var _showingAnswer2 = _interopRequireDefault(_showingAnswer);
 
-	var _visible = __webpack_require__(828);
+	var _visible = __webpack_require__(827);
 
 	var _visible2 = _interopRequireDefault(_visible);
 
@@ -55649,7 +55611,7 @@
 		exports.default = maps;
 
 /***/ },
-/* 824 */
+/* 823 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55685,7 +55647,7 @@
 	exports.default = created;
 
 /***/ },
-/* 825 */
+/* 824 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55729,7 +55691,7 @@
 	exports.default = hoveredBorough;
 
 /***/ },
-/* 826 */
+/* 825 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55776,7 +55738,7 @@
 		}
 
 /***/ },
-/* 827 */
+/* 826 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55828,7 +55790,7 @@
 		}
 
 /***/ },
-/* 828 */
+/* 827 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55841,7 +55803,7 @@
 
 	var _actions2 = _interopRequireDefault(_actions);
 
-	var _createVisibilityReducer = __webpack_require__(805);
+	var _createVisibilityReducer = __webpack_require__(821);
 
 	var _createVisibilityReducer2 = _interopRequireDefault(_createVisibilityReducer);
 
@@ -55850,7 +55812,7 @@
 		exports.default = (0, _createVisibilityReducer2.default)(_actions2.default.SHOW_MAP, _actions2.default.HIDE_MAP);
 
 /***/ },
-/* 829 */
+/* 828 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55861,108 +55823,15 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _map = __webpack_require__(830);
-
-	var _map2 = _interopRequireDefault(_map);
-
-	var _visible = __webpack_require__(831);
-
-	var _visible2 = _interopRequireDefault(_visible);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var marker = (0, _redux.combineReducers)({
-		map: _map2.default,
-		visible: _visible2.default
-	});
-
-		exports.default = marker;
-
-/***/ },
-/* 830 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _actions = __webpack_require__(579);
-
-	var _actions2 = _interopRequireDefault(_actions);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = function () {
-		var state = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
-		var action = arguments[1];
-		var map = action.map;
-		var type = action.type;
-
-
-		switch (type) {
-
-			case _actions2.default.CLEAR_MARKER_MAP:
-
-				state = null;
-
-				break;
-
-			case _actions2.default.SET_MARKER_MAP:
-
-				state = map;
-
-				break;
-
-		}
-
-		return state;
-		};
-
-/***/ },
-/* 831 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _actions = __webpack_require__(579);
-
-	var _actions2 = _interopRequireDefault(_actions);
-
-	var _createVisibilityReducer = __webpack_require__(805);
-
-	var _createVisibilityReducer2 = _interopRequireDefault(_createVisibilityReducer);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-		exports.default = (0, _createVisibilityReducer2.default)(_actions2.default.SHOW_MARKER, _actions2.default.HIDE_MARKER);
-
-/***/ },
-/* 832 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-
-	var _redux = __webpack_require__(479);
-
-	var _created = __webpack_require__(833);
+	var _created = __webpack_require__(829);
 
 	var _created2 = _interopRequireDefault(_created);
 
-	var _displayingLocation = __webpack_require__(834);
+	var _displayingLocation = __webpack_require__(830);
 
 	var _displayingLocation2 = _interopRequireDefault(_displayingLocation);
 
-	var _visible = __webpack_require__(835);
+	var _visible = __webpack_require__(831);
 
 	var _visible2 = _interopRequireDefault(_visible);
 
@@ -55977,7 +55846,7 @@
 		exports.default = panorama;
 
 /***/ },
-/* 833 */
+/* 829 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56013,7 +55882,7 @@
 	exports.default = created;
 
 /***/ },
-/* 834 */
+/* 830 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56068,7 +55937,7 @@
 	exports.default = displayingLocation;
 
 /***/ },
-/* 835 */
+/* 831 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56081,7 +55950,7 @@
 
 	var _actions2 = _interopRequireDefault(_actions);
 
-	var _createVisibilityReducer = __webpack_require__(805);
+	var _createVisibilityReducer = __webpack_require__(821);
 
 	var _createVisibilityReducer2 = _interopRequireDefault(_createVisibilityReducer);
 
@@ -56090,7 +55959,7 @@
 		exports.default = (0, _createVisibilityReducer2.default)(_actions2.default.SHOW_PANORAMA, _actions2.default.HIDE_PANORAMA);
 
 /***/ },
-/* 836 */
+/* 832 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56101,7 +55970,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _displaying = __webpack_require__(837);
+	var _displaying = __webpack_require__(833);
 
 	var _displaying2 = _interopRequireDefault(_displaying);
 
@@ -56110,7 +55979,7 @@
 		exports.default = (0, _redux.combineReducers)({ displaying: _displaying2.default });
 
 /***/ },
-/* 837 */
+/* 833 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56170,7 +56039,7 @@
 	exports.default = displaying;
 
 /***/ },
-/* 838 */
+/* 834 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56181,7 +56050,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _locationRequest = __webpack_require__(839);
+	var _locationRequest = __webpack_require__(835);
 
 	var _locationRequest2 = _interopRequireDefault(_locationRequest);
 
@@ -56190,7 +56059,7 @@
 		exports.default = (0, _redux.combineReducers)({ locationRequest: _locationRequest2.default });
 
 /***/ },
-/* 839 */
+/* 835 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56242,7 +56111,7 @@
 		};
 
 /***/ },
-/* 840 */
+/* 836 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56253,7 +56122,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _complete = __webpack_require__(841);
+	var _complete = __webpack_require__(837);
 
 	var _complete2 = _interopRequireDefault(_complete);
 
@@ -56266,7 +56135,7 @@
 		exports.default = view;
 
 /***/ },
-/* 841 */
+/* 837 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
