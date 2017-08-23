@@ -60,6 +60,8 @@ export default dispatch => {
 
 		startGame: 					() => dispatch(actionCreators.startGame()),
 
+		throwError: 				e => dispatch(actionCreators.throwError(e)),
+
 		viewComplete: 				() => dispatch(actionCreators.viewComplete())
 
 	};

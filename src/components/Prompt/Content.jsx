@@ -222,27 +222,25 @@ export default class Content {
 
 	}
 
-	_getTotalCorrectAnswers(props) {
+	_getErrorPrompt() {
 
-		return props.history.filter(turn => {
+		const type = this._promptTypes.ERROR;
 
-			const { randomLocation, selectedBorough } = turn;
+		const message = {
+			start: "Looks like there's been an ",
+			middle: "error",
+			end: ".  Fuhgeddaboudit."
+		};
 
-			return twoBlocksUtils.answerIsCorrect(randomLocation, selectedBorough);
+		return (
 
-		}).length;
+			<div className={ type } key={ type }>{ message.start }<span className="error-name red">{ message.middle }</span>{ message.end }</div>
+
+		);
 
 	}
 
-	_isFirstPanoramaOfRestartedGame(props) {
-
-		return props.totalGamesPlayed > 1;
-
-	}
-
-	/*----------  Public API  ----------*/
-	
-	getForProps(props) {
+	_getStageBasedPrompt(props) {
 
 		let content = null;
 
@@ -291,6 +289,36 @@ export default class Content {
 		}
 
 		return content;
+
+	}
+
+	_getTotalCorrectAnswers(props) {
+
+		return props.history.filter(turn => {
+
+			const { randomLocation, selectedBorough } = turn;
+
+			return twoBlocksUtils.answerIsCorrect(randomLocation, selectedBorough);
+
+		}).length;
+
+	}
+
+	_isFirstPanoramaOfRestartedGame(props) {
+
+		return props.totalGamesPlayed > 1;
+
+	}
+
+	/*----------  Public API  ----------*/
+	
+	getForProps(props) {
+
+		return (props.thrownError) 
+
+			? this._getErrorPrompt(props) 
+
+			: this._getStageBasedPrompt(props);
 
 	}
 

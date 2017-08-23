@@ -87,7 +87,6 @@ export default class PromptTiming {
 
 	/*----------  Public API  ----------*/
 
-	// Eventually subclass this into a "PromptTiming" class
 	getForStage(stage) {
 
 		let timing = null;

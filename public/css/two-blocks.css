@@ -54,6 +54,10 @@ html, body {
 	position: relative;
 }
 
+.two-blocks-prompt .red {
+	color: #D9285B;
+}
+
 .two-blocks-map {
 	position: absolute; 
 }
@@ -70,4 +74,8 @@ html, body {
 
 .desktop .two-blocks-replay-button {
 	margin-top: 15px;
+}
+
+.desktop .two-blocks-interchange {
+	margin-left: 3%;
 }

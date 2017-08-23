@@ -24,6 +24,7 @@ class TwoBlocksPrompt extends React.Component {
 		this.promptTypes = {
 
 			CORRECT_BOROUGH: 'correct-borough-prompt',
+			ERROR: 'error-prompt',
 			GUESSING_LOCATION: 'guessing-location-prompt', 
 			INCORRECT_BOROUGH: 'incorrect-borough-prompt',
 			LOADING_PANORAMA: 'loading-panorama-prompt', 

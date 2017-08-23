@@ -74,7 +74,6 @@
 	color: #DFC00F;
 }
 
-.two-blocks-prompt .red, 
 .mobile .two-blocks-countdown .red {
 	color: #D9285B;
 }
@@ -324,5 +323,11 @@
 /* Game Over Prompt */
 
 .mobile .game-over-prompt span {
+	position: relative;
+}
+
+/* Error Prompt */
+
+.mobile .error-prompt .error-name {
 	position: relative;
 }

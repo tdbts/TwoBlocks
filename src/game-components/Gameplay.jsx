@@ -3,13 +3,6 @@
 import { EventEmitter } from 'events';
 import { gameStages, lifecycle, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS } from '../constants/constants';   
 
-/**
- *
- * How to get the random location?  Perhaps emit an 
- *    event requesting the data?
- *
- */
-
 export default class TwoBlocksGame extends EventEmitter {
 
 	constructor(props) {
@@ -32,35 +25,6 @@ export default class TwoBlocksGame extends EventEmitter {
 			current: props,
 			previous: null
 		};
-
-		/*=================================
-		=            DEBUGGING            =
-		=================================*/
-
-		const logEvent = function logEvent(event) {
-		
-			return payload => {
-
-				window.console.log("event:", event); 
-
-				if (payload) {
-
-					window.console.log("payload:", payload); 
-				
-				}
-
-			}; 
-		
-		}; 
-		
-		
-		for (const event in this.events) {
-
-			this.on(event, logEvent(event)); 
-
-		}
-		
-		/*=====  End of DEBUGGING  ======*/
 
 	}
 

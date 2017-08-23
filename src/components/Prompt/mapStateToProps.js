@@ -2,7 +2,7 @@ export default state => {
 
 	const { app, gameplay, prompt } = state;
 
-	const { initialized } = app;
+	const { initialized, thrownError } = app;
 
 	const { 
 
@@ -36,6 +36,7 @@ export default state => {
 		selectedBorough,
 		stage,
 		submitted,
+		thrownError,
 		totalGamesPlayed
 
 	};

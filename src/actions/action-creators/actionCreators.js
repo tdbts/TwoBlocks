@@ -49,6 +49,7 @@ import stopShowingAnswer from './stopShowingAnswer';
 import stopShowingPanorama from './stopShowingPanorama';
 import stopShowingPrompt from './stopShowingPrompt';
 import submitBorough from './submitBorough';
+import throwError from './throwError';
 import viewComplete from './viewComplete';
 
 export default {
@@ -103,5 +104,6 @@ export default {
 	stopShowingPanorama,
 	stopShowingPrompt,
 	submitBorough,
+	throwError,
 	viewComplete
 };

@@ -24,7 +24,7 @@ export default class MapUpdateManager {
 
 		// On mobile devices, show answer in the 'EVALUATING_ANSWER' stage, 
 		// after prompt has completed displaying.
-		if ((BEFORE !== showingAnswer) || !(isMobile) || (gameStages.EVALUATING_ANSWER !== stage) || (AFTER !== prompt.displaying)) return;
+		if (!(isMobile) || (gameStages.EVALUATING_ANSWER !== stage) || (BEFORE !== showingAnswer) || (AFTER !== prompt.displaying)) return;
 
 		showAnswer();
 
@@ -45,7 +45,8 @@ export default class MapUpdateManager {
 
 		} = props; 
 
-		// Styling only applies to desktop map
+		// Styling only applies to desktop map in 'GUESSING_LOCATION' stage.
+		// Dont' apply styling if considered borough has not changed.
 		if (isMobile || (GUESSING_LOCATION !== stage) || (prevConsideredBorough && consideredBorough && (prevConsideredBorough.getID() === consideredBorough.getID()))) return;
 
 		if (prevConsideredBorough && (!(selectedBorough) || (selectedBorough.getID() !== prevConsideredBorough.getID()))) {
@@ -61,13 +62,6 @@ export default class MapUpdateManager {
 		}
 
 	}
-
-	/**
-	 *
-	 * Need to consider how to handle the centering of the 
-	 * map on the 'pregame' stage...
-	 *
-	 */
 	
 	_checkGameStageChanges(props, prevProps) {
 
@@ -85,7 +79,7 @@ export default class MapUpdateManager {
 
 		const { geoJSON, isMobile } = props;
 
-		if (prevGeoJSON || !(geoJSON) || isMobile) return;
+		if (isMobile || prevGeoJSON || !(geoJSON)) return;
 
 		this._mapComponent.addGeoJSON(geoJSON);
 

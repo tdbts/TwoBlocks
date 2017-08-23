@@ -139,11 +139,7 @@ class TwoBlocks extends React.Component {
 
 			.then(randomLocation => this.props.setRandomLocation(randomLocation))
 
-			.catch(e => {
-
-				throw e;
-
-			});
+			.catch(e => this._onError(e));
 
 	}
 
@@ -213,11 +209,7 @@ class TwoBlocks extends React.Component {
 
 			.then(geoJSON => this.setState({ geoJSON }))
 
-			.catch(e => {
-
-				throw e;
-
-			});
+			.catch(e => this._onError(e));
 
 	}
 
@@ -251,11 +243,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.props.cssLoaded())
 
-			.catch(e => {
-
-				throw e;
-
-			});
+			.catch(e => this._onError(e));
 
 	}
 
@@ -267,11 +255,7 @@ class TwoBlocks extends React.Component {
 
 			.then(() => this.props.geoJSONLoaded())
 
-			.catch(e => {
-
-				throw e;
-
-			}));
+			.catch(e => this._onError(e)));
 
 	}
 
@@ -296,11 +280,7 @@ class TwoBlocks extends React.Component {
 
 				.then(() => this.props.librariesLoaded())
 
-				.catch(e => {
-				
-					throw e;
-
-				});
+				.catch(e => this._onError(e));
 
 		});
 
@@ -329,6 +309,14 @@ class TwoBlocks extends React.Component {
 		this._loadCSS();
 		this._loadGeoJSON();
 		this._loadLibraries();		
+
+	}
+
+	_onError(e) {
+
+		window.console.error("e:", e); 
+
+		this.props.throwError(e);
 
 	}
 
