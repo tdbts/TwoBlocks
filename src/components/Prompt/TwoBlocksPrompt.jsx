@@ -60,7 +60,8 @@ class TwoBlocksPrompt extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
-		
+
+		// No need to update if the prompt has already done its job.
 		return lifecycle.AFTER !== nextProps.prompt.displaying;
 
 	}

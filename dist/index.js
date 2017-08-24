@@ -31490,13 +31490,13 @@
 				var _this5 = this;
 
 				return this._loadExternalEntity('geoJSON', function () {
-					return _this5.service.loadGeoJSON().then(function () {
-						return _this5._getGeoJSON();
-					}).then(function () {
-						return _this5.props.geoJSONLoaded();
-					}).catch(function (e) {
-						return _this5._onError(e);
-					});
+					return _this5.service.loadGeoJSON();
+				}).then(function () {
+					return _this5._getGeoJSON();
+				}).then(function () {
+					return _this5.props.geoJSONLoaded();
+				}).catch(function (e) {
+					return _this5._onError(e);
 				});
 			}
 		}, {
@@ -39404,6 +39404,7 @@
 			key: 'shouldComponentUpdate',
 			value: function shouldComponentUpdate(nextProps) {
 
+				// No need to update if the prompt has already done its job.
 				return _constants.lifecycle.AFTER !== nextProps.prompt.displaying;
 			}
 		}, {
@@ -53610,10 +53611,9 @@
 				var submitted = _gameplay$currentTurn.submitted;
 
 
-				if (!canEvaluateAnswer && submitted) {
+				if (canEvaluateAnswer || !submitted) return;
 
-					this._getDispatcher().canEvaluateAnswer();
-				}
+				this._getDispatcher().canEvaluateAnswer();
 			}
 		}, {
 			key: '_checkConfirmingAnswer',

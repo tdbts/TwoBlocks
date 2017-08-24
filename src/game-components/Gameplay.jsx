@@ -34,11 +34,9 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		const { canEvaluateAnswer, submitted } = gameplay.currentTurn;
 
-		if (!(canEvaluateAnswer) && submitted) {
+		if (canEvaluateAnswer || !(submitted)) return;
 
-			this._getDispatcher().canEvaluateAnswer();
-
-		} 
+		this._getDispatcher().canEvaluateAnswer();
 
 	}
 

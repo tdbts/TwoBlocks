@@ -249,13 +249,13 @@ class TwoBlocks extends React.Component {
 
 	_loadGeoJSON() {
 
-		return this._loadExternalEntity('geoJSON', () => this.service.loadGeoJSON()
+		return this._loadExternalEntity('geoJSON', () => this.service.loadGeoJSON())
 
 			.then(() => this._getGeoJSON())
 
 			.then(() => this.props.geoJSONLoaded())
 
-			.catch(e => this._onError(e)));
+			.catch(e => this._onError(e));
 
 	}
 
