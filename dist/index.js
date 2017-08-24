@@ -31327,8 +31327,8 @@
 				this._onDeviceModeDetermination();
 			}
 		}, {
-			key: '_checkGameComponentCreation',
-			value: function _checkGameComponentCreation() {
+			key: '_canIndicateGameComponentsCreated',
+			value: function _canIndicateGameComponentsCreated() {
 				var _props2 = this.props;
 				var app = _props2.app;
 				var maps = _props2.maps;
@@ -31336,7 +31336,13 @@
 				var gameComponentsCreated = app.initialization.gameComponentsCreated;
 
 
-				if (gameComponentsCreated || !maps.created || !panorama.created) return;
+				return !gameComponentsCreated && maps.created && panorama.created;
+			}
+		}, {
+			key: '_checkGameComponentCreation',
+			value: function _checkGameComponentCreation() {
+
+				if (!this._canIndicateGameComponentsCreated()) return;
 
 				this.props.gameComponentsCreated();
 			}
@@ -31349,8 +31355,8 @@
 				this.gameplay.start();
 			}
 		}, {
-			key: '_checkInitializationComplete',
-			value: function _checkInitializationComplete() {
+			key: '_canIndicateAppInitialized',
+			value: function _canIndicateAppInitialized() {
 				var _props$app = this.props.app;
 				var initialized = _props$app.initialized;
 				var initialization = _props$app.initialization;
@@ -31360,19 +31366,30 @@
 					return initialization[requirement] === true;
 				});
 
-				if (initialized || !initializationComplete) return;
+				return !initialized && initializationComplete;
+			}
+		}, {
+			key: '_checkInitializationComplete',
+			value: function _checkInitializationComplete() {
+
+				if (!this._canIndicateAppInitialized()) return;
 
 				this.props.appInitialized();
+			}
+		}, {
+			key: '_canGetNewRandomLocation',
+			value: function _canGetNewRandomLocation(prevLocationRequest) {
+				var locationRequest = this.props.service.locationRequest;
+
+
+				return prevLocationRequest !== locationRequest && _constants.lifecycle.DURING === locationRequest;
 			}
 		}, {
 			key: '_checkLocationRequest',
 			value: function _checkLocationRequest(prevLocationRequest) {
 				var _this2 = this;
 
-				var locationRequest = this.props.service.locationRequest;
-
-
-				if (prevLocationRequest === locationRequest || _constants.lifecycle.DURING !== locationRequest) return;
+				if (!this._canGetNewRandomLocation(prevLocationRequest)) return;
 
 				this.service.getRandomLocation(this.state.geoJSON).then(function (randomLocation) {
 					return _this2.props.setRandomLocation(randomLocation);
@@ -31381,12 +31398,18 @@
 				});
 			}
 		}, {
-			key: '_checkViewCompletion',
-			value: function _checkViewCompletion() {
+			key: '_canIndicateViewComplete',
+			value: function _canIndicateViewComplete() {
 				var complete = this.props.view.complete;
 
 
-				if (complete || !this._viewProgress.isComplete(this.props)) return;
+				return !complete && this._viewProgress.isComplete(this.props);
+			}
+		}, {
+			key: '_checkViewCompletion',
+			value: function _checkViewCompletion() {
+
+				if (!this._canIndicateViewComplete()) return;
 
 				this.props.viewComplete();
 			}
@@ -53606,12 +53629,13 @@
 				var _getCurrentProps2 = this._getCurrentProps();
 
 				var gameplay = _getCurrentProps2.gameplay;
+				var stage = gameplay.stage;
 				var _gameplay$currentTurn = gameplay.currentTurn;
 				var canEvaluateAnswer = _gameplay$currentTurn.canEvaluateAnswer;
 				var submitted = _gameplay$currentTurn.submitted;
 
 
-				if (canEvaluateAnswer || !submitted) return;
+				if (_constants.gameStages.GUESSING_LOCATION !== stage || canEvaluateAnswer || submitted) return;
 
 				this._getDispatcher().canEvaluateAnswer();
 			}

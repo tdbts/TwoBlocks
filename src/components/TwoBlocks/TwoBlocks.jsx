@@ -95,13 +95,19 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	_checkGameComponentCreation() {
+	_canIndicateGameComponentsCreated() {
 
 		const { app, maps, panorama } = this.props;
 
 		const { gameComponentsCreated } = app.initialization;
 
-		if (gameComponentsCreated || !(maps.created) || !(panorama.created)) return;
+		return !(gameComponentsCreated) && maps.created && panorama.created;
+
+	}
+
+	_checkGameComponentCreation() {
+
+		if (!(this._canIndicateGameComponentsCreated())) return;
 
 		this.props.gameComponentsCreated();
 
@@ -115,25 +121,37 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	_checkInitializationComplete() {
+	_canIndicateAppInitialized() {
 
 		const { initialized, initialization } = this.props.app;
 
 		const initializationComplete = Object.keys(initialization)
 
 			.every(requirement => initialization[requirement] === true);
+		
+		return !(initialized) && initializationComplete;
 
-		if (initialized || !(initializationComplete)) return;
+	}
+
+	_checkInitializationComplete() {
+
+		if (!(this._canIndicateAppInitialized())) return;
 
 		this.props.appInitialized();
 
 	}
 
-	_checkLocationRequest(prevLocationRequest) {
+	_canGetNewRandomLocation(prevLocationRequest) {
 
 		const { locationRequest } = this.props.service;
 
-		if ((prevLocationRequest === locationRequest) || (lifecycle.DURING !== locationRequest)) return;
+		return (prevLocationRequest !== locationRequest) && (lifecycle.DURING === locationRequest);
+
+	}
+
+	_checkLocationRequest(prevLocationRequest) {
+
+		if (!(this._canGetNewRandomLocation(prevLocationRequest))) return;
 
 		this.service.getRandomLocation(this.state.geoJSON)
 
@@ -143,11 +161,17 @@ class TwoBlocks extends React.Component {
 
 	}
 
-	_checkViewCompletion() {
+	_canIndicateViewComplete() {
 
 		const { complete } = this.props.view;
 
-		if (complete || !(this._viewProgress.isComplete(this.props))) return;
+		return !(complete) && this._viewProgress.isComplete(this.props);
+
+	}
+
+	_checkViewCompletion() {
+
+		if (!(this._canIndicateViewComplete())) return;
 
 		this.props.viewComplete();
 

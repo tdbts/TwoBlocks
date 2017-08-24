@@ -32,9 +32,11 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		const { gameplay } = this._getCurrentProps();
 
+		const { stage } = gameplay;
+
 		const { canEvaluateAnswer, submitted } = gameplay.currentTurn;
 
-		if (canEvaluateAnswer || !(submitted)) return;
+		if ((gameStages.GUESSING_LOCATION !== stage) || canEvaluateAnswer || submitted) return;
 
 		this._getDispatcher().canEvaluateAnswer();
 
