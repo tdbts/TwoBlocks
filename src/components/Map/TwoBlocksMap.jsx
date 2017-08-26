@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { lifecycle, nycLocationData } from '../../constants/constants';
+import { gameStages, nycLocationData } from '../../constants/constants';
 import Map from '../Platform/Platform';
 import CityMapsDesktop from './CityMapsDesktop';
 import CityMapsMobile from './CityMapsMobile';
@@ -97,10 +97,10 @@ class TwoBlocksMap extends React.Component {
 
 	_getShowingLocationMapCenter() {
 
-		const { randomLocation, showingAnswer } = this.props;
+		const { randomLocation, stage } = this.props;
 		const { CENTER } = nycLocationData;		
 
-		return ((lifecycle.DURING === showingAnswer) ? randomLocation : CENTER);
+		return ((gameStages.EVALUATING_ANSWER === stage) ? randomLocation : CENTER);
 
 	}
 

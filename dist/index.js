@@ -32154,11 +32154,11 @@
 			value: function _getShowingLocationMapCenter() {
 				var _props = this.props;
 				var randomLocation = _props.randomLocation;
-				var showingAnswer = _props.showingAnswer;
+				var stage = _props.stage;
 				var CENTER = _constants.nycLocationData.CENTER;
 
 
-				return _constants.lifecycle.DURING === showingAnswer ? randomLocation : CENTER;
+				return _constants.gameStages.EVALUATING_ANSWER === stage ? randomLocation : CENTER;
 			}
 		}, {
 			key: '_onMapMounted',
@@ -35320,6 +35320,8 @@
 		_createClass(MapStageManager, [{
 			key: '_onEvaluatingAnswer',
 			value: function _onEvaluatingAnswer(props) {
+
+				this._mapComponent.centerMaps();
 
 				if (props.isMobile) return;
 

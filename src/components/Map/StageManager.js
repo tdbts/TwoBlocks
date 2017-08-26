@@ -10,6 +10,8 @@ export default class MapStageManager {
 
 	_onEvaluatingAnswer(props) {
 
+		this._mapComponent.centerMaps();
+
 		if (props.isMobile) return;
 
 		props.showAnswer();
