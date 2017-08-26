@@ -37909,6 +37909,17 @@
 			return (/iPad/g.test(window.navigator.userAgent)
 			);
 		},
+		getTotalCorrectAnswers: function getTotalCorrectAnswers(history) {
+			var _this = this;
+
+			return history.filter(function (turn) {
+				var randomLocation = turn.randomLocation;
+				var selectedBorough = turn.selectedBorough;
+
+
+				return _this.answerIsCorrect(randomLocation, selectedBorough);
+			}).length;
+		},
 		loadCSS: function loadCSS() {
 
 			__webpack_require__(635); // Use Webpack loaders to add CSS
@@ -39826,20 +39837,21 @@
 		}, {
 			key: '_getPostgame',
 			value: function _getPostgame(props) {
+				var history = props.history;
 				var roundsPlayed = props.roundsPlayed;
 
 
 				var type = this._promptTypes.POSTGAME;
 
-				var fractionClass = this._getPostgameFractionClass(this._getTotalCorrectAnswers(props), roundsPlayed);
+				var totalCorrectAnswers = _twoBlocksUtils2.default.getTotalCorrectAnswers(history);
+
+				var fractionClass = this._getPostgameFractionClass(totalCorrectAnswers, roundsPlayed);
 
 				var startText = "Game over.  You correctly guessed ";
 
 				var endText = " of the Street View locations.";
 
 				var totalCorrectClassList = ['total-correct', fractionClass].join(" ").trim();
-
-				var totalCorrectAnswers = this._getTotalCorrectAnswers(props);
 
 				var correctAnswersFraction = [totalCorrectAnswers, "/", roundsPlayed].join(" ");
 
@@ -39961,18 +39973,6 @@
 				}
 
 				return content;
-			}
-		}, {
-			key: '_getTotalCorrectAnswers',
-			value: function _getTotalCorrectAnswers(props) {
-
-				return props.history.filter(function (turn) {
-					var randomLocation = turn.randomLocation;
-					var selectedBorough = turn.selectedBorough;
-
-
-					return _twoBlocksUtils2.default.answerIsCorrect(randomLocation, selectedBorough);
-				}).length;
 			}
 		}, {
 			key: '_isFirstPanoramaOfRestartedGame',

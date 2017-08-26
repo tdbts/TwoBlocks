@@ -63,6 +63,18 @@ const twoBlocksUtils = {
 
 	}, 
 
+	getTotalCorrectAnswers(history) {
+
+		return history.filter(turn => {
+
+			const { randomLocation, selectedBorough } = turn;
+
+			return this.answerIsCorrect(randomLocation, selectedBorough);
+
+		}).length;
+
+	},
+
 	loadCSS() {
 
 		require('../../public/css/two-blocks.css');  // Use Webpack loaders to add CSS 

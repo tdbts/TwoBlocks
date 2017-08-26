@@ -158,19 +158,19 @@ export default class Content {
 
 	_getPostgame(props) {
 
-		const { roundsPlayed } = props;
+		const { history, roundsPlayed } = props;
 
 		const type = this._promptTypes.POSTGAME;
 
-		const fractionClass = this._getPostgameFractionClass(this._getTotalCorrectAnswers(props), roundsPlayed);
+		const totalCorrectAnswers = twoBlocksUtils.getTotalCorrectAnswers(history);
+
+		const fractionClass = this._getPostgameFractionClass(totalCorrectAnswers, roundsPlayed);
 
 		const startText = "Game over.  You correctly guessed ";
 
 		const endText = " of the Street View locations.";
 
 		const totalCorrectClassList = [ 'total-correct', fractionClass ].join(" ").trim();
-
-		const totalCorrectAnswers = this._getTotalCorrectAnswers(props);
 
 		const correctAnswersFraction = [ totalCorrectAnswers, "/", roundsPlayed ].join(" ");
 
@@ -289,18 +289,6 @@ export default class Content {
 		}
 
 		return content;
-
-	}
-
-	_getTotalCorrectAnswers(props) {
-
-		return props.history.filter(turn => {
-
-			const { randomLocation, selectedBorough } = turn;
-
-			return twoBlocksUtils.answerIsCorrect(randomLocation, selectedBorough);
-
-		}).length;
 
 	}
 
