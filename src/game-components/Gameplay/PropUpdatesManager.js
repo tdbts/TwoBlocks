@@ -75,7 +75,7 @@ export default class PropUpdatesManager {
 
 		const { roundsPlayed } = this._getCurrentProps().gameplay;
 
-		if ((prevRoundsPlayed <= roundsPlayed) || this._maximumRoundsPlayed(roundsPlayed)) return;
+		if ((prevRoundsPlayed === roundsPlayed) || this._maximumRoundsPlayed(roundsPlayed)) return;
 
 		this._nextTurn();
 

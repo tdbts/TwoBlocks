@@ -8882,7 +8882,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var DEFAULT_MAXIMUM_ROUNDS = 1;
+	var DEFAULT_MAXIMUM_ROUNDS = 5;
 	var KEY_PRESS_DEBOUNCE_TIMEOUT = 100;
 	var MAXIMUM_EVENT_EMITTER_LISTENERS = 50;
 	var MAXIMUM_PANORAMA_REQUESTS = 5;

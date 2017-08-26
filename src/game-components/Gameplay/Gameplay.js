@@ -95,9 +95,16 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		this.switchToNextGameStage(); 
 
-		this.getDispatcher().requestRandomLocation();
+		// Although we have switched game stages in the store, the 'Gameplay' 
+		// instance's copy of the store will not update until 'propsDidUpdate()' 
+		// is called.  Wait until props update before moving on, otherwise, 
+		// bad things happen.
 
-		return this._readyForNextStage()
+		return new Promise(resolve => this._waitForPropsUpdate(resolve))
+
+			.then(this.getDispatcher().requestRandomLocation())
+
+			.then(() => this._readyForNextStage())
 
 			.catch(e => {
 
@@ -130,6 +137,12 @@ export default class TwoBlocksGame extends EventEmitter {
 				throw e;
 
 			});
+
+	}
+
+	_waitForPropsUpdate(action) {
+
+		this.once(this.events.PROPS_UPDATE, action);
 
 	}
 

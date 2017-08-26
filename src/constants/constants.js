@@ -8,7 +8,7 @@ import nycLocationData from './nycLocationData';
 import transitionTypes from './transitionTypes'; 
 import workerMessages from './workerMessages';  
 
-const DEFAULT_MAXIMUM_ROUNDS 			= 1;
+const DEFAULT_MAXIMUM_ROUNDS 			= 5;
 const KEY_PRESS_DEBOUNCE_TIMEOUT 		= 100; 
 const MAXIMUM_EVENT_EMITTER_LISTENERS	= 50; 
 const MAXIMUM_PANORAMA_REQUESTS  		= 5; 

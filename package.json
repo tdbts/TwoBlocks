@@ -75,6 +75,7 @@
     "react-redux": "^4.4.5",
     "redux": "^3.5.2",
     "redux-devtools-extension": "^1.0.0",
+    "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
     "serve-static": "^1.11.1",
     "superagent": "^2.3.0"

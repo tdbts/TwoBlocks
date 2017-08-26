@@ -2,8 +2,9 @@
 
 import 'babel-polyfill'; 
 import React from 'react';
+import { logger } from 'redux-logger';
 import { render } from 'react-dom';
-import { createStore } from 'redux';
+import { applyMiddleware, compose, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import TwoBlocks from '../src/components/TwoBlocks/TwoBlocks';
@@ -13,7 +14,7 @@ const reducers = [ twoBlocks, {} ];
 
 if ('development' === process.env.NODE_ENV) {
 
-	reducers.push(composeWithDevTools());
+	reducers.push(compose(applyMiddleware(logger), composeWithDevTools()));
 
 }
 
