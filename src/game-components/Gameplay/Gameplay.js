@@ -1,7 +1,8 @@
 /* global window */
  
 import { EventEmitter } from 'events';
-import { gameStages, lifecycle, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS } from '../constants/constants';   
+import { gameStages, lifecycle, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS } from '../../constants/constants';   
+import StageManager from './StageManager';
 
 export default class TwoBlocksGame extends EventEmitter {
 
@@ -26,11 +27,13 @@ export default class TwoBlocksGame extends EventEmitter {
 			previous: null
 		};
 
+		this._stageManager = new StageManager(this);
+
 	}
 
 	_checkCanEvaluateAnswer() {
 
-		const { gameplay } = this._getCurrentProps();
+		const { gameplay } = this.getCurrentProps();
 
 		const { stage } = gameplay;
 
@@ -44,7 +47,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_checkConfirmingAnswer(prevSelectedBorough) {
 
-		const { selectedBorough, submitted } = this._getCurrentProps().gameplay.currentTurn;
+		const { selectedBorough, submitted } = this.getCurrentProps().gameplay.currentTurn;
 
 		if ((prevSelectedBorough === selectedBorough) || !(selectedBorough) || submitted) return;
 
@@ -54,7 +57,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_checkGameOver(prevRoundsPlayed) {
 
-		const { roundsPlayed } = this._getCurrentProps().gameplay;
+		const { roundsPlayed } = this.getCurrentProps().gameplay;
 
 		if (prevRoundsPlayed === roundsPlayed) return;
 
@@ -66,7 +69,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_checkGameRestart(prevGameOver) {
 
-		const { over } = this._getCurrentProps().gameplay;
+		const { over } = this.getCurrentProps().gameplay;
 
 		if (!(prevGameOver) || over) return;
 
@@ -77,7 +80,7 @@ export default class TwoBlocksGame extends EventEmitter {
 	_checkGameStage() {
 
 		// If stage is not yet defined, stage is 'PREGAME'
-		if (this._getCurrentProps().gameplay.stage) return;
+		if (this.getCurrentStage()) return;
 
 		this._getDispatcher().stagePregame();
 
@@ -85,7 +88,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_checkGameStarted(prevStarted) {
 
-		if (prevStarted || !(this._getCurrentProps().gameplay.started)) return;
+		if (prevStarted || !(this.getCurrentProps().gameplay.started)) return;
 
 		this._startGamePlay();
 
@@ -93,7 +96,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_checkNextTurn(prevRoundsPlayed) {
 
-		const { roundsPlayed } = this._getCurrentProps().gameplay;
+		const { roundsPlayed } = this.getCurrentProps().gameplay;
 
 		if ((prevRoundsPlayed <= roundsPlayed) || this.maximumRoundsPlayed(roundsPlayed)) return;
 
@@ -103,7 +106,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_checkStagePostgame(prevOver) {
 
-		const { over } = this._getCurrentProps().gameplay;
+		const { over } = this.getCurrentProps().gameplay;
 
 		if ((prevOver === over) || !(over)) return;
 
@@ -113,7 +116,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_checkTurnComplete() {
 
-		const { maps, gameplay } = this._getCurrentProps();
+		const { maps, gameplay } = this.getCurrentProps();
 
 		const { showingAnswer } = maps;
 
@@ -127,7 +130,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_evaluateAnswer() {
 
-		const { canEvaluateAnswer } = this._getCurrentProps().gameplay.currentTurn;
+		const { canEvaluateAnswer } = this.getCurrentProps().gameplay.currentTurn;
 
 		if (!(canEvaluateAnswer)) return;
 
@@ -155,85 +158,17 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	}
 
-	_getCurrentProps() {
-
-		return this._props.current;
-
-	}
-
 	_getDispatcher() {
 
-		return this._getCurrentProps();
+		return this.getCurrentProps();
 
 	}
 
 	_getNextGameStage() {
 
-		let nextStage = null; 
-
-		const { stage } = this._getCurrentProps().gameplay;
-
-		const { 
-
-			PREGAME, 
-			LOADING_PANORAMA, 
-			SHOWING_PANORAMA, 
-			GUESSING_LOCATION, 
-			EVALUATING_ANSWER, 
-			POSTGAME 
-
-		} = gameStages;
-
-		switch (stage) {
-
-			case null:
-
-				nextStage = PREGAME;
-
-				break;
-
-			case PREGAME:
-
-				nextStage = LOADING_PANORAMA;
-
-				break;
-
-			case LOADING_PANORAMA:
-
-				nextStage = SHOWING_PANORAMA;
-
-				break;
-
-			case SHOWING_PANORAMA:
-
-				nextStage = GUESSING_LOCATION;
-
-				break;
-
-			case GUESSING_LOCATION:
-
-				nextStage = EVALUATING_ANSWER;
-
-				break;
-
-			case EVALUATING_ANSWER: 
-
-				nextStage = this.gameIsOver() ? POSTGAME : LOADING_PANORAMA;
-
-				break;
-
-			case POSTGAME:
-
-				// Handle restarts.  'PREGAME' stage only exists before first game. 
-				nextStage = LOADING_PANORAMA;
-
-				break;
-
-		}
-
-		return nextStage;
-
-	} 
+		return this._stageManager.getNextGameStage();
+	
+	}
 
 	_getPreviousProps() {
 
@@ -301,7 +236,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_onTurnComplete() {
 		
-		const { currentTurn } = this._getCurrentProps().gameplay;
+		const { currentTurn } = this.getCurrentProps().gameplay;
 
 		const { selectedBorough } = currentTurn;
 
@@ -355,37 +290,9 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_readyForNextStage() {
 
-		let result = null;
+		return this._stageManager.readyForNextStage();
 
-		if (this._stageIsComplete()) {
-
-			result = Promise.resolve();
-
-		} else {
-
-			result = new Promise(resolve => {
-
-				this.on(this.events.PROPS_UPDATE, () => {
-
-						if (!(this._stageIsComplete())) return;
-
-						resolve();
-
-					});
-
-				})
-
-				.catch(e => {
-
-					throw e;
-
-				});
-
-		}
-
-		return result;
-
-	} 
+	}
 
 	_showPanorama() {
 
@@ -401,50 +308,21 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	}
 
-	// Determine if the stage requirements are completed.  
-	// Most stages are completed once the view completes its designated task.
-
 	_stageIsComplete() {
-	
-		let result = false;
 
-		const { stage } = this._getCurrentProps().gameplay;
-
-		switch (stage) {
-
-			case gameStages.PREGAME:
-
-				result = this._stagePregameIsComplete();
-
-				break;
-
-			case gameStages.LOADING_PANORAMA:
-
-				result = this._stageLoadingPanoramaIsComplete();
-
-				break;
-
-			default:
-
-				result = this._viewIsComplete();
-
-				break;
-
-		}
-
-		return result;
+		return this._stageManager.stageIsComplete();
 
 	}
 
 	_stageLoadingPanoramaIsComplete() {
 
-		return this._getCurrentProps().gameplay.currentTurn.randomLocation && this._viewIsComplete();
+		return this.getCurrentProps().gameplay.currentTurn.randomLocation && this.viewIsComplete();
 
 	}
 
 	_stagePregameIsComplete() {
 
-		return this._getCurrentProps().app.initialized && this._viewIsComplete();
+		return this.getCurrentProps().app.initialized && this.viewIsComplete();
 
 	}
 
@@ -468,56 +346,8 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_switchToNextGameStage() {
 
-		const props = this._getCurrentProps();
-
-		const stage = this._getNextGameStage(); 
-
-		switch (stage) {
-
-			case gameStages.PREGAME: 
-
-				props.stagePregame();
-
-				break;
-
-			case gameStages.LOADING_PANORAMA:
-
-				props.stageLoadingPanorama();
-
-				break;
-
-			case gameStages.SHOWING_PANORAMA:
-
-				props.stageShowingPanorama();
-
-				break;
-
-			case gameStages.GUESSING_LOCATION:
-
-				props.stageGuessingLocation();
-
-				break;
-
-			case gameStages.EVALUATING_ANSWER:
-
-				props.stageEvaluatingAnswer();
-
-				break;
-
-			case gameStages.POSTGAME:
-
-				props.stagePostgame();
-
-				break;
-
-		}
-
-	}
-
-	_viewIsComplete() {
-
-		return this._getCurrentProps().view.complete;
-
+		return this._stageManager.switchToNextGameStage();
+		
 	}
 
 	/*----------  Public API  ----------*/
@@ -528,10 +358,34 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	} 
 
+	appIsInitialized() {
+
+		return this.getCurrentProps().app.initialized;
+
+	}
+
 	gameIsOver() {
 
-		return this._getCurrentProps().gameplay.over;
+		return this.getCurrentProps().gameplay.over;
 	
+	}
+
+	getCurrentProps() {
+
+		return this._props.current;
+
+	}
+
+	getCurrentStage() {
+
+		return this.getCurrentProps().gameplay.stage;
+
+	}
+
+	getRandomLocation() {
+
+		return this.getCurrentProps().gameplay.currentTurn.randomLocation;
+
 	}
 
 	getMaximumRounds() {
@@ -548,7 +402,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	propsDidUpdate(props) {
 
-		this._props.previous = this._getCurrentProps();
+		this._props.previous = this.getCurrentProps();
 		this._props.current = props;
 
 		this._processProps();
@@ -571,9 +425,15 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	totalCorrectAnswers() {
 
-		const { history } = this._getCurrentProps().gameplay;
+		const { history } = this.getCurrentProps().gameplay;
 
 		return history.filter(turn => turn.selectedBorough.getID() === turn.randomLocation.borough.getID());
+
+	}
+
+	viewIsComplete() {
+
+		return this.getCurrentProps().view.complete;
 
 	}
 

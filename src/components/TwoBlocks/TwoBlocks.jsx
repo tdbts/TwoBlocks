@@ -6,7 +6,7 @@ import { lifecycle } from '../../constants/constants';
 import TwoBlocksWorldView from '../WorldView/TwoBlocksWorldView';
 import TwoBlocksInterchange from '../Interchange/TwoBlocksInterchange';
 import TwoBlocksService from '../../services/TwoBlocksService';
-import Gameplay from '../../game-components/Gameplay';
+import Gameplay from '../../game-components/Gameplay/Gameplay';
 import viewProgress from './viewProgress';
 import twoBlocksUtils from '../../game-utils/twoBlocksUtils';
 import mapStateToProps from './mapStateToProps';
