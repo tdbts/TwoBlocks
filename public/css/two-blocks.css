@@ -59,6 +59,10 @@ html, body {
 	color: #D9285B;
 }
 
+.two-blocks-prompt .correct-borough {
+	font-weight: bold;
+}
+
 .two-blocks-map {
 	position: absolute; 
 }
