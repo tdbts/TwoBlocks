@@ -5,6 +5,7 @@ html, body {
 }
 
 .app-container {
+	position: relative;
 	overflow: hidden;
 }
 
