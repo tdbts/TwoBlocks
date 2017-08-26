@@ -38375,8 +38375,7 @@
 
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PanoramaDisplay).call(this));
 
-			_this.COUNTDOWN_LENGTH = 1;
-			// this.COUNTDOWN_LENGTH = 15;
+			_this.COUNTDOWN_LENGTH = 15;
 
 			_this.SPINNER_OPTIONS = {
 				punctuate: {

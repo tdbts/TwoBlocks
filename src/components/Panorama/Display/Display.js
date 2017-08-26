@@ -8,8 +8,7 @@ export default class PanoramaDisplay extends EventEmitter {
 
 		super();
 
-		this.COUNTDOWN_LENGTH = 1;
-		// this.COUNTDOWN_LENGTH = 15;
+		this.COUNTDOWN_LENGTH = 15;
 
 		this.SPINNER_OPTIONS = {
 			punctuate: {
