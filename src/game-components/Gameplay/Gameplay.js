@@ -1,7 +1,8 @@
 /* global window */
  
 import { EventEmitter } from 'events';
-import { gameStages, lifecycle, DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS } from '../../constants/constants';   
+import { DEFAULT_MAXIMUM_ROUNDS, MAXIMUM_EVENT_EMITTER_LISTENERS } from '../../constants/constants';
+import PropUpdatesManager from './PropUpdatesManager';
 import StageManager from './StageManager';
 
 export default class TwoBlocksGame extends EventEmitter {
@@ -27,104 +28,8 @@ export default class TwoBlocksGame extends EventEmitter {
 			previous: null
 		};
 
+		this._propUpdatesManager = new PropUpdatesManager(this);
 		this._stageManager = new StageManager(this);
-
-	}
-
-	_checkCanEvaluateAnswer() {
-
-		const { gameplay } = this.getCurrentProps();
-
-		const { stage } = gameplay;
-
-		const { canEvaluateAnswer, submitted } = gameplay.currentTurn;
-
-		if ((gameStages.GUESSING_LOCATION !== stage) || canEvaluateAnswer || submitted) return;
-
-		this._getDispatcher().canEvaluateAnswer();
-
-	}
-
-	_checkConfirmingAnswer(prevSelectedBorough) {
-
-		const { selectedBorough, submitted } = this.getCurrentProps().gameplay.currentTurn;
-
-		if ((prevSelectedBorough === selectedBorough) || !(selectedBorough) || submitted) return;
-
-		this._getDispatcher().confirmAnswer();
-
-	}
-
-	_checkGameOver(prevRoundsPlayed) {
-
-		const { roundsPlayed } = this.getCurrentProps().gameplay;
-
-		if (prevRoundsPlayed === roundsPlayed) return;
-
-		if (!(this.maximumRoundsPlayed(roundsPlayed))) return;
-
-		this._getDispatcher().gameOver();
-
-	}
-
-	_checkGameRestart(prevGameOver) {
-
-		const { over } = this.getCurrentProps().gameplay;
-
-		if (!(prevGameOver) || over) return;
-
-		this.restart();
-
-	}
-
-	_checkGameStage() {
-
-		// If stage is not yet defined, stage is 'PREGAME'
-		if (this.getCurrentStage()) return;
-
-		this._getDispatcher().stagePregame();
-
-	}
-
-	_checkGameStarted(prevStarted) {
-
-		if (prevStarted || !(this.getCurrentProps().gameplay.started)) return;
-
-		this._startGamePlay();
-
-	}
-
-	_checkNextTurn(prevRoundsPlayed) {
-
-		const { roundsPlayed } = this.getCurrentProps().gameplay;
-
-		if ((prevRoundsPlayed <= roundsPlayed) || this.maximumRoundsPlayed(roundsPlayed)) return;
-
-		this._nextTurn();
-
-	}
-
-	_checkStagePostgame(prevOver) {
-
-		const { over } = this.getCurrentProps().gameplay;
-
-		if ((prevOver === over) || !(over)) return;
-
-		this._switchToNextGameStage();
-
-	}
-
-	_checkTurnComplete() {
-
-		const { maps, gameplay } = this.getCurrentProps();
-
-		const { showingAnswer } = maps;
-
-		const { stage } = gameplay;
-
-		if (gameStages.EVALUATING_ANSWER !== stage || lifecycle.AFTER !== showingAnswer) return;
-
-		this._onTurnComplete();
 
 	}
 
@@ -134,7 +39,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		if (!(canEvaluateAnswer)) return;
 
-		this._switchToNextGameStage();
+		this.switchToNextGameStage();
 
 		/**
 		 *
@@ -146,7 +51,7 @@ export default class TwoBlocksGame extends EventEmitter {
 		 */
 
 		// Don't allow answer evaluation until the next turn
-		this._getDispatcher().cannotEvaluateAnswer();
+		this.getDispatcher().cannotEvaluateAnswer();
 
 		return this._readyForNextStage()
 
@@ -158,27 +63,9 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	}
 
-	_getDispatcher() {
-
-		return this.getCurrentProps();
-
-	}
-
-	_getNextGameStage() {
-
-		return this._stageManager.getNextGameStage();
-	
-	}
-
-	_getPreviousProps() {
-
-		return this._props.previous;
-
-	}
-
 	_guessLocation() {
 
-		this._switchToNextGameStage(); 
+		this.switchToNextGameStage(); 
 
 		return this._readyForNextStage()
 
@@ -194,21 +81,21 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		this._hasStarted = true;
 
-		return this._nextTurn();	
+		return this.nextTurn();	
 
 	} 
 
 	_loadNewGame() {
 
-		return this._nextTurn(); 
+		return this.nextTurn(); 
 
 	}
 
 	_loadPanorama() {
 
-		this._switchToNextGameStage(); 
+		this.switchToNextGameStage(); 
 
-		this._getDispatcher().requestRandomLocation();
+		this.getDispatcher().requestRandomLocation();
 
 		return this._readyForNextStage()
 
@@ -219,68 +106,6 @@ export default class TwoBlocksGame extends EventEmitter {
 			});
 
 	} 
-
-	_nextTurn() {
-
-		this._getDispatcher().nextTurn();
-
-		return this._loadPanorama()
-
-			.then(() => this._showPanorama())
-
-			.then(() => this._guessLocation())
-
-			.then(() => this._evaluateAnswer()); 
-
-	}
-
-	_onTurnComplete() {
-		
-		const { currentTurn } = this.getCurrentProps().gameplay;
-
-		const { selectedBorough } = currentTurn;
-
-		if (!(selectedBorough)) return;  // Turn already cleared
-
-		this._getDispatcher().saveTurn(currentTurn);
-		this._getDispatcher().incrementTotalRounds();
-		this._getDispatcher().clearCurrentTurn();
-
-	} 
-
-	_processProps() {
-
-		if (!(this._getPreviousProps())) return;
-
-		const {
-
-			currentTurn,
-			over,
-			roundsPlayed,
-			stage,
-			started
-
-		} = this._getPreviousProps().gameplay;
-
-		this._checkCanEvaluateAnswer();
-
-		this._checkConfirmingAnswer(currentTurn.selectedBorough);
-
-		this._checkGameOver(roundsPlayed);
-
-		this._checkGameStage(stage);
-
-		// Reactive
-		this._checkGameStarted(started);
-
-		this._checkNextTurn(roundsPlayed);
-
-		this._checkStagePostgame(over);
-
-		// Reactive
-		this._checkTurnComplete();
-
-	}
 
 	_readyForGameplay() {
 
@@ -296,7 +121,7 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	_showPanorama() {
 
-		this._switchToNextGameStage(); 
+		this.switchToNextGameStage(); 
 
 		return this._readyForNextStage()
 
@@ -306,48 +131,6 @@ export default class TwoBlocksGame extends EventEmitter {
 
 			});
 
-	}
-
-	_stageIsComplete() {
-
-		return this._stageManager.stageIsComplete();
-
-	}
-
-	_stageLoadingPanoramaIsComplete() {
-
-		return this.getCurrentProps().gameplay.currentTurn.randomLocation && this.viewIsComplete();
-
-	}
-
-	_stagePregameIsComplete() {
-
-		return this.getCurrentProps().app.initialized && this.viewIsComplete();
-
-	}
-
-	_startGamePlay() {
-
-		return this._readyForGameplay()
-
-			.then(() => this._hasStarted 
-
-				? this._loadNewGame() 
-
-				: this._loadFirstGame())
-
-			.catch(e => {
-
-				throw e;
-
-			});
-
-	}
-
-	_switchToNextGameStage() {
-
-		return this._stageManager.switchToNextGameStage();
-		
 	}
 
 	/*----------  Public API  ----------*/
@@ -382,9 +165,9 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	}
 
-	getRandomLocation() {
+	getDispatcher() {
 
-		return this.getCurrentProps().gameplay.currentTurn.randomLocation;
+		return this.getCurrentProps();
 
 	}
 
@@ -394,9 +177,35 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	}
 
+	getPreviousProps() {
+
+		return this._props.previous;
+
+	}
+
+	getRandomLocation() {
+
+		return this.getCurrentProps().gameplay.currentTurn.randomLocation;
+
+	}
+
 	maximumRoundsPlayed(roundsPlayed) {
 
 		return roundsPlayed === this.getMaximumRounds(); 
+
+	}
+
+	nextTurn() {
+
+		this.getDispatcher().nextTurn();
+
+		return this._loadPanorama()
+
+			.then(() => this._showPanorama())
+
+			.then(() => this._guessLocation())
+
+			.then(() => this._evaluateAnswer()); 
 
 	}
 
@@ -405,11 +214,25 @@ export default class TwoBlocksGame extends EventEmitter {
 		this._props.previous = this.getCurrentProps();
 		this._props.current = props;
 
-		this._processProps();
+		this._propUpdatesManager.process();
 
 		this.emit(this.events.PROPS_UPDATE);
 
 	}
+
+	onTurnComplete() {
+		
+		const { currentTurn } = this.getCurrentProps().gameplay;
+
+		const { selectedBorough } = currentTurn;
+
+		if (!(selectedBorough)) return;  // Turn already cleared
+
+		this.getDispatcher().saveTurn(currentTurn);
+		this.getDispatcher().incrementTotalRounds();
+		this.getDispatcher().clearCurrentTurn();
+
+	} 
 
 	restart() {
 
@@ -419,9 +242,27 @@ export default class TwoBlocksGame extends EventEmitter {
 
 	start() {
 
-		this._getDispatcher().startGame();
+		this.getDispatcher().startGame();
  
 	} 
+
+	startGameplay() {
+
+		return this._readyForGameplay()
+
+			.then(() => this._hasStarted 
+
+				? this._loadNewGame() 
+
+				: this._loadFirstGame())
+
+			.catch(e => {
+
+				throw e;
+
+			});
+
+	}
 
 	totalCorrectAnswers() {
 
@@ -435,6 +276,12 @@ export default class TwoBlocksGame extends EventEmitter {
 
 		return this.getCurrentProps().view.complete;
 
+	}
+
+	switchToNextGameStage() {
+
+		return this._stageManager.switchToNextGameStage();
+		
 	}
 
 }

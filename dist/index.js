@@ -64,7 +64,7 @@
 
 	var _TwoBlocks2 = _interopRequireDefault(_TwoBlocks);
 
-	var _twoBlocks = __webpack_require__(795);
+	var _twoBlocks = __webpack_require__(796);
 
 	var _twoBlocks2 = _interopRequireDefault(_twoBlocks);
 
@@ -31207,7 +31207,7 @@
 
 	var _Gameplay2 = _interopRequireDefault(_Gameplay);
 
-	var _viewProgress = __webpack_require__(792);
+	var _viewProgress = __webpack_require__(793);
 
 	var _viewProgress2 = _interopRequireDefault(_viewProgress);
 
@@ -31215,11 +31215,11 @@
 
 	var _twoBlocksUtils2 = _interopRequireDefault(_twoBlocksUtils);
 
-	var _mapStateToProps = __webpack_require__(793);
+	var _mapStateToProps = __webpack_require__(794);
 
 	var _mapStateToProps2 = _interopRequireDefault(_mapStateToProps);
 
-	var _mapDispatchToProps = __webpack_require__(794);
+	var _mapDispatchToProps = __webpack_require__(795);
 
 	var _mapDispatchToProps2 = _interopRequireDefault(_mapDispatchToProps);
 
@@ -53589,7 +53589,11 @@
 
 	var _constants = __webpack_require__(507);
 
-	var _StageManager = __webpack_require__(791);
+	var _PropUpdatesManager = __webpack_require__(791);
+
+	var _PropUpdatesManager2 = _interopRequireDefault(_PropUpdatesManager);
+
+	var _StageManager = __webpack_require__(792);
 
 	var _StageManager2 = _interopRequireDefault(_StageManager);
 
@@ -53626,114 +53630,13 @@
 				previous: null
 			};
 
+			_this._propUpdatesManager = new _PropUpdatesManager2.default(_this);
 			_this._stageManager = new _StageManager2.default(_this);
 
 			return _this;
 		}
 
 		_createClass(TwoBlocksGame, [{
-			key: '_checkCanEvaluateAnswer',
-			value: function _checkCanEvaluateAnswer() {
-				var _getCurrentProps = this.getCurrentProps();
-
-				var gameplay = _getCurrentProps.gameplay;
-				var stage = gameplay.stage;
-				var _gameplay$currentTurn = gameplay.currentTurn;
-				var canEvaluateAnswer = _gameplay$currentTurn.canEvaluateAnswer;
-				var submitted = _gameplay$currentTurn.submitted;
-
-
-				if (_constants.gameStages.GUESSING_LOCATION !== stage || canEvaluateAnswer || submitted) return;
-
-				this._getDispatcher().canEvaluateAnswer();
-			}
-		}, {
-			key: '_checkConfirmingAnswer',
-			value: function _checkConfirmingAnswer(prevSelectedBorough) {
-				var _getCurrentProps$game = this.getCurrentProps().gameplay.currentTurn;
-				var selectedBorough = _getCurrentProps$game.selectedBorough;
-				var submitted = _getCurrentProps$game.submitted;
-
-
-				if (prevSelectedBorough === selectedBorough || !selectedBorough || submitted) return;
-
-				this._getDispatcher().confirmAnswer();
-			}
-		}, {
-			key: '_checkGameOver',
-			value: function _checkGameOver(prevRoundsPlayed) {
-				var roundsPlayed = this.getCurrentProps().gameplay.roundsPlayed;
-
-
-				if (prevRoundsPlayed === roundsPlayed) return;
-
-				if (!this.maximumRoundsPlayed(roundsPlayed)) return;
-
-				this._getDispatcher().gameOver();
-			}
-		}, {
-			key: '_checkGameRestart',
-			value: function _checkGameRestart(prevGameOver) {
-				var over = this.getCurrentProps().gameplay.over;
-
-
-				if (!prevGameOver || over) return;
-
-				this.restart();
-			}
-		}, {
-			key: '_checkGameStage',
-			value: function _checkGameStage() {
-
-				// If stage is not yet defined, stage is 'PREGAME'
-				if (this.getCurrentStage()) return;
-
-				this._getDispatcher().stagePregame();
-			}
-		}, {
-			key: '_checkGameStarted',
-			value: function _checkGameStarted(prevStarted) {
-
-				if (prevStarted || !this.getCurrentProps().gameplay.started) return;
-
-				this._startGamePlay();
-			}
-		}, {
-			key: '_checkNextTurn',
-			value: function _checkNextTurn(prevRoundsPlayed) {
-				var roundsPlayed = this.getCurrentProps().gameplay.roundsPlayed;
-
-
-				if (prevRoundsPlayed <= roundsPlayed || this.maximumRoundsPlayed(roundsPlayed)) return;
-
-				this._nextTurn();
-			}
-		}, {
-			key: '_checkStagePostgame',
-			value: function _checkStagePostgame(prevOver) {
-				var over = this.getCurrentProps().gameplay.over;
-
-
-				if (prevOver === over || !over) return;
-
-				this._switchToNextGameStage();
-			}
-		}, {
-			key: '_checkTurnComplete',
-			value: function _checkTurnComplete() {
-				var _getCurrentProps2 = this.getCurrentProps();
-
-				var maps = _getCurrentProps2.maps;
-				var gameplay = _getCurrentProps2.gameplay;
-				var showingAnswer = maps.showingAnswer;
-				var stage = gameplay.stage;
-
-
-				if (_constants.gameStages.EVALUATING_ANSWER !== stage || _constants.lifecycle.AFTER !== showingAnswer) return;
-
-				this._onTurnComplete();
-			}
-		}, {
 			key: '_evaluateAnswer',
 			value: function _evaluateAnswer() {
 				var canEvaluateAnswer = this.getCurrentProps().gameplay.currentTurn.canEvaluateAnswer;
@@ -53741,7 +53644,7 @@
 
 				if (!canEvaluateAnswer) return;
 
-				this._switchToNextGameStage();
+				this.switchToNextGameStage();
 
 				/**
 	    *
@@ -53753,7 +53656,7 @@
 	    */
 
 				// Don't allow answer evaluation until the next turn
-				this._getDispatcher().cannotEvaluateAnswer();
+				this.getDispatcher().cannotEvaluateAnswer();
 
 				return this._readyForNextStage().catch(function (e) {
 
@@ -53761,28 +53664,10 @@
 				});
 			}
 		}, {
-			key: '_getDispatcher',
-			value: function _getDispatcher() {
-
-				return this.getCurrentProps();
-			}
-		}, {
-			key: '_getNextGameStage',
-			value: function _getNextGameStage() {
-
-				return this._stageManager.getNextGameStage();
-			}
-		}, {
-			key: '_getPreviousProps',
-			value: function _getPreviousProps() {
-
-				return this._props.previous;
-			}
-		}, {
 			key: '_guessLocation',
 			value: function _guessLocation() {
 
-				this._switchToNextGameStage();
+				this.switchToNextGameStage();
 
 				return this._readyForNextStage().catch(function (e) {
 
@@ -53795,87 +53680,26 @@
 
 				this._hasStarted = true;
 
-				return this._nextTurn();
+				return this.nextTurn();
 			}
 		}, {
 			key: '_loadNewGame',
 			value: function _loadNewGame() {
 
-				return this._nextTurn();
+				return this.nextTurn();
 			}
 		}, {
 			key: '_loadPanorama',
 			value: function _loadPanorama() {
 
-				this._switchToNextGameStage();
+				this.switchToNextGameStage();
 
-				this._getDispatcher().requestRandomLocation();
+				this.getDispatcher().requestRandomLocation();
 
 				return this._readyForNextStage().catch(function (e) {
 
 					throw e;
 				});
-			}
-		}, {
-			key: '_nextTurn',
-			value: function _nextTurn() {
-				var _this2 = this;
-
-				this._getDispatcher().nextTurn();
-
-				return this._loadPanorama().then(function () {
-					return _this2._showPanorama();
-				}).then(function () {
-					return _this2._guessLocation();
-				}).then(function () {
-					return _this2._evaluateAnswer();
-				});
-			}
-		}, {
-			key: '_onTurnComplete',
-			value: function _onTurnComplete() {
-				var currentTurn = this.getCurrentProps().gameplay.currentTurn;
-				var selectedBorough = currentTurn.selectedBorough;
-
-
-				if (!selectedBorough) return; // Turn already cleared
-
-				this._getDispatcher().saveTurn(currentTurn);
-				this._getDispatcher().incrementTotalRounds();
-				this._getDispatcher().clearCurrentTurn();
-			}
-		}, {
-			key: '_processProps',
-			value: function _processProps() {
-
-				if (!this._getPreviousProps()) return;
-
-				var _getPreviousProps$gam = this._getPreviousProps().gameplay;
-
-				var currentTurn = _getPreviousProps$gam.currentTurn;
-				var over = _getPreviousProps$gam.over;
-				var roundsPlayed = _getPreviousProps$gam.roundsPlayed;
-				var stage = _getPreviousProps$gam.stage;
-				var started = _getPreviousProps$gam.started;
-
-
-				this._checkCanEvaluateAnswer();
-
-				this._checkConfirmingAnswer(currentTurn.selectedBorough);
-
-				this._checkGameOver(roundsPlayed);
-
-				this._checkGameStage(stage);
-
-				// Reactive
-				this._checkGameStarted(started);
-
-				this._checkNextTurn(roundsPlayed);
-
-				this._checkStagePostgame(over);
-
-				// Reactive
-				this._checkTurnComplete();
 			}
 		}, {
 			key: '_readyForGameplay',
@@ -53893,48 +53717,12 @@
 			key: '_showPanorama',
 			value: function _showPanorama() {
 
-				this._switchToNextGameStage();
+				this.switchToNextGameStage();
 
 				return this._readyForNextStage().catch(function (e) {
 
 					throw e;
 				});
-			}
-		}, {
-			key: '_stageIsComplete',
-			value: function _stageIsComplete() {
-
-				return this._stageManager.stageIsComplete();
-			}
-		}, {
-			key: '_stageLoadingPanoramaIsComplete',
-			value: function _stageLoadingPanoramaIsComplete() {
-
-				return this.getCurrentProps().gameplay.currentTurn.randomLocation && this.viewIsComplete();
-			}
-		}, {
-			key: '_stagePregameIsComplete',
-			value: function _stagePregameIsComplete() {
-
-				return this.getCurrentProps().app.initialized && this.viewIsComplete();
-			}
-		}, {
-			key: '_startGamePlay',
-			value: function _startGamePlay() {
-				var _this3 = this;
-
-				return this._readyForGameplay().then(function () {
-					return _this3._hasStarted ? _this3._loadNewGame() : _this3._loadFirstGame();
-				}).catch(function (e) {
-
-					throw e;
-				});
-			}
-		}, {
-			key: '_switchToNextGameStage',
-			value: function _switchToNextGameStage() {
-
-				return this._stageManager.switchToNextGameStage();
 			}
 
 			/*----------  Public API  ----------*/
@@ -53970,10 +53758,10 @@
 				return this.getCurrentProps().gameplay.stage;
 			}
 		}, {
-			key: 'getRandomLocation',
-			value: function getRandomLocation() {
+			key: 'getDispatcher',
+			value: function getDispatcher() {
 
-				return this.getCurrentProps().gameplay.currentTurn.randomLocation;
+				return this.getCurrentProps();
 			}
 		}, {
 			key: 'getMaximumRounds',
@@ -53982,10 +53770,37 @@
 				return this.MAXIMUM_ROUNDS;
 			}
 		}, {
+			key: 'getPreviousProps',
+			value: function getPreviousProps() {
+
+				return this._props.previous;
+			}
+		}, {
+			key: 'getRandomLocation',
+			value: function getRandomLocation() {
+
+				return this.getCurrentProps().gameplay.currentTurn.randomLocation;
+			}
+		}, {
 			key: 'maximumRoundsPlayed',
 			value: function maximumRoundsPlayed(roundsPlayed) {
 
 				return roundsPlayed === this.getMaximumRounds();
+			}
+		}, {
+			key: 'nextTurn',
+			value: function nextTurn() {
+				var _this2 = this;
+
+				this.getDispatcher().nextTurn();
+
+				return this._loadPanorama().then(function () {
+					return _this2._showPanorama();
+				}).then(function () {
+					return _this2._guessLocation();
+				}).then(function () {
+					return _this2._evaluateAnswer();
+				});
 			}
 		}, {
 			key: 'propsDidUpdate',
@@ -53994,9 +53809,22 @@
 				this._props.previous = this.getCurrentProps();
 				this._props.current = props;
 
-				this._processProps();
+				this._propUpdatesManager.process();
 
 				this.emit(this.events.PROPS_UPDATE);
+			}
+		}, {
+			key: 'onTurnComplete',
+			value: function onTurnComplete() {
+				var currentTurn = this.getCurrentProps().gameplay.currentTurn;
+				var selectedBorough = currentTurn.selectedBorough;
+
+
+				if (!selectedBorough) return; // Turn already cleared
+
+				this.getDispatcher().saveTurn(currentTurn);
+				this.getDispatcher().incrementTotalRounds();
+				this.getDispatcher().clearCurrentTurn();
 			}
 		}, {
 			key: 'restart',
@@ -54008,7 +53836,19 @@
 			key: 'start',
 			value: function start() {
 
-				this._getDispatcher().startGame();
+				this.getDispatcher().startGame();
+			}
+		}, {
+			key: 'startGameplay',
+			value: function startGameplay() {
+				var _this3 = this;
+
+				return this._readyForGameplay().then(function () {
+					return _this3._hasStarted ? _this3._loadNewGame() : _this3._loadFirstGame();
+				}).catch(function (e) {
+
+					throw e;
+				});
 			}
 		}, {
 			key: 'totalCorrectAnswers',
@@ -54026,6 +53866,12 @@
 
 				return this.getCurrentProps().view.complete;
 			}
+		}, {
+			key: 'switchToNextGameStage',
+			value: function switchToNextGameStage() {
+
+				return this._stageManager.switchToNextGameStage();
+			}
 		}]);
 
 		return TwoBlocksGame;
@@ -54035,6 +53881,231 @@
 
 /***/ },
 /* 791 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _constants = __webpack_require__(507);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var PropUpdatesManager = function () {
+		function PropUpdatesManager(gameplay) {
+			_classCallCheck(this, PropUpdatesManager);
+
+			this._gameplay = gameplay;
+		}
+
+		_createClass(PropUpdatesManager, [{
+			key: '_checkCanEvaluateAnswer',
+			value: function _checkCanEvaluateAnswer() {
+				var _getCurrentProps2 = this._getCurrentProps();
+
+				var gameplay = _getCurrentProps2.gameplay;
+				var currentTurn = gameplay.currentTurn;
+				var stage = gameplay.stage;
+				var canEvaluateAnswer = currentTurn.canEvaluateAnswer;
+				var submitted = currentTurn.submitted;
+
+
+				if (_constants.gameStages.GUESSING_LOCATION !== stage || canEvaluateAnswer || submitted) return;
+
+				this._getDispatcher().canEvaluateAnswer();
+			}
+		}, {
+			key: '_checkConfirmingAnswer',
+			value: function _checkConfirmingAnswer(prevSelectedBorough) {
+				var _getCurrentProps$game = this._getCurrentProps().gameplay.currentTurn;
+
+				var selectedBorough = _getCurrentProps$game.selectedBorough;
+				var submitted = _getCurrentProps$game.submitted;
+
+
+				if (prevSelectedBorough === selectedBorough || !selectedBorough || submitted) return;
+
+				this._getDispatcher().confirmAnswer();
+			}
+		}, {
+			key: '_checkGameOver',
+			value: function _checkGameOver(prevRoundsPlayed) {
+				var roundsPlayed = this._getCurrentProps().gameplay.roundsPlayed;
+
+				if (prevRoundsPlayed === roundsPlayed) return;
+
+				if (!this._maximumRoundsPlayed(roundsPlayed)) return;
+
+				this._getDispatcher().gameOver();
+			}
+		}, {
+			key: '_checkGameRestart',
+			value: function _checkGameRestart(prevGameOver) {
+				var over = this._getCurrentProps().gameplay.over;
+
+				if (!prevGameOver || over) return;
+
+				this._restart();
+			}
+		}, {
+			key: '_checkGameStage',
+			value: function _checkGameStage() {
+
+				// If stage is not yet defined, stage is 'PREGAME'
+				if (this._getCurrentStage()) return;
+
+				this._getDispatcher().stagePregame();
+			}
+		}, {
+			key: '_checkGameStarted',
+			value: function _checkGameStarted(prevStarted) {
+
+				if (prevStarted || !this._getCurrentProps().gameplay.started) return;
+
+				this._startGamePlay();
+			}
+		}, {
+			key: '_checkNextTurn',
+			value: function _checkNextTurn(prevRoundsPlayed) {
+				var roundsPlayed = this._getCurrentProps().gameplay.roundsPlayed;
+
+				if (prevRoundsPlayed <= roundsPlayed || this._maximumRoundsPlayed(roundsPlayed)) return;
+
+				this._nextTurn();
+			}
+		}, {
+			key: '_checkStagePostgame',
+			value: function _checkStagePostgame(prevOver) {
+				var over = this._getCurrentProps().gameplay.over;
+
+				if (prevOver === over || !over) return;
+
+				this._switchToNextGameStage();
+			}
+		}, {
+			key: '_checkTurnComplete',
+			value: function _checkTurnComplete() {
+				var _getCurrentProps3 = this._getCurrentProps();
+
+				var maps = _getCurrentProps3.maps;
+				var gameplay = _getCurrentProps3.gameplay;
+				var showingAnswer = maps.showingAnswer;
+				var stage = gameplay.stage;
+
+
+				if (_constants.gameStages.EVALUATING_ANSWER !== stage || _constants.lifecycle.AFTER !== showingAnswer) return;
+
+				this._onTurnComplete();
+			}
+		}, {
+			key: '_getCurrentProps',
+			value: function _getCurrentProps() {
+
+				return this._gameplay.getCurrentProps();
+			}
+		}, {
+			key: '_getCurrentStage',
+			value: function _getCurrentStage() {
+
+				return this._gameplay.getCurrentStage();
+			}
+		}, {
+			key: '_getDispatcher',
+			value: function _getDispatcher() {
+
+				return this._gameplay.getDispatcher();
+			}
+		}, {
+			key: '_getPreviousProps',
+			value: function _getPreviousProps() {
+
+				return this._gameplay.getPreviousProps();
+			}
+		}, {
+			key: '_maximumRoundsPlayed',
+			value: function _maximumRoundsPlayed(roundsPlayed) {
+
+				return this._gameplay.maximumRoundsPlayed(roundsPlayed);
+			}
+		}, {
+			key: '_nextTurn',
+			value: function _nextTurn() {
+
+				return this._gameplay.nextTurn();
+			}
+		}, {
+			key: '_onTurnComplete',
+			value: function _onTurnComplete() {
+
+				return this._gameplay.onTurnComplete();
+			}
+		}, {
+			key: '_restart',
+			value: function _restart() {
+
+				this._gameplay.restart();
+			}
+		}, {
+			key: '_startGamePlay',
+			value: function _startGamePlay() {
+
+				return this._gameplay.startGameplay();
+			}
+		}, {
+			key: '_switchToNextGameStage',
+			value: function _switchToNextGameStage() {
+
+				return this._gameplay.switchToNextGameStage();
+			}
+
+			/*----------  Public API  ----------*/
+
+		}, {
+			key: 'process',
+			value: function process() {
+
+				if (!this._getPreviousProps()) return;
+
+				var _getPreviousProps$gam = this._getPreviousProps().gameplay;
+
+				var currentTurn = _getPreviousProps$gam.currentTurn;
+				var over = _getPreviousProps$gam.over;
+				var roundsPlayed = _getPreviousProps$gam.roundsPlayed;
+				var stage = _getPreviousProps$gam.stage;
+				var started = _getPreviousProps$gam.started;
+
+
+				this._checkCanEvaluateAnswer();
+
+				this._checkConfirmingAnswer(currentTurn.selectedBorough);
+
+				this._checkGameOver(roundsPlayed);
+
+				this._checkGameStage(stage);
+
+				// Reactive
+				this._checkGameStarted(started);
+
+				this._checkNextTurn(roundsPlayed);
+
+				this._checkStagePostgame(over);
+
+				// Reactive
+				this._checkTurnComplete();
+			}
+		}]);
+
+		return PropUpdatesManager;
+	}();
+
+		exports.default = PropUpdatesManager;
+
+/***/ },
+/* 792 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54294,7 +54365,7 @@
 		exports.default = StageManager;
 
 /***/ },
-/* 792 */
+/* 793 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54400,7 +54471,7 @@
 		};
 
 /***/ },
-/* 793 */
+/* 794 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -54433,7 +54504,7 @@
 		};
 
 /***/ },
-/* 794 */
+/* 795 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54576,7 +54647,7 @@
 		};
 
 /***/ },
-/* 795 */
+/* 796 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54587,39 +54658,39 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _app = __webpack_require__(796);
+	var _app = __webpack_require__(797);
 
 	var _app2 = _interopRequireDefault(_app);
 
-	var _countdown = __webpack_require__(805);
+	var _countdown = __webpack_require__(806);
 
 	var _countdown2 = _interopRequireDefault(_countdown);
 
-	var _gameplay = __webpack_require__(807);
+	var _gameplay = __webpack_require__(808);
 
 	var _gameplay2 = _interopRequireDefault(_gameplay);
 
-	var _interchange = __webpack_require__(822);
+	var _interchange = __webpack_require__(823);
 
 	var _interchange2 = _interopRequireDefault(_interchange);
 
-	var _maps = __webpack_require__(825);
+	var _maps = __webpack_require__(826);
 
 	var _maps2 = _interopRequireDefault(_maps);
 
-	var _panorama = __webpack_require__(831);
+	var _panorama = __webpack_require__(832);
 
 	var _panorama2 = _interopRequireDefault(_panorama);
 
-	var _prompt = __webpack_require__(835);
+	var _prompt = __webpack_require__(836);
 
 	var _prompt2 = _interopRequireDefault(_prompt);
 
-	var _service = __webpack_require__(837);
+	var _service = __webpack_require__(838);
 
 	var _service2 = _interopRequireDefault(_service);
 
-	var _view = __webpack_require__(839);
+	var _view = __webpack_require__(840);
 
 	var _view2 = _interopRequireDefault(_view);
 
@@ -54640,7 +54711,7 @@
 		exports.default = twoBlocks;
 
 /***/ },
-/* 796 */
+/* 797 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54651,19 +54722,19 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _thrownError = __webpack_require__(797);
+	var _thrownError = __webpack_require__(798);
 
 	var _thrownError2 = _interopRequireDefault(_thrownError);
 
-	var _initialized = __webpack_require__(798);
+	var _initialized = __webpack_require__(799);
 
 	var _initialized2 = _interopRequireDefault(_initialized);
 
-	var _isMobile = __webpack_require__(799);
+	var _isMobile = __webpack_require__(800);
 
 	var _isMobile2 = _interopRequireDefault(_isMobile);
 
-	var _initialization = __webpack_require__(800);
+	var _initialization = __webpack_require__(801);
 
 	var _initialization2 = _interopRequireDefault(_initialization);
 
@@ -54679,7 +54750,7 @@
 		exports.default = app;
 
 /***/ },
-/* 797 */
+/* 798 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54715,7 +54786,7 @@
 		};
 
 /***/ },
-/* 798 */
+/* 799 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54751,7 +54822,7 @@
 	exports.default = initialized;
 
 /***/ },
-/* 799 */
+/* 800 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54793,7 +54864,7 @@
 	exports.default = isMobile;
 
 /***/ },
-/* 800 */
+/* 801 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54804,19 +54875,19 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _cssLoaded = __webpack_require__(801);
+	var _cssLoaded = __webpack_require__(802);
 
 	var _cssLoaded2 = _interopRequireDefault(_cssLoaded);
 
-	var _gameComponentsCreated = __webpack_require__(802);
+	var _gameComponentsCreated = __webpack_require__(803);
 
 	var _gameComponentsCreated2 = _interopRequireDefault(_gameComponentsCreated);
 
-	var _geoJSONLoaded = __webpack_require__(803);
+	var _geoJSONLoaded = __webpack_require__(804);
 
 	var _geoJSONLoaded2 = _interopRequireDefault(_geoJSONLoaded);
 
-	var _librariesLoaded = __webpack_require__(804);
+	var _librariesLoaded = __webpack_require__(805);
 
 	var _librariesLoaded2 = _interopRequireDefault(_librariesLoaded);
 
@@ -54832,7 +54903,7 @@
 		exports.default = initialization;
 
 /***/ },
-/* 801 */
+/* 802 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54866,7 +54937,7 @@
 		};
 
 /***/ },
-/* 802 */
+/* 803 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54902,7 +54973,7 @@
 	exports.default = gameComponentsCreated;
 
 /***/ },
-/* 803 */
+/* 804 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54938,7 +55009,7 @@
 	exports.default = geoJSONLoaded;
 
 /***/ },
-/* 804 */
+/* 805 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54974,7 +55045,7 @@
 	exports.default = librariesLoaded;
 
 /***/ },
-/* 805 */
+/* 806 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -54985,7 +55056,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _timeLeft = __webpack_require__(806);
+	var _timeLeft = __webpack_require__(807);
 
 	var _timeLeft2 = _interopRequireDefault(_timeLeft);
 
@@ -54998,7 +55069,7 @@
 		exports.default = countdown;
 
 /***/ },
-/* 806 */
+/* 807 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55037,7 +55108,7 @@
 	exports.default = timeLeft;
 
 /***/ },
-/* 807 */
+/* 808 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55048,35 +55119,35 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _currentTurn = __webpack_require__(808);
+	var _currentTurn = __webpack_require__(809);
 
 	var _currentTurn2 = _interopRequireDefault(_currentTurn);
 
-	var _history = __webpack_require__(815);
+	var _history = __webpack_require__(816);
 
 	var _history2 = _interopRequireDefault(_history);
 
-	var _over = __webpack_require__(816);
+	var _over = __webpack_require__(817);
 
 	var _over2 = _interopRequireDefault(_over);
 
-	var _roundsPlayed = __webpack_require__(817);
+	var _roundsPlayed = __webpack_require__(818);
 
 	var _roundsPlayed2 = _interopRequireDefault(_roundsPlayed);
 
-	var _restarting = __webpack_require__(818);
+	var _restarting = __webpack_require__(819);
 
 	var _restarting2 = _interopRequireDefault(_restarting);
 
-	var _stage = __webpack_require__(819);
+	var _stage = __webpack_require__(820);
 
 	var _stage2 = _interopRequireDefault(_stage);
 
-	var _started = __webpack_require__(820);
+	var _started = __webpack_require__(821);
 
 	var _started2 = _interopRequireDefault(_started);
 
-	var _totalGamesPlayed = __webpack_require__(821);
+	var _totalGamesPlayed = __webpack_require__(822);
 
 	var _totalGamesPlayed2 = _interopRequireDefault(_totalGamesPlayed);
 
@@ -55096,7 +55167,7 @@
 		exports.default = gameplay;
 
 /***/ },
-/* 808 */
+/* 809 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55107,27 +55178,27 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _canEvaluateAnswer = __webpack_require__(809);
+	var _canEvaluateAnswer = __webpack_require__(810);
 
 	var _canEvaluateAnswer2 = _interopRequireDefault(_canEvaluateAnswer);
 
-	var _confirmingAnswer = __webpack_require__(810);
+	var _confirmingAnswer = __webpack_require__(811);
 
 	var _confirmingAnswer2 = _interopRequireDefault(_confirmingAnswer);
 
-	var _consideredBorough = __webpack_require__(811);
+	var _consideredBorough = __webpack_require__(812);
 
 	var _consideredBorough2 = _interopRequireDefault(_consideredBorough);
 
-	var _randomLocation = __webpack_require__(812);
+	var _randomLocation = __webpack_require__(813);
 
 	var _randomLocation2 = _interopRequireDefault(_randomLocation);
 
-	var _selectedBorough = __webpack_require__(813);
+	var _selectedBorough = __webpack_require__(814);
 
 	var _selectedBorough2 = _interopRequireDefault(_selectedBorough);
 
-	var _submitted = __webpack_require__(814);
+	var _submitted = __webpack_require__(815);
 
 	var _submitted2 = _interopRequireDefault(_submitted);
 
@@ -55145,7 +55216,7 @@
 		exports.default = currentTurn;
 
 /***/ },
-/* 809 */
+/* 810 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55187,7 +55258,7 @@
 	exports.default = canEvaluateAnswer;
 
 /***/ },
-/* 810 */
+/* 811 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55228,7 +55299,7 @@
 	exports.default = confirmingAnswer;
 
 /***/ },
-/* 811 */
+/* 812 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55273,7 +55344,7 @@
 	exports.default = consideredBorough;
 
 /***/ },
-/* 812 */
+/* 813 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55316,7 +55387,7 @@
 		};
 
 /***/ },
-/* 813 */
+/* 814 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55361,7 +55432,7 @@
 	exports.default = selectedBorough;
 
 /***/ },
-/* 814 */
+/* 815 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55405,7 +55476,7 @@
 	exports.default = submitted;
 
 /***/ },
-/* 815 */
+/* 816 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55448,7 +55519,7 @@
 	exports.default = history;
 
 /***/ },
-/* 816 */
+/* 817 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55491,7 +55562,7 @@
 	exports.default = complete;
 
 /***/ },
-/* 817 */
+/* 818 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55533,7 +55604,7 @@
 	exports.default = roundsPlayed;
 
 /***/ },
-/* 818 */
+/* 819 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55573,7 +55644,7 @@
 		};
 
 /***/ },
-/* 819 */
+/* 820 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55639,7 +55710,7 @@
 		};
 
 /***/ },
-/* 820 */
+/* 821 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55675,7 +55746,7 @@
 	exports.default = started;
 
 /***/ },
-/* 821 */
+/* 822 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55711,7 +55782,7 @@
 		}
 
 /***/ },
-/* 822 */
+/* 823 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55722,7 +55793,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _visible = __webpack_require__(823);
+	var _visible = __webpack_require__(824);
 
 	var _visible2 = _interopRequireDefault(_visible);
 
@@ -55735,7 +55806,7 @@
 		exports.default = interchange;
 
 /***/ },
-/* 823 */
+/* 824 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55748,7 +55819,7 @@
 
 	var _actions2 = _interopRequireDefault(_actions);
 
-	var _createVisibilityReducer = __webpack_require__(824);
+	var _createVisibilityReducer = __webpack_require__(825);
 
 	var _createVisibilityReducer2 = _interopRequireDefault(_createVisibilityReducer);
 
@@ -55757,7 +55828,7 @@
 		exports.default = (0, _createVisibilityReducer2.default)(_actions2.default.SHOW_INTERCHANGE, _actions2.default.HIDE_INTERCHANGE);
 
 /***/ },
-/* 824 */
+/* 825 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -55797,7 +55868,7 @@
 	exports.default = createVisibilityReducer;
 
 /***/ },
-/* 825 */
+/* 826 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55808,23 +55879,23 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _created = __webpack_require__(826);
+	var _created = __webpack_require__(827);
 
 	var _created2 = _interopRequireDefault(_created);
 
-	var _hoveredBorough = __webpack_require__(827);
+	var _hoveredBorough = __webpack_require__(828);
 
 	var _hoveredBorough2 = _interopRequireDefault(_hoveredBorough);
 
-	var _level = __webpack_require__(828);
+	var _level = __webpack_require__(829);
 
 	var _level2 = _interopRequireDefault(_level);
 
-	var _showingAnswer = __webpack_require__(829);
+	var _showingAnswer = __webpack_require__(830);
 
 	var _showingAnswer2 = _interopRequireDefault(_showingAnswer);
 
-	var _visible = __webpack_require__(830);
+	var _visible = __webpack_require__(831);
 
 	var _visible2 = _interopRequireDefault(_visible);
 
@@ -55841,7 +55912,7 @@
 		exports.default = maps;
 
 /***/ },
-/* 826 */
+/* 827 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55877,7 +55948,7 @@
 	exports.default = created;
 
 /***/ },
-/* 827 */
+/* 828 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55921,7 +55992,7 @@
 	exports.default = hoveredBorough;
 
 /***/ },
-/* 828 */
+/* 829 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -55968,7 +56039,7 @@
 		}
 
 /***/ },
-/* 829 */
+/* 830 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56020,7 +56091,7 @@
 		}
 
 /***/ },
-/* 830 */
+/* 831 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56033,7 +56104,7 @@
 
 	var _actions2 = _interopRequireDefault(_actions);
 
-	var _createVisibilityReducer = __webpack_require__(824);
+	var _createVisibilityReducer = __webpack_require__(825);
 
 	var _createVisibilityReducer2 = _interopRequireDefault(_createVisibilityReducer);
 
@@ -56042,7 +56113,7 @@
 		exports.default = (0, _createVisibilityReducer2.default)(_actions2.default.SHOW_MAP, _actions2.default.HIDE_MAP);
 
 /***/ },
-/* 831 */
+/* 832 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56053,15 +56124,15 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _created = __webpack_require__(832);
+	var _created = __webpack_require__(833);
 
 	var _created2 = _interopRequireDefault(_created);
 
-	var _displayingLocation = __webpack_require__(833);
+	var _displayingLocation = __webpack_require__(834);
 
 	var _displayingLocation2 = _interopRequireDefault(_displayingLocation);
 
-	var _visible = __webpack_require__(834);
+	var _visible = __webpack_require__(835);
 
 	var _visible2 = _interopRequireDefault(_visible);
 
@@ -56076,7 +56147,7 @@
 		exports.default = panorama;
 
 /***/ },
-/* 832 */
+/* 833 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56112,7 +56183,7 @@
 	exports.default = created;
 
 /***/ },
-/* 833 */
+/* 834 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56167,7 +56238,7 @@
 	exports.default = displayingLocation;
 
 /***/ },
-/* 834 */
+/* 835 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56180,7 +56251,7 @@
 
 	var _actions2 = _interopRequireDefault(_actions);
 
-	var _createVisibilityReducer = __webpack_require__(824);
+	var _createVisibilityReducer = __webpack_require__(825);
 
 	var _createVisibilityReducer2 = _interopRequireDefault(_createVisibilityReducer);
 
@@ -56189,7 +56260,7 @@
 		exports.default = (0, _createVisibilityReducer2.default)(_actions2.default.SHOW_PANORAMA, _actions2.default.HIDE_PANORAMA);
 
 /***/ },
-/* 835 */
+/* 836 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56200,7 +56271,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _displaying = __webpack_require__(836);
+	var _displaying = __webpack_require__(837);
 
 	var _displaying2 = _interopRequireDefault(_displaying);
 
@@ -56209,7 +56280,7 @@
 		exports.default = (0, _redux.combineReducers)({ displaying: _displaying2.default });
 
 /***/ },
-/* 836 */
+/* 837 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56269,7 +56340,7 @@
 	exports.default = displaying;
 
 /***/ },
-/* 837 */
+/* 838 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56280,7 +56351,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _locationRequest = __webpack_require__(838);
+	var _locationRequest = __webpack_require__(839);
 
 	var _locationRequest2 = _interopRequireDefault(_locationRequest);
 
@@ -56289,7 +56360,7 @@
 		exports.default = (0, _redux.combineReducers)({ locationRequest: _locationRequest2.default });
 
 /***/ },
-/* 838 */
+/* 839 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56341,7 +56412,7 @@
 		};
 
 /***/ },
-/* 839 */
+/* 840 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -56352,7 +56423,7 @@
 
 	var _redux = __webpack_require__(479);
 
-	var _complete = __webpack_require__(840);
+	var _complete = __webpack_require__(841);
 
 	var _complete2 = _interopRequireDefault(_complete);
 
@@ -56365,7 +56436,7 @@
 		exports.default = view;
 
 /***/ },
-/* 840 */
+/* 841 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
