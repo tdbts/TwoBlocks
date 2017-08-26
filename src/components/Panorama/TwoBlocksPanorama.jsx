@@ -106,12 +106,6 @@ class TwoBlocksPanorama extends React.Component {
 
 				break;
 
-			case gameStages.EVALUATING_ANSWER:
-
-				this._onStageEvaluatingAnswer();
-
-				break;
-
 		}
 
 	}
@@ -315,7 +309,6 @@ class TwoBlocksPanorama extends React.Component {
 		this._display = new Display(this._panorama, this.props.isMobile);
 
 		this._assignDisplayEventListeners();
-		this._startMotionControl();
 
 		this._display.start();
 
@@ -335,24 +328,6 @@ class TwoBlocksPanorama extends React.Component {
 
 	}
 
-	/**
-	 *
-	 * Ultimately, will refactor 'mapStateToProps()' 
-	 * to reduce game state to 'show' and 'hide' props,
-	 * calculated based off of the current state.  
-	 * In other words, the Panorama will ultimately 
-	 * know nothing about whether to show the panorama 
-	 * if it is mobile / desktop or not.  Rather, that 
-	 * calculation will be performed in an outside entity, 
-	 * and reduce the determination to a single boolean, 
-	 * which is then passed to the Panorama as a prop.
-	 *
-	 */
-	
-	_onStageEvaluatingAnswer() {
-
-	}
-
 	_onStageGuessingLocation() {
 
 		// On mobile devices, panorama continues to be 
@@ -368,6 +343,8 @@ class TwoBlocksPanorama extends React.Component {
 	}
 
 	_onStageShowingPanorama() {
+
+		this._startMotionControl();
 
 		this.props.showPanorama();
 	

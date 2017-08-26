@@ -37531,12 +37531,6 @@
 
 						break;
 
-					case _constants.gameStages.EVALUATING_ANSWER:
-
-						this._onStageEvaluatingAnswer();
-
-						break;
-
 				}
 			}
 		}, {
@@ -37724,7 +37718,6 @@
 				this._display = new _Display2.default(this._panorama, this.props.isMobile);
 
 				this._assignDisplayEventListeners();
-				this._startMotionControl();
 
 				this._display.start();
 			}
@@ -37742,24 +37735,6 @@
 
 				this._checkPanoramaLoadPrerequisites();
 			}
-
-			/**
-	   *
-	   * Ultimately, will refactor 'mapStateToProps()' 
-	   * to reduce game state to 'show' and 'hide' props,
-	   * calculated based off of the current state.  
-	   * In other words, the Panorama will ultimately 
-	   * know nothing about whether to show the panorama 
-	   * if it is mobile / desktop or not.  Rather, that 
-	   * calculation will be performed in an outside entity, 
-	   * and reduce the determination to a single boolean, 
-	   * which is then passed to the Panorama as a prop.
-	   *
-	   */
-
-		}, {
-			key: '_onStageEvaluatingAnswer',
-			value: function _onStageEvaluatingAnswer() {}
 		}, {
 			key: '_onStageGuessingLocation',
 			value: function _onStageGuessingLocation() {
@@ -37776,6 +37751,8 @@
 		}, {
 			key: '_onStageShowingPanorama',
 			value: function _onStageShowingPanorama() {
+
+				this._startMotionControl();
 
 				this.props.showPanorama();
 			}
@@ -37984,7 +37961,7 @@
 
 
 	// module
-	exports.push([module.id, "html, body {\n\theight: 100%; \n\tmargin: 0; \n\tpadding: 0;\n}\n\n.app-container {\n\tposition: relative;\n\toverflow: hidden;\n}\n\n.fill-container {\n\theight: 100%; \n\twidth: 100%; \n}\n\n.inherit-dimensions {\n\theight: inherit; \n\twidth: inherit; \n}\n\n.hidden {\n\tdisplay: none; \n}\n\n.offscreen {\n\tleft: -10000px;\n}\n\n/* Elements with '.visible' class are on top of the \n\tstack of maps / panoramas */\n.visible {\n\tz-index: 100; \n}\n\n.layered {\n\tposition: absolute; \n}\n\n/* ------ Components ------ */\n\n.two-blocks {\n\twidth: 100%; \n\theight: calc(100% - 150px);\n\tfont-family: \"Lucida Console\", Monaco, monospace; \n}\n\n.two-blocks-view {\n\tmargin-bottom: 2%;\n\tbox-shadow: 2px 2px 10px #000;\n}\n\n.two-blocks-view, \n.two-blocks-prompt {\n\tposition: relative;\n}\n\n.two-blocks-prompt .red {\n\tcolor: #D9285B;\n}\n\n.two-blocks-prompt .correct-borough {\n\tfont-weight: bold;\n}\n\n.two-blocks-map {\n\tposition: absolute; \n}\n\n.two-blocks-submitter-borough-name {\n\tcolor: #D9285B;\n}\n\n.two-blocks-button {\n\tborder-radius: 10px;\n\theight: 2em;\n\tletter-spacing: 1px; \n}\n\n.desktop .two-blocks-replay-button {\n\tmargin-top: 15px;\n}\n\n.desktop .two-blocks-interchange {\n\tmargin-left: 3%;\n}\n", ""]);
+	exports.push([module.id, "html, body {\n\theight: 100%; \n\tmargin: 0; \n\tpadding: 0;\n}\n\n.app-container {\n\tposition: relative;\n\toverflow: hidden;\n}\n\n.fill-container {\n\theight: 100%; \n\twidth: 100%; \n}\n\n.inherit-dimensions {\n\theight: inherit; \n\twidth: inherit; \n}\n\n.hidden {\n\tdisplay: none; \n}\n\n.offscreen {\n\tleft: -10000px;\n}\n\n/* Elements with '.visible' class are on top of the \n\tstack of maps / panoramas */\n.visible {\n\tz-index: 100; \n}\n\n.layered {\n\tposition: absolute; \n}\n\n/* ------ Components ------ */\n\n.two-blocks {\n\twidth: 100%; \n\theight: calc(100% - 150px);\n\tfont-family: \"Lucida Console\", Monaco, monospace; \n}\n\n.two-blocks-view {\n\tmargin-bottom: 25px;\n\tbox-shadow: 2px 2px 10px #000;\n}\n\n.two-blocks-view, \n.two-blocks-prompt {\n\tposition: relative;\n}\n\n.two-blocks-prompt .red {\n\tcolor: #D9285B;\n}\n\n.two-blocks-prompt .correct-borough {\n\tfont-weight: bold;\n}\n\n.two-blocks-map {\n\tposition: absolute; \n}\n\n.two-blocks-submitter-borough-name {\n\tcolor: #D9285B;\n}\n\n.two-blocks-button {\n\tborder-radius: 10px;\n\theight: 2em;\n\tletter-spacing: 1px; \n}\n\n.desktop .two-blocks-replay-button {\n\tmargin-top: 15px;\n}\n\n.desktop .two-blocks-interchange {\n\tmargin-left: 3%;\n}\n", ""]);
 
 	// exports
 
