@@ -26,7 +26,7 @@ var plugins = [];
 plugins.push(new webpack.DefinePlugin({
 
 	'process.env': {
-		'MAPS_API_KEY': JSON.stringify("AIzaSyDuL3PsXv2Rc2qpVN5ZfLNa2tkdnrFJmBE"), 
+		'MAPS_API_KEY': JSON.stringify("AIzaSyCOM_BERMiLrpHzBv3kO6yVBKVUDmwuPos"), 
   		'NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development')
 	}
 	
